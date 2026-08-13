@@ -184,9 +184,7 @@ class _HomePageState extends State<HomePage> {
                     isExpanded: true,
                     initialValue: selectedAircraftType,
                     hint: Text(
-                      aircraftTypes.isNotEmpty
-                          ? aircraftTypes[0]
-                          : 'No options available',
+                      '737-700W/CFM56-7B22',
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         color: AppColors.placeholderDark,
@@ -294,7 +292,7 @@ class _HomePageState extends State<HomePage> {
                       isExpanded: true,
                       initialValue: selectedConfigurationType,
                       hint: const Text(
-                        'Select Configuration',
+                        'Airspeed Unreliable (Flaps 15)',
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           color: AppColors.placeholderDark,
@@ -347,9 +345,7 @@ class _HomePageState extends State<HomePage> {
                     isExpanded: true,
                     initialValue: selectedAirportType,
                     hint: Text(
-                      airportTypes.isNotEmpty
-                          ? airportTypes[0]
-                          : 'No options available',
+                      'PTY',
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         color: AppColors.placeholderDark,
