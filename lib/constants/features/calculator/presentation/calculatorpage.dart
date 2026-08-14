@@ -859,7 +859,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                         ),
                       ),
 
-                      //Vref add, cambia dependiendo del tipo de aircraft a N/A y el texto cambie a VREF15 +
+                      //Vref add, cambia dependiendo del tipo de aircraft (Normal o Non-Normal) a N/A y el texto cambia a VREF15 +
                       Card(
                         color: AppColors.cardDark,
                         child: Padding(
@@ -1447,7 +1447,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                                 color: AppColors.white,
                                               ),
                                             ),
-
+                                            const SizedBox(width: 5),
                                             Text(
                                               '14762' + AppStrings.ft,
                                               style: TextStyle(
@@ -1455,7 +1455,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                                 color: AppColors.textColor3Dark,
                                               ),
                                             ),
-                                            //const SizedBox(width: 2),
+                                            
                                             Text(
                                               '(' + '4500' + AppStrings.m + ')',
                                               style: TextStyle(
@@ -1463,6 +1463,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                                 color: AppColors.textColor3Dark,
                                               ),
                                             ),
+                                            const SizedBox(width: 10),
                                           ],
                                         ),
                                       ),
@@ -1493,7 +1494,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                                 color: AppColors.white,
                                               ),
                                             ),
-
+                                            const SizedBox(width: 15),
                                             Text(
                                               '9155' + AppStrings.ft,
                                               style: TextStyle(
@@ -1501,7 +1502,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                                 color: AppColors.textColor2Dark,
                                               ),
                                             ),
-                                            //const SizedBox(width: 2),
+                                          
                                             Text(
                                               '(' + '2790' + AppStrings.m + ')',
                                               style: TextStyle(
@@ -1509,6 +1510,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                                 color: AppColors.textColor2Dark,
                                               ),
                                             ),
+                                            const SizedBox(width: 4),
                                           ],
                                         ),
                                     ),
