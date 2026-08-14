@@ -25,7 +25,7 @@ static const Color okPriButBrDark = Color(0xFF2DB7AA);
 static const Color cancelPriButBgDark= Color(0xFF202032);
 static const Color cancelPriButBrDark = Color(0xFF5F6183);
 
-static const Color bottomSheetDark = Color.fromARGB(255, 0, 0, 0);
+static const Color cardDark = Color.fromARGB(255, 26, 24, 24);
 static const Color activeColor = Color(0xFFFFCC00);
 static const Color errorColor = Color.fromARGB(255, 255, 30, 0);
 

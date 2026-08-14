@@ -136,7 +136,7 @@ class _HomePageState extends State<HomePage> {
     }
     if (comentarios.isNotEmpty) {
       print(
-        "La variable va lista con el contenido de la¿os comentarios hacia calculatorpage",
+        "La variable va lista con el contenido de los comentarios hacia calculatorpage",
       );
     }
 

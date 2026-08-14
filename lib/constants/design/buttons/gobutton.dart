@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_application_5/constants/colors/app_colors.dart';
 import 'package:flutter_application_5/constants/strings/app_strings.dart';
 import 'package:flutter_application_5/constants/design/text/app_text.dart';
-import 'package:flutter_application_5/theme/app_theme_extesion.dart';
+//import 'package:flutter_application_5/theme/app_theme_extesion.dart';
 
 class GoButton extends StatelessWidget {
   final String? label;
@@ -40,13 +40,13 @@ class GoButton extends StatelessWidget {
 
     //final Size screenSize = MediaQuery.of(context).size;
     
-    final appTheme = Theme.of(context).extension<AppThemeExtension>()!;
+    //final appTheme = Theme.of(context).extension<AppThemeExtension>()!;
 
     return Center(
               child: ElevatedButton(
                 onPressed: onPressed,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: appTheme.bottomSheetDark,
+                 // backgroundColor: appTheme.backgroundDark,
                   //foregroundColor: AppColors.iconDark,
                   fixedSize: const Size(100, 100),
                   shape: BeveledRectangleBorder(

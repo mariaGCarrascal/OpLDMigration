@@ -18,16 +18,17 @@ class DarkTheme {
       error: AppColors.errorColor,
       onError: AppColors.errorColor,
     ),
+//#2A2A2A
     extensions: [
       AppThemeExtension(
         placeholder: AppColors.placeholder,
-        bottomSheetDark: AppColors.bottomSheetDark,
+        cardDark: AppColors.cardDark,
         resultColor: AppColors.resultColor,
         okPriButBgDark: AppColors.okPriButBgDark,
         okPriButBrDark: AppColors.okPriButBrDark,
         cancelPriButBgDark: AppColors.cancelPriButBgDark,
         cancelPriButBrDark: AppColors.cancelPriButBrDark,
-        barrierColor: const Color.fromARGB(255, 44, 45, 71).withOpacity(0.8),
+        barrierColor: const Color.fromARGB(255, 44, 45, 71).withValues(alpha: 0.8),
         iconColor: AppColors.iconDark,
         disableColor: AppColors.backgroundDark,
       ),

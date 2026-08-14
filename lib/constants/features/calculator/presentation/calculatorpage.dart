@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_5/constants/colors/app_colors.dart';
+import 'package:flutter_application_5/constants/features/home/data/airportdata.dart';
 import 'package:flutter_application_5/constants/strings/app_strings.dart';
 import 'package:flutter/services.dart';
 
@@ -12,6 +13,8 @@ class CalculatorPage extends StatefulWidget {
 }
 
 class _CalculatorPageState extends State<CalculatorPage> {
+
+  //Variables clave
   int _counter = 0;
   double _currentElevation = 2000;
   double _currentLadWeight = 130000;
@@ -19,16 +22,28 @@ class _CalculatorPageState extends State<CalculatorPage> {
   List<String>? listaComments = [];
   String? selectedAircraftType;
   String? selectedCongfiguration;
+  String? selectedCondition = 'DRY';
   final List<String> aircraftTypes = ['Normal', 'Non-Normal', 'XXX'];
+  final List<String> rwyConditions = ['DRY', 'GOOD', 'GOOD TO MEDIUM', 'MEDIUM', 'MEDIUM TO POOR', 'POOR'];
   final List<String> windValues = ['000', '010', '020', '030', '040', '050'];
+  Map<String, List<String>> conditionNotes = Airportdata.rcaTable;
+  List<String>? rwyNote = [];
+  String? rwyRcc;
   bool _isExpanded = false;
 
   @override
   void initState() {
     super.initState();
+    updateRwyCondition('DRY');
     print("Paso 8: cometarios  recibidos de home page: ${widget.comentariosNon}");
     listaComments = widget.comentariosNon;
     print("paso 9: cometarios  recibidos de la variable: $listaComments");
+  }
+
+  void updateRwyCondition(String condition) {
+    final values = conditionNotes[condition] ?? ["Unknown"];
+    rwyRcc = values.first;
+    rwyNote = values.skip(1).toList();
   }
 
   void _increment() {
@@ -48,6 +63,8 @@ class _CalculatorPageState extends State<CalculatorPage> {
 
   @override
   Widget build(BuildContext context) {
+
+    final Size screenSize = MediaQuery.of(context).size;
 
     return Scaffold(
       backgroundColor: AppColors.backgroundDark,
@@ -72,7 +89,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                     children: [
                       //Airport Information Header
                       Card(
-                        color: AppColors.bottomSheetDark,
+                        color: AppColors.black,
                         shape: RoundedRectangleBorder(
                           side: BorderSide(color: Colors.white),
                           borderRadius: BorderRadius.circular(4),
@@ -100,7 +117,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
 
                       //Rwy ID, si es XXX, se muestra el texto RWY MAG HDG y los valores pasan a ser numerico como Wind. En aumento de +1 hasta 360
                       Card(
-                        color: AppColors.bottomSheetDark,
+                        color: AppColors.cardDark,
                         child: Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: Row(
@@ -122,7 +139,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                     color: AppColors.textColor3Dark,
                                   ),
                                 ),
-                                const SizedBox(width: 500.0),
+                                SizedBox(width: screenSize.width * 0.20),
                                 Expanded(
                                   child: DropdownButtonFormField<String>(
                                     isExpanded: true,
@@ -171,7 +188,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                     color: AppColors.white,
                                   ),
                                 ),
-                                const SizedBox(width: 8.0),
+                                const SizedBox(width: 20.0),
                                 PopupMenuButton<String>(
                                   initialValue: selectedWind,
                                   onSelected: (String newValue) {
@@ -216,7 +233,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
 
                       //Rwy condition
                       Card(
-                        color: AppColors.bottomSheetDark,
+                        color: AppColors.cardDark,
                         child: Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: Row(
@@ -229,13 +246,13 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                   color: AppColors.white, 
                                 ),
                               ),
-                              const SizedBox(width: 500.0),
+                              SizedBox(width: screenSize.width * 0.20),
                               Expanded(
                                 child: DropdownButtonFormField<String>(
                                   isExpanded: true, 
-                                  initialValue: selectedAircraftType,
+                                  initialValue: selectedCondition,
                                   hint: Text(
-                                    'No options yet',
+                                    'DRY',
                                     style: TextStyle(
                                       fontWeight: FontWeight.bold,
                                       color: AppColors.placeholderDark,
@@ -253,7 +270,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                       vertical: 2,
                                     ),
                                   ),
-                                  items: aircraftTypes.map((String value) {
+                                  items: rwyConditions.map((String value) {
                                     return DropdownMenuItem<String>(
                                       value: value,
                                       child: Text(
@@ -264,8 +281,11 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                     );
                                   }).toList(),
                                   onChanged: (newValue) {
+                                    if (newValue == null) return;
+
                                     setState(() {
-                                      selectedAircraftType = newValue;
+                                      selectedCondition = newValue;
+                                      updateRwyCondition(newValue);
                                     });
                                   },
                                 ),
@@ -277,7 +297,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
 
                       //Rwy slope, en vista XXX se muestra un valor en porcentaje (color verde), y botones de suma y resta
                       Card(
-                        color: AppColors.bottomSheetDark,
+                        color: AppColors.cardDark,
                         child: Padding(
                           padding: const EdgeInsets.all(15.0),
                           child: Row(
@@ -346,9 +366,9 @@ class _CalculatorPageState extends State<CalculatorPage> {
                         ),
                       ),
 
-                      //Elevation, la vista cambie si es el aeropuerto es XXX
+                      //Elevation, la vista cambia si es el aeropuerto es XXX
                       Card(
-                            color: AppColors.bottomSheetDark,
+                            color: AppColors.cardDark,
                             child: Padding(
                               padding: const EdgeInsets.all(20.0),
                               child: Column(
@@ -357,8 +377,9 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                   Row(
                                     children: [
                                       Text(AppStrings.elevation, style: const TextStyle(color: AppColors.white)),
-                                      const SizedBox(width: 750.0),
+                                      //SizedBox(width: screenSize.width * 0.20),
                                       if (selectedAircraftType == 'XXX') ...[
+                                            SizedBox(width: screenSize.width * 0.30),
                                             Text(
                                               '${(_currentElevation as num).toInt()}${AppStrings.ft}',
                                               style: const TextStyle(color: AppColors.textColor3Dark),
@@ -402,6 +423,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                               ),
                                             ),
                                          ] else ...[
+                                            SizedBox(width: screenSize.width * 0.20),
                                             Text(
                                               (_counter as num).toInt().toString() + AppStrings.ft,
                                               style: TextStyle(color: AppColors.textColor3Dark),
@@ -429,7 +451,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
 
                       //LDA y boton de ajustes
                       Card(
-                            color: AppColors.bottomSheetDark,
+                            color: AppColors.cardDark,
                             child: Padding(
                               padding: const EdgeInsets.all(20.0),
                               child: Column(
@@ -469,7 +491,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                           });
                                         },
                                         style: ElevatedButton.styleFrom(
-                                          backgroundColor: AppColors.bottomSheetDark,
+                                          backgroundColor: AppColors.black,
                                           side: BorderSide(color: AppColors.placeholderDark),
                                           shape: RoundedRectangleBorder(
                                             borderRadius: BorderRadius.circular(15),
@@ -562,7 +584,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                       
                       //Aircraft Configuration header
                       Card(
-                        color: AppColors.bottomSheetDark,
+                        color: AppColors.black,
                         shape: RoundedRectangleBorder(
                           side: BorderSide(color: AppColors.white),
                           borderRadius: BorderRadius.circular(4),
@@ -583,7 +605,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
 
                       //Flaps
                       Card(
-                        color: AppColors.bottomSheetDark,
+                        color: AppColors.cardDark,
                         child: Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: Row(
@@ -596,7 +618,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                   color: AppColors.white, 
                                 ),
                               ),
-                              const SizedBox(width: 400.0),
+                              SizedBox(width: screenSize.width * 0.20),
                               Expanded(
                                 child: DropdownButtonFormField<String>(
                                   isExpanded: true, 
@@ -644,7 +666,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
 
                       //Autobrake
                       Card(
-                        color: AppColors.bottomSheetDark,
+                        color: AppColors.cardDark,
                         child: Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: Row(
@@ -657,7 +679,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                   color: AppColors.white, 
                                 ),
                               ),
-                              const SizedBox(width: 500.0),
+                              SizedBox(width: screenSize.width * 0.20),
                               Expanded(
                                 child: DropdownButtonFormField<String>(
                                   isExpanded: true, 
@@ -677,7 +699,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                       borderRadius: BorderRadius.circular(5.0),
                                     ),
                                     contentPadding: const EdgeInsets.symmetric(
-                                      horizontal: 8, 
+                                      horizontal: 10, 
                                       vertical: 2,
                                     ),
                                   ),
@@ -706,7 +728,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
 
                       //Reversers
                       Card(
-                        color: AppColors.bottomSheetDark,
+                        color: AppColors.cardDark,
                         child: Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: Row(
@@ -719,7 +741,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                   color: AppColors.white, 
                                 ),
                               ),
-                              const SizedBox(width: 500.0),
+                              SizedBox(width: screenSize.width * 0.20),
                               Expanded(
                                 child: DropdownButtonFormField<String>(
                                   isExpanded: true, 
@@ -768,7 +790,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
 
                       //SpeedBrakes, cambia dependiendo del tipo de aircraft (normal o non-normal) a N/A 
                       Card(
-                        color: AppColors.bottomSheetDark,
+                        color: AppColors.cardDark,
                         child: Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: Row(
@@ -781,7 +803,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                   color: AppColors.white, 
                                 ),
                               ),
-                              const SizedBox(width: 500.0),
+                              SizedBox(width: screenSize.width * 0.20),
                               if (selectedAircraftType != 'Non-Normal')
                                 Expanded(
                                   child: DropdownButtonFormField<String>(
@@ -839,7 +861,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
 
                       //Vref add, cambia dependiendo del tipo de aircraft a N/A y el texto cambie a VREF15 +
                       Card(
-                        color: AppColors.bottomSheetDark,
+                        color: AppColors.cardDark,
                         child: Padding(
                           padding: const EdgeInsets.all(15.0),
                           child: Row(
@@ -927,7 +949,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
 
                       //Landing Weight
                       Card(
-                            color: AppColors.bottomSheetDark,
+                            color: AppColors.cardDark,
                             child: Padding(
                               padding: const EdgeInsets.all(20.0),
                               child: Column(
@@ -1014,7 +1036,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                     children: [
                       // Weather Condition Header
                       Card(
-                        color: AppColors.bottomSheetDark,
+                        color: AppColors.black,
                         shape: RoundedRectangleBorder(
                           side: BorderSide(color: AppColors.white),
                           borderRadius: BorderRadius.circular(4),
@@ -1035,7 +1057,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
 
                       // QNH
                       Card(
-                        color: AppColors.bottomSheetDark,
+                        color: AppColors.cardDark,
                         child: Padding(
                           padding: const EdgeInsets.all(15.0),
                           child: Row(
@@ -1136,7 +1158,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
 
                     // Altitude
                     Card(
-                        color: AppColors.bottomSheetDark,
+                        color: AppColors.cardDark,
                         child: Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: Row(
@@ -1157,7 +1179,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
 
                       // QAT
                       Card(
-                        color: AppColors.bottomSheetDark,
+                        color: AppColors.cardDark,
                         child: Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: Row(
@@ -1238,7 +1260,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
 
                     // WIND
                     Card(
-                      color: AppColors.bottomSheetDark,
+                      color: AppColors.cardDark,
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Row(
@@ -1380,7 +1402,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                       
                     //Performance Results header, si es XXX, solo se muestra el OpLD 
                       Card(
-                        color: AppColors.bottomSheetDark,
+                        color: AppColors.black,
                         shape: RoundedRectangleBorder(
                           side: BorderSide(color: AppColors.white),
                           borderRadius: BorderRadius.circular(4),
@@ -1404,19 +1426,44 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                     if(selectedAircraftType != 'XXX')
                                       Container(
                                         width: double.infinity,
-                                        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-                                        decoration: BoxDecoration(
-                                          color: AppColors.white.withValues(alpha: 0.1), 
-                                          borderRadius: BorderRadius.circular(4),
-                                          border: Border.all(color: AppColors.white.withValues(alpha: 0.3)),
+                                        padding: const EdgeInsets.symmetric(
+                                          vertical: 12,
+                                          horizontal: 16,
                                         ),
-                                        child: Text(
-                                          AppStrings.netLda,
-                                          textAlign: TextAlign.left,
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            color: AppColors.white,
+                                        decoration: BoxDecoration(
+                                          color: AppColors.white.withValues(alpha: 0.1),
+                                          borderRadius: BorderRadius.circular(4),
+                                          border: Border.all(
+                                            color: AppColors.white.withValues(alpha: 0.3),
                                           ),
+                                        ),
+                                        child: Row(
+                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text(
+                                              AppStrings.netLda,
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                color: AppColors.white,
+                                              ),
+                                            ),
+
+                                            Text(
+                                              '14762' + AppStrings.ft,
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                color: AppColors.textColor3Dark,
+                                              ),
+                                            ),
+                                            //const SizedBox(width: 2),
+                                            Text(
+                                              '(' + '4500' + AppStrings.m + ')',
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                color: AppColors.textColor3Dark,
+                                              ),
+                                            ),
+                                          ],
                                         ),
                                       ),
 
@@ -1424,21 +1471,46 @@ class _CalculatorPageState extends State<CalculatorPage> {
 
                                     //OpLD results
                                     Container(
-                                      width: double.infinity,
-                                      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-                                      decoration: BoxDecoration(
-                                        color: AppColors.white.withValues(alpha: 0.1),
-                                        borderRadius: BorderRadius.circular(4),
-                                        border: Border.all(color: AppColors.white.withValues(alpha: 0.3)),
-                                      ),
-                                      child: Text(
-                                        AppStrings.opld, 
-                                        textAlign: TextAlign.left,
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          color: AppColors.white,
+                                        width: double.infinity,
+                                        padding: const EdgeInsets.symmetric(
+                                          vertical: 12,
+                                          horizontal: 16,
                                         ),
-                                      ),
+                                        decoration: BoxDecoration(
+                                          color: AppColors.white.withValues(alpha: 0.1),
+                                          borderRadius: BorderRadius.circular(4),
+                                          border: Border.all(
+                                            color: AppColors.white.withValues(alpha: 0.3),
+                                          ),
+                                        ),
+                                        child: Row(
+                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text(
+                                              AppStrings.opld,
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                color: AppColors.white,
+                                              ),
+                                            ),
+
+                                            Text(
+                                              '9155' + AppStrings.ft,
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                color: AppColors.textColor2Dark,
+                                              ),
+                                            ),
+                                            //const SizedBox(width: 2),
+                                            Text(
+                                              '(' + '2790' + AppStrings.m + ')',
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                color: AppColors.textColor2Dark,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
                                     ),
                             ],
                           ),
@@ -1447,7 +1519,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
 
                       //OpLD Results Notes, no se muestra el Remaining si el aeropuerto es XXX
                       Card(
-                        color: AppColors.bottomSheetDark,
+                        color: AppColors.black,
                         shape: RoundedRectangleBorder(
                           side: BorderSide(color: AppColors.white),
                           borderRadius: BorderRadius.circular(4),
@@ -1468,20 +1540,51 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                     children: [
                                       if (selectedAircraftType != 'XXX') ...[
                                         const SizedBox(height: 12),
-                                        Text(
-                                          AppStrings.remaining, 
-                                          textAlign: TextAlign.left, 
-                                          style: TextStyle(color: AppColors.white),
-                                        ),
+                                        Row(
+                                          children: [  
+                                            Text(
+                                              AppStrings.remaining, 
+                                              textAlign: TextAlign.left, 
+                                              style: TextStyle(fontWeight: FontWeight.bold, color: AppColors.white),
+                                            ),
+                                            SizedBox(width: screenSize.width * 0.20),
+                                            Text(
+                                              '5608' + AppStrings.ft, 
+                                              textAlign: TextAlign.right, 
+                                              style: TextStyle(color: AppColors.textColor2Dark),
+                                            ),
+                                            const SizedBox(width: 10),
+                                            Text(
+                                              '(' + '1709' + AppStrings.m + ')', 
+                                              textAlign: TextAlign.right, 
+                                              style: TextStyle(color: AppColors.textColor2Dark),
+                                            ),
+                                          ],
+                                        )
+
                                       ],
                                       const SizedBox(height: 12),
-                                      Text(AppStrings.flap, textAlign: TextAlign.left, style: TextStyle(color: AppColors.white)),
+                                      Text(AppStrings.flap, textAlign: TextAlign.left, style: TextStyle(color: AppColors.placeholder)),
                                       const SizedBox(height: 12),
-                                      Text(AppStrings.autobrake, textAlign: TextAlign.left, style: TextStyle(color: AppColors.white)),
-                                      const SizedBox(height: 12),
-                                      Text('DRY rwy Condition:', textAlign: TextAlign.left, style: TextStyle(color: AppColors.white)),
-                                      const SizedBox(height: 25),
-                                      Text('Comentarios segun el rwy condition.', textAlign: TextAlign.left, style: TextStyle(color: AppColors.white)),
+                                      Text(AppStrings.autobrake, textAlign: TextAlign.left, style: TextStyle(color: AppColors.placeholder)),
+                                      const SizedBox(height: 50),
+
+                                      Row(
+                                        children: [
+                                          Text('$selectedCondition rwy Condition:', textAlign: TextAlign.left, style: TextStyle(color: AppColors.placeholder)),
+                                          SizedBox(width: screenSize.width * 0.25),
+                                          Text('(''$rwyRcc'')', textAlign: TextAlign.right, style: TextStyle(color: AppColors.placeholder)),
+                                        ]
+                                      ),
+                                      const SizedBox(height: 20),
+                                      ...rwyNote!.map((nota) => Padding(
+                                                padding: const EdgeInsets.symmetric(vertical: 5.0),
+                                                child: Text(
+                                                  nota,
+                                                  style: const TextStyle(color: AppColors.placeholder),
+                                                  textAlign: TextAlign.start,
+                                                ),
+                                              )),
                                     ],
                                   ),
                                 ),

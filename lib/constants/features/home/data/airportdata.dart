@@ -2552,7 +2552,7 @@ class Airportdata {
 
       }
 
-  static const Map<String, List<String>> RCATable = { 
+  static const Map<String, List<String>> rcaTable = { 
     'DRY': ["RCC 6", "- Dry."],
     'GOOD': ["RCC 5", "- Frost, Wet (includes Damp).", "- 1/8\" (3mm) depth or less of: “Water, Slush, Dry Snow, Wet Snow”."],
     'GOOD TO MEDIUM':["RCC 4", "- (-15°C and colder) OAT: Compacted Snow."],

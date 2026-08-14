@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 @immutable
 class AppThemeExtension extends ThemeExtension<AppThemeExtension> {
   final Color placeholder;
-  final Color bottomSheetDark;
+  final Color cardDark;
   final Color disableColor;
   final Color resultColor;
   final Color okPriButBgDark;
@@ -17,7 +17,7 @@ class AppThemeExtension extends ThemeExtension<AppThemeExtension> {
 
   const AppThemeExtension({
     required this.placeholder,
-    required this.bottomSheetDark,
+    required this.cardDark,
     required this.disableColor,
     required this.resultColor,
     required this.okPriButBgDark,
@@ -32,7 +32,7 @@ class AppThemeExtension extends ThemeExtension<AppThemeExtension> {
   @override
   AppThemeExtension copyWith({
     Color? placeholder,
-    Color? bottomSheetDark,
+    Color? cardDark,
     Color? disableColor,
     Color? resultColor,
     Color? okPriButBgDark,
@@ -45,7 +45,7 @@ class AppThemeExtension extends ThemeExtension<AppThemeExtension> {
   }) {
     return AppThemeExtension(
       placeholder: placeholder ?? this.placeholder,
-      bottomSheetDark: bottomSheetDark ?? this.bottomSheetDark,
+      cardDark: cardDark ?? this.cardDark,
       disableColor: disableColor ?? this.disableColor,
       resultColor: resultColor ?? this.resultColor,
       okPriButBgDark: okPriButBgDark ?? this.okPriButBgDark,
@@ -63,7 +63,7 @@ class AppThemeExtension extends ThemeExtension<AppThemeExtension> {
     if (other is! AppThemeExtension) return this;
     return AppThemeExtension(
       placeholder: Color.lerp(placeholder, other.placeholder, t)!,
-      bottomSheetDark: Color.lerp(bottomSheetDark, other.bottomSheetDark, t)!,
+      cardDark: Color.lerp(cardDark, other.cardDark, t)!,
       disableColor: Color.lerp(disableColor, other.disableColor, t)!,
       resultColor: Color.lerp(resultColor, other.resultColor, t)!,
       okPriButBgDark: Color.lerp(okPriButBgDark, other.okPriButBgDark, t)!,
