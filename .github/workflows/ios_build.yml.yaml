@@ -1,0 +1,33 @@
+name: Construir IPA para iOS
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build:
+    name: Compilar Flutter iOS
+    runs-on: macos-latest # Utiliza una Mac en la nube de forma automática
+
+    steps:
+      - name: Clonar Repositorio
+        uses: actions/checkout@v4
+
+      - name: Configurar Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.x' # O la versión exacta de Flutter que uses
+          channel: 'stable'
+
+      - name: Instalar Dependencias
+        run: flutter pub get
+
+      # Compilación sin firma (ideal si solo quieres probar que el código compila o usar herramientas externas)
+      - name: Construir IPA sin firmar
+        run: flutter build ipa --release --no-codesign
+
+      - name: Subir archivo IPA como Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ios-app-ipa
+          path: build/ios/ipa/*.ipa
