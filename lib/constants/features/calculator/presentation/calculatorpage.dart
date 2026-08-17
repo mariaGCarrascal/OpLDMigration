@@ -1,12 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_5/constants/colors/app_colors.dart';
+import 'package:flutter_application_5/constants/features/calculator/fuctions/customDigitFormatter.dart';
 import 'package:flutter_application_5/constants/features/home/data/airportdata.dart';
 import 'package:flutter_application_5/constants/strings/app_strings.dart';
 import 'package:flutter/services.dart';
 
 class CalculatorPage extends StatefulWidget {
   final List<String>? comentariosNon;
-  const CalculatorPage({super.key, this.comentariosNon});
+  final String? aircraft;
+  final String? normalNon;
+  final String? configuration;
+  final String? airport;
+  final String? airportEl;
+  final String? airportQNH;
+  final String? airportTemp;
+  const CalculatorPage({
+    super.key, 
+    this.comentariosNon, this.aircraft, this.normalNon, this.configuration, 
+    this.airport, this.airportEl, this.airportQNH, this.airportTemp
+  });
 
   @override
   State<CalculatorPage> createState() => _CalculatorPageState();
@@ -14,24 +26,31 @@ class CalculatorPage extends StatefulWidget {
 
 class _CalculatorPageState extends State<CalculatorPage> {
 
-  //Variables clave
+  //Variables 
   int _counter = 0;
   //Nota la reduccion solo permite 5 digitos si son 0, pero si tiene valor que no sea 0 al inicio solo permite 4 digitos
   String? _currentReduction;
   double _currentLadWeight = 130000;
   double _currentElevation = 2000;
   String? selectedWind;
-  List<String>? listaComments = [];
   String? selectedAircraftType;
+  String? selectedAircraft;
+  String? selectedLanding;
+  String? selectedAirport;
   String? selectedCongfiguration;
+  String? selectedAirportAltitud;
+  String? selectedAirportQNH;
+  String? selectedAirportTemperature;
   String? selectedCondition = 'DRY';
-  final List<String> aircraftTypes = ['Normal', 'Non-Normal', 'XXX'];
+  String? rwyRcc;
+  bool _isExpanded = false;
+  //Variables de listas
+  List<String>? listaComments = [];
+  final List<String> aircraftTypes = ['Opcion A', 'Opcion B'];
   final List<String> rwyConditions = ['DRY', 'GOOD', 'GOOD TO MEDIUM', 'MEDIUM', 'MEDIUM TO POOR', 'POOR'];
   final List<String> windValues = ['000', '010', '020', '030', '040', '050', '060', '070', '080', '090', '100'];
   Map<String, List<String>> conditionNotes = Airportdata.rcaTable;
   List<String>? rwyNote = [];
-  String? rwyRcc;
-  bool _isExpanded = false;
 
   @override
   void initState() {
@@ -39,7 +58,13 @@ class _CalculatorPageState extends State<CalculatorPage> {
     updateRwyCondition('DRY');
     print("Paso 8: cometarios  recibidos de home page: ${widget.comentariosNon}");
     listaComments = widget.comentariosNon;
-    print("paso 9: cometarios  recibidos de la variable: $listaComments");
+    selectedAircraft = widget.aircraft;
+    selectedLanding = widget.normalNon;
+    selectedCongfiguration = widget.configuration;
+    selectedAirport = widget.airport;
+    selectedAirportAltitud = widget.airportEl;
+    selectedAirportQNH = widget.airportQNH;
+    selectedAirportTemperature = widget.airportTemp;
   }
 
   void updateRwyCondition(String condition) {
@@ -73,7 +98,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
       appBar: AppBar(
         title: Center(
           child: Text(
-            AppStrings.appHeaderHome, 
+            '$selectedAircraft', 
             style: TextStyle(fontSize: 22, color: AppColors.white),
           ),
         ),
@@ -109,7 +134,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                   color: AppColors.white),
                               ),
                               Text(
-                                'XXX', // TextForSelectedAirport
+                                '$selectedAirport', // TextForSelectedAirport
                                 style: TextStyle(color: AppColors.iconDark),
                               ),
                             ],
@@ -125,7 +150,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [     
-                              if (selectedAircraftType != 'XXX') ...[
+                              if (selectedAirport != 'XXX') ...[
                                 Text(
                                   AppStrings.rwyId,
                                   style: TextStyle(
@@ -311,7 +336,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                 ),
                               ),
                               const Spacer(),
-                              if (selectedAircraftType != 'XXX')
+                              if (selectedAirport != 'XXX')
                                 Expanded(
                                   child: Text(
                                     '0.07%',
@@ -380,7 +405,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                     children: [
                                       Text(AppStrings.elevation, style: const TextStyle(color: AppColors.white)),
                                       //SizedBox(width: screenSize.width * 0.20),
-                                      if (selectedAircraftType == 'XXX') ...[
+                                      if (selectedAirport == 'XXX') ...[
                                             SizedBox(width: screenSize.width * 0.30),
                                             Text(
                                               '${(_currentElevation as num).toInt()}${AppStrings.ft}',
@@ -433,7 +458,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                           ]
                                     ],
                                   ),
-                                  if (selectedAircraftType == 'XXX') 
+                                  if (selectedAirport == 'XXX') 
                                     Slider(
                                       activeColor: AppColors.iconDark,
                                       thumbColor: AppColors.iconDark,
@@ -527,6 +552,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                             keyboardType: TextInputType.number, 
                                             inputFormatters: <TextInputFormatter>[
                                               FilteringTextInputFormatter.digitsOnly,
+                                              Customdigitformatter(),
                                             ],
                                             onChanged: (String newValue) {
                                               setState(() {
@@ -816,7 +842,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                 ),
                               ),
                               SizedBox(width: screenSize.width * 0.20),
-                              if (selectedAircraftType != 'Non-Normal')
+                              if (selectedLanding != 'Non-Normal')
                                 Expanded(
                                   child: DropdownButtonFormField<String>(
                                     isExpanded: true,
@@ -880,7 +906,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               
-                              if (selectedAircraftType != 'Non-Normal') ...[
+                              if (selectedLanding != 'Non-Normal') ...[
                                 Expanded(
                                   child: Text(
                                     AppStrings.vrefAdd,
@@ -1089,7 +1115,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                   mainAxisSize: MainAxisSize.min, 
                                   children: [ 
                                     Text(
-                                      (_counter as num).toInt().toString(),
+                                      '$selectedAirportQNH',
                                       style: TextStyle(color: AppColors.placeholderDark),
                                     ),
                                     const SizedBox(height: 4),
@@ -1180,7 +1206,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                               Expanded(
                                 flex: 7,
                                 child: Text(
-                                  '213' + AppStrings.palt,
+                                  '$selectedAirportAltitud' + AppStrings.palt,
                                   style: TextStyle(color: AppColors.textColor3Dark ),
                                 ),
                               ),
@@ -1210,7 +1236,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                   mainAxisSize: MainAxisSize.min, 
                                   children: [ 
                                     Text(
-                                      (_counter as num).toInt().toString()  + AppStrings.celcius,
+                                      '$selectedAirportTemperature'  + AppStrings.celcius,
                                       style: TextStyle(color: AppColors.okPriButBrDark),
                                     ),
                                     const SizedBox(height: 4),
@@ -1435,7 +1461,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                               const SizedBox(height: 12),
 
                                   //NET LDA results, no se muestra si el aeropuerto es XXX
-                                    if(selectedAircraftType != 'XXX')
+                                    if(selectedAirport != 'XXX')
                                       Container(
                                         width: double.infinity,
                                         padding: const EdgeInsets.symmetric(
@@ -1552,7 +1578,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                   child: Column(
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
-                                      if (selectedAircraftType != 'XXX') ...[
+                                      if (selectedAirport != 'XXX') ...[
                                         const SizedBox(height: 12),
                                         Row(
                                           children: [  

@@ -104,14 +104,14 @@ class _HomePageState extends State<HomePage> {
   }
 
   // Selected input values
-  String? selectedAircraftType;
-  String? selectedLandingType;
-  String? selectedAirportType;
-  String? selectedConfigurationType;
-  String? airportEl;
-  String? airportQNH;
-  String? airportTemp;
-  String? airportRunway;
+  String? selectedAircraftType = '737-700W/CFM56-7B22';
+  String? selectedLandingType = 'Normal';
+  String? selectedAirportType = 'PTY';
+  String? selectedConfigurationType = 'Airspeed Unreliable (Flaps 15)';
+  String? elevation;
+  String? qnh;
+  String? temperature;
+  String? runway;
 
   void _onGoPressed() async {
     if(!_isReady) {
@@ -121,18 +121,12 @@ class _HomePageState extends State<HomePage> {
       " paso 1: se oprimio en boton, el arreglo va vacio: ${_comentariosNon}",
     );
     print(" paso 2: se va a ejecutar la funcion loadcoments");
+    
     loadComments();
 
-    if (selectedLandingType == 'Non-Normal') {
-      print('Configuration: $selectedConfigurationType');
-    }
-
-    airportEl = elevations[selectedAirportType] ?? "Unknown";
-    airportQNH = refQNH[selectedAirportType] ?? "Unknown";
-    airportTemp = refTemp[selectedAirportType] ?? "Unknown";
-    print(airportEl);
-    print(airportQNH);
-    print(airportTemp);
+    elevation = elevations[selectedAirportType] ?? "Unknown";
+    qnh = refQNH[selectedAirportType] ?? "Unknown";
+    temperature = refTemp[selectedAirportType] ?? "Unknown";
     print("Comentarios llegando despues del filtro $_comentariosNon");
 
     List<String> comentarios = [];
@@ -151,7 +145,10 @@ class _HomePageState extends State<HomePage> {
       context,
       MaterialPageRoute(
         builder: (BuildContext context) =>
-            CalculatorPage(comentariosNon: comentarios),
+            CalculatorPage(
+              comentariosNon: comentarios, aircraft: selectedAircraftType, 
+              normalNon: selectedLandingType, configuration: selectedConfigurationType, 
+              airport: selectedAirportType, airportEl: elevation, airportQNH: qnh, airportTemp: temperature),
       ),
     );
   }
