@@ -16,8 +16,10 @@ class _CalculatorPageState extends State<CalculatorPage> {
 
   //Variables clave
   int _counter = 0;
-  double _currentElevation = 2000;
+  //Nota la reduccion solo permite 5 digitos si son 0, pero si tiene valor que no sea 0 al inicio solo permite 4 digitos
+  String? _currentReduction;
   double _currentLadWeight = 130000;
+  double _currentElevation = 2000;
   String? selectedWind;
   List<String>? listaComments = [];
   String? selectedAircraftType;
@@ -25,7 +27,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
   String? selectedCondition = 'DRY';
   final List<String> aircraftTypes = ['Normal', 'Non-Normal', 'XXX'];
   final List<String> rwyConditions = ['DRY', 'GOOD', 'GOOD TO MEDIUM', 'MEDIUM', 'MEDIUM TO POOR', 'POOR'];
-  final List<String> windValues = ['000', '010', '020', '030', '040', '050'];
+  final List<String> windValues = ['000', '010', '020', '030', '040', '050', '060', '070', '080', '090', '100'];
   Map<String, List<String>> conditionNotes = Airportdata.rcaTable;
   List<String>? rwyNote = [];
   String? rwyRcc;
@@ -518,9 +520,9 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                           width: 150,
                                           height: 50,
                                           child: TextField(
-                                            controller: TextEditingController(text: selectedWind)
+                                            controller: TextEditingController(text: _currentReduction)
                                               ..selection = TextSelection.fromPosition(
-                                                TextPosition(offset: (selectedWind ?? '').length),
+                                                TextPosition(offset: (_currentReduction ?? '').length),
                                               ),
                                             keyboardType: TextInputType.number, 
                                             inputFormatters: <TextInputFormatter>[
@@ -528,7 +530,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                             ],
                                             onChanged: (String newValue) {
                                               setState(() {
-                                                selectedWind = newValue; 
+                                                _currentReduction = newValue; 
                                               });
                                             },
                                             textAlign: TextAlign.center,
@@ -563,6 +565,16 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                           AppStrings.m,
                                           style: TextStyle(color: AppColors.placeholderDark, fontSize: 15),
                                         ),
+                                        if (_currentReduction?.isNotEmpty ?? false) ...[
+                                          const SizedBox(width: 25),
+                                          Text(
+                                            '($_currentReduction${AppStrings.ft})',
+                                            style: const TextStyle(
+                                              color: AppColors.textColor3Dark,
+                                              fontSize: 15,
+                                            ),
+                                          ),
+                                        ],
 
                                       ],
                                     ),
