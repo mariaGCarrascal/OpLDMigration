@@ -23,6 +23,7 @@ class _HomePageState extends State<HomePage> {
   //Nota: VREF ADD inicia por 5kt en Normal, en Non-Normal en N/A. 
   //Nota: Dependiendo de configuracion Non-Normal, el texto de Vref cambia por tener su valor dentro del nodo como VrefLabel, mismo caso para flaps como flapLabel que toma solo la parte de flap del texto.
   //Nota: Los valores en metro al lado cifras en ft son la conversion de pies a metros.
+  //Noat: La conversion de pies a metros es multiplicar ft * 0.3048. Usar el metodo .round en la variable de resultado de la operacion.
    
   // Variables clave
   List<String> aircraftTypes = [];
@@ -40,6 +41,7 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
+    //refRunway = Airportdata.airportRunwayData(selectedAirportType);
     loadXml();
   }
 
@@ -103,7 +105,7 @@ class _HomePageState extends State<HomePage> {
       print('paso 7: se extrajo los comentarios: $_comentariosNon');
   }
 
-  // Selected input values
+  // Selected input values, falta arreglar tema de obtener los datos de Runway data airport
   String? selectedAircraftType = '737-700W/CFM56-7B22';
   String? selectedLandingType = 'Normal';
   String? selectedAirportType = 'PTY';
@@ -111,7 +113,7 @@ class _HomePageState extends State<HomePage> {
   String? elevation;
   String? qnh;
   String? temperature;
-  String? runway;
+  Map<String, List<String>> refRunway = {};
 
   void _onGoPressed() async {
     if(!_isReady) {
@@ -121,13 +123,17 @@ class _HomePageState extends State<HomePage> {
       " paso 1: se oprimio en boton, el arreglo va vacio: ${_comentariosNon}",
     );
     print(" paso 2: se va a ejecutar la funcion loadcoments");
-    
+
     loadComments();
 
     elevation = elevations[selectedAirportType] ?? "Unknown";
     qnh = refQNH[selectedAirportType] ?? "Unknown";
     temperature = refTemp[selectedAirportType] ?? "Unknown";
+    refRunway = Airportdata.airportRunwayData(selectedAirportType); 
+    //print(refRunway);
+    
     print("Comentarios llegando despues del filtro $_comentariosNon");
+    print(selectedAirportType);
 
     List<String> comentarios = [];
 
@@ -148,7 +154,7 @@ class _HomePageState extends State<HomePage> {
             CalculatorPage(
               comentariosNon: comentarios, aircraft: selectedAircraftType, 
               normalNon: selectedLandingType, configuration: selectedConfigurationType, 
-              airport: selectedAirportType, airportEl: elevation, airportQNH: qnh, airportTemp: temperature),
+              airport: selectedAirportType, airportEl: elevation, airportQNH: qnh, airportTemp: temperature, airportRunway: refRunway,),
       ),
     );
   }
@@ -158,7 +164,7 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       backgroundColor: AppColors.backgroundDark,
       appBar: AppBar(
-        title: const Text(AppStrings.appHeaderHome),
+        title: const Text(AppStrings.appHeaderHome, style: TextStyle(color: AppColors.white),),
         centerTitle: true,
       ),
       body: SingleChildScrollView(
@@ -170,6 +176,7 @@ class _HomePageState extends State<HomePage> {
               decoration: BoxDecoration(
                 color: AppColors.black,
                 borderRadius: BorderRadius.circular(10.0),
+                border: Border.all(color: AppColors.white, width: 5)
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -387,7 +394,7 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
 
-            const SizedBox(height: 20),
+            const SizedBox(height: 50),
 
             // Boton GO para ir a la pantalla de calculadora
             Center(
@@ -396,7 +403,7 @@ class _HomePageState extends State<HomePage> {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.black,
                   foregroundColor: AppColors.iconDark,
-                  fixedSize: const Size(100, 100),
+                  fixedSize: const Size(150, 150),
                   shape: BeveledRectangleBorder(
                     borderRadius: BorderRadius.circular(200),
                     side: BorderSide(color: AppColors.iconDark, width: 1),
@@ -405,15 +412,15 @@ class _HomePageState extends State<HomePage> {
                 ),
                 child: const Text(
                   AppStrings.goButton,
-                  style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+                  style: TextStyle(fontSize: 40, fontWeight: FontWeight.bold),
                 ),
               ),
             ),
-            const SizedBox(height: 80),
+            const SizedBox(height: 100),
             Center(
               child: OpLDAppText.regular(
                 AppStrings.appVersionNumber,
-                color: AppColors.black,
+                color: AppColors.white,
               ),
             ),
           ],

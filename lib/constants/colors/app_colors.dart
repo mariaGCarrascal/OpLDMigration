@@ -6,7 +6,7 @@ static const Color white = Colors.white;
 static const Color black = Colors.black;
 
 //Dark colors
-static const Color backgroundDark = Color.fromRGBO(5, 100, 255, 0);
+static const Color backgroundDark = Color.fromRGBO(0, 0, 0, 0);
 static const Color surfaceDark = Color(0xFF27283D);
 
 static const Color textColor1Dark = Colors.white;

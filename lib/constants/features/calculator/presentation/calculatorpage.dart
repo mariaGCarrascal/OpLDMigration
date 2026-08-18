@@ -14,10 +14,11 @@ class CalculatorPage extends StatefulWidget {
   final String? airportEl;
   final String? airportQNH;
   final String? airportTemp;
+  final Map<String, List<String>>? airportRunway;
   const CalculatorPage({
     super.key, 
     this.comentariosNon, this.aircraft, this.normalNon, this.configuration, 
-    this.airport, this.airportEl, this.airportQNH, this.airportTemp
+    this.airport, this.airportEl, this.airportQNH, this.airportTemp, this.airportRunway
   });
 
   @override
@@ -26,45 +27,55 @@ class CalculatorPage extends StatefulWidget {
 
 class _CalculatorPageState extends State<CalculatorPage> {
 
-  //Variables 
+  //Variables para las selecciones 
   int _counter = 0;
+  double pies = 7975;
   //Nota la reduccion solo permite 5 digitos si son 0, pero si tiene valor que no sea 0 al inicio solo permite 4 digitos
   String? _currentReduction;
   double _currentLadWeight = 130000;
   double _currentElevation = 2000;
+  String? selectedRunway;
   String? selectedWind;
   String? selectedAircraftType;
   String? selectedAircraft;
   String? selectedLanding;
   String? selectedAirport;
-  String? selectedCongfiguration;
-  String? selectedAirportAltitud;
+  String? selectedConfiguration;
+  String? selectedAirportElevation;
   String? selectedAirportQNH;
   String? selectedAirportTemperature;
   String? selectedCondition = 'DRY';
   String? rwyRcc;
+  String? rwyId;
+  String? rwySlope;
+  String? rwyLda;
   bool _isExpanded = false;
-  //Variables de listas
+  //Variables de listas de los DropDownlists
   List<String>? listaComments = [];
+  Map<String, List<String>>? selectedAirportRunway;
+  List<String>? selectedSlopeValues = [];
   final List<String> aircraftTypes = ['Opcion A', 'Opcion B'];
   final List<String> rwyConditions = ['DRY', 'GOOD', 'GOOD TO MEDIUM', 'MEDIUM', 'MEDIUM TO POOR', 'POOR'];
   final List<String> windValues = ['000', '010', '020', '030', '040', '050', '060', '070', '080', '090', '100'];
   Map<String, List<String>> conditionNotes = Airportdata.rcaTable;
   List<String>? rwyNote = [];
 
+  //Pendiente: Hay que inicializar con el valor elegido en HomePage la variable de rwy de RWY ID DropList en iniState.
   @override
   void initState() {
     super.initState();
     updateRwyCondition('DRY');
-    print("Paso 8: cometarios  recibidos de home page: ${widget.comentariosNon}");
+    print("Datos de Runway de home page: ${widget.airportRunway}");
+    //print("Paso 8: cometarios  recibidos de home page: ${widget.comentariosNon}");
     listaComments = widget.comentariosNon;
     selectedAircraft = widget.aircraft;
     selectedLanding = widget.normalNon;
-    selectedCongfiguration = widget.configuration;
+    selectedConfiguration = widget.configuration;
     selectedAirport = widget.airport;
-    selectedAirportAltitud = widget.airportEl;
+    selectedAirportElevation = widget.airportEl;
     selectedAirportQNH = widget.airportQNH;
     selectedAirportTemperature = widget.airportTemp;
+    selectedAirportRunway = widget.airportRunway;
   }
 
   void updateRwyCondition(String condition) {
@@ -128,7 +139,6 @@ class _CalculatorPageState extends State<CalculatorPage> {
                             children: [
                               Text(
                                 AppStrings.airportInfo,
-                                
                                 style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   color: AppColors.white),
@@ -160,17 +170,17 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                 ),
                                 const SizedBox(width: 20.0),
                                 Text(
-                                  '(45°)',
+                                  '($rwyId°)',
                                   style: TextStyle(
                                     fontWeight: FontWeight.bold,
                                     color: AppColors.textColor3Dark,
                                   ),
                                 ),
-                                SizedBox(width: screenSize.width * 0.20),
+                                SizedBox(width: screenSize.width * 0.18),
                                 Expanded(
                                   child: DropdownButtonFormField<String>(
                                     isExpanded: true,
-                                    initialValue: selectedAircraftType,
+                                    initialValue: selectedRunway,
                                     hint: Text(
                                       'No options yet',
                                       style: TextStyle(
@@ -190,7 +200,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                         vertical: 2,
                                       ),
                                     ),
-                                    items: aircraftTypes.map((String value) {
+                                    items: (selectedAirportRunway?.keys ?? <String>{}).map((value) {
                                       return DropdownMenuItem<String>(
                                         value: value,
                                         child: Text(
@@ -202,7 +212,10 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                     }).toList(),
                                     onChanged: (newValue) {
                                       setState(() {
-                                        selectedAircraftType = newValue;
+                                        selectedSlopeValues = selectedAirportRunway?[newValue];
+                                        rwyId = selectedSlopeValues?[0]; 
+                                        rwyLda = selectedSlopeValues?[1]; 
+                                        rwySlope = selectedSlopeValues?[2];
                                       });
                                     },
                                   ),
@@ -215,7 +228,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                     color: AppColors.white,
                                   ),
                                 ),
-                                const SizedBox(width: 20.0),
+                                const SizedBox(width: 18.0),
                                 PopupMenuButton<String>(
                                   initialValue: selectedWind,
                                   onSelected: (String newValue) {
@@ -273,13 +286,13 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                   color: AppColors.white, 
                                 ),
                               ),
-                              SizedBox(width: screenSize.width * 0.20),
+                              SizedBox(width: screenSize.width * 0.15),
                               Expanded(
                                 child: DropdownButtonFormField<String>(
                                   isExpanded: true, 
                                   initialValue: selectedCondition,
                                   hint: Text(
-                                    'DRY',
+                                    '$selectedCondition',
                                     style: TextStyle(
                                       fontWeight: FontWeight.bold,
                                       color: AppColors.placeholderDark,
@@ -339,14 +352,14 @@ class _CalculatorPageState extends State<CalculatorPage> {
                               if (selectedAirport != 'XXX')
                                 Expanded(
                                   child: Text(
-                                    '0.07%',
-                                    style: TextStyle(color: AppColors.textColor3Dark),
+                                    '$rwySlope%',
+                                    style: TextStyle(color: AppColors.textColor3Dark, fontSize: 15,),
                                   ),
                                 )
                               else ...[
                                 Expanded(
                                   child: Text(
-                                    '0.07%',
+                                    '$rwySlope%',
                                     style: TextStyle(color: AppColors.textColor2Dark),
                                   ),
                                 ),
@@ -404,12 +417,11 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                   Row(
                                     children: [
                                       Text(AppStrings.elevation, style: const TextStyle(color: AppColors.white)),
-                                      //SizedBox(width: screenSize.width * 0.20),
                                       if (selectedAirport == 'XXX') ...[
-                                            SizedBox(width: screenSize.width * 0.30),
+                                            SizedBox(width: screenSize.width * 0.20),
                                             Text(
-                                              '${(_currentElevation as num).toInt()}${AppStrings.ft}',
-                                              style: const TextStyle(color: AppColors.textColor3Dark),
+                                              '$selectedAirportElevation ${AppStrings.ft}',
+                                              style: const TextStyle(color: AppColors.textColor3Dark, fontSize: 15,),
                                             ),
                                             const SizedBox(width: 10.0),
                                             ElevatedButton(
@@ -452,8 +464,8 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                          ] else ...[
                                             SizedBox(width: screenSize.width * 0.20),
                                             Text(
-                                              (_counter as num).toInt().toString() + AppStrings.ft,
-                                              style: TextStyle(color: AppColors.textColor3Dark),
+                                              '$selectedAirportElevation ${AppStrings.ft}',
+                                              style: TextStyle(color: AppColors.textColor3Dark, fontSize: 15,),
                                             ),
                                           ]
                                     ],
@@ -490,13 +502,13 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                       Text(
                                         AppStrings.lda,
                                         style: TextStyle(
-                                          color: AppColors.activeColor,
+                                          color: AppColors.white,
                                           fontWeight: FontWeight.bold,
                                         ),
                                       ),
                                       const Spacer(),
                                       Text(
-                                        '14763' + AppStrings.ft,
+                                        '$rwyLda${AppStrings.ft}',
                                         style: TextStyle(
                                           color: AppColors.textColor3Dark,
                                           fontWeight: FontWeight.bold,
@@ -504,7 +516,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                       ),
                                       const Spacer(),
                                       Text(
-                                        '(' + '4500' + AppStrings.m + ')',
+                                        '(${(double.tryParse(rwyLda ?? '0')! * 0.3048).round()}${AppStrings.m})',
                                         style: TextStyle(
                                           color: AppColors.textColor3Dark,
                                           fontWeight: FontWeight.bold,
@@ -656,7 +668,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                   color: AppColors.white, 
                                 ),
                               ),
-                              SizedBox(width: screenSize.width * 0.20),
+                              SizedBox(width: screenSize.width * 0.15),
                               Expanded(
                                 child: DropdownButtonFormField<String>(
                                   isExpanded: true, 
@@ -717,7 +729,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                   color: AppColors.white, 
                                 ),
                               ),
-                              SizedBox(width: screenSize.width * 0.20),
+                              SizedBox(width: screenSize.width * 0.15),
                               Expanded(
                                 child: DropdownButtonFormField<String>(
                                   isExpanded: true, 
@@ -1116,12 +1128,12 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                   children: [ 
                                     Text(
                                       '$selectedAirportQNH',
-                                      style: TextStyle(color: AppColors.placeholderDark),
+                                      style: TextStyle(color: AppColors.placeholderDark, fontSize: 15,),
                                     ),
                                     const SizedBox(height: 4),
                                     Text(
-                                      (_counter as num).toInt().toString(),
-                                      style: TextStyle(color: AppColors.placeholderDark),
+                                      '${(0.02953 * (double.tryParse(selectedAirportQNH ?? '') ?? 0)).toStringAsFixed(2)}',
+                                      style: TextStyle(color: AppColors.placeholderDark, fontSize: 15,),
                                     ),
                                 ]
                                 ),
@@ -1135,12 +1147,12 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                   children: [ 
                                     Text(
                                       AppStrings.hpa,
-                                      style: TextStyle(color: AppColors.placeholderDark),
+                                      style: TextStyle(color: AppColors.placeholderDark, fontSize: 15,),
                                     ),
                                     const SizedBox(height: 4),
                                     Text(
                                       AppStrings.inhg,
-                                      style: TextStyle(color: AppColors.placeholderDark),
+                                      style: TextStyle(color: AppColors.placeholderDark, fontSize: 15,),
                                     ),
                                 ]
                                 ),
@@ -1206,8 +1218,8 @@ class _CalculatorPageState extends State<CalculatorPage> {
                               Expanded(
                                 flex: 7,
                                 child: Text(
-                                  '$selectedAirportAltitud' + AppStrings.palt,
-                                  style: TextStyle(color: AppColors.textColor3Dark ),
+                                  '$selectedAirportElevation ${AppStrings.palt}',
+                                  style: TextStyle(color: AppColors.textColor3Dark, fontSize: 15,),
                                 ),
                               ),
                             ],
@@ -1236,13 +1248,13 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                   mainAxisSize: MainAxisSize.min, 
                                   children: [ 
                                     Text(
-                                      '$selectedAirportTemperature'  + AppStrings.celcius,
-                                      style: TextStyle(color: AppColors.okPriButBrDark),
+                                      '${double.tryParse(selectedAirportTemperature ?? '')?.round() ?? 0} ${AppStrings.celcius}',
+                                      style: TextStyle(color: AppColors.okPriButBrDark, fontSize: 15,),
                                     ),
                                     const SizedBox(height: 4),
                                     Text(
                                       AppStrings.isa + (_counter as num).toInt().toString(),
-                                      style: TextStyle(color: AppColors.placeholderDark),
+                                      style: TextStyle(color: AppColors.placeholderDark, fontSize: 15,),
                                     ),
                                 ]
                                 ),
@@ -1487,18 +1499,20 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                             ),
                                             const SizedBox(width: 5),
                                             Text(
-                                              '14762' + AppStrings.ft,
+                                              '14762${AppStrings.ft}',
                                               style: TextStyle(
                                                 fontWeight: FontWeight.bold,
                                                 color: AppColors.textColor3Dark,
+                                                fontSize: 15,
                                               ),
                                             ),
                                             
                                             Text(
-                                              '(' + '4500' + AppStrings.m + ')',
+                                              '(4500${AppStrings.m})',
                                               style: TextStyle(
                                                 fontWeight: FontWeight.bold,
                                                 color: AppColors.textColor3Dark,
+                                                fontSize: 15,
                                               ),
                                             ),
                                             const SizedBox(width: 10),
@@ -1534,18 +1548,20 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                             ),
                                             const SizedBox(width: 15),
                                             Text(
-                                              '9155' + AppStrings.ft,
+                                              '9155${AppStrings.ft}',
                                               style: TextStyle(
                                                 fontWeight: FontWeight.bold,
                                                 color: AppColors.textColor2Dark,
+                                                fontSize: 15,
                                               ),
                                             ),
                                           
                                             Text(
-                                              '(' + '2790' + AppStrings.m + ')',
+                                              '(2790${AppStrings.m})',
                                               style: TextStyle(
                                                 fontWeight: FontWeight.bold,
                                                 color: AppColors.textColor2Dark,
+                                                fontSize: 15,
                                               ),
                                             ),
                                             const SizedBox(width: 4),
@@ -1587,17 +1603,17 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                               textAlign: TextAlign.left, 
                                               style: TextStyle(fontWeight: FontWeight.bold, color: AppColors.white),
                                             ),
-                                            SizedBox(width: screenSize.width * 0.20),
+                                            SizedBox(width: screenSize.width * 0.15),
                                             Text(
-                                              '5608' + AppStrings.ft, 
+                                              '5608${AppStrings.ft}', 
                                               textAlign: TextAlign.right, 
-                                              style: TextStyle(color: AppColors.textColor2Dark),
+                                              style: TextStyle(color: AppColors.textColor2Dark, fontSize: 15,),
                                             ),
                                             const SizedBox(width: 10),
                                             Text(
-                                              '(' + '1709' + AppStrings.m + ')', 
+                                              '(1709${AppStrings.m})', 
                                               textAlign: TextAlign.right, 
-                                              style: TextStyle(color: AppColors.textColor2Dark),
+                                              style: TextStyle(color: AppColors.textColor2Dark, fontSize: 15,),
                                             ),
                                           ],
                                         )
@@ -1612,7 +1628,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                       Row(
                                         children: [
                                           Text('$selectedCondition rwy Condition:', textAlign: TextAlign.left, style: TextStyle(color: AppColors.placeholder)),
-                                          SizedBox(width: screenSize.width * 0.25),
+                                          SizedBox(width: screenSize.width * 0.20),
                                           Text('(''$rwyRcc'')', textAlign: TextAlign.right, style: TextStyle(color: AppColors.placeholder)),
                                         ]
                                       ),

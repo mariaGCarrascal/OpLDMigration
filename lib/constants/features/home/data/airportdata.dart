@@ -719,7 +719,7 @@ class Airportdata {
   };
 
 
-  static Map<String, List<String>> airportRunwayData(String name) {
+  static Map<String, List<String>> airportRunwayData(String? name) {
     switch (name) {
                 case "XXX":
                   return {
