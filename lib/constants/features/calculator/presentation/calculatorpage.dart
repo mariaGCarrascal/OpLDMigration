@@ -286,7 +286,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                   color: AppColors.white, 
                                 ),
                               ),
-                              SizedBox(width: screenSize.width * 0.15),
+                              SizedBox(width: screenSize.width * 0.12),
                               Expanded(
                                 child: DropdownButtonFormField<String>(
                                   isExpanded: true, 
@@ -418,7 +418,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                     children: [
                                       Text(AppStrings.elevation, style: const TextStyle(color: AppColors.white)),
                                       if (selectedAirport == 'XXX') ...[
-                                            SizedBox(width: screenSize.width * 0.20),
+                                            SizedBox(width: screenSize.width * 0.22),
                                             Text(
                                               '$selectedAirportElevation ${AppStrings.ft}',
                                               style: const TextStyle(color: AppColors.textColor3Dark, fontSize: 15,),
@@ -1628,7 +1628,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                       Row(
                                         children: [
                                           Text('$selectedCondition rwy Condition:', textAlign: TextAlign.left, style: TextStyle(color: AppColors.placeholder)),
-                                          SizedBox(width: screenSize.width * 0.20),
+                                          SizedBox(width: screenSize.width * 0.15),
                                           Text('(''$rwyRcc'')', textAlign: TextAlign.right, style: TextStyle(color: AppColors.placeholder)),
                                         ]
                                       ),

@@ -176,7 +176,7 @@ class _HomePageState extends State<HomePage> {
               decoration: BoxDecoration(
                 color: AppColors.black,
                 borderRadius: BorderRadius.circular(10.0),
-                border: Border.all(color: AppColors.white, width: 5)
+                border: Border.all(color: AppColors.white, width: 2)
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
