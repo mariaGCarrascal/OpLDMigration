@@ -41,7 +41,6 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    //refRunway = Airportdata.airportRunwayData(selectedAirportType);
     loadXml();
   }
 
@@ -105,7 +104,7 @@ class _HomePageState extends State<HomePage> {
       print('paso 7: se extrajo los comentarios: $_comentariosNon');
   }
 
-  // Selected input values, falta arreglar tema de obtener los datos de Runway data airport
+  // Selected input values
   String? selectedAircraftType = '737-700W/CFM56-7B22';
   String? selectedLandingType = 'Normal';
   String? selectedAirportType = 'PTY';

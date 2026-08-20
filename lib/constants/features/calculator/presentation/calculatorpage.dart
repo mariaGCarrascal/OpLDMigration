@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_5/constants/colors/app_colors.dart';
+import 'package:flutter_application_5/constants/features/calculator/fuctions/calculateAltitud.dart';
 import 'package:flutter_application_5/constants/features/calculator/fuctions/customDigitFormatter.dart';
 import 'package:flutter_application_5/constants/features/home/data/airportdata.dart';
 import 'package:flutter_application_5/constants/strings/app_strings.dart';
@@ -48,6 +49,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
   String? rwyId;
   String? rwySlope;
   String? rwyLda;
+  String? altitud;
   bool _isExpanded = false;
   //Variables de listas de los DropDownlists
   List<String>? listaComments = [];
@@ -78,6 +80,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
     rwyId = selectedSlopeValues?[0]; 
     rwyLda = selectedSlopeValues?[1]; 
     rwySlope = selectedSlopeValues?[2];
+    altitud = Calculatealtitud(elevationRef: selectedAirportElevation, qnhRef: selectedAirportQNH)();
   }
 
   void updateRwyCondition(String condition) {
@@ -737,7 +740,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                   isExpanded: true, 
                                   initialValue: selectedAircraftType,
                                   hint: Text(
-                                    'Opcion At',
+                                    'Opcion A',
                                     style: TextStyle(
                                       fontWeight: FontWeight.bold,
                                       color: AppColors.placeholderDark,
@@ -1220,7 +1223,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                               Expanded(
                                 flex: 7,
                                 child: Text(
-                                  '$selectedAirportElevation ${AppStrings.palt}',
+                                  '$altitud ${AppStrings.palt}',
                                   style: TextStyle(color: AppColors.textColor3Dark, fontSize: 15,),
                                 ),
                               ),
@@ -1501,7 +1504,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                             ),
                                             const SizedBox(width: 5),
                                             Text(
-                                              '14762${AppStrings.ft}',
+                                              '$rwyLda${AppStrings.ft}',
                                               style: TextStyle(
                                                 fontWeight: FontWeight.bold,
                                                 color: AppColors.textColor3Dark,
@@ -1510,7 +1513,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                             ),
                                             
                                             Text(
-                                              '(4500${AppStrings.m})',
+                                              '(${(double.tryParse(rwyLda ?? '0')! * 0.3048).round()}${AppStrings.m})',
                                               style: TextStyle(
                                                 fontWeight: FontWeight.bold,
                                                 color: AppColors.textColor3Dark,
