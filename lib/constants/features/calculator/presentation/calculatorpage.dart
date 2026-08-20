@@ -80,7 +80,10 @@ class _CalculatorPageState extends State<CalculatorPage> {
     rwyId = selectedSlopeValues?[0]; 
     rwyLda = selectedSlopeValues?[1]; 
     rwySlope = selectedSlopeValues?[2];
-    altitud = Calculatealtitud(elevationRef: selectedAirportElevation, qnhRef: selectedAirportQNH)();
+    //Da error de Unexpected null value cuando el aeropuerto es XXX.
+    if(selectedAirport != 'XXX') {
+      altitud = Calculatealtitud(elevationRef: selectedAirportElevation, qnhRef: selectedAirportQNH)();
+    } 
   }
 
   void updateRwyCondition(String condition) {
@@ -169,7 +172,6 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                 Text(
                                   AppStrings.rwyId,
                                   style: TextStyle(
-                                    fontWeight: FontWeight.bold,
                                     color: AppColors.white,
                                   ),
                                 ),
@@ -287,7 +289,6 @@ class _CalculatorPageState extends State<CalculatorPage> {
                               Text(
                                 AppStrings.rwyCond,
                                 style: TextStyle(
-                                  fontWeight: FontWeight.bold,
                                   color: AppColors.white, 
                                 ),
                               ),
@@ -508,7 +509,6 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                         AppStrings.lda,
                                         style: TextStyle(
                                           color: AppColors.white,
-                                          fontWeight: FontWeight.bold,
                                         ),
                                       ),
                                       const Spacer(),
@@ -669,7 +669,6 @@ class _CalculatorPageState extends State<CalculatorPage> {
                               Text(
                                 AppStrings.flap,
                                 style: TextStyle(
-                                  fontWeight: FontWeight.bold,
                                   color: AppColors.white, 
                                 ),
                               ),
@@ -730,7 +729,6 @@ class _CalculatorPageState extends State<CalculatorPage> {
                               Text(
                                 AppStrings.autobrake,
                                 style: TextStyle(
-                                  fontWeight: FontWeight.bold,
                                   color: AppColors.white, 
                                 ),
                               ),
@@ -792,7 +790,6 @@ class _CalculatorPageState extends State<CalculatorPage> {
                               Text(
                                 AppStrings.reversers,
                                 style: TextStyle(
-                                  fontWeight: FontWeight.bold,
                                   color: AppColors.white, 
                                 ),
                               ),
@@ -854,7 +851,6 @@ class _CalculatorPageState extends State<CalculatorPage> {
                               Text(
                                 AppStrings.speedbrakes,
                                 style: TextStyle(
-                                  fontWeight: FontWeight.bold,
                                   color: AppColors.white, 
                                 ),
                               ),
@@ -904,7 +900,6 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                 Expanded (child: Text(
                                     AppStrings.na,
                                     style: TextStyle(
-                                      fontWeight: FontWeight.bold,
                                       color: AppColors.textColor3Dark,
                                     ),
                                   ),
@@ -1220,13 +1215,23 @@ class _CalculatorPageState extends State<CalculatorPage> {
                             children: [
                               Expanded(flex: 3, child: Text(AppStrings.altitude, style: TextStyle(color: AppColors.white))),
                               const SizedBox(width: 120.0),
-                              Expanded(
-                                flex: 7,
-                                child: Text(
-                                  '$altitud ${AppStrings.palt}',
-                                  style: TextStyle(color: AppColors.textColor3Dark, fontSize: 15,),
+                              if (selectedAirport == 'XXX') ...[
+                                Expanded(
+                                  flex: 7,
+                                  child: Text(
+                                    '$altitud ${AppStrings.palt}',
+                                    style: TextStyle(color: AppColors.textColor3Dark, fontSize: 15,),
+                                  ),
                                 ),
-                              ),
+                              ] else ...[
+                                Expanded(
+                                  flex: 7,
+                                  child: Text(
+                                    '$_currentElevation ${AppStrings.palt}',
+                                    style: TextStyle(color: AppColors.textColor3Dark, fontSize: 15,),
+                                  ),
+                                ),
+                              ]
                             ],
                           ),
                         ),
