@@ -29,7 +29,6 @@ class _CalculatorPageState extends State<CalculatorPage> {
 
   //Variables para las selecciones 
   int _counter = 0;
-  double pies = 7975;
   //Nota la reduccion solo permite 5 digitos si son 0, pero si tiene valor que no sea 0 al inicio solo permite 4 digitos
   String? _currentReduction;
   double _currentLadWeight = 130000;
@@ -60,12 +59,10 @@ class _CalculatorPageState extends State<CalculatorPage> {
   Map<String, List<String>> conditionNotes = Airportdata.rcaTable;
   List<String>? rwyNote = [];
 
-  //Pendiente: Hay que inicializar con el valor elegido en HomePage la variable de rwy de RWY ID DropList en iniState.
   @override
   void initState() {
     super.initState();
     updateRwyCondition('DRY');
-    print("Datos de Runway de home page: ${widget.airportRunway}");
     //print("Paso 8: cometarios  recibidos de home page: ${widget.comentariosNon}");
     listaComments = widget.comentariosNon;
     selectedAircraft = widget.aircraft;
@@ -76,6 +73,11 @@ class _CalculatorPageState extends State<CalculatorPage> {
     selectedAirportQNH = widget.airportQNH;
     selectedAirportTemperature = widget.airportTemp;
     selectedAirportRunway = widget.airportRunway;
+    selectedRunway = selectedAirportRunway?.keys.first;
+    selectedSlopeValues = selectedAirportRunway?[selectedRunway];
+    rwyId = selectedSlopeValues?[0]; 
+    rwyLda = selectedSlopeValues?[1]; 
+    rwySlope = selectedSlopeValues?[2];
   }
 
   void updateRwyCondition(String condition) {
@@ -182,7 +184,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                     isExpanded: true,
                                     initialValue: selectedRunway,
                                     hint: Text(
-                                      'No options yet',
+                                     '$selectedRunway',
                                       style: TextStyle(
                                         fontWeight: FontWeight.bold,
                                         color: AppColors.placeholderDark,
@@ -674,7 +676,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                   isExpanded: true, 
                                   initialValue: selectedAircraftType,
                                   hint: Text(
-                                    'No options yet',
+                                    'Opcion A',
                                     style: TextStyle(
                                       fontWeight: FontWeight.bold,
                                       color: AppColors.placeholderDark,
@@ -735,7 +737,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                   isExpanded: true, 
                                   initialValue: selectedAircraftType,
                                   hint: Text(
-                                    'No options yet',
+                                    'Opcion At',
                                     style: TextStyle(
                                       fontWeight: FontWeight.bold,
                                       color: AppColors.placeholderDark,
@@ -797,7 +799,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                   isExpanded: true, 
                                   initialValue: selectedAircraftType,
                                   hint: Text(
-                                    'No options yet',
+                                    'Opcion A',
                                     style: TextStyle(
                                       fontWeight: FontWeight.bold,
                                       color: AppColors.placeholderDark,
@@ -860,7 +862,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                     isExpanded: true,
                                     initialValue: selectedAircraftType,
                                     hint: Text(
-                                      'No options yet',
+                                      'Opcion A',
                                       style: TextStyle(
                                         fontWeight: FontWeight.bold,
                                         color: AppColors.placeholderDark,
@@ -1693,7 +1695,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                                   comentario,
                                                   style: const TextStyle(color: AppColors.white),
                                                   textAlign: TextAlign.start,
-                                                ),
+                                                ),  
                                               )),
 
                                               const Spacer(),
