@@ -22,6 +22,8 @@ class CalculatorPage extends StatefulWidget {
     this.airport, this.airportEl, this.airportQNH, this.airportTemp, this.airportRunway
   });
 
+  //Pendiente: Tema de la altitud que hace decimales con el slider en aeropurto XXX.
+
   @override
   State<CalculatorPage> createState() => _CalculatorPageState();
 }
@@ -65,7 +67,6 @@ class _CalculatorPageState extends State<CalculatorPage> {
   void initState() {
     super.initState();
     updateRwyCondition('DRY');
-    //print("Paso 8: cometarios  recibidos de home page: ${widget.comentariosNon}");
     listaComments = widget.comentariosNon;
     selectedAircraft = widget.aircraft;
     selectedLanding = widget.normalNon;
@@ -914,7 +915,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                         ),
                       ),
 
-                      //Vref add, cambia dependiendo del tipo de aircraft (Normal o Non-Normal) a N/A y el texto cambia a VREF15 +
+                      //Vref add, cambia dependiendo del tipo de aircraft (Normal o Non-Normal) a N/A y el texto VREF cambia
                       Card(
                         color: AppColors.cardDark,
                         child: Padding(
@@ -983,19 +984,80 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                   ],
                                 ),
                               ]  else ...[
-                                  Expanded(
-                                    child: Text(
-                                      AppStrings.vrefPlus,
-                                      style: TextStyle(color: AppColors.white),
-                                    ),
-                                  ),
-                                  const SizedBox(width: 100.0),
-                                  Expanded(
-                                    child: Text(
-                                    AppStrings.na,
-                                      style: TextStyle(color: AppColors.textColor3Dark),
-                                    ),
-                                  ),                            
+                                    if(selectedConfiguration?.contains('Airspeed Unreliable') == true) ...[
+                                      Expanded(
+                                        child: Text(
+                                          AppStrings.vrefPlus,
+                                          style: TextStyle(color: AppColors.white),
+                                        ),
+                                      ),
+                                      const SizedBox(width: 100.0),
+                                      Expanded(
+                                        child: Text(
+                                        AppStrings.na,
+                                          style: TextStyle(color: AppColors.textColor3Dark),
+                                        ),
+                                      ),  
+                                    ] else ...[
+                                        Expanded(
+                                          child: Text(
+                                            AppStrings.vrefAdd,
+                                            style: TextStyle(color: AppColors.white),
+                                          ),
+                                        ),
+                                        const SizedBox(width: 10.0),
+                                        Expanded(
+                                          child: Text(
+                                          (_counter as num).toInt().toString() + AppStrings.kt,
+                                            style: TextStyle(color: AppColors.placeholderDark),
+                                          ),
+                                        ),
+                                        const SizedBox(width: 10.0),
+
+                                        Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                          
+                                            ElevatedButton(
+                                              onPressed: _decrement,
+                                              style: ElevatedButton.styleFrom(
+                                                backgroundColor: AppColors.placeholder, 
+                                                foregroundColor: AppColors.iconDark, 
+                                                minimumSize: const Size(50, 50),
+                                                padding: EdgeInsets.zero,
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius: BorderRadius.circular(8.0),
+                                                  side: const BorderSide(color: AppColors.placeholder, width: 1.0), 
+                                                ),
+                                              ),
+                                              child: Icon(
+                                                Icons.remove,
+                                                color: AppColors.iconDark, 
+                                                size: 20,
+                                              ),
+                                            ),
+                                            const SizedBox(width: 8.0),                                 
+                                            ElevatedButton(
+                                              onPressed: _increment,
+                                              style: ElevatedButton.styleFrom(
+                                                backgroundColor: AppColors.placeholder, 
+                                                foregroundColor: AppColors.iconDark, 
+                                                minimumSize: const Size(50, 50),
+                                                padding: EdgeInsets.zero,
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius: BorderRadius.circular(8.0),
+                                                  side: const BorderSide(color: AppColors.placeholder, width: 1.0), 
+                                                ),
+                                              ),
+                                              child: Icon(
+                                                Icons.add,
+                                                color: AppColors.iconDark, 
+                                                size: 20,
+                                              ),
+                                            ),
+                                          ], 
+                                        ),
+                                    ],
                                 ],
                             ],
                           ),
@@ -1478,12 +1540,21 @@ class _CalculatorPageState extends State<CalculatorPage> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [ 
-                              Text(
-                                AppStrings.landingTittle,
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  color: AppColors.white),
-                              ),
+                              if(selectedLanding != 'Non-Normal') ...[
+                                Text(
+                                  AppStrings.landingTittle,
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: AppColors.white),
+                                ),
+                               ] else ...[
+                                  Text(
+                                    '$selectedConfiguration',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color: AppColors.white),
+                                  ),
+                               ],
 
                               const SizedBox(height: 12),
 
@@ -1639,11 +1710,14 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                       const SizedBox(height: 12),
                                       Text(AppStrings.autobrake, textAlign: TextAlign.left, style: TextStyle(color: AppColors.placeholder)),
                                       const SizedBox(height: 50),
-
+                                      //Revisar o reajustar tras ver vista en tablet
                                       Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                         children: [
+                                          Expanded(child: 
                                           Text('$selectedCondition rwy Condition:', textAlign: TextAlign.left, style: TextStyle(color: AppColors.placeholder)),
-                                          SizedBox(width: screenSize.width * 0.15),
+                                          ),
+                                          SizedBox(width: screenSize.width * 0.10),
                                           Text('(''$rwyRcc'')', textAlign: TextAlign.right, style: TextStyle(color: AppColors.placeholder)),
                                         ]
                                       ),
@@ -1694,7 +1768,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                               child: const Text(
                                                   AppStrings.notesTitle,
                                                   style: TextStyle(
-                                                    color: AppColors.white,
+                                                    color: AppColors.textColor2Dark,
                                                     fontSize: 20,
                                                     fontWeight: FontWeight.bold,
                                                   ),
@@ -1702,14 +1776,18 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                               ),
                                               const SizedBox(height: 20),
                                               
-                                              ...listaComments!.map((comentario) => Padding(
+                                              ...listaComments!.expand((comentario) => [
+                                              Divider(color: AppColors.cancelPriButBrDark,),
+                                              Padding(
                                                 padding: const EdgeInsets.symmetric(vertical: 12.0),
                                                 child: Text(
                                                   comentario,
                                                   style: const TextStyle(color: AppColors.white),
                                                   textAlign: TextAlign.start,
                                                 ),  
-                                              )),
+                                              ),
+                                              Divider(color: AppColors.cancelPriButBrDark,)
+                                              ]),
 
                                               const Spacer(),
                                               //Boton de Return del Importent Notes

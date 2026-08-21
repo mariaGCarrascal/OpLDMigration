@@ -20,7 +20,7 @@ class _HomePageState extends State<HomePage> {
   //Nota: Los comentarios que se traen cuando es Normal, son solo de Flap 15 y varian es por el tipo de avion solamente, si non-normal, ya es por el tipo de configuracion.
   //Nota: Los Flaps inician en 30 y el autobrake en 3 en Normal, en Non-normal varian por la configuracion el Flap y el autobrake en automatic.
   //Nota: Los reversers se mantienen en default en el 1er valor de los datos del Aeropuerto, Reversers en 0 revsr Inop y Speedbrakes en Automatic (excepto en Non-Nomral que sale N/A) en Normal y Non-Normal.
-  //Nota: VREF ADD inicia por 5kt en Normal, en Non-Normal en N/A. 
+  //Nota: VREF ADD inicia por 5kt en Normal, en Non-Normal en N/A cuando solo son los 3 de Airspeed Unreliable. 
   //Nota: Dependiendo de configuracion Non-Normal, el texto de Vref cambia por tener su valor dentro del nodo como VrefLabel, mismo caso para flaps como flapLabel que toma solo la parte de flap del texto.
   //Nota: Los valores en metro al lado cifras en ft son la conversion de pies a metros.
   //Noat: La conversion de pies a metros es multiplicar ft * 0.3048. Usar el metodo .round en la variable de resultado de la operacion.
@@ -66,7 +66,7 @@ class _HomePageState extends State<HomePage> {
           .where((label) => label.isNotEmpty)
           .toSet()
           .toList();
-      
+
       _isReady = true;
     });
   }
