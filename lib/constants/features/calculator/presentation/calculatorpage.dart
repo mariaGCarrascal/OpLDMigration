@@ -71,18 +71,22 @@ class _CalculatorPageState extends State<CalculatorPage> {
     selectedLanding = widget.normalNon;
     selectedConfiguration = widget.configuration;
     selectedAirport = widget.airport;
-    selectedAirportElevation = widget.airportEl;
     selectedAirportQNH = widget.airportQNH;
-    selectedAirportTemperature = widget.airportTemp;
-    selectedAirportRunway = widget.airportRunway;
-    selectedRunway = selectedAirportRunway?.keys.first;
-    selectedSlopeValues = selectedAirportRunway?[selectedRunway];
-    rwyId = selectedSlopeValues?[0]; 
-    rwyLda = selectedSlopeValues?[1]; 
-    rwySlope = selectedSlopeValues?[2];
-    //Da error de Unexpected null value cuando el aeropuerto es XXX.
     if(selectedAirport != 'XXX') {
+      selectedAirportElevation = widget.airportEl;
+      selectedAirportTemperature = widget.airportTemp;
+      selectedAirportRunway = widget.airportRunway;
+      selectedRunway = selectedAirportRunway?.keys.first;
+      selectedSlopeValues = selectedAirportRunway?[selectedRunway];
+      rwyId = selectedSlopeValues?[0]; 
+      rwyLda = selectedSlopeValues?[1]; 
+      rwySlope = selectedSlopeValues?[2];
       altitud = Calculatealtitud(elevationRef: selectedAirportElevation, qnhRef: selectedAirportQNH)();
+    } else {
+      selectedAirportTemperature = '26.0';
+      rwyId = '0000'; 
+      rwyLda = '0000'; 
+      rwySlope = '0';
     } 
   }
 
@@ -426,7 +430,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                       if (selectedAirport == 'XXX') ...[
                                             SizedBox(width: screenSize.width * 0.22),
                                             Text(
-                                              '$selectedAirportElevation ${AppStrings.ft}',
+                                              '$_currentElevation ${AppStrings.ft}',
                                               style: const TextStyle(color: AppColors.textColor3Dark, fontSize: 15,),
                                             ),
                                             const SizedBox(width: 10.0),
@@ -494,8 +498,9 @@ class _CalculatorPageState extends State<CalculatorPage> {
                             ),
                       ),
 
-                      //LDA y boton de ajustes
-                      Card(
+                      //LDA y boton de ajustes de reduccion
+                      if (selectedAirport != 'XXX') 
+                       Card(
                             color: AppColors.cardDark,
                             child: Padding(
                               padding: const EdgeInsets.all(20.0),
@@ -636,7 +641,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                               ),
                             ),
                           ),
-                      
+
                       //Aircraft Configuration header
                       Card(
                         color: AppColors.black,
@@ -1215,7 +1220,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                             children: [
                               Expanded(flex: 3, child: Text(AppStrings.altitude, style: TextStyle(color: AppColors.white))),
                               const SizedBox(width: 120.0),
-                              if (selectedAirport == 'XXX') ...[
+                              if (selectedAirport != 'XXX') ...[
                                 Expanded(
                                   flex: 7,
                                   child: Text(
@@ -1263,7 +1268,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                     ),
                                     const SizedBox(height: 4),
                                     Text(
-                                      AppStrings.isa + (_counter as num).toInt().toString(),
+                                      '${AppStrings.isa} ${(_counter as num).toInt().toString()}',
                                       style: TextStyle(color: AppColors.placeholderDark, fontSize: 15,),
                                     ),
                                 ]

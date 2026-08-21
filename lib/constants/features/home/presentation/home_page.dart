@@ -129,16 +129,13 @@ class _HomePageState extends State<HomePage> {
     qnh = refQNH[selectedAirportType] ?? "Unknown";
     temperature = refTemp[selectedAirportType] ?? "Unknown";
     refRunway = Airportdata.airportRunwayData(selectedAirportType); 
-    //print(refRunway);
     
     print("Comentarios llegando despues del filtro $_comentariosNon");
-    print(selectedAirportType);
 
     List<String> comentarios = [];
 
     for (int i = 0; i < _comentariosNon.length; i++) {
       comentarios.add(_comentariosNon[i]);
-      //print(_comentariosNon[i]);
     }
     if (comentarios.isNotEmpty) {
       print(
