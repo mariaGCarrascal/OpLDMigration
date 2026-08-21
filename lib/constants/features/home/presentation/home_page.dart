@@ -25,7 +25,7 @@ class _HomePageState extends State<HomePage> {
   //Nota: Los valores en metro al lado cifras en ft son la conversion de pies a metros.
   //Noat: La conversion de pies a metros es multiplicar ft * 0.3048. Usar el metodo .round en la variable de resultado de la operacion.
    
-  // Variables clave, resolver tema de que las opcines de Non-normal sean menos
+  // Variables clave
   List<String> aircraftTypes = [];
   final List<String> landingTypes = ['Normal', 'Non-Normal'];
   List<String> configurationTypes = [];

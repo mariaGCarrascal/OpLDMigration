@@ -22,7 +22,8 @@ class CalculatorPage extends StatefulWidget {
     this.airport, this.airportEl, this.airportQNH, this.airportTemp, this.airportRunway
   });
 
-  //Pendiente: Tema de la altitud que hace decimales con el slider en aeropurto XXX.
+  //Pendiente: Tema de la altitud que hace decimales con el slider en aeropurto XXX, resolver tema de que las opciones de Non-normal que varian dependiendo del tipo de aircraft.
+  //Pendinte: Probar traer los cometarios como funcion desde esta pantalla y las opciones de flaps en non-normal,
 
   @override
   State<CalculatorPage> createState() => _CalculatorPageState();
@@ -36,6 +37,12 @@ class _CalculatorPageState extends State<CalculatorPage> {
   String? _currentReduction;
   double _currentLadWeight = 130000;
   double _currentElevation = 2000;
+  //Modificar a futuro este tema del slider en Elevation en aeropuerto XXX.
+  final double _minElevation = -2000;
+  final double _maxElevation = 14200;
+  late double sliderMin;
+  late double sliderMax;
+  int? _divisions;
   String? selectedRunway;
   String? selectedWind;
   String? selectedAircraftType;
@@ -47,6 +54,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
   String? selectedAirportQNH;
   String? selectedAirportTemperature;
   String? selectedCondition = 'DRY';
+  String? selectedSpeedBrakeType = 'AUTOMATIC';
   String? rwyRcc;
   String? rwyId;
   String? rwySlope;
@@ -58,6 +66,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
   Map<String, List<String>>? selectedAirportRunway;
   List<String>? selectedSlopeValues = [];
   final List<String> aircraftTypes = ['Opcion A', 'Opcion B'];
+  final List<String> speedBrakesTypes = ['AUTOMATIC', 'MANUAL'];
   final List<String> rwyConditions = ['DRY', 'GOOD', 'GOOD TO MEDIUM', 'MEDIUM', 'MEDIUM TO POOR', 'POOR'];
   final List<String> windValues = ['000', '010', '020', '030', '040', '050', '060', '070', '080', '090', '100'];
   Map<String, List<String>> conditionNotes = Airportdata.rcaTable;
@@ -84,6 +93,9 @@ class _CalculatorPageState extends State<CalculatorPage> {
       rwySlope = selectedSlopeValues?[2];
       altitud = Calculatealtitud(elevationRef: selectedAirportElevation, qnhRef: selectedAirportQNH)();
     } else {
+      sliderMin = (_minElevation / 1000).ceil() * 1000;
+      sliderMax = (_maxElevation / 1000).floor() * 1000;
+      _divisions = ((sliderMax - sliderMin) / 1000).round();
       selectedAirportTemperature = '26.0';
       rwyId = '0000'; 
       rwyLda = '0000'; 
@@ -485,9 +497,10 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                     Slider(
                                       activeColor: AppColors.iconDark,
                                       thumbColor: AppColors.iconDark,
-                                      value: _currentElevation,
-                                      min: -2000,
-                                      max: 14200,
+                                      value: _currentElevation.clamp(sliderMin, sliderMax),
+                                      min: sliderMin,
+                                      max: sliderMax,
+                                      divisions: _divisions,
                                       onChanged: (double val) {
                                         setState(() {
                                           _currentElevation = val;
@@ -865,9 +878,9 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                 Expanded(
                                   child: DropdownButtonFormField<String>(
                                     isExpanded: true,
-                                    initialValue: selectedAircraftType,
+                                    initialValue: selectedSpeedBrakeType,
                                     hint: Text(
-                                      'Opcion A',
+                                      'AUTOMATIC',
                                       style: TextStyle(
                                         fontWeight: FontWeight.bold,
                                         color: AppColors.placeholderDark,
@@ -885,7 +898,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                         vertical: 2,
                                       ),
                                     ),
-                                    items: aircraftTypes.map((String value) {
+                                    items: speedBrakesTypes.map((String value) {
                                       return DropdownMenuItem<String>(
                                         value: value,
                                         child: Text(
@@ -897,7 +910,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                     }).toList(),
                                     onChanged: (newValue) {
                                       setState(() {
-                                        selectedAircraftType = newValue;
+                                        selectedSpeedBrakeType = newValue;
                                       }); 
                                     },
                                   ),
