@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_5/constants/features/home/presentation/home_page.dart';
-//import 'package:flutter_application_5/constants/features/home/presentation/test_page.dart';
+import 'package:flutter_application_5/service_dataxml/opldservice.dart';
 import 'package:flutter_application_5/theme/dark_theme.dart';
-//import 'package:hot_app/main_shell.dart';
 
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await OpLdService.instance.initialize();
   runApp(const MyApp());
 }
 

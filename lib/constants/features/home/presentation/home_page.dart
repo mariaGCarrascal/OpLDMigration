@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_5/constants/colors/app_colors.dart';
 import 'package:flutter_application_5/constants/strings/app_strings.dart';
-import 'package:flutter/services.dart';
+//import 'package:flutter/services.dart';
 import 'package:xml/xml.dart';
 import 'package:flutter_application_5/constants/features/home/data/airportdata.dart';
 import 'package:flutter_application_5/constants/design/text/app_text.dart';
 import 'package:flutter_application_5/constants/features/calculator/presentation/calculatorpage.dart';
+import 'package:flutter_application_5/service_dataxml/opldservice.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -57,11 +58,8 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> loadXml() async {
-    final String xmlString = await rootBundle.loadString(
-      'assets/data/tables/OpLDinfoFromTables.xml',
-    );
 
-    final XmlDocument document = XmlDocument.parse(xmlString);
+    final XmlDocument document = OpLdService.instance.document;
     if (!mounted) return;
     final aircraftElements = document.findAllElements('aircraft');
     final configElements = document.findAllElements('nonNormalConfiguration');
@@ -163,7 +161,6 @@ class _HomePageState extends State<HomePage> {
     refRunway = Airportdata.airportRunwayData(selectedAirportType);
     if(selectedLandingType == 'Non-Normal') {
       selectedConfigurationFlap = _flapsNon[0];
-      print('Flaps de Non-Normal Seleccionado: $selectedConfigurationFlap');
     }
   
     print("Comentarios llegando despues del filtro $_comentariosNon");

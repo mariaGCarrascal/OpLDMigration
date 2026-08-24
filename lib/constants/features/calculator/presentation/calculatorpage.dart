@@ -53,6 +53,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
   String? selectedConfiguration;
   String? selectedAirportElevation;
   String? selectedFlaps;
+  String? selectedAutoBrakes;
   String? selectedAirportQNH;
   String? selectedAirportTemperature;
   String? selectedCondition = 'DRY';
@@ -69,6 +70,8 @@ class _CalculatorPageState extends State<CalculatorPage> {
   Map<String, List<String>>? selectedAirportRunway;
   List<String>? selectedSlopeValues = [];
   final List<String> aircraftTypes = ['Opcion A', 'Opcion B'];
+  final List<String> normalFlaps = ['FLAPS 15', 'FLAPS 30', 'FLAPS 40'];
+  final List<String> autoBrakes = ['MAX MANUAL', 'AUTOBRAKE MAX', 'AUTOBRAKE 3', 'AUTOBRAKE 2', 'AUTOBRAKE 1'];
   final List<String> speedBrakesTypes = ['AUTOMATIC', 'MANUAL'];
   final List<String> rwyConditions = ['DRY', 'GOOD', 'GOOD TO MEDIUM', 'MEDIUM', 'MEDIUM TO POOR', 'POOR'];
   final List<String> windValues = ['000', '010', '020', '030', '040', '050', '060', '070', '080', '090', '100'];
@@ -85,8 +88,14 @@ class _CalculatorPageState extends State<CalculatorPage> {
     selectedConfiguration = widget.configuration;
     selectedAirport = widget.airport;
     selectedAirportQNH = widget.airportQNH;
-    selectedFlaps = widget.nonflaps;
-    nonFlap = widget.nonflaps;
+    if(selectedLanding == 'Normal') {
+      selectedFlaps = 'FLAPS 30';
+    } else {
+      selectedFlaps = widget.nonflaps;
+      nonFlap = widget.nonflaps;
+    }
+    selectedAutoBrakes = 'AUTOBRAKE 3';
+
     if(selectedAirport != 'XXX') {
       selectedAirportElevation = widget.airportEl;
       selectedAirportTemperature = widget.airportTemp;
@@ -701,9 +710,9 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                 Expanded(
                                   child: DropdownButtonFormField<String>(
                                     isExpanded: true, 
-                                    initialValue: selectedAircraftType,
+                                    initialValue: selectedFlaps,
                                     hint: Text(
-                                      'Opcion A',
+                                      '$selectedFlaps',
                                       style: TextStyle(
                                         fontWeight: FontWeight.bold,
                                         color: AppColors.placeholderDark,
@@ -721,7 +730,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                         vertical: 2,
                                       ),
                                     ),
-                                    items: aircraftTypes.map((String value) {
+                                    items: normalFlaps.map((String value) {
                                       return DropdownMenuItem<String>(
                                         value: value,
                                         child: Text(
@@ -733,7 +742,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                     }).toList(),
                                     onChanged: (newValue) {
                                       setState(() {
-                                        selectedAircraftType = newValue;
+                                        selectedFlaps = newValue;
                                       });
                                     },
                                   ),
@@ -804,9 +813,9 @@ class _CalculatorPageState extends State<CalculatorPage> {
                               Expanded(
                                 child: DropdownButtonFormField<String>(
                                   isExpanded: true, 
-                                  initialValue: selectedAircraftType,
+                                  initialValue: selectedAutoBrakes,
                                   hint: Text(
-                                    'Opcion A',
+                                    '$selectedAutoBrakes',
                                     style: TextStyle(
                                       fontWeight: FontWeight.bold,
                                       color: AppColors.placeholderDark,
@@ -824,7 +833,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                       vertical: 2,
                                     ),
                                   ),
-                                  items: aircraftTypes.map((String value) {
+                                  items: autoBrakes.map((String value) {
                                     return DropdownMenuItem<String>(
                                       value: value,
                                       child: Text(
@@ -836,7 +845,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                   }).toList(),
                                   onChanged: (newValue) {
                                     setState(() {
-                                      selectedAircraftType = newValue;
+                                      selectedAutoBrakes = newValue;
                                     });
                                   },
                                 ),
@@ -1821,7 +1830,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                         ),
                                         content: SizedBox(
                                           width: 650.0,
-                                          height: 600.0,
+                                          height: 700.0,
                                           child: Column(
                                             mainAxisAlignment: MainAxisAlignment.start,
                                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -1836,7 +1845,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                                   ),
                                                 ),
                                               ),
-                                              const SizedBox(height: 20),
+                                              const SizedBox(height: 10),
                                               
                                               ...listaComments!.expand((comentario) => [
                                               Divider(color: AppColors.cancelPriButBrDark,),
