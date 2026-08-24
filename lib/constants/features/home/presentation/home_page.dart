@@ -30,13 +30,25 @@ class _HomePageState extends State<HomePage> {
   final List<String> landingTypes = ['Normal', 'Non-Normal'];
   List<String> configurationTypes = [];
   List<String> _comentariosNon = [];
+  List<String> _flapsNon = [];
   List<String> targetFlap = [];
   final airportTypes = Airportdata.airportNames;
   Map<String, String> elevations = Airportdata.airportElevation;
   Map<String, String> refQNH = Airportdata.airportRefQNH;
   Map<String, String> refTemp = Airportdata.airportAverageRefTemp;
   XmlDocument? _xmlDocument;
+  String? elevation;
+  String? qnh;
+  String? temperature;
+  Map<String, List<String>> refRunway = {};
   bool _isReady = false;
+  // Selected input values
+  String? selectedAircraftType = '737-700W/CFM56-7B22';
+  String? selectedLandingType = 'Normal';
+  String? selectedAirportType = 'PTY';
+  String? selectedConfigurationType = 'Airspeed Unreliable (Flaps 15)';
+  String? selectedConfigurationFlap = 'Flaps 15';
+
 
   @override
   void initState() {
@@ -71,10 +83,7 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-  void loadComments(){
-    print('paso 3: se esta ejecutando loadComments.');
-      if(_xmlDocument == null) return;
-      print('paso 5: examinando condiciones');
+  void searchFlaps(){
       Iterable<XmlElement> targetFlap = [];
 
       if (selectedAircraftType != null && selectedLandingType != null) {
@@ -93,9 +102,42 @@ class _HomePageState extends State<HomePage> {
             )
             .expand((f) => f.findAllElements('nonNormalConfiguration'));
       }
+
+      if (selectedConfigurationType != null) {
+        _flapsNon = targetFlap
+            .where((f) => f.getAttribute('id') == selectedConfigurationType)
+            .map((e) => e.getAttribute('flapLabel'))
+            .where((label) => label != null)
+            .cast<String>()
+            .toList();
+      }
+  }
+
+  void loadComments(){
+    print('paso 3: se esta ejecutando loadComments.');
+      if(_xmlDocument == null) return;
+      print('paso 5: examinando condiciones');
+      Iterable<XmlElement> target = [];
+
+      if (selectedAircraftType != null && selectedLandingType != null) {
+        target = _xmlDocument!
+            .findAllElements('aircraft')
+            .where(
+              (a) =>
+                  a.getAttribute('id') == selectedAircraftType ||
+                  a.getAttribute('label') == selectedAircraftType,
+            )
+            .expand((l) => l.findAllElements('landingCondition'))
+            .where(
+              (lc) =>
+                  lc.getAttribute('label')?.toUpperCase() ==
+                  selectedLandingType?.toUpperCase(),
+            )
+            .expand((f) => f.findAllElements('nonNormalConfiguration'));
+      }
       print('paso 6: Extrayendo comentarios de acuerdo a las condiciones.');
       if (selectedConfigurationType != null) {
-        _comentariosNon = targetFlap
+        _comentariosNon = target
             .where((f) => f.getAttribute('id') == selectedConfigurationType)
             .expand((c) => c.findAllElements('Comments'))
             .map((e) => e.innerText)
@@ -103,16 +145,6 @@ class _HomePageState extends State<HomePage> {
       }
       print('paso 7: se extrajo los comentarios: $_comentariosNon');
   }
-
-  // Selected input values
-  String? selectedAircraftType = '737-700W/CFM56-7B22';
-  String? selectedLandingType = 'Normal';
-  String? selectedAirportType = 'PTY';
-  String? selectedConfigurationType = 'Airspeed Unreliable (Flaps 15)';
-  String? elevation;
-  String? qnh;
-  String? temperature;
-  Map<String, List<String>> refRunway = {};
 
   void _onGoPressed() async {
     if(!_isReady) {
@@ -128,8 +160,12 @@ class _HomePageState extends State<HomePage> {
     elevation = elevations[selectedAirportType] ?? "Unknown";
     qnh = refQNH[selectedAirportType] ?? "Unknown";
     temperature = refTemp[selectedAirportType] ?? "Unknown";
-    refRunway = Airportdata.airportRunwayData(selectedAirportType); 
-    
+    refRunway = Airportdata.airportRunwayData(selectedAirportType);
+    if(selectedLandingType == 'Non-Normal') {
+      selectedConfigurationFlap = _flapsNon[0];
+      print('Flaps de Non-Normal Seleccionado: $selectedConfigurationFlap');
+    }
+  
     print("Comentarios llegando despues del filtro $_comentariosNon");
 
     List<String> comentarios = [];
@@ -150,7 +186,8 @@ class _HomePageState extends State<HomePage> {
             CalculatorPage(
               comentariosNon: comentarios, aircraft: selectedAircraftType, 
               normalNon: selectedLandingType, configuration: selectedConfigurationType, 
-              airport: selectedAirportType, airportEl: elevation, airportQNH: qnh, airportTemp: temperature, airportRunway: refRunway,),
+              airport: selectedAirportType, airportEl: elevation, airportQNH: qnh, airportTemp: temperature, airportRunway: refRunway,
+              nonflaps: selectedConfigurationFlap,),
       ),
     );
   }
@@ -330,6 +367,7 @@ class _HomePageState extends State<HomePage> {
                       onChanged: (newValue) {
                         setState(() {
                           selectedConfigurationType = newValue;
+                          searchFlaps();
                         });
                       },
                     ),

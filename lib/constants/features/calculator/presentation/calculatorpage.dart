@@ -16,13 +16,14 @@ class CalculatorPage extends StatefulWidget {
   final String? airportQNH;
   final String? airportTemp;
   final Map<String, List<String>>? airportRunway;
+  final String? nonflaps;
   const CalculatorPage({
     super.key, 
     this.comentariosNon, this.aircraft, this.normalNon, this.configuration, 
-    this.airport, this.airportEl, this.airportQNH, this.airportTemp, this.airportRunway
+    this.airport, this.airportEl, this.airportQNH, this.airportTemp, this.airportRunway, this.nonflaps
   });
 
-  //Pendiente: Tema de la altitud que hace decimales con el slider en aeropurto XXX, resolver tema de que las opciones de Non-normal que varian dependiendo del tipo de aircraft.
+  //Pendiente: resolver tema de que las opciones de Non-normal que varian dependiendo del tipo de aircraft.
   //Pendinte: Probar traer los cometarios como funcion desde esta pantalla y las opciones de flaps en non-normal,
 
   @override
@@ -51,9 +52,11 @@ class _CalculatorPageState extends State<CalculatorPage> {
   String? selectedAirport;
   String? selectedConfiguration;
   String? selectedAirportElevation;
+  String? selectedFlaps;
   String? selectedAirportQNH;
   String? selectedAirportTemperature;
   String? selectedCondition = 'DRY';
+  String? nonFlap;
   String? selectedSpeedBrakeType = 'AUTOMATIC';
   String? rwyRcc;
   String? rwyId;
@@ -82,6 +85,8 @@ class _CalculatorPageState extends State<CalculatorPage> {
     selectedConfiguration = widget.configuration;
     selectedAirport = widget.airport;
     selectedAirportQNH = widget.airportQNH;
+    selectedFlaps = widget.nonflaps;
+    nonFlap = widget.nonflaps;
     if(selectedAirport != 'XXX') {
       selectedAirportElevation = widget.airportEl;
       selectedAirportTemperature = widget.airportTemp;
@@ -692,46 +697,90 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                 ),
                               ),
                               SizedBox(width: screenSize.width * 0.15),
-                              Expanded(
-                                child: DropdownButtonFormField<String>(
-                                  isExpanded: true, 
-                                  initialValue: selectedAircraftType,
-                                  hint: Text(
-                                    'Opcion A',
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      color: AppColors.placeholderDark,
+                              if(selectedLanding == 'Normal') ...[
+                                Expanded(
+                                  child: DropdownButtonFormField<String>(
+                                    isExpanded: true, 
+                                    initialValue: selectedAircraftType,
+                                    hint: Text(
+                                      'Opcion A',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: AppColors.placeholderDark,
+                                      ),
+                                      overflow: TextOverflow.ellipsis,
                                     ),
-                                    overflow: TextOverflow.ellipsis,
+                                    decoration: InputDecoration(
+                                      filled: true,
+                                      fillColor: AppColors.placeholder,
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(5.0),
+                                      ),
+                                      contentPadding: const EdgeInsets.symmetric(
+                                        horizontal: 8, 
+                                        vertical: 2,
+                                      ),
+                                    ),
+                                    items: aircraftTypes.map((String value) {
+                                      return DropdownMenuItem<String>(
+                                        value: value,
+                                        child: Text(
+                                          value,
+                                          style: TextStyle(color: AppColors.placeholderDark),
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      );
+                                    }).toList(),
+                                    onChanged: (newValue) {
+                                      setState(() {
+                                        selectedAircraftType = newValue;
+                                      });
+                                    },
                                   ),
-                                  decoration: InputDecoration(
-                                    filled: true,
-                                    fillColor: AppColors.placeholder,
-                                    border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(5.0),
-                                    ),
-                                    contentPadding: const EdgeInsets.symmetric(
-                                      horizontal: 8, 
-                                      vertical: 2,
-                                    ),
-                                  ),
-                                  items: aircraftTypes.map((String value) {
-                                    return DropdownMenuItem<String>(
-                                      value: value,
-                                      child: Text(
-                                        value,
-                                        style: TextStyle(color: AppColors.placeholderDark),
+                                ),
+                              ] else ... [
+                                  Expanded(
+                                    child: DropdownButtonFormField<String>(
+                                      isExpanded: true,
+                                      initialValue: selectedFlaps,
+                                      hint: Text(
+                                        '$selectedFlaps',
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          color: AppColors.placeholderDark,
+                                        ),
                                         overflow: TextOverflow.ellipsis,
                                       ),
-                                    );
-                                  }).toList(),
-                                  onChanged: (newValue) {
-                                    setState(() {
-                                      selectedAircraftType = newValue;
-                                    });
-                                  },
-                                ),
-                              ),
+                                      decoration: InputDecoration(
+                                        filled: true,
+                                        fillColor: AppColors.placeholder,
+                                        border: OutlineInputBorder(
+                                          borderRadius: BorderRadius.circular(5.0),
+                                        ),
+                                        contentPadding: const EdgeInsets.symmetric(
+                                          horizontal: 8, 
+                                          vertical: 2,
+                                        ),
+                                      ),
+                                      items:[nonFlap].where((val) => val != null).map((value) {
+                                        final String safeValue = value!; 
+                                        return DropdownMenuItem<String>(
+                                          value: safeValue,
+                                          child: Text(
+                                            safeValue,
+                                            style: TextStyle(color: AppColors.placeholderDark),
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        );
+                                      }).toList(),
+                                      onChanged: (newValue) {
+                                        setState(() {
+                                          selectedFlaps = newValue;
+                                        });
+                                      },
+                                    ),
+                                  ),
+                              ],
                             ],
                           ),
                         ),
