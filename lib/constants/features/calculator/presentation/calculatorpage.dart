@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_5/constants/colors/app_colors.dart';
 import 'package:flutter_application_5/constants/features/calculator/fuctions/calculateAltitud.dart';
+import 'package:flutter_application_5/constants/features/calculator/fuctions/calculateisa.dart';
 import 'package:flutter_application_5/constants/features/calculator/fuctions/customDigitFormatter.dart';
 import 'package:flutter_application_5/constants/features/home/data/airportdata.dart';
 import 'package:flutter_application_5/constants/strings/app_strings.dart';
@@ -31,7 +32,7 @@ class CalculatorPage extends StatefulWidget {
 }
 
 class _CalculatorPageState extends State<CalculatorPage> {
-
+//ISA = temperatureAirport - 15 + (0.0019812 * elevationAirport)
   //Variables para las selecciones 
   int _counter = 0;
   //Nota la reduccion solo permite 5 digitos si son 0, pero si tiene valor que no sea 0 al inicio solo permite 4 digitos
@@ -44,6 +45,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
   late double sliderMin;
   late double sliderMax;
   int? _divisions;
+  String? isa;
   String? selectedRunway;
   String? selectedWind;
   String? selectedAircraftType;
@@ -115,6 +117,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
       rwyLda = '0000'; 
       rwySlope = '0';
     } 
+    isa = Calculateisa(elevationRef: selectedAirportElevation, temperatureRef: selectedAirportTemperature)();
   }
 
   void updateRwyCondition(String condition) {
@@ -1401,7 +1404,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                     ),
                                     const SizedBox(height: 4),
                                     Text(
-                                      '${AppStrings.isa} ${(_counter as num).toInt().toString()}',
+                                      '${AppStrings.isa} $isa',
                                       style: TextStyle(color: AppColors.placeholderDark, fontSize: 15,),
                                     ),
                                 ]
@@ -1777,9 +1780,9 @@ class _CalculatorPageState extends State<CalculatorPage> {
 
                                       ],
                                       const SizedBox(height: 12),
-                                      Text(AppStrings.flap, textAlign: TextAlign.left, style: TextStyle(color: AppColors.placeholder)),
+                                      Text('$selectedFlaps', textAlign: TextAlign.left, style: TextStyle(color: AppColors.placeholder)),
                                       const SizedBox(height: 12),
-                                      Text(AppStrings.autobrake, textAlign: TextAlign.left, style: TextStyle(color: AppColors.placeholder)),
+                                      Text('$selectedAutoBrakes', textAlign: TextAlign.left, style: TextStyle(color: AppColors.placeholder)),
                                       const SizedBox(height: 50),
                                       //Revisar o reajustar tras ver vista en tablet
                                       Row(
