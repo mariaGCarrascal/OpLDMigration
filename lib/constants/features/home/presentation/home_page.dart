@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_5/constants/colors/app_colors.dart';
 import 'package:flutter_application_5/constants/strings/app_strings.dart';
-//import 'package:flutter/services.dart';
 import 'package:xml/xml.dart';
 import 'package:flutter_application_5/constants/features/home/data/airportdata.dart';
 import 'package:flutter_application_5/constants/design/text/app_text.dart';
@@ -33,6 +32,7 @@ class _HomePageState extends State<HomePage> {
   List<String> _comentariosNon = [];
   List<String> _flapsNon = [];
   List<String> targetFlap = [];
+  List<String> targetConfig = [];
   final airportTypes = Airportdata.airportNames;
   Map<String, String> elevations = Airportdata.airportElevation;
   Map<String, String> refQNH = Airportdata.airportRefQNH;
@@ -47,9 +47,8 @@ class _HomePageState extends State<HomePage> {
   String? selectedAircraftType = '737-700W/CFM56-7B22';
   String? selectedLandingType = 'Normal';
   String? selectedAirportType = 'PTY';
-  String? selectedConfigurationType = 'Airspeed Unreliable (Flaps 15)';
-  String? selectedConfigurationFlap = 'Flaps 15';
-
+  String? selectedConfigurationType;
+  String? selectedConfigurationFlap;
 
   @override
   void initState() {
@@ -62,7 +61,6 @@ class _HomePageState extends State<HomePage> {
     final XmlDocument document = OpLdService.instance.document;
     if (!mounted) return;
     final aircraftElements = document.findAllElements('aircraft');
-    final configElements = document.findAllElements('nonNormalConfiguration');
 
     setState(() {
       _xmlDocument = document;
@@ -71,11 +69,7 @@ class _HomePageState extends State<HomePage> {
           .where((label) => label.isNotEmpty)
           .toList();
 
-      configurationTypes = configElements
-          .map((element) => element.getAttribute('id') ?? '')
-          .where((label) => label.isNotEmpty)
-          .toSet()
-          .toList();
+      loadConfig();
 
       _isReady = true;
     });
@@ -111,10 +105,48 @@ class _HomePageState extends State<HomePage> {
       }
   }
 
+  void loadConfig() {
+        if (_xmlDocument == null || selectedAircraftType == null) {
+          return;
+        }
+
+        final targetConfig = _xmlDocument!
+            .findAllElements('aircraft')
+            .where(
+              (a) =>
+                  a.getAttribute('id') == selectedAircraftType ||
+                  a.getAttribute('label') == selectedAircraftType,
+            )
+            .expand(
+              (aircraft) => aircraft.findAllElements('landingCondition'),
+            )
+            .where(
+              (lc) =>
+                  lc.getAttribute('label')?.toUpperCase() == 'NON-NORMAL',
+            )
+            .expand(
+              (lc) => lc.findAllElements('nonNormalConfiguration'),
+            )
+            .map((e) => e.getAttribute('longLabel'))
+            .whereType<String>()
+            .toSet()
+            .toList();
+
+        configurationTypes = targetConfig;
+
+        if (configurationTypes.isNotEmpty) {
+          selectedConfigurationType = configurationTypes.first;
+          searchFlaps();
+        } else {
+          selectedConfigurationType = null;
+          _flapsNon.clear();
+        }
+  }
+
   void loadComments(){
-    print('paso 3: se esta ejecutando loadComments.');
+    
       if(_xmlDocument == null) return;
-      print('paso 5: examinando condiciones');
+
       Iterable<XmlElement> target = [];
 
       if (selectedAircraftType != null && selectedLandingType != null) {
@@ -133,7 +165,7 @@ class _HomePageState extends State<HomePage> {
             )
             .expand((f) => f.findAllElements('nonNormalConfiguration'));
       }
-      print('paso 6: Extrayendo comentarios de acuerdo a las condiciones.');
+      
       if (selectedConfigurationType != null) {
         _comentariosNon = target
             .where((f) => f.getAttribute('id') == selectedConfigurationType)
@@ -151,19 +183,17 @@ class _HomePageState extends State<HomePage> {
     print(
       " paso 1: se oprimio en boton, el arreglo va vacio: ${_comentariosNon}",
     );
-    print(" paso 2: se va a ejecutar la funcion loadcoments");
-
+    
     loadComments();
 
     elevation = elevations[selectedAirportType] ?? "Unknown";
     qnh = refQNH[selectedAirportType] ?? "Unknown";
     temperature = refTemp[selectedAirportType] ?? "Unknown";
     refRunway = Airportdata.airportRunwayData(selectedAirportType);
-    if(selectedLandingType == 'Non-Normal') {
-      selectedConfigurationFlap = _flapsNon[0];
+    if (selectedLandingType == 'Non-Normal' &&
+        _flapsNon.isNotEmpty) {
+      selectedConfigurationFlap = _flapsNon.first;
     }
-  
-    print("Comentarios llegando despues del filtro $_comentariosNon");
 
     List<String> comentarios = [];
 
@@ -256,7 +286,14 @@ class _HomePageState extends State<HomePage> {
                     onChanged: (newValue) {
                       setState(() {
                         selectedAircraftType = newValue;
+                        selectedConfigurationType = null;
+                        selectedConfigurationFlap = null;
+                        _flapsNon.clear();
+                        loadConfig();
                       });
+                        if (selectedLandingType == 'Non-Normal') {
+                          loadConfig();
+                        }
                     },
                   ),
 
@@ -308,10 +345,16 @@ class _HomePageState extends State<HomePage> {
                     onChanged: (newValue) {
                       setState(() {
                         selectedLandingType = newValue;
-                        if (newValue != 'Non-Normal') {
-                          selectedConfigurationType = null;
-                        }
+                        selectedConfigurationType = null;
+                            selectedConfigurationFlap = null;
+                            _flapsNon.clear();
+                            if (newValue != 'Non-Normal') {
+                              configurationTypes.clear();
+                            }
                       });
+                        if (newValue == 'Non-Normal') {
+                          loadConfig();
+                        }
                     },
                   ),
 
@@ -331,9 +374,9 @@ class _HomePageState extends State<HomePage> {
                     // Configuration Picker
                     DropdownButtonFormField<String>(
                       isExpanded: true,
-                      initialValue: selectedConfigurationType,
+                      initialValue: configurationTypes.contains(selectedConfigurationType) ? selectedConfigurationType: null,
                       hint: const Text(
-                        'Airspeed Unreliable (Flaps 15)',
+                        'Seleccionar una configuracion',
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           color: AppColors.placeholderDark,
