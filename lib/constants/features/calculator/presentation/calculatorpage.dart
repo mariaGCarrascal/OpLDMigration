@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_application_5/constants/colors/app_colors.dart';
 import 'package:flutter_application_5/constants/features/calculator/fuctions/calculateAltitud.dart';
 import 'package:flutter_application_5/constants/features/calculator/fuctions/calculateisa.dart';
+import 'package:flutter_application_5/constants/features/calculator/fuctions/calculatetemperatureincredecre.dart';
 import 'package:flutter_application_5/constants/features/calculator/fuctions/customDigitFormatter.dart';
 import 'package:flutter_application_5/constants/features/home/data/airportdata.dart';
 import 'package:flutter_application_5/constants/strings/app_strings.dart';
@@ -32,7 +33,7 @@ class CalculatorPage extends StatefulWidget {
 }
 
 class _CalculatorPageState extends State<CalculatorPage> {
-//ISA = temperatureAirport - 15 + (0.0019812 * elevationAirport)
+
   //Variables para las selecciones 
   int _counter = 0;
   //Nota la reduccion solo permite 5 digitos si son 0, pero si tiene valor que no sea 0 al inicio solo permite 4 digitos
@@ -67,7 +68,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
   String? rwyLda;
   String? altitud;
   bool _isExpanded = false;
-  //Variables de listas de los DropDownlists
+  //Variables de listas y Maps de los DropDownlists
   List<String>? listaComments = [];
   Map<String, List<String>>? selectedAirportRunway;
   List<String>? selectedSlopeValues = [];
@@ -1416,7 +1417,11 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                 children: [
                                 
                                   ElevatedButton(
-                                    onPressed: _decrement,
+                                    onPressed: () {
+                                        setState(() {
+                                          selectedAirportTemperature = Calculatetemperatureincredecre(temperatureRef: selectedAirportTemperature, operation: 'decrement')();
+                                          isa = Calculateisa(elevationRef: selectedAirportElevation, temperatureRef: selectedAirportTemperature)();
+                                        });},
                                     style: ElevatedButton.styleFrom(
                                       backgroundColor: AppColors.placeholder, 
                                       foregroundColor: AppColors.iconDark, 
@@ -1435,7 +1440,11 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                   ),
                                   const SizedBox(width: 8.0),                                 
                                   ElevatedButton(
-                                    onPressed: _increment,
+                                    onPressed:  () {
+                                        setState(() {
+                                          selectedAirportTemperature = Calculatetemperatureincredecre(temperatureRef: selectedAirportTemperature, operation: 'increment')();
+                                          isa = Calculateisa(elevationRef: selectedAirportElevation, temperatureRef: selectedAirportTemperature)();
+                                        });},
                                     style: ElevatedButton.styleFrom(
                                       backgroundColor: AppColors.placeholder, 
                                       foregroundColor: AppColors.iconDark, 

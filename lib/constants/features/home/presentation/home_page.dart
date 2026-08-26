@@ -25,7 +25,7 @@ class _HomePageState extends State<HomePage> {
   //Nota: Los valores en metro al lado cifras en ft son la conversion de pies a metros.
   //Noat: La conversion de pies a metros es multiplicar ft * 0.3048. Usar el metodo .round en la variable de resultado de la operacion.
    
-  // Variables clave
+  // Variables clave de listas
   List<String> aircraftTypes = [];
   final List<String> landingTypes = ['Normal', 'Non-Normal'];
   List<String> configurationTypes = [];
@@ -37,13 +37,13 @@ class _HomePageState extends State<HomePage> {
   Map<String, String> elevations = Airportdata.airportElevation;
   Map<String, String> refQNH = Airportdata.airportRefQNH;
   Map<String, String> refTemp = Airportdata.airportAverageRefTemp;
+  Map<String, List<String>> refRunway = {};
   XmlDocument? _xmlDocument;
+  //Variables clave
   String? elevation;
   String? qnh;
   String? temperature;
-  Map<String, List<String>> refRunway = {};
   bool _isReady = false;
-  // Selected input values
   String? selectedAircraftType = '737-700W/CFM56-7B22';
   String? selectedLandingType = 'Normal';
   String? selectedAirportType = 'PTY';
