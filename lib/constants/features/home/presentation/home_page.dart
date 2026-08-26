@@ -173,15 +173,14 @@ class _HomePageState extends State<HomePage> {
             .map((e) => e.innerText)
             .toList();
       }
-      print('paso 7: se extrajo los comentarios: $_comentariosNon');
   }
 
   void _onGoPressed() async {
     if(!_isReady) {
       return;
     }
-    print(
-      " paso 1: se oprimio en boton, el arreglo va vacio: ${_comentariosNon}",
+    debugPrint(
+      " paso 1: se oprimio en boton, el arreglo va vacio: $_comentariosNon",
     );
     
     loadComments();
@@ -201,7 +200,7 @@ class _HomePageState extends State<HomePage> {
       comentarios.add(_comentariosNon[i]);
     }
     if (comentarios.isNotEmpty) {
-      print(
+      debugPrint(
         "La variable va lista con el contenido de los comentarios hacia calculatorpage",
       );
     }
@@ -247,6 +246,7 @@ class _HomePageState extends State<HomePage> {
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       color: AppColors.white,
+                      fontSize: 25,
                     ),
                   ),
                   const SizedBox(height: 8.0),
@@ -305,6 +305,7 @@ class _HomePageState extends State<HomePage> {
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         color: AppColors.white,
+                        fontSize: 25,
                       ),
                     ),
                   ),
@@ -367,6 +368,7 @@ class _HomePageState extends State<HomePage> {
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           color: AppColors.white,
+                          fontSize: 25,
                         ),
                       ),
                     ),
@@ -421,6 +423,7 @@ class _HomePageState extends State<HomePage> {
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         color: AppColors.white,
+                        fontSize: 25,
                       ),
                     ),
                   ),
@@ -453,7 +456,7 @@ class _HomePageState extends State<HomePage> {
                         value: value,
                         child: Text(
                           value,
-                          style: TextStyle(color: AppColors.placeholderDark),
+                          style: TextStyle(color: AppColors.placeholderDark,),
                           overflow: TextOverflow.ellipsis,
                         ),
                       );
@@ -468,7 +471,7 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
 
-            const SizedBox(height: 50),
+            const SizedBox(height: 100),
 
             // Boton GO para ir a la pantalla de calculadora
             Center(
@@ -490,7 +493,7 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
             ),
-            const SizedBox(height: 100),
+            const SizedBox(height: 150),
             Center(
               child: OpLDAppText.regular(
                 AppStrings.appVersionNumber,

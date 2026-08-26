@@ -5,8 +5,8 @@ import 'package:flutter_application_5/constants/features/calculator/presentation
 
 class AppPages {
   static final Map<String, WidgetBuilder> pages = {
-    AppRoutes.HomePage: (_) => const HomePage(),
-    AppRoutes.Calculatorpage: (_) => const CalculatorPage(),
+    AppRoutes.homePage: (_) => const HomePage(),
+    AppRoutes.calculatorpage: (_) => const CalculatorPage(),
     //AppRoutes.Notespage: (_) => const Notespage(),
   };
 }

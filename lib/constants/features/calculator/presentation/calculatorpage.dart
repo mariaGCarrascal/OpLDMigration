@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_application_5/constants/colors/app_colors.dart';
 import 'package:flutter_application_5/constants/features/calculator/fuctions/calculateAltitud.dart';
 import 'package:flutter_application_5/constants/features/calculator/fuctions/calculateisa.dart';
+import 'package:flutter_application_5/constants/features/calculator/fuctions/calculateqnhincredecre.dart';
 import 'package:flutter_application_5/constants/features/calculator/fuctions/calculatetemperatureincredecre.dart';
 import 'package:flutter_application_5/constants/features/calculator/fuctions/customDigitFormatter.dart';
 import 'package:flutter_application_5/constants/features/home/data/airportdata.dart';
@@ -1305,7 +1306,13 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                 children: [
                                 
                                   ElevatedButton(
-                                    onPressed: _decrement,
+                                    onPressed:  () {
+                                        setState(() {
+                                          print('QNH antes de la operacion decremento: $selectedAirportQNH');
+                                          selectedAirportQNH = Calculateqnhincredecre(qnhRef: selectedAirportQNH, operation: 'decrement')();
+                                          print('Resultado de decremento QNH: $selectedAirportQNH');
+                                          altitud = Calculatealtitud(elevationRef: selectedAirportElevation, qnhRef: selectedAirportQNH)();
+                                        });},
                                     style: ElevatedButton.styleFrom(
                                       backgroundColor: AppColors.placeholder, 
                                       foregroundColor: AppColors.iconDark, 
@@ -1324,7 +1331,13 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                   ),
                                   const SizedBox(width: 8.0),                                 
                                   ElevatedButton(
-                                    onPressed: _increment,
+                                    onPressed: () {
+                                        setState(() {
+                                          print('QNH antes de la operacion incremento: $selectedAirportQNH');
+                                          selectedAirportQNH = Calculateqnhincredecre(qnhRef: selectedAirportQNH, operation: 'increment')();
+                                          print('Resultado de incremento QNH: $selectedAirportQNH');
+                                          altitud = Calculatealtitud(elevationRef: selectedAirportElevation, qnhRef: selectedAirportQNH)();
+                                        });},
                                     style: ElevatedButton.styleFrom(
                                       backgroundColor: AppColors.placeholder, 
                                       foregroundColor: AppColors.iconDark, 
