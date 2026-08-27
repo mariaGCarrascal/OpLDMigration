@@ -4,6 +4,7 @@ import 'package:flutter_application_5/constants/features/calculator/fuctions/cal
 import 'package:flutter_application_5/constants/features/calculator/fuctions/calculateisa.dart';
 import 'package:flutter_application_5/constants/features/calculator/fuctions/calculateqnhincredecre.dart';
 import 'package:flutter_application_5/constants/features/calculator/fuctions/calculatetemperatureincredecre.dart';
+import 'package:flutter_application_5/constants/features/calculator/fuctions/calculatevrefincredecre.dart';
 import 'package:flutter_application_5/constants/features/calculator/fuctions/customDigitFormatter.dart';
 import 'package:flutter_application_5/constants/features/calculator/fuctions/loadcomments.dart';
 import 'package:flutter_application_5/constants/features/home/data/airportdata.dart';
@@ -68,6 +69,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
   String? rwyId;
   String? rwySlope;
   String? rwyLda;
+  String? vRef;
   String? altitud;
   bool _isExpanded = false;
   //Variables de listas y Maps de los DropDownlists
@@ -124,6 +126,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
       rwySlope = '0';
     } 
     isa = Calculateisa(elevationRef: selectedAirportElevation, temperatureRef: selectedAirportTemperature)();
+    vRef = '5';
   }
 
   void updateRwyCondition(String condition) {
@@ -1014,7 +1017,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                 const SizedBox(width: 10.0),
                                 Expanded(
                                   child: Text(
-                                  (_counter as num).toInt().toString() + AppStrings.kt,
+                                  '$vRef ${AppStrings.kt}',
                                     style: TextStyle(color: AppColors.placeholderDark),
                                   ),
                                 ),
@@ -1025,7 +1028,11 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                   children: [
                                   
                                     ElevatedButton(
-                                      onPressed: _decrement,
+                                      onPressed: () {
+                                        setState(() {
+                                          vRef = Calculatevrefincredecre(vReference: vRef, operation: 'decrement')();
+                                        });
+                                      },
                                       style: ElevatedButton.styleFrom(
                                         backgroundColor: AppColors.placeholder, 
                                         foregroundColor: AppColors.iconDark, 
@@ -1044,7 +1051,11 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                     ),
                                     const SizedBox(width: 8.0),                                 
                                     ElevatedButton(
-                                      onPressed: _increment,
+                                      onPressed: () {
+                                        setState(() {
+                                          vRef = Calculatevrefincredecre(vReference: vRef, operation: 'increment')();
+                                        });
+                                      },
                                       style: ElevatedButton.styleFrom(
                                         backgroundColor: AppColors.placeholder, 
                                         foregroundColor: AppColors.iconDark, 
@@ -1088,7 +1099,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                         const SizedBox(width: 10.0),
                                         Expanded(
                                           child: Text(
-                                          (_counter as num).toInt().toString() + AppStrings.kt,
+                                          '$vRef ${AppStrings.kt}',
                                             style: TextStyle(color: AppColors.placeholderDark),
                                           ),
                                         ),
@@ -1099,7 +1110,11 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                           children: [
                                           
                                             ElevatedButton(
-                                              onPressed: _decrement,
+                                              onPressed: () {
+                                                setState(() {
+                                                  vRef = Calculatevrefincredecre(vReference: vRef, operation: 'decrement')();
+                                                });
+                                              },
                                               style: ElevatedButton.styleFrom(
                                                 backgroundColor: AppColors.placeholder, 
                                                 foregroundColor: AppColors.iconDark, 
@@ -1118,7 +1133,11 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                             ),
                                             const SizedBox(width: 8.0),                                 
                                             ElevatedButton(
-                                              onPressed: _increment,
+                                              onPressed: () {
+                                                setState(() {
+                                                  vRef = Calculatevrefincredecre(vReference: vRef, operation: 'increment')();
+                                                });
+                                              },
                                               style: ElevatedButton.styleFrom(
                                                 backgroundColor: AppColors.placeholder, 
                                                 foregroundColor: AppColors.iconDark, 
