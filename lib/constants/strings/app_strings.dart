@@ -49,6 +49,7 @@ class AppStrings {
   static const String isa = "ISA +";
   static const String wind = "WIND";
   static const String kthwc = "KT HWC";
+  static const String kttwc = "KT TWC";
   static const String ktCwc = "KT CWC";
 
   static const String netLda = "NET LDA:";

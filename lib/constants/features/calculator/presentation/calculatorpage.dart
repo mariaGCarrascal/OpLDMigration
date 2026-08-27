@@ -5,12 +5,13 @@ import 'package:flutter_application_5/constants/features/calculator/fuctions/cal
 import 'package:flutter_application_5/constants/features/calculator/fuctions/calculateqnhincredecre.dart';
 import 'package:flutter_application_5/constants/features/calculator/fuctions/calculatetemperatureincredecre.dart';
 import 'package:flutter_application_5/constants/features/calculator/fuctions/customDigitFormatter.dart';
+import 'package:flutter_application_5/constants/features/calculator/fuctions/loadcomments.dart';
 import 'package:flutter_application_5/constants/features/home/data/airportdata.dart';
 import 'package:flutter_application_5/constants/strings/app_strings.dart';
 import 'package:flutter/services.dart';
 
 class CalculatorPage extends StatefulWidget {
-  final List<String>? comentariosNon;
+
   final String? aircraft;
   final String? normalNon;
   final String? configuration;
@@ -22,7 +23,7 @@ class CalculatorPage extends StatefulWidget {
   final String? nonflaps;
   const CalculatorPage({
     super.key, 
-    this.comentariosNon, this.aircraft, this.normalNon, this.configuration, 
+    this.aircraft, this.normalNon, this.configuration, 
     this.airport, this.airportEl, this.airportQNH, this.airportTemp, this.airportRunway, this.nonflaps
   });
 
@@ -78,7 +79,10 @@ class _CalculatorPageState extends State<CalculatorPage> {
   final List<String> autoBrakes = ['MAX MANUAL', 'AUTOBRAKE MAX', 'AUTOBRAKE 3', 'AUTOBRAKE 2', 'AUTOBRAKE 1'];
   final List<String> speedBrakesTypes = ['AUTOMATIC', 'MANUAL'];
   final List<String> rwyConditions = ['DRY', 'GOOD', 'GOOD TO MEDIUM', 'MEDIUM', 'MEDIUM TO POOR', 'POOR'];
-  final List<String> windValues = ['000', '010', '020', '030', '040', '050', '060', '070', '080', '090', '100'];
+  final List<String> windDirection = ['000', '010', '020', '030', '040', '050', '060', '070', '080', '090', '100',
+                                      '110', '120', '130', '140', '150', '160', '170', '180', '190', '200', '210',
+                                      '220', '230', '240', '250', '260', '270', '280', '290', '300', '310', '320',
+                                      '330', '340', '350', '360'];
   Map<String, List<String>> conditionNotes = Airportdata.rcaTable;
   List<String>? rwyNote = [];
 
@@ -86,12 +90,12 @@ class _CalculatorPageState extends State<CalculatorPage> {
   void initState() {
     super.initState();
     updateRwyCondition('DRY');
-    listaComments = widget.comentariosNon;
     selectedAircraft = widget.aircraft;
     selectedLanding = widget.normalNon;
     selectedConfiguration = widget.configuration;
     selectedAirport = widget.airport;
     selectedAirportQNH = widget.airportQNH;
+    listaComments = Loadcomments(aircraftRef: selectedAircraft, landingRef: selectedLanding,configurationRef: selectedConfiguration)();
     if(selectedLanding == 'Normal') {
       selectedFlaps = 'FLAPS 30';
     } else {
@@ -280,7 +284,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                     });
                                   },
                                   itemBuilder: (BuildContext context) {
-                                    return windValues.map((String opcion) {
+                                    return windDirection.map((String opcion) {
                                       return PopupMenuItem<String>(
                                         value: opcion,
                                         child: Text(opcion),
@@ -1308,9 +1312,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                   ElevatedButton(
                                     onPressed:  () {
                                         setState(() {
-                                          print('QNH antes de la operacion decremento: $selectedAirportQNH');
                                           selectedAirportQNH = Calculateqnhincredecre(qnhRef: selectedAirportQNH, operation: 'decrement')();
-                                          print('Resultado de decremento QNH: $selectedAirportQNH');
                                           altitud = Calculatealtitud(elevationRef: selectedAirportElevation, qnhRef: selectedAirportQNH)();
                                         });},
                                     style: ElevatedButton.styleFrom(
@@ -1333,9 +1335,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                   ElevatedButton(
                                     onPressed: () {
                                         setState(() {
-                                          print('QNH antes de la operacion incremento: $selectedAirportQNH');
                                           selectedAirportQNH = Calculateqnhincredecre(qnhRef: selectedAirportQNH, operation: 'increment')();
-                                          print('Resultado de incremento QNH: $selectedAirportQNH');
                                           altitud = Calculatealtitud(elevationRef: selectedAirportElevation, qnhRef: selectedAirportQNH)();
                                         });},
                                     style: ElevatedButton.styleFrom(
@@ -1511,7 +1511,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                             });
                                           },
                                           itemBuilder: (BuildContext context) {            
-                                            return windValues.map((String opcion) {
+                                            return windDirection.map((String opcion) {
                                               return PopupMenuItem<String>(
                                                 value: opcion,
                                                 child: Text(opcion),

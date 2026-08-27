@@ -29,7 +29,6 @@ class _HomePageState extends State<HomePage> {
   List<String> aircraftTypes = [];
   final List<String> landingTypes = ['Normal', 'Non-Normal'];
   List<String> configurationTypes = [];
-  List<String> _comentariosNon = [];
   List<String> _flapsNon = [];
   List<String> targetFlap = [];
   List<String> targetConfig = [];
@@ -143,47 +142,13 @@ class _HomePageState extends State<HomePage> {
         }
   }
 
-  void loadComments(){
-    
-      if(_xmlDocument == null) return;
-
-      Iterable<XmlElement> target = [];
-
-      if (selectedAircraftType != null && selectedLandingType != null) {
-        target = _xmlDocument!
-            .findAllElements('aircraft')
-            .where(
-              (a) =>
-                  a.getAttribute('id') == selectedAircraftType ||
-                  a.getAttribute('label') == selectedAircraftType,
-            )
-            .expand((l) => l.findAllElements('landingCondition'))
-            .where(
-              (lc) =>
-                  lc.getAttribute('label')?.toUpperCase() ==
-                  selectedLandingType?.toUpperCase(),
-            )
-            .expand((f) => f.findAllElements('nonNormalConfiguration'));
-      }
-      
-      if (selectedConfigurationType != null) {
-        _comentariosNon = target
-            .where((f) => f.getAttribute('id') == selectedConfigurationType)
-            .expand((c) => c.findAllElements('Comments'))
-            .map((e) => e.innerText)
-            .toList();
-      }
-  }
-
   void _onGoPressed() async {
     if(!_isReady) {
       return;
     }
     debugPrint(
-      " paso 1: se oprimio en boton, el arreglo va vacio: $_comentariosNon",
+      " paso 1: se oprimio en boton, el arreglo va vacio.",
     );
-    
-    loadComments();
 
     elevation = elevations[selectedAirportType] ?? "Unknown";
     qnh = refQNH[selectedAirportType] ?? "Unknown";
@@ -194,23 +159,12 @@ class _HomePageState extends State<HomePage> {
       selectedConfigurationFlap = _flapsNon.first;
     }
 
-    List<String> comentarios = [];
-
-    for (int i = 0; i < _comentariosNon.length; i++) {
-      comentarios.add(_comentariosNon[i]);
-    }
-    if (comentarios.isNotEmpty) {
-      debugPrint(
-        "La variable va lista con el contenido de los comentarios hacia calculatorpage",
-      );
-    }
-
     Navigator.push(
       context,
       MaterialPageRoute(
         builder: (BuildContext context) =>
             CalculatorPage(
-              comentariosNon: comentarios, aircraft: selectedAircraftType, 
+              aircraft: selectedAircraftType, 
               normalNon: selectedLandingType, configuration: selectedConfigurationType, 
               airport: selectedAirportType, airportEl: elevation, airportQNH: qnh, airportTemp: temperature, airportRunway: refRunway,
               nonflaps: selectedConfigurationFlap,),
