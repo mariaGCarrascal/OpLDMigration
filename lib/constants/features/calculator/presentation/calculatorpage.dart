@@ -70,12 +70,16 @@ class _CalculatorPageState extends State<CalculatorPage> {
   String? rwySlope;
   String? rwyLda;
   String? vRef;
+  String? weightMIN;
+  String? weightMAX;
+  String? weightDefault;
   String? altitud;
   bool _isExpanded = false;
   //Variables de listas y Maps de los DropDownlists
   List<String>? listaComments = [];
   Map<String, List<String>>? selectedAirportRunway;
   List<String>? selectedSlopeValues = [];
+  List<String>? selectedAircraftWeight = [];
   final List<String> aircraftTypes = ['Opcion A', 'Opcion B'];
   final List<String> normalFlaps = ['FLAPS 15', 'FLAPS 30', 'FLAPS 40'];
   final List<String> autoBrakes = ['MAX MANUAL', 'AUTOBRAKE MAX', 'AUTOBRAKE 3', 'AUTOBRAKE 2', 'AUTOBRAKE 1'];
@@ -160,10 +164,11 @@ class _CalculatorPageState extends State<CalculatorPage> {
       appBar: AppBar(
         title: Center(
           child: Text(
-            '$selectedAircraft', 
+            '$selectedAircraft',
             style: TextStyle(fontSize: 22, color: AppColors.white),
           ),
         ),
+        backgroundColor: Colors.black,
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(4.0),
@@ -206,6 +211,13 @@ class _CalculatorPageState extends State<CalculatorPage> {
                       //Rwy ID, si es XXX, se muestra el texto RWY MAG HDG y los valores pasan a ser numerico como Wind. En aumento de +1 hasta 360
                       Card(
                         color: AppColors.cardDark,
+                        shape: RoundedRectangleBorder(
+                        side: BorderSide(
+                          color: AppColors.placeholder, 
+                          width: 2.0,         
+                        ),
+                        borderRadius: BorderRadius.circular(12.0), 
+                      ),
                         child: Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: Row(
@@ -240,16 +252,22 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                       overflow: TextOverflow.ellipsis,
                                     ),
                                     decoration: InputDecoration(
-                                      filled: true,
-                                      fillColor: AppColors.placeholder,
-                                      border: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(5.0),
+                                        filled: true,
+                                        fillColor: AppColors.placeholder,
+                                        enabledBorder: OutlineInputBorder(
+                                          borderSide: BorderSide(
+                                            color: AppColors.placeholder,
+                                            width: 1,
+                                          ),
+                                        ),
+                                        border: OutlineInputBorder(
+                                          borderRadius: BorderRadius.circular(5.0),
+                                        ),
+                                        contentPadding: const EdgeInsets.symmetric(
+                                          horizontal: 10,
+                                          vertical: 5,
+                                        ),
                                       ),
-                                      contentPadding: const EdgeInsets.symmetric(
-                                        horizontal: 8,
-                                        vertical: 2,
-                                      ),
-                                    ),
                                     items: (selectedAirportRunway?.keys ?? <String>{}).map((value) {
                                       return DropdownMenuItem<String>(
                                         value: value,
@@ -324,6 +342,13 @@ class _CalculatorPageState extends State<CalculatorPage> {
                       //Rwy condition
                       Card(
                         color: AppColors.cardDark,
+                        shape: RoundedRectangleBorder(
+                        side: BorderSide(
+                          color: AppColors.placeholder, 
+                          width: 2.0,         
+                        ),
+                        borderRadius: BorderRadius.circular(12.0), 
+                      ),
                         child: Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: Row(
@@ -349,16 +374,22 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                     overflow: TextOverflow.ellipsis,
                                   ),
                                   decoration: InputDecoration(
-                                    filled: true,
-                                    fillColor: AppColors.placeholder,
-                                    border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(5.0),
+                                      filled: true,
+                                      fillColor: AppColors.placeholder,
+                                      enabledBorder: OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                          color: AppColors.placeholder,
+                                          width: 1,
+                                        ),
+                                      ),
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(5.0),
+                                      ),
+                                      contentPadding: const EdgeInsets.symmetric(
+                                        horizontal: 10,
+                                        vertical: 5,
+                                      ),
                                     ),
-                                    contentPadding: const EdgeInsets.symmetric(
-                                      horizontal: 8, 
-                                      vertical: 2,
-                                    ),
-                                  ),
                                   items: rwyConditions.map((String value) {
                                     return DropdownMenuItem<String>(
                                       value: value,
@@ -387,6 +418,13 @@ class _CalculatorPageState extends State<CalculatorPage> {
                       //Rwy slope, en vista XXX se muestra un valor en porcentaje (color verde), y botones de suma y resta
                       Card(
                         color: AppColors.cardDark,
+                        shape: RoundedRectangleBorder(
+                        side: BorderSide(
+                          color: AppColors.placeholder, 
+                          width: 2.0,         
+                        ),
+                        borderRadius: BorderRadius.circular(12.0), 
+                      ),
                         child: Padding(
                           padding: const EdgeInsets.all(15.0),
                           child: Row(
@@ -458,6 +496,13 @@ class _CalculatorPageState extends State<CalculatorPage> {
                       //Elevation, la vista cambia si es el aeropuerto es XXX
                       Card(
                             color: AppColors.cardDark,
+                            shape: RoundedRectangleBorder(
+                              side: BorderSide(
+                                color: AppColors.placeholder, 
+                                width: 2.0,         
+                              ),
+                              borderRadius: BorderRadius.circular(12.0), 
+                            ),
                             child: Padding(
                               padding: const EdgeInsets.all(20.0),
                               child: Column(
@@ -542,6 +587,13 @@ class _CalculatorPageState extends State<CalculatorPage> {
                       if (selectedAirport != 'XXX') 
                        Card(
                             color: AppColors.cardDark,
+                            shape: RoundedRectangleBorder(
+                            side: BorderSide(
+                              color: AppColors.placeholder, 
+                              width: 2.0,         
+                            ),
+                            borderRadius: BorderRadius.circular(12.0), 
+                          ),
                             child: Padding(
                               padding: const EdgeInsets.all(20.0),
                               child: Column(
@@ -706,6 +758,13 @@ class _CalculatorPageState extends State<CalculatorPage> {
                       //Flaps
                       Card(
                         color: AppColors.cardDark,
+                        shape: RoundedRectangleBorder(
+                        side: BorderSide(
+                          color: AppColors.placeholder, 
+                          width: 2.0,         
+                        ),
+                        borderRadius: BorderRadius.circular(12.0), 
+                        ),
                         child: Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: Row(
@@ -732,16 +791,22 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                       overflow: TextOverflow.ellipsis,
                                     ),
                                     decoration: InputDecoration(
-                                      filled: true,
-                                      fillColor: AppColors.placeholder,
-                                      border: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(5.0),
+                                        filled: true,
+                                        fillColor: AppColors.placeholder,
+                                        enabledBorder: OutlineInputBorder(
+                                          borderSide: BorderSide(
+                                            color: AppColors.placeholder,
+                                            width: 1,
+                                          ),
+                                        ),
+                                        border: OutlineInputBorder(
+                                          borderRadius: BorderRadius.circular(5.0),
+                                        ),
+                                        contentPadding: const EdgeInsets.symmetric(
+                                          horizontal: 10,
+                                          vertical: 5,
+                                        ),
                                       ),
-                                      contentPadding: const EdgeInsets.symmetric(
-                                        horizontal: 8, 
-                                        vertical: 2,
-                                      ),
-                                    ),
                                     items: normalFlaps.map((String value) {
                                       return DropdownMenuItem<String>(
                                         value: value,
@@ -773,16 +838,22 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                         overflow: TextOverflow.ellipsis,
                                       ),
                                       decoration: InputDecoration(
-                                        filled: true,
-                                        fillColor: AppColors.placeholder,
-                                        border: OutlineInputBorder(
-                                          borderRadius: BorderRadius.circular(5.0),
+                                          filled: true,
+                                          fillColor: AppColors.placeholder,
+                                          enabledBorder: OutlineInputBorder(
+                                            borderSide: BorderSide(
+                                              color: AppColors.placeholder,
+                                              width: 1,
+                                            ),
+                                          ),
+                                          border: OutlineInputBorder(
+                                            borderRadius: BorderRadius.circular(5.0),
+                                          ),
+                                          contentPadding: const EdgeInsets.symmetric(
+                                            horizontal: 10,
+                                            vertical: 5,
+                                          ),
                                         ),
-                                        contentPadding: const EdgeInsets.symmetric(
-                                          horizontal: 8, 
-                                          vertical: 2,
-                                        ),
-                                      ),
                                       items:[nonFlap].where((val) => val != null).map((value) {
                                         final String safeValue = value!; 
                                         return DropdownMenuItem<String>(
@@ -810,6 +881,13 @@ class _CalculatorPageState extends State<CalculatorPage> {
                       //Autobrake
                       Card(
                         color: AppColors.cardDark,
+                        shape: RoundedRectangleBorder(
+                        side: BorderSide(
+                          color: AppColors.placeholder, 
+                          width: 2.0,         
+                        ),
+                        borderRadius: BorderRadius.circular(12.0), 
+                        ),
                         child: Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: Row(
@@ -835,16 +913,22 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                     overflow: TextOverflow.ellipsis,
                                   ),
                                   decoration: InputDecoration(
-                                    filled: true,
-                                    fillColor: AppColors.placeholder,
-                                    border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(5.0),
+                                      filled: true,
+                                      fillColor: AppColors.placeholder,
+                                      enabledBorder: OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                          color: AppColors.placeholder,
+                                          width: 1,
+                                        ),
+                                      ),
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(5.0),
+                                      ),
+                                      contentPadding: const EdgeInsets.symmetric(
+                                        horizontal: 10,
+                                        vertical: 5,
+                                      ),
                                     ),
-                                    contentPadding: const EdgeInsets.symmetric(
-                                      horizontal: 10, 
-                                      vertical: 2,
-                                    ),
-                                  ),
                                   items: autoBrakes.map((String value) {
                                     return DropdownMenuItem<String>(
                                       value: value,
@@ -871,6 +955,13 @@ class _CalculatorPageState extends State<CalculatorPage> {
                       //Reversers
                       Card(
                         color: AppColors.cardDark,
+                        shape: RoundedRectangleBorder(
+                        side: BorderSide(
+                          color: AppColors.placeholder, 
+                          width: 2.0,         
+                        ),
+                        borderRadius: BorderRadius.circular(12.0), 
+                        ),
                         child: Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: Row(
@@ -898,12 +989,18 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                   decoration: InputDecoration(
                                     filled: true,
                                     fillColor: AppColors.placeholder,
+                                    enabledBorder: OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                        color: AppColors.placeholder,
+                                        width: 1,
+                                      ),
+                                    ),
                                     border: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(5.0),
                                     ),
                                     contentPadding: const EdgeInsets.symmetric(
-                                      horizontal: 8, 
-                                      vertical: 2,
+                                      horizontal: 10,
+                                      vertical: 5,
                                     ),
                                   ),
                                   items: aircraftTypes.map((String value) {
@@ -932,6 +1029,13 @@ class _CalculatorPageState extends State<CalculatorPage> {
                       //SpeedBrakes, cambia dependiendo del tipo de aircraft (normal o non-normal) a N/A 
                       Card(
                         color: AppColors.cardDark,
+                        shape: RoundedRectangleBorder(
+                        side: BorderSide(
+                          color: AppColors.placeholder, 
+                          width: 2.0,         
+                        ),
+                        borderRadius: BorderRadius.circular(12.0), 
+                        ),
                         child: Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: Row(
@@ -960,12 +1064,18 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                     decoration: InputDecoration(
                                       filled: true,
                                       fillColor: AppColors.placeholder,
+                                      enabledBorder: OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                          color: AppColors.placeholder,
+                                          width: 1,
+                                        ),
+                                      ),
                                       border: OutlineInputBorder(
                                         borderRadius: BorderRadius.circular(5.0),
                                       ),
                                       contentPadding: const EdgeInsets.symmetric(
-                                        horizontal: 8,
-                                        vertical: 2,
+                                        horizontal: 10,
+                                        vertical: 5,
                                       ),
                                     ),
                                     items: speedBrakesTypes.map((String value) {
@@ -1001,6 +1111,13 @@ class _CalculatorPageState extends State<CalculatorPage> {
                       //Vref add, cambia dependiendo del tipo de aircraft (Normal o Non-Normal) a N/A y el texto VREF cambia
                       Card(
                         color: AppColors.cardDark,
+                        shape: RoundedRectangleBorder(
+                        side: BorderSide(
+                          color: AppColors.placeholder, 
+                          width: 2.0,         
+                        ),
+                        borderRadius: BorderRadius.circular(12.0), 
+                        ),
                         child: Padding(
                           padding: const EdgeInsets.all(15.0),
                           child: Row(
@@ -1166,6 +1283,13 @@ class _CalculatorPageState extends State<CalculatorPage> {
                       //Landing Weight
                       Card(
                             color: AppColors.cardDark,
+                            shape: RoundedRectangleBorder(
+                            side: BorderSide(
+                              color: AppColors.placeholder, 
+                              width: 2.0,         
+                            ),
+                            borderRadius: BorderRadius.circular(12.0), 
+                            ),
                             child: Padding(
                               padding: const EdgeInsets.all(20.0),
                               child: Column(
@@ -1274,6 +1398,13 @@ class _CalculatorPageState extends State<CalculatorPage> {
                       // QNH
                       Card(
                         color: AppColors.cardDark,
+                        shape: RoundedRectangleBorder(
+                        side: BorderSide(
+                          color: AppColors.placeholder, 
+                          width: 2.0,         
+                        ),
+                        borderRadius: BorderRadius.circular(12.0), 
+                        ),
                         child: Padding(
                           padding: const EdgeInsets.all(15.0),
                           child: Row(
@@ -1383,6 +1514,13 @@ class _CalculatorPageState extends State<CalculatorPage> {
                     // Altitude
                     Card(
                         color: AppColors.cardDark,
+                        shape: RoundedRectangleBorder(
+                        side: BorderSide(
+                          color: AppColors.placeholder, 
+                          width: 2.0,         
+                        ),
+                        borderRadius: BorderRadius.circular(12.0), 
+                        ),
                         child: Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: Row(
@@ -1414,6 +1552,13 @@ class _CalculatorPageState extends State<CalculatorPage> {
                       // QAT
                       Card(
                         color: AppColors.cardDark,
+                        shape: RoundedRectangleBorder(
+                        side: BorderSide(
+                          color: AppColors.placeholder, 
+                          width: 2.0,         
+                        ),
+                        borderRadius: BorderRadius.circular(12.0), 
+                        ),
                         child: Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: Row(
@@ -1503,6 +1648,13 @@ class _CalculatorPageState extends State<CalculatorPage> {
                     // WIND
                     Card(
                       color: AppColors.cardDark,
+                      shape: RoundedRectangleBorder(
+                        side: BorderSide(
+                          color: AppColors.placeholder, 
+                          width: 2.0,         
+                        ),
+                        borderRadius: BorderRadius.circular(12.0), 
+                      ),
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Row(
