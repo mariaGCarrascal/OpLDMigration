@@ -49,6 +49,8 @@ class Searchdefault{
           ...c.findAllElements('VrefAdditiveMAXvalue'),
           ...c.findAllElements('altitudeMINvalue'),
           ...c.findAllElements('altitudeMAXvalue'),
+          ...c.findAllElements('slopeMINvalue'),
+          ...c.findAllElements('slopeMAXvalue'),
           ])
             .map((e) => e.innerText)
             .toList();

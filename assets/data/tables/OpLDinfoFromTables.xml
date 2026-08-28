@@ -21,8 +21,8 @@
 			<altitudeMAXvalue> 14219 </altitudeMAXvalue>
 			<windMINvalue> -15 </windMINvalue>
 			<windMAXvalue>  40 </windMAXvalue>
-			<slopeMINvalue> -3.0 </slopeMINvalue>
-			<slopeMAXvalue>  3.0 </slopeMAXvalue>
+			<slopeMINvalue>-3.0</slopeMINvalue>
+			<slopeMAXvalue>3.0</slopeMAXvalue>
 			<deltaISA_MINvalue> -20 </deltaISA_MINvalue>
 			<deltaISA_MAXvalue>  60 </deltaISA_MAXvalue>
 			<VrefAdditiveMINvalue>0</VrefAdditiveMINvalue>
@@ -17787,8 +17787,8 @@
 			<altitudeMAXvalue> 14219 </altitudeMAXvalue>
 			<windMINvalue> -15 </windMINvalue>
 			<windMAXvalue>  40 </windMAXvalue>
-			<slopeMINvalue> -3.0 </slopeMINvalue>
-			<slopeMAXvalue>  3.0 </slopeMAXvalue>
+			<slopeMINvalue>-3.0</slopeMINvalue>
+			<slopeMAXvalue>3.0</slopeMAXvalue>
 			<deltaISA_MINvalue> -20 </deltaISA_MINvalue>
 			<deltaISA_MAXvalue>  45 </deltaISA_MAXvalue>
 			<VrefAdditiveMINvalue>0</VrefAdditiveMINvalue>
@@ -53277,8 +53277,8 @@
 			<altitudeMAXvalue> 14219 </altitudeMAXvalue>
 			<windMINvalue> -15 </windMINvalue>
 			<windMAXvalue>  40 </windMAXvalue>
-			<slopeMINvalue> -3.0 </slopeMINvalue>
-			<slopeMAXvalue>  3.0 </slopeMAXvalue>
+			<slopeMINvalue>-3.0</slopeMINvalue>
+			<slopeMAXvalue>3.0</slopeMAXvalue>
 			<deltaISA_MINvalue> -20 </deltaISA_MINvalue>
 			<deltaISA_MAXvalue>60</deltaISA_MAXvalue>
 			<VrefAdditiveMINvalue>0</VrefAdditiveMINvalue>
@@ -74486,8 +74486,8 @@
 			<altitudeMAXvalue> 14219 </altitudeMAXvalue>
 			<windMINvalue> -15 </windMINvalue>
 			<windMAXvalue>  40 </windMAXvalue>
-			<slopeMINvalue> -3.0 </slopeMINvalue>
-			<slopeMAXvalue>  3.0 </slopeMAXvalue>
+			<slopeMINvalue>-3.0</slopeMINvalue>
+			<slopeMAXvalue>3.0</slopeMAXvalue>
 			<deltaISA_MINvalue> -20 </deltaISA_MINvalue>
 			<deltaISA_MAXvalue>60</deltaISA_MAXvalue>
 			<VrefAdditiveMINvalue>0</VrefAdditiveMINvalue>

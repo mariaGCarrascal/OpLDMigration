@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_5/constants/colors/app_colors.dart';
 import 'package:flutter_application_5/constants/features/calculator/fuctions/calculateAltitud.dart';
+import 'package:flutter_application_5/constants/features/calculator/fuctions/calculateelevationincredecre.dart';
 import 'package:flutter_application_5/constants/features/calculator/fuctions/calculateisa.dart';
 import 'package:flutter_application_5/constants/features/calculator/fuctions/calculateqnhincredecre.dart';
+import 'package:flutter_application_5/constants/features/calculator/fuctions/calculateslopeincredecre.dart';
 import 'package:flutter_application_5/constants/features/calculator/fuctions/calculatetemperatureincredecre.dart';
 import 'package:flutter_application_5/constants/features/calculator/fuctions/calculatevrefincredecre.dart';
 import 'package:flutter_application_5/constants/features/calculator/fuctions/calculateweightincredecre.dart';
@@ -45,9 +47,9 @@ class _CalculatorPageState extends State<CalculatorPage> {
   String? _currentReduction;
   double _currentLadWeight = 130000;
   double _currentElevation = 2000;
+  double? altitudMax;
+  double? altitudMin;
   //Modificar a futuro este tema del slider en Elevation en aeropuerto XXX.
-  final double _minElevation = -2000;
-  final double _maxElevation = 14200;
   late double sliderMin;
   late double sliderMax;
   int? _divisions;
@@ -70,6 +72,8 @@ class _CalculatorPageState extends State<CalculatorPage> {
   String? rwyRcc;
   String? rwyId;
   String? rwySlope;
+  String? rwySlopeMin;
+  String? rwySlopeMax;
   String? rwyLda;
   String? vRef;
   String? vMax;
@@ -129,19 +133,24 @@ class _CalculatorPageState extends State<CalculatorPage> {
       rwyLda = selectedSlopeValues?[1]; 
       rwySlope = selectedSlopeValues?[2];
       altitud = Calculatealtitud(elevationRef: selectedAirportElevation, qnhRef: selectedAirportQNH)();
+      isa = Calculateisa(elevationRef: selectedAirportElevation, temperatureRef: selectedAirportTemperature)();
     } else {
-      sliderMin = (_minElevation / 1000).ceil() * 1000;
-      sliderMax = (_maxElevation / 1000).floor() * 1000;
+      altitudMin = double.parse(defaultAircraft?[9] ?? '0');
+      altitudMax = double.parse(defaultAircraft?[10] ?? '0');
+      sliderMin = (altitudMin! / 1000).ceil() * 1000;
+      sliderMax = (altitudMax! / 1000).floor() * 1000;
       _divisions = ((sliderMax - sliderMin) / 1000).round();
       selectedAirportTemperature = '26.0';
+      isa = Calculateisa(elevationRef: _currentElevation.toString(), temperatureRef: selectedAirportTemperature)();
       rwyId = '0000'; 
       rwyLda = '0000'; 
-      rwySlope = '0';
+      rwySlope = '0.0';
+      rwySlopeMin = defaultAircraft?[11];
+      rwySlopeMax = defaultAircraft?[12];
     } 
     _currentLadWeight = double.parse(defaultAircraft?[4] ?? '0');
     weightMAX = double.parse(defaultAircraft?[5] ?? '0');
     weightMIN = double.parse(defaultAircraft?[6] ?? '0');
-    isa = Calculateisa(elevationRef: selectedAirportElevation, temperatureRef: selectedAirportTemperature)();
     vRef = defaultAircraft?[0];
     vMin = defaultAircraft?[7];
     vMax = defaultAircraft?[8];
@@ -461,12 +470,16 @@ class _CalculatorPageState extends State<CalculatorPage> {
                               else ...[
                                 Expanded(
                                   child: Text(
-                                    '$rwySlope%',
+                                    '$rwySlope %',
                                     style: TextStyle(color: AppColors.textColor2Dark),
                                   ),
                                 ),
                                 ElevatedButton(
-                                  onPressed: _decrement,
+                                  onPressed: () {
+                                      setState(() {
+                                          rwySlope = Calculateslopeincredecre(slopeReference: rwySlope, minReference: rwySlopeMin, maxReference: rwySlopeMax, operation: 'decrement')();
+                                        });
+                                      },
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: AppColors.placeholder,
                                     foregroundColor: AppColors.iconDark,
@@ -485,7 +498,11 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                 ),
                                 const SizedBox(width: 8.0),
                                 ElevatedButton(
-                                  onPressed: _increment,
+                                  onPressed: () {
+                                    setState(() {
+                                        rwySlope = Calculateslopeincredecre(slopeReference: rwySlope, minReference: rwySlopeMin, maxReference: rwySlopeMax, operation: 'increment')();
+                                      });
+                                    },
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: AppColors.placeholder,
                                     foregroundColor: AppColors.iconDark,
@@ -534,7 +551,11 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                             ),
                                             const SizedBox(width: 10.0),
                                             ElevatedButton(
-                                              onPressed: _decrement,
+                                              onPressed: () {
+                                                setState(() {
+                                                    _currentElevation = Calculateelevationincredecre(elevationReference: _currentElevation, minReference: weightMIN, maxReference: weightMAX, operation: 'decrement')();
+                                                  });
+                                                },
                                               style: ElevatedButton.styleFrom(
                                                 backgroundColor: AppColors.placeholder,
                                                 foregroundColor: AppColors.iconDark,
@@ -553,7 +574,11 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                             ),
                                             const SizedBox(width: 8.0),
                                             ElevatedButton(
-                                              onPressed: _increment,
+                                              onPressed: () {
+                                                setState(() {
+                                                    _currentElevation = Calculateelevationincredecre(elevationReference: _currentElevation, minReference: weightMIN, maxReference: weightMAX, operation: 'increment')();
+                                                  });
+                                                },
                                               style: ElevatedButton.styleFrom(
                                                 backgroundColor: AppColors.placeholder,
                                                 foregroundColor: AppColors.iconDark,
@@ -1478,57 +1503,113 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                 ),
                               ),
 
-                              Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                
-                                  ElevatedButton(
-                                    onPressed:  () {
-                                        setState(() {
-                                          selectedAirportQNH = Calculateqnhincredecre(qnhRef: selectedAirportQNH, operation: 'decrement')();
-                                          altitud = Calculatealtitud(elevationRef: selectedAirportElevation, qnhRef: selectedAirportQNH)();
-                                        });},
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: AppColors.placeholder, 
-                                      foregroundColor: AppColors.iconDark, 
-                                      minimumSize: const Size(50, 50),
-                                      padding: EdgeInsets.zero,
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(8.0),
-                                        side: const BorderSide(color: AppColors.placeholder, width: 1.0), 
+                              if(selectedAirport != 'XXX') ...[
+                                Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                  
+                                    ElevatedButton(
+                                      onPressed:  () {
+                                          setState(() {
+                                            selectedAirportQNH = Calculateqnhincredecre(qnhRef: selectedAirportQNH, operation: 'decrement')();
+                                            altitud = Calculatealtitud(elevationRef: selectedAirportElevation, qnhRef: selectedAirportQNH)();
+                                          });},
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: AppColors.placeholder, 
+                                        foregroundColor: AppColors.iconDark, 
+                                        minimumSize: const Size(50, 50),
+                                        padding: EdgeInsets.zero,
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(8.0),
+                                          side: const BorderSide(color: AppColors.placeholder, width: 1.0), 
+                                        ),
+                                      ),
+                                      child: Icon(
+                                        Icons.remove,
+                                        color: AppColors.iconDark, 
+                                        size: 20,
                                       ),
                                     ),
-                                    child: Icon(
-                                      Icons.remove,
-                                      color: AppColors.iconDark, 
-                                      size: 20,
-                                    ),
-                                  ),
-                                  const SizedBox(width: 8.0),                                 
-                                  ElevatedButton(
-                                    onPressed: () {
-                                        setState(() {
-                                          selectedAirportQNH = Calculateqnhincredecre(qnhRef: selectedAirportQNH, operation: 'increment')();
-                                          altitud = Calculatealtitud(elevationRef: selectedAirportElevation, qnhRef: selectedAirportQNH)();
-                                        });},
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: AppColors.placeholder, 
-                                      foregroundColor: AppColors.iconDark, 
-                                      minimumSize: const Size(50, 50),
-                                      padding: EdgeInsets.zero,
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(8.0),
-                                        side: const BorderSide(color: AppColors.placeholder, width: 1.0), 
+                                    const SizedBox(width: 8.0),                                 
+                                    ElevatedButton(
+                                      onPressed: () {
+                                          setState(() {
+                                            selectedAirportQNH = Calculateqnhincredecre(qnhRef: selectedAirportQNH, operation: 'increment')();
+                                            altitud = Calculatealtitud(elevationRef: selectedAirportElevation, qnhRef: selectedAirportQNH)();
+                                          });},
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: AppColors.placeholder, 
+                                        foregroundColor: AppColors.iconDark, 
+                                        minimumSize: const Size(50, 50),
+                                        padding: EdgeInsets.zero,
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(8.0),
+                                          side: const BorderSide(color: AppColors.placeholder, width: 1.0), 
+                                        ),
+                                      ),
+                                      child: Icon(
+                                        Icons.add,
+                                        color: AppColors.iconDark, 
+                                        size: 20,
                                       ),
                                     ),
-                                    child: Icon(
-                                      Icons.add,
-                                      color: AppColors.iconDark, 
-                                      size: 20,
+                                  ],
+                                ),
+                              ] else ...[
+                                  Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+         
+                                    ElevatedButton(
+                                      onPressed:  () {
+                                          setState(() {
+                                            selectedAirportQNH = Calculateqnhincredecre(qnhRef: selectedAirportQNH, operation: 'decrement')();
+                                            altitud = Calculatealtitud(elevationRef: _currentElevation.toString(), qnhRef: selectedAirportQNH)();
+                                          });},
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: AppColors.placeholder, 
+                                        foregroundColor: AppColors.iconDark, 
+                                        minimumSize: const Size(50, 50),
+                                        padding: EdgeInsets.zero,
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(8.0),
+                                          side: const BorderSide(color: AppColors.placeholder, width: 1.0), 
+                                        ),
+                                      ),
+                                      child: Icon(
+                                        Icons.remove,
+                                        color: AppColors.iconDark, 
+                                        size: 20,
+                                      ),
                                     ),
-                                  ),
-                                ],
-                              ),
+                                    const SizedBox(width: 8.0),                                 
+                                    ElevatedButton(
+                                      onPressed: () {
+                                          setState(() {
+                                            selectedAirportQNH = Calculateqnhincredecre(qnhRef: selectedAirportQNH, operation: 'increment')();
+                                            altitud = Calculatealtitud(elevationRef: _currentElevation.toString(), qnhRef: selectedAirportQNH)();
+                                          });},
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: AppColors.placeholder, 
+                                        foregroundColor: AppColors.iconDark, 
+                                        minimumSize: const Size(50, 50),
+                                        padding: EdgeInsets.zero,
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(8.0),
+                                          side: const BorderSide(color: AppColors.placeholder, width: 1.0), 
+                                        ),
+                                      ),
+                                      child: Icon(
+                                        Icons.add,
+                                        color: AppColors.iconDark, 
+                                        size: 20,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+
+                              ]
+
                             ],
                           ),
                         ),
@@ -1612,57 +1693,111 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                 ),
                               ),
                               const SizedBox(width: 10.0),
-                              Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                
-                                  ElevatedButton(
-                                    onPressed: () {
-                                        setState(() {
-                                          selectedAirportTemperature = Calculatetemperatureincredecre(temperatureRef: selectedAirportTemperature, operation: 'decrement')();
-                                          isa = Calculateisa(elevationRef: selectedAirportElevation, temperatureRef: selectedAirportTemperature)();
-                                        });},
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: AppColors.placeholder, 
-                                      foregroundColor: AppColors.iconDark, 
-                                      minimumSize: const Size(50, 50),
-                                      padding: EdgeInsets.zero,
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(8.0),
-                                        side: const BorderSide(color: AppColors.placeholder, width: 1.0), 
+                              if(selectedAirport != 'XXX') ...[
+                                Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                  
+                                    ElevatedButton(
+                                      onPressed: () {
+                                          setState(() {
+                                            selectedAirportTemperature = Calculatetemperatureincredecre(temperatureRef: selectedAirportTemperature, operation: 'decrement')();
+                                            isa = Calculateisa(elevationRef: selectedAirportElevation, temperatureRef: selectedAirportTemperature)();
+                                          });},
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: AppColors.placeholder, 
+                                        foregroundColor: AppColors.iconDark, 
+                                        minimumSize: const Size(50, 50),
+                                        padding: EdgeInsets.zero,
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(8.0),
+                                          side: const BorderSide(color: AppColors.placeholder, width: 1.0), 
+                                        ),
+                                      ),
+                                      child: Icon(
+                                        Icons.remove,
+                                        color: AppColors.iconDark, 
+                                        size: 20,
                                       ),
                                     ),
-                                    child: Icon(
-                                      Icons.remove,
-                                      color: AppColors.iconDark, 
-                                      size: 20,
-                                    ),
-                                  ),
-                                  const SizedBox(width: 8.0),                                 
-                                  ElevatedButton(
-                                    onPressed:  () {
-                                        setState(() {
-                                          selectedAirportTemperature = Calculatetemperatureincredecre(temperatureRef: selectedAirportTemperature, operation: 'increment')();
-                                          isa = Calculateisa(elevationRef: selectedAirportElevation, temperatureRef: selectedAirportTemperature)();
-                                        });},
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: AppColors.placeholder, 
-                                      foregroundColor: AppColors.iconDark, 
-                                      minimumSize: const Size(50, 50),
-                                      padding: EdgeInsets.zero,
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(8.0),
-                                        side: const BorderSide(color: AppColors.placeholder, width: 1.0), 
+                                    const SizedBox(width: 8.0),                                 
+                                    ElevatedButton(
+                                      onPressed:  () {
+                                          setState(() {
+                                            selectedAirportTemperature = Calculatetemperatureincredecre(temperatureRef: selectedAirportTemperature, operation: 'increment')();
+                                            isa = Calculateisa(elevationRef: selectedAirportElevation, temperatureRef: selectedAirportTemperature)();
+                                          });},
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: AppColors.placeholder, 
+                                        foregroundColor: AppColors.iconDark, 
+                                        minimumSize: const Size(50, 50),
+                                        padding: EdgeInsets.zero,
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(8.0),
+                                          side: const BorderSide(color: AppColors.placeholder, width: 1.0), 
+                                        ),
+                                      ),
+                                      child: Icon(
+                                        Icons.add,
+                                        color: AppColors.iconDark, 
+                                        size: 20,
                                       ),
                                     ),
-                                    child: Icon(
-                                      Icons.add,
-                                      color: AppColors.iconDark, 
-                                      size: 20,
-                                    ),
+                                  ],
+                                ),
+                              ] else ...[
+                                  Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                    
+                                      ElevatedButton(
+                                        onPressed: () {
+                                            setState(() {
+                                              selectedAirportTemperature = Calculatetemperatureincredecre(temperatureRef: selectedAirportTemperature, operation: 'decrement')();
+                                              isa = Calculateisa(elevationRef: _currentElevation.toString(), temperatureRef: selectedAirportTemperature)();
+                                            });},
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: AppColors.placeholder, 
+                                          foregroundColor: AppColors.iconDark, 
+                                          minimumSize: const Size(50, 50),
+                                          padding: EdgeInsets.zero,
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(8.0),
+                                            side: const BorderSide(color: AppColors.placeholder, width: 1.0), 
+                                          ),
+                                        ),
+                                        child: Icon(
+                                          Icons.remove,
+                                          color: AppColors.iconDark, 
+                                          size: 20,
+                                        ),
+                                      ),
+                                      const SizedBox(width: 8.0),                                 
+                                      ElevatedButton(
+                                        onPressed:  () {
+                                            setState(() {
+                                              selectedAirportTemperature = Calculatetemperatureincredecre(temperatureRef: selectedAirportTemperature, operation: 'increment')();
+                                              isa = Calculateisa(elevationRef: _currentElevation.toString(), temperatureRef: selectedAirportTemperature)();
+                                            });},
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: AppColors.placeholder, 
+                                          foregroundColor: AppColors.iconDark, 
+                                          minimumSize: const Size(50, 50),
+                                          padding: EdgeInsets.zero,
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(8.0),
+                                            side: const BorderSide(color: AppColors.placeholder, width: 1.0), 
+                                          ),
+                                        ),
+                                        child: Icon(
+                                          Icons.add,
+                                          color: AppColors.iconDark, 
+                                          size: 20,
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                ],
-                              ),
+                              ]
                             ],
                           ),
                         ),
