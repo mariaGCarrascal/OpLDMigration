@@ -138,7 +138,6 @@ class _HomePageState extends State<HomePage> {
     if (!_isReady) {
       return;
     }
-    debugPrint(" paso 1: se oprimio en boton, el arreglo va vacio.");
  
     elevation = elevations[selectedAirportType] ?? "Unknown";
     qnh = refQNH[selectedAirportType] ?? "Unknown";
@@ -486,7 +485,7 @@ class _HomePageState extends State<HomePage> {
             bottom: 0,
             child: OpLDAppText.regular(
               AppStrings.appVersionNumber,
-              color: AppColors.white,
+              color: AppColors.placeholder,
             ),
           ),
         ],

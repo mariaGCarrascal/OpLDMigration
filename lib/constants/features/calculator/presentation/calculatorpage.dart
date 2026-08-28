@@ -5,8 +5,10 @@ import 'package:flutter_application_5/constants/features/calculator/fuctions/cal
 import 'package:flutter_application_5/constants/features/calculator/fuctions/calculateqnhincredecre.dart';
 import 'package:flutter_application_5/constants/features/calculator/fuctions/calculatetemperatureincredecre.dart';
 import 'package:flutter_application_5/constants/features/calculator/fuctions/calculatevrefincredecre.dart';
+import 'package:flutter_application_5/constants/features/calculator/fuctions/calculateweightincredecre.dart';
 import 'package:flutter_application_5/constants/features/calculator/fuctions/customDigitFormatter.dart';
 import 'package:flutter_application_5/constants/features/calculator/fuctions/loadcomments.dart';
+import 'package:flutter_application_5/constants/features/calculator/fuctions/searchdefault.dart';
 import 'package:flutter_application_5/constants/features/home/data/airportdata.dart';
 import 'package:flutter_application_5/constants/strings/app_strings.dart';
 import 'package:flutter/services.dart';
@@ -70,13 +72,16 @@ class _CalculatorPageState extends State<CalculatorPage> {
   String? rwySlope;
   String? rwyLda;
   String? vRef;
-  String? weightMIN;
-  String? weightMAX;
-  String? weightDefault;
+  String? vMax;
+  String? vMin;
+  late double weightMIN;
+  late double weightMAX;
   String? altitud;
   bool _isExpanded = false;
   //Variables de listas y Maps de los DropDownlists
   List<String>? listaComments = [];
+  List<String>? weightsAircraft = [];
+  List<String>? defaultAircraft = [];
   Map<String, List<String>>? selectedAirportRunway;
   List<String>? selectedSlopeValues = [];
   List<String>? selectedAircraftWeight = [];
@@ -97,18 +102,22 @@ class _CalculatorPageState extends State<CalculatorPage> {
     super.initState();
     updateRwyCondition('DRY');
     selectedAircraft = widget.aircraft;
+    defaultAircraft = Searchdefault(aircraftRef: selectedAircraft)();
+    _currentLadWeight = double.parse(defaultAircraft?[4] ?? '0');
+    weightMAX = double.parse(defaultAircraft?[5] ?? '0');
+    weightMIN = double.parse(defaultAircraft?[6] ?? '0');
     selectedLanding = widget.normalNon;
     selectedConfiguration = widget.configuration;
     selectedAirport = widget.airport;
     selectedAirportQNH = widget.airportQNH;
     listaComments = Loadcomments(aircraftRef: selectedAircraft, landingRef: selectedLanding,configurationRef: selectedConfiguration)();
     if(selectedLanding == 'Normal') {
-      selectedFlaps = 'FLAPS 30';
+      selectedFlaps = defaultAircraft?[1];
     } else {
       selectedFlaps = widget.nonflaps;
       nonFlap = widget.nonflaps;
     }
-    selectedAutoBrakes = 'AUTOBRAKE 3';
+    selectedAutoBrakes = defaultAircraft?[2];
 
     if(selectedAirport != 'XXX') {
       selectedAirportElevation = widget.airportEl;
@@ -129,8 +138,14 @@ class _CalculatorPageState extends State<CalculatorPage> {
       rwyLda = '0000'; 
       rwySlope = '0';
     } 
+    _currentLadWeight = double.parse(defaultAircraft?[4] ?? '0');
+    weightMAX = double.parse(defaultAircraft?[5] ?? '0');
+    weightMIN = double.parse(defaultAircraft?[6] ?? '0');
     isa = Calculateisa(elevationRef: selectedAirportElevation, temperatureRef: selectedAirportTemperature)();
-    vRef = '5';
+    vRef = defaultAircraft?[0];
+    vMin = defaultAircraft?[7];
+    vMax = defaultAircraft?[8];
+    
   }
 
   void updateRwyCondition(String condition) {
@@ -1147,7 +1162,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                     ElevatedButton(
                                       onPressed: () {
                                         setState(() {
-                                          vRef = Calculatevrefincredecre(vReference: vRef, operation: 'decrement')();
+                                          vRef = Calculatevrefincredecre(vReference: vRef, minReference: vMin, maxReference: vMax, operation: 'decrement')();
                                         });
                                       },
                                       style: ElevatedButton.styleFrom(
@@ -1170,7 +1185,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                     ElevatedButton(
                                       onPressed: () {
                                         setState(() {
-                                          vRef = Calculatevrefincredecre(vReference: vRef, operation: 'increment')();
+                                          vRef = Calculatevrefincredecre(vReference: vRef, minReference: vMin, maxReference: vMax, operation: 'increment')();
                                         });
                                       },
                                       style: ElevatedButton.styleFrom(
@@ -1229,7 +1244,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                             ElevatedButton(
                                               onPressed: () {
                                                 setState(() {
-                                                  vRef = Calculatevrefincredecre(vReference: vRef, operation: 'decrement')();
+                                                  vRef = Calculatevrefincredecre(vReference: vRef, minReference: vMin, maxReference: vMax, operation: 'decrement')();
                                                 });
                                               },
                                               style: ElevatedButton.styleFrom(
@@ -1252,7 +1267,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                             ElevatedButton(
                                               onPressed: () {
                                                 setState(() {
-                                                  vRef = Calculatevrefincredecre(vReference: vRef, operation: 'increment')();
+                                                  vRef = Calculatevrefincredecre(vReference: vRef, minReference: vMin, maxReference: vMax, operation: 'increment')();
                                                 });
                                               },
                                               style: ElevatedButton.styleFrom(
@@ -1309,7 +1324,11 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                       ),
                                       const Spacer(),
                                       ElevatedButton(
-                                        onPressed: _decrement,
+                                        onPressed: () {
+                                          setState(() {
+                                            _currentLadWeight = Calculateweightincredecre(weightReference: _currentLadWeight, minReference: weightMIN, maxReference: weightMAX, operation: 'decrement')();
+                                          });
+                                        },
                                         style: ElevatedButton.styleFrom(
                                           backgroundColor: AppColors.placeholder, 
                                           foregroundColor: AppColors.iconDark, 
@@ -1328,7 +1347,11 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                       ),
                                       const SizedBox(width: 8.0),                                 
                                       ElevatedButton(
-                                        onPressed: _increment,
+                                        onPressed:  () {
+                                          setState(() {
+                                            _currentLadWeight = Calculateweightincredecre(weightReference: _currentLadWeight, minReference: weightMIN, maxReference: weightMAX, operation: 'increment')();
+                                          });
+                                        },
                                         style: ElevatedButton.styleFrom(
                                           backgroundColor: AppColors.placeholder, 
                                           foregroundColor: AppColors.iconDark, 
@@ -1352,8 +1375,8 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                     activeColor: AppColors.iconDark,
                                     thumbColor: AppColors.iconDark,
                                     value: _currentLadWeight,
-                                    min: 96000,
-                                    max: 174200,
+                                    min: weightMIN,
+                                    max: weightMAX,
                                     onChanged: (double val) {
                                       setState(() {
                                         _currentLadWeight = val;
