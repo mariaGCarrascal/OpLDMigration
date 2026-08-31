@@ -34,7 +34,7 @@ class Searchdefault{
             )
             .expand((f) => [f.findAllElements('landingCondition').first]);
       }
-      
+     
       if (selectedAircraftType != null) {
         defaultValues = target
           .expand((c) => [
@@ -51,6 +51,8 @@ class Searchdefault{
           ...c.findAllElements('altitudeMAXvalue'),
           ...c.findAllElements('slopeMINvalue'),
           ...c.findAllElements('slopeMAXvalue'),
+          ...c.findAllElements('deltaISA_MINvalue'),
+          ...c.findAllElements('deltaISA_MAXvalue'),
           ])
             .map((e) => e.innerText)
             .toList();

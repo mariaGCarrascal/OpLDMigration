@@ -27,8 +27,8 @@
 			<deltaISA_MAXvalue>  60 </deltaISA_MAXvalue>
 			<VrefAdditiveMINvalue>0</VrefAdditiveMINvalue>
 			<VrefAdditiveMAXvalue>30</VrefAdditiveMAXvalue>
-			<reversersInoperativeMINvalue> 0 </reversersInoperativeMINvalue>
-			<reversersInoperativeMAXvalue> 2 </reversersInoperativeMAXvalue>
+			<reversersInoperativeMINvalue>0</reversersInoperativeMINvalue>
+			<reversersInoperativeMAXvalue>2</reversersInoperativeMAXvalue>
 			<weightDefaultValue>129200</weightDefaultValue>
 			<altitudeDefaultValue>   2000 </altitudeDefaultValue>
 			<windDefaultValue>      0 </windDefaultValue>
@@ -17793,8 +17793,8 @@
 			<deltaISA_MAXvalue>  45 </deltaISA_MAXvalue>
 			<VrefAdditiveMINvalue>0</VrefAdditiveMINvalue>
 			<VrefAdditiveMAXvalue>30</VrefAdditiveMAXvalue>
-			<reversersInoperativeMINvalue> 0 </reversersInoperativeMINvalue>
-			<reversersInoperativeMAXvalue> 2 </reversersInoperativeMAXvalue>
+			<reversersInoperativeMINvalue>0</reversersInoperativeMINvalue>
+			<reversersInoperativeMAXvalue>2</reversersInoperativeMAXvalue>
 			<weightDefaultValue>146300</weightDefaultValue>
 			<altitudeDefaultValue>   2000 </altitudeDefaultValue>
 			<windDefaultValue>      0 </windDefaultValue>
@@ -35557,8 +35557,8 @@
 			<deltaISA_MAXvalue>60</deltaISA_MAXvalue>
 			<VrefAdditiveMINvalue>0</VrefAdditiveMINvalue>
 			<VrefAdditiveMAXvalue>30</VrefAdditiveMAXvalue>
-			<reversersInoperativeMINvalue> 0 </reversersInoperativeMINvalue>
-			<reversersInoperativeMAXvalue> 2 </reversersInoperativeMAXvalue>
+			<reversersInoperativeMINvalue>0</reversersInoperativeMINvalue>
+			<reversersInoperativeMAXvalue>2</reversersInoperativeMAXvalue>
 			<weightDefaultValue>146300</weightDefaultValue>
 			<altitudeDefaultValue>2000</altitudeDefaultValue>
 			<windDefaultValue>0</windDefaultValue>

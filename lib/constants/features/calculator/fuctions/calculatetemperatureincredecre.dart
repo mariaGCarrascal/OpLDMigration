@@ -1,9 +1,12 @@
 class Calculatetemperatureincredecre {
   final String? temperatureRef;
+  final String? isaRef;
+  final String? minRef;
+  final String? maxRef;
   final String? operation;
 
   Calculatetemperatureincredecre({
-    this.temperatureRef,
+    this.temperatureRef, this.isaRef, this.minRef, this.maxRef,
     this.operation,
   });
 
@@ -14,16 +17,22 @@ class Calculatetemperatureincredecre {
 
     try {
       final double temperature = double.parse(temperatureRef!.trim());
+      final double isa = double.parse(isaRef!.trim());
+      final double min = double.parse(minRef!.trim());
+      final double max = double.parse(maxRef!.trim());
       double result = temperature.roundToDouble();
 
       if (operation != null) {
         final String opLower = operation!.trim().toLowerCase();
         
         if (opLower == 'increment') {
-          result += 1.0; 
+          if(isa < max ) {
+            result += 1.0; }
         } else if (opLower == 'decrement') {
-          result -= 1.0; 
+            if(isa > min) {
+              result -= 1.0; }
         }
+
       }
 
       return result.round().toString();
