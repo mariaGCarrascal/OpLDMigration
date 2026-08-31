@@ -11,6 +11,7 @@ import 'package:flutter_application_5/constants/features/calculator/fuctions/cal
 import 'package:flutter_application_5/constants/features/calculator/fuctions/calculateweightincredecre.dart';
 import 'package:flutter_application_5/constants/features/calculator/fuctions/customDigitFormatter.dart';
 import 'package:flutter_application_5/constants/features/calculator/fuctions/loadcomments.dart';
+import 'package:flutter_application_5/constants/features/calculator/fuctions/loadreversers.dart';
 import 'package:flutter_application_5/constants/features/calculator/fuctions/searchdefault.dart';
 import 'package:flutter_application_5/constants/features/home/data/airportdata.dart';
 import 'package:flutter_application_5/constants/strings/app_strings.dart';
@@ -34,11 +35,8 @@ class CalculatorPage extends StatefulWidget {
   });
 //Pendientes:
 //Buscar solucion cuando se presiona el boton de suma y resta que cambia la variable de altitud en QNH, de momento se paraliza.
-//Cargar los reversers y usarlos. 
 //Cambiar la visual del card results juntandolo y usar Divider.
-//Agregar la logica max y min de isa con valores del xml. (Listo)
-//Aplicar los calculos con Reduction. (Listo)
-//Falta que se traigan los cometarios cuando Landing es Normal, tambien cambian por el flap elegido. (Listo)
+//Calculo de Vientos y traer/usar valores default, min y max de viento.
 //Traer los datos para los calculos que dan resultado del OpLD performance y el calculo de remaing a final (netLDA - opldResults)
 //Logica de cambio de colores en el OpLD
 
@@ -54,7 +52,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
   String? _currentReduction;
   String? netLDA;
   String? opldResult;
-  String? remaingResult;
+  String? remainingResult;
   double _currentLadWeight = 130000;
   double _currentElevation = 2000;
   double? altitudMax;
@@ -73,6 +71,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
   String? selectedConfiguration;
   String? selectedAirportElevation;
   String? selectedFlaps;
+   String? selectedReversers;
   String? selectedAutoBrakes;
   String? selectedAirportQNH;
   String? selectedAirportTemperature;
@@ -103,6 +102,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
   List<String>? selectedAircraftWeight = [];
   final List<String> aircraftTypes = ['Opcion A', 'Opcion B'];
   final List<String> normalFlaps = ['FLAPS 15', 'FLAPS 30', 'FLAPS 40'];
+  List<String>? reversersList = [];
   final List<String> autoBrakes = ['MAX MANUAL', 'AUTOBRAKE MAX', 'AUTOBRAKE 3', 'AUTOBRAKE 2', 'AUTOBRAKE 1'];
   final List<String> speedBrakesTypes = ['AUTOMATIC', 'MANUAL'];
   final List<String> rwyConditions = ['DRY', 'GOOD', 'GOOD TO MEDIUM', 'MEDIUM', 'MEDIUM TO POOR', 'POOR'];
@@ -129,6 +129,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
     selectedAirport = widget.airport;
     selectedAirportQNH = widget.airportQNH;
     selectedAutoBrakes = defaultAircraft?[2];
+    reversersList = Loadreversers(valuesRef: defaultAircraft!)();
 
     if(selectedLanding == 'Normal') {
       selectedFlaps = defaultAircraft?[1];
@@ -1040,9 +1041,9 @@ class _CalculatorPageState extends State<CalculatorPage> {
                               Expanded(
                                 child: DropdownButtonFormField<String>(
                                   isExpanded: true, 
-                                  initialValue: selectedAircraftType,
+                                  initialValue: selectedReversers,
                                   hint: Text(
-                                    'Opcion A',
+                                    reversersList![0],
                                     style: TextStyle(
                                       fontWeight: FontWeight.bold,
                                       color: AppColors.placeholderDark,
@@ -1066,7 +1067,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                       vertical: 5,
                                     ),
                                   ),
-                                  items: aircraftTypes.map((String value) {
+                                  items: reversersList!.map((String value) {
                                     return DropdownMenuItem<String>(
                                       value: value,
                                       child: Text(
@@ -1078,7 +1079,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                   }).toList(),
                                   onChanged: (newValue) {
                                     setState(() {
-                                      selectedAircraftType = newValue;
+                                      selectedReversers = newValue;
                                     });
                                   },
                                 ),
@@ -2157,7 +2158,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                       const SizedBox(height: 12),
                                       Text('$selectedAutoBrakes', textAlign: TextAlign.left, style: TextStyle(color: AppColors.placeholder)),
                                       const SizedBox(height: 50),
-                                      //Revisar o reajustar tras ver vista en tablet
+                                     
                                       Row(
                                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                         children: [

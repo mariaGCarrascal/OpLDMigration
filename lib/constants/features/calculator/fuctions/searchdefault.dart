@@ -53,6 +53,9 @@ class Searchdefault{
           ...c.findAllElements('slopeMAXvalue'),
           ...c.findAllElements('deltaISA_MINvalue'),
           ...c.findAllElements('deltaISA_MAXvalue'),
+          ...c.findAllElements('reversersInoperativeDefaultValue'),
+          ...c.findAllElements('reversersInoperativeMINvalue'),
+          ...c.findAllElements('reversersInoperativeMAXvalue'),
           ])
             .map((e) => e.innerText)
             .toList();
