@@ -55,11 +55,10 @@ class _CalculatorPageState extends State<CalculatorPage> {
   String? netLDA;
   String? opldResult;
   String? remainingResult;
-  double _currentLadWeight = 130000;
-  double _currentElevation = 2000;
+  late double _currentLadWeight;
+  late double _currentElevation;
   double? altitudMax;
   double? altitudMin;
-  //Modificar a futuro este tema del slider en Elevation en aeropuerto XXX.
   late double sliderMin;
   late double sliderMax;
   int? _divisions;
@@ -76,7 +75,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
   String? selectedAutoBrake;
   String? selectedAirportQNH;
   String? selectedAirportTemperature;
-  String? selectedCondition = 'DRY';
+  String? selectedCondition;
   String? nonFlap;
   String? selectedSpeedBrakeType = 'AUTOMATIC';
   String? rwyRcc;
@@ -116,9 +115,10 @@ class _CalculatorPageState extends State<CalculatorPage> {
   @override
   void initState() {
     super.initState();
-    updateRwyCondition('DRY');
     selectedAircraft = widget.aircraft;
     defaultAircraft = Searchdefault(aircraftRef: selectedAircraft)();
+    selectedCondition = defaultAircraft?[19];
+    updateRwyCondition('$selectedCondition');
     _currentLadWeight = double.parse(defaultAircraft?[4] ?? '0');
     weightMAX = double.parse(defaultAircraft?[5] ?? '0');
     weightMIN = double.parse(defaultAircraft?[6] ?? '0');
@@ -163,6 +163,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
       sliderMax = (altitudMax! / 1000).floor() * 1000;
       _divisions = ((sliderMax - sliderMin) / 1000).round();
       selectedAirportTemperature = '26.0';
+      _currentElevation = double.parse(defaultAircraft?[18] ?? '0');
       isa = Calculateisa(elevationRef: _currentElevation.toString(), temperatureRef: selectedAirportTemperature)();
       rwyId = '0000'; 
       rwyLda = '0000'; 

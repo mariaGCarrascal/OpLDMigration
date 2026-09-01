@@ -56,6 +56,8 @@ class Searchdefault{
           ...c.findAllElements('reversersInoperativeDefaultValue'),
           ...c.findAllElements('reversersInoperativeMINvalue'),
           ...c.findAllElements('reversersInoperativeMAXvalue'),
+          ...c.findAllElements('altitudeDefaultValue'),
+          ...c.findAllElements('reportedBrakingAction_label_ofDefault'),
           ])
             .map((e) => e.innerText)
             .toList();
