@@ -15,7 +15,7 @@ class Calculateelevationincredecre {
     }
 
     try {
-      final int elevation = elevationReference!.toInt();;
+      final int elevation = elevationReference!.toInt();
       final int elevationMin = minReference!.toInt();
       final int elevationMax = maxReference!.toInt();
       int result = elevation;

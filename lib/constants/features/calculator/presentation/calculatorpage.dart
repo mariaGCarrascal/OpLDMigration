@@ -10,8 +10,10 @@ import 'package:flutter_application_5/constants/features/calculator/fuctions/cal
 import 'package:flutter_application_5/constants/features/calculator/fuctions/calculatevrefincredecre.dart';
 import 'package:flutter_application_5/constants/features/calculator/fuctions/calculateweightincredecre.dart';
 import 'package:flutter_application_5/constants/features/calculator/fuctions/customDigitFormatter.dart';
+import 'package:flutter_application_5/constants/features/calculator/fuctions/loadautobrakes.dart';
 import 'package:flutter_application_5/constants/features/calculator/fuctions/loadcomments.dart';
 import 'package:flutter_application_5/constants/features/calculator/fuctions/loadreversers.dart';
+import 'package:flutter_application_5/constants/features/calculator/fuctions/searchautobrakedefault.dart';
 import 'package:flutter_application_5/constants/features/calculator/fuctions/searchdefault.dart';
 import 'package:flutter_application_5/constants/features/home/data/airportdata.dart';
 import 'package:flutter_application_5/constants/strings/app_strings.dart';
@@ -64,15 +66,14 @@ class _CalculatorPageState extends State<CalculatorPage> {
   String? isa;
   String? selectedRunway;
   String? selectedWind;
-  String? selectedAircraftType;
   String? selectedAircraft;
   String? selectedLanding;
   String? selectedAirport;
   String? selectedConfiguration;
   String? selectedAirportElevation;
   String? selectedFlaps;
-   String? selectedReversers;
-  String? selectedAutoBrakes;
+  String? selectedReversers;
+  String? selectedAutoBrake;
   String? selectedAirportQNH;
   String? selectedAirportTemperature;
   String? selectedCondition = 'DRY';
@@ -100,10 +101,9 @@ class _CalculatorPageState extends State<CalculatorPage> {
   Map<String, List<String>>? selectedAirportRunway;
   List<String>? selectedSlopeValues = [];
   List<String>? selectedAircraftWeight = [];
-  final List<String> aircraftTypes = ['Opcion A', 'Opcion B'];
   final List<String> normalFlaps = ['FLAPS 15', 'FLAPS 30', 'FLAPS 40'];
   List<String>? reversersList = [];
-  final List<String> autoBrakes = ['MAX MANUAL', 'AUTOBRAKE MAX', 'AUTOBRAKE 3', 'AUTOBRAKE 2', 'AUTOBRAKE 1'];
+  List<String>? autoBrakeOptions;
   final List<String> speedBrakesTypes = ['AUTOMATIC', 'MANUAL'];
   final List<String> rwyConditions = ['DRY', 'GOOD', 'GOOD TO MEDIUM', 'MEDIUM', 'MEDIUM TO POOR', 'POOR'];
   final List<String> windDirection = ['000', '010', '020', '030', '040', '050', '060', '070', '080', '090', '100',
@@ -128,16 +128,19 @@ class _CalculatorPageState extends State<CalculatorPage> {
     selectedConfiguration = widget.configuration;
     selectedAirport = widget.airport;
     selectedAirportQNH = widget.airportQNH;
-    selectedAutoBrakes = defaultAircraft?[2];
     reversersList = Loadreversers(valuesRef: defaultAircraft!)();
-
+    
     if(selectedLanding == 'Normal') {
       selectedFlaps = defaultAircraft?[1];
       listaComments = Loadcomments(aircraftRef: selectedAircraft, landingRef: selectedLanding,configurationRef: selectedConfiguration, flapRef: selectedFlaps)();
+      selectedAutoBrake = defaultAircraft?[2];
+      autoBrakeOptions = Loadautobrakes(aircraftRef: selectedAircraft, landingRef: selectedLanding, configurationRef: selectedConfiguration, flapRef: selectedFlaps, conditionRef: selectedCondition)();
     } else {
       selectedFlaps = widget.nonflaps;
       nonFlap = widget.nonflaps;
       listaComments = Loadcomments(aircraftRef: selectedAircraft, landingRef: selectedLanding,configurationRef: selectedConfiguration, flapRef: selectedFlaps)();
+      selectedAutoBrake = Searchautobrakedefault(aircraftRef: selectedAircraft, landingRef: selectedLanding, configurationRef: selectedConfiguration, conditionRef: selectedCondition)();
+      autoBrakeOptions = Loadautobrakes(aircraftRef: selectedAircraft, landingRef: selectedLanding, configurationRef: selectedConfiguration, flapRef: selectedFlaps, conditionRef: selectedCondition)();
     }
 
     if(selectedAirport != 'XXX') {
@@ -163,7 +166,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
       isa = Calculateisa(elevationRef: _currentElevation.toString(), temperatureRef: selectedAirportTemperature)();
       rwyId = '0000'; 
       rwyLda = '0000'; 
-      rwySlope = '0.0';
+      rwySlope = '0';
       netLDA = rwyLda;
       opldResult = '8143';
       rwySlopeMin = defaultAircraft?[11];
@@ -451,6 +454,12 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                     setState(() {
                                       selectedCondition = newValue;
                                       updateRwyCondition(newValue);
+                                      if(selectedLanding == 'Non-Normal') {
+                                        selectedAutoBrake = Searchautobrakedefault(aircraftRef: selectedAircraft, landingRef: selectedLanding, configurationRef: selectedConfiguration, conditionRef: selectedCondition)();
+                                        autoBrakeOptions = Loadautobrakes(aircraftRef: selectedAircraft, landingRef: selectedLanding, configurationRef: selectedConfiguration, flapRef: selectedFlaps, conditionRef: selectedCondition)();
+                                      } else {
+                                        autoBrakeOptions = Loadautobrakes(aircraftRef: selectedAircraft, landingRef: selectedLanding, configurationRef: selectedConfiguration, flapRef: selectedFlaps, conditionRef: selectedCondition)();
+                                      }
                                     });
                                   },
                                 ),
@@ -885,6 +894,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                       setState(() {
                                         selectedFlaps = newValue;
                                         listaComments = Loadcomments(aircraftRef: selectedAircraft, landingRef: selectedLanding,configurationRef: selectedConfiguration, flapRef: selectedFlaps)();
+                                        autoBrakeOptions = Loadautobrakes(aircraftRef: selectedAircraft, landingRef: selectedLanding, configurationRef: selectedConfiguration, flapRef: selectedFlaps, conditionRef: selectedCondition)();
                                       });
                                     },
                                   ),
@@ -968,9 +978,9 @@ class _CalculatorPageState extends State<CalculatorPage> {
                               Expanded(
                                 child: DropdownButtonFormField<String>(
                                   isExpanded: true, 
-                                  initialValue: selectedAutoBrakes,
+                                  initialValue: selectedAutoBrake,
                                   hint: Text(
-                                    '$selectedAutoBrakes',
+                                    '$selectedAutoBrake',
                                     style: TextStyle(
                                       fontWeight: FontWeight.bold,
                                       color: AppColors.placeholderDark,
@@ -994,7 +1004,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                         vertical: 5,
                                       ),
                                     ),
-                                  items: autoBrakes.map((String value) {
+                                  items: autoBrakeOptions!.map((String value) {
                                     return DropdownMenuItem<String>(
                                       value: value,
                                       child: Text(
@@ -1006,7 +1016,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                   }).toList(),
                                   onChanged: (newValue) {
                                     setState(() {
-                                      selectedAutoBrakes = newValue;
+                                      selectedAutoBrake = newValue;
                                     });
                                   },
                                 ),
@@ -1045,7 +1055,6 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                   hint: Text(
                                     reversersList![0],
                                     style: TextStyle(
-                                      fontWeight: FontWeight.bold,
                                       color: AppColors.placeholderDark,
                                     ),
                                     overflow: TextOverflow.ellipsis,
@@ -1365,7 +1374,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                           Text(AppStrings.landWeight, style: const TextStyle(color: AppColors.white)),
                                           const SizedBox(height: 5.0),
                                           Text(
-                                            (_currentLadWeight as num).toInt().toString() + AppStrings.lb,
+                                            '${(_currentLadWeight as num).toInt().toString()} ${AppStrings.lb}',
                                             style: const TextStyle(color: AppColors.textColor2Dark),
                                           ),
                                         ],
@@ -1500,7 +1509,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                     ),
                                     const SizedBox(height: 4),
                                     Text(
-                                      '${(0.02953 * (double.tryParse(selectedAirportQNH ?? '') ?? 0)).toStringAsFixed(2)}',
+                                      (0.02953 * (double.tryParse(selectedAirportQNH ?? '') ?? 0)).toStringAsFixed(2),
                                       style: TextStyle(color: AppColors.placeholderDark, fontSize: 15,),
                                     ),
                                 ]
@@ -2156,7 +2165,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                       const SizedBox(height: 12),
                                       Text('$selectedFlaps', textAlign: TextAlign.left, style: TextStyle(color: AppColors.placeholder)),
                                       const SizedBox(height: 12),
-                                      Text('$selectedAutoBrakes', textAlign: TextAlign.left, style: TextStyle(color: AppColors.placeholder)),
+                                      Text('$selectedAutoBrake', textAlign: TextAlign.left, style: TextStyle(color: AppColors.placeholder)),
                                       const SizedBox(height: 50),
                                      
                                       Row(
