@@ -42,6 +42,7 @@ class CalculatorPage extends StatefulWidget {
 //Uso de valores Mag en vientos cuando sea XXX el aerpuerto.
 //Traer los datos para los calculos que dan resultado del OpLD performance y el calculo de remaing a final (netLDA - opldResults)
 //Logica de cambio de colores en el OpLD.
+//Hay overflow en remaining cuando es vertical y aumentar la longuitud de rwy id. Hay overflow cuando aparece configuration en Homepage al estar horizontal
 
   @override
   State<CalculatorPage> createState() => _CalculatorPageState();
@@ -2223,7 +2224,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                               textAlign: TextAlign.left, 
                                               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppColors.white),
                                             ),
-                                            SizedBox(width: screenSize.width * 0.15),
+                                            SizedBox(width: screenSize.width * 0.13),
                                             Text(
                                               '5608${AppStrings.ft}', 
                                               textAlign: TextAlign.right, 
