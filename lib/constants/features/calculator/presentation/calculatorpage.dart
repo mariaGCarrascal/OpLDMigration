@@ -36,9 +36,9 @@ class CalculatorPage extends StatefulWidget {
     this.airport, this.airportEl, this.airportQNH, this.airportTemp, this.airportRunway, this.nonflaps
   });
 //Pendientes:
-//Buscar solucion cuando se presiona el boton de suma y resta que cambia la variable de altitud en QNH, de momento se paraliza.
 //Cambiar la visual del card results juntandolo y usar Divider.
-//Calculo de Vientos y traer/usar valores default, min y max de viento.
+//Calculo de Vientos y traer/usar valores default, min y max de viento, de momento solo se usa windMin.
+//Uso de valores Mag en vientos cuando sea XXX el aerpuerto.
 //Traer los datos para los calculos que dan resultado del OpLD performance y el calculo de remaing a final (netLDA - opldResults)
 //Logica de cambio de colores en el OpLD.
 
@@ -50,7 +50,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
 
   //Variables para las selecciones 
   int _counter = 0;
-  //Nota la reduccion solo permite 5 digitos si son 0, pero si tiene valor que no sea 0 al inicio solo permite 4 digitos
+  //Nota: la reduccion solo permite 5 digitos si son 0, pero si tiene valor que no sea 0 al inicio solo permite 4 digitos
   String? _currentReduction;
   String? netLDA;
   String? opldResult;
@@ -90,6 +90,8 @@ class _CalculatorPageState extends State<CalculatorPage> {
   String? vMin;
   String? isaMax;
   String? isaMin;
+  String? windMax;
+  String? windMin;
   late double weightMIN;
   late double weightMAX;
   String? altitud;
@@ -159,6 +161,8 @@ class _CalculatorPageState extends State<CalculatorPage> {
     weightMIN = double.parse(defaultAircraft?[6] ?? '0');
     isaMin = defaultAircraft?[13];
     isaMax = defaultAircraft?[14];
+    windMin = defaultAircraft?[21];
+    windMax = defaultAircraft?[22];
     selectedLanding = widget.normalNon;
     selectedConfiguration = widget.configuration;
     selectedAirport = widget.airport;
@@ -190,7 +194,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
       opldResult = rwyLda; 
       rwySlope = selectedSlopeValues?[2];
       altitud = Calculatealtitud(elevationRef: selectedAirportElevation, qnhRef: selectedAirportQNH)();
-      isa = Calculateisa(elevationRef: selectedAirportElevation, temperatureRef: selectedAirportTemperature)();
+      isa = Calculateisa(elevationRef: altitud, temperatureRef: selectedAirportTemperature)();
     } else {
       altitudMin = double.parse(defaultAircraft?[9] ?? '0');
       altitudMax = double.parse(defaultAircraft?[10] ?? '0');
@@ -199,7 +203,8 @@ class _CalculatorPageState extends State<CalculatorPage> {
       _divisions = ((sliderMax - sliderMin) / 1000).round();
       selectedAirportTemperature = '26.0';
       _currentElevation = double.parse(defaultAircraft?[18] ?? '0');
-      isa = Calculateisa(elevationRef: _currentElevation.toString(), temperatureRef: selectedAirportTemperature)();
+      altitud = Calculatealtitud(elevationRef: _currentElevation.toString(), qnhRef: selectedAirportQNH)();
+      isa = Calculateisa(elevationRef: altitud, temperatureRef: selectedAirportTemperature)();
       rwyId = '0000'; 
       rwyLda = '0000'; 
       rwySlope = '0';
@@ -221,6 +226,12 @@ class _CalculatorPageState extends State<CalculatorPage> {
     final values = conditionNotes[condition] ?? ["Unknown"];
     rwyRcc = values.first;
     rwyNote = values.skip(1).toList();
+  }
+
+  String _formatSlope(String? value) {
+    final number = double.tryParse(value ?? '');
+    if (number == null) return value ?? '0';
+    return number == number.toInt() ? number.toInt().toString() : number.toString();
   }
 
   void _increment() {
@@ -529,7 +540,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                               if (selectedAirport != 'XXX')
                                 Expanded(
                                   child: Text(
-                                    '$rwySlope %',
+                                    '${_formatSlope(rwySlope)} %',
                                     style: TextStyle(color: AppColors.textColor3Dark, fontSize: 15,),
                                   ),
                                 )
@@ -619,7 +630,9 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                             ElevatedButton(
                                               onPressed: () {
                                                 setState(() {
-                                                    _currentElevation = Calculateelevationincredecre(elevationReference: _currentElevation, minReference: weightMIN, maxReference: weightMAX, operation: 'decrement')();
+                                                    _currentElevation = Calculateelevationincredecre(elevationReference: _currentElevation, minReference: altitudMin, maxReference: altitudMax, operation: 'decrement')();
+                                                    altitud = Calculatealtitud(elevationRef: _currentElevation.toString(), qnhRef: selectedAirportQNH)();
+                                                    isa = Calculateisa(elevationRef: altitud, temperatureRef: selectedAirportTemperature)();
                                                   });
                                                 },
                                               style: ElevatedButton.styleFrom(
@@ -642,7 +655,9 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                             ElevatedButton(
                                               onPressed: () {
                                                 setState(() {
-                                                    _currentElevation = Calculateelevationincredecre(elevationReference: _currentElevation, minReference: weightMIN, maxReference: weightMAX, operation: 'increment')();
+                                                    _currentElevation = Calculateelevationincredecre(elevationReference: _currentElevation, minReference: altitudMin, maxReference: altitudMax, operation: 'increment')();
+                                                    altitud = Calculatealtitud(elevationRef: _currentElevation.toString(), qnhRef: selectedAirportQNH)();
+                                                    isa = Calculateisa(elevationRef: altitud, temperatureRef: selectedAirportTemperature)();
                                                   });
                                                 },
                                               style: ElevatedButton.styleFrom(
@@ -681,6 +696,8 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                       onChanged: (double val) {
                                         setState(() {
                                           _currentElevation = val;
+                                          altitud = Calculatealtitud(elevationRef: _currentElevation.toString(), qnhRef: selectedAirportQNH)();
+                                          isa = Calculateisa(elevationRef: altitud, temperatureRef: selectedAirportTemperature)();
                                         });
                                       },
                                     ),
@@ -1626,8 +1643,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                               ] else ...[
                                   Row(
                                   mainAxisSize: MainAxisSize.min,
-                                  children: [
-//Buscar solucion cuando se presiona el boton de suma y resta que cambia la variable de altitud en QNH, de momento se paraliza.       
+                                  children: [      
                                     ElevatedButton(
                                       onPressed:  () {
                                           setState(() {
@@ -1711,7 +1727,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                 Expanded(
                                   flex: 7,
                                   child: Text(
-                                    '$_currentElevation ${AppStrings.palt}',
+                                    '$altitud ${AppStrings.palt}',
                                     style: TextStyle(color: AppColors.textColor3Dark, fontSize: 15,),
                                   ),
                                 ),
@@ -1770,7 +1786,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                       onPressed: () {
                                           setState(() {
                                             selectedAirportTemperature = Calculatetemperatureincredecre(temperatureRef: selectedAirportTemperature, isaRef: isa, minRef: isaMin, maxRef: isaMax, operation: 'decrement')();
-                                            isa = Calculateisa(elevationRef: selectedAirportElevation, temperatureRef: selectedAirportTemperature)();
+                                            isa = Calculateisa(elevationRef: altitud, temperatureRef: selectedAirportTemperature)();
                                           });},
                                       style: ElevatedButton.styleFrom(
                                         backgroundColor: AppColors.placeholder, 
@@ -1793,7 +1809,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                       onPressed:  () {
                                           setState(() {
                                             selectedAirportTemperature = Calculatetemperatureincredecre(temperatureRef: selectedAirportTemperature, isaRef: isa, minRef: isaMin, maxRef: isaMax, operation: 'increment')();
-                                            isa = Calculateisa(elevationRef: selectedAirportElevation, temperatureRef: selectedAirportTemperature)();
+                                            isa = Calculateisa(elevationRef: altitud, temperatureRef: selectedAirportTemperature)();
                                           });},
                                       style: ElevatedButton.styleFrom(
                                         backgroundColor: AppColors.placeholder, 
@@ -1822,7 +1838,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                         onPressed: () {
                                             setState(() {
                                               selectedAirportTemperature = Calculatetemperatureincredecre(temperatureRef: selectedAirportTemperature, operation: 'decrement')();
-                                              isa = Calculateisa(elevationRef: _currentElevation.toString(), temperatureRef: selectedAirportTemperature)();
+                                              isa = Calculateisa(elevationRef: altitud, temperatureRef: selectedAirportTemperature)();
                                             });},
                                         style: ElevatedButton.styleFrom(
                                           backgroundColor: AppColors.placeholder, 
@@ -1845,7 +1861,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                         onPressed:  () {
                                             setState(() {
                                               selectedAirportTemperature = Calculatetemperatureincredecre(temperatureRef: selectedAirportTemperature, operation: 'increment')();
-                                              isa = Calculateisa(elevationRef: _currentElevation.toString(), temperatureRef: selectedAirportTemperature)();
+                                              isa = Calculateisa(elevationRef: altitud, temperatureRef: selectedAirportTemperature)();
                                             });},
                                         style: ElevatedButton.styleFrom(
                                           backgroundColor: AppColors.placeholder, 
