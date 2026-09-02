@@ -36,6 +36,7 @@ class CalculatorPage extends StatefulWidget {
     this.airport, this.airportEl, this.airportQNH, this.airportTemp, this.airportRunway, this.nonflaps
   });
 //Pendientes:
+//Ajuste en los calculos de QNh con la temperatura, se congela cuando se aumenta la elevacion y no se presiona el boton de sum y rest de OAT en XXX.
 //Cambiar la visual del card results juntandolo y usar Divider.
 //Calculo de Vientos y traer/usar valores default, min y max de viento, de momento solo se usa windMin.
 //Uso de valores Mag en vientos cuando sea XXX el aerpuerto.
@@ -263,6 +264,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
             style: TextStyle(fontSize: 22, color: AppColors.white),
           ),
         ),
+        iconTheme: const IconThemeData(color: AppColors.white),
         backgroundColor: Colors.black,
       ),
       body: SingleChildScrollView(
@@ -327,7 +329,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                 ),
                                 const SizedBox(width: 20.0),
                                 Text(
-                                  '($rwyId°)',
+                                  '(${rwyId!.trim()}°)',
                                   style: TextStyle(
                                     fontWeight: FontWeight.bold,
                                     color: AppColors.textColor3Dark,
@@ -560,7 +562,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: AppColors.placeholder,
                                     foregroundColor: AppColors.iconDark,
-                                    minimumSize: const Size(50, 50),
+                                    minimumSize: const Size(70, 70),
                                     padding: EdgeInsets.zero,
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(8.0),
@@ -570,7 +572,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                   child: Icon(
                                     Icons.remove,
                                     color: AppColors.iconDark,
-                                    size: 20,
+                                    size: 30,
                                   ),
                                 ),
                                 const SizedBox(width: 8.0),
@@ -583,7 +585,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: AppColors.placeholder,
                                     foregroundColor: AppColors.iconDark,
-                                    minimumSize: const Size(50, 50),
+                                    minimumSize: const Size(70, 70),
                                     padding: EdgeInsets.zero,
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(8.0),
@@ -593,7 +595,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                   child: Icon(
                                     Icons.add,
                                     color: AppColors.iconDark,
-                                    size: 20,
+                                    size: 30,
                                   ),
                                 ),
                               ],
@@ -638,7 +640,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                               style: ElevatedButton.styleFrom(
                                                 backgroundColor: AppColors.placeholder,
                                                 foregroundColor: AppColors.iconDark,
-                                                minimumSize: const Size(50, 50),
+                                                minimumSize: const Size(70, 70),
                                                 padding: EdgeInsets.zero,
                                                 shape: RoundedRectangleBorder(
                                                   borderRadius: BorderRadius.circular(8.0),
@@ -648,7 +650,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                               child: Icon(
                                                 Icons.remove,
                                                 color: AppColors.iconDark,
-                                                size: 20,
+                                                size: 30,
                                               ),
                                             ),
                                             const SizedBox(width: 8.0),
@@ -663,7 +665,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                               style: ElevatedButton.styleFrom(
                                                 backgroundColor: AppColors.placeholder,
                                                 foregroundColor: AppColors.iconDark,
-                                                minimumSize: const Size(50, 50),
+                                                minimumSize: const Size(70, 70),
                                                 padding: EdgeInsets.zero,
                                                 shape: RoundedRectangleBorder(
                                                   borderRadius: BorderRadius.circular(8.0),
@@ -673,7 +675,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                               child: Icon(
                                                 Icons.add,
                                                 color: AppColors.iconDark,
-                                                size: 20,
+                                                size: 30,
                                               ),
                                             ),
                                          ] else ...[
@@ -1278,7 +1280,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                       style: ElevatedButton.styleFrom(
                                         backgroundColor: AppColors.placeholder, 
                                         foregroundColor: AppColors.iconDark, 
-                                        minimumSize: const Size(50, 50),
+                                        minimumSize: const Size(70, 70),
                                         padding: EdgeInsets.zero,
                                         shape: RoundedRectangleBorder(
                                           borderRadius: BorderRadius.circular(8.0),
@@ -1288,7 +1290,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                       child: Icon(
                                         Icons.remove,
                                         color: AppColors.iconDark, 
-                                        size: 20,
+                                        size: 30,
                                       ),
                                     ),
                                     const SizedBox(width: 8.0),                                 
@@ -1301,7 +1303,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                       style: ElevatedButton.styleFrom(
                                         backgroundColor: AppColors.placeholder, 
                                         foregroundColor: AppColors.iconDark, 
-                                        minimumSize: const Size(50, 50),
+                                        minimumSize: const Size(70, 70),
                                         padding: EdgeInsets.zero,
                                         shape: RoundedRectangleBorder(
                                           borderRadius: BorderRadius.circular(8.0),
@@ -1311,7 +1313,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                       child: Icon(
                                         Icons.add,
                                         color: AppColors.iconDark, 
-                                        size: 20,
+                                        size: 30,
                                       ),
                                     ),
                                   ],
@@ -1360,7 +1362,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                               style: ElevatedButton.styleFrom(
                                                 backgroundColor: AppColors.placeholder, 
                                                 foregroundColor: AppColors.iconDark, 
-                                                minimumSize: const Size(50, 50),
+                                                minimumSize: const Size(70, 70),
                                                 padding: EdgeInsets.zero,
                                                 shape: RoundedRectangleBorder(
                                                   borderRadius: BorderRadius.circular(8.0),
@@ -1370,7 +1372,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                               child: Icon(
                                                 Icons.remove,
                                                 color: AppColors.iconDark, 
-                                                size: 20,
+                                                size: 30,
                                               ),
                                             ),
                                             const SizedBox(width: 8.0),                                 
@@ -1383,7 +1385,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                               style: ElevatedButton.styleFrom(
                                                 backgroundColor: AppColors.placeholder, 
                                                 foregroundColor: AppColors.iconDark, 
-                                                minimumSize: const Size(50, 50),
+                                                minimumSize: const Size(70, 70),
                                                 padding: EdgeInsets.zero,
                                                 shape: RoundedRectangleBorder(
                                                   borderRadius: BorderRadius.circular(8.0),
@@ -1393,7 +1395,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                               child: Icon(
                                                 Icons.add,
                                                 color: AppColors.iconDark, 
-                                                size: 20,
+                                                size: 30,
                                               ),
                                             ),
                                           ], 
@@ -1442,7 +1444,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                         style: ElevatedButton.styleFrom(
                                           backgroundColor: AppColors.placeholder, 
                                           foregroundColor: AppColors.iconDark, 
-                                          minimumSize: const Size(50, 50),
+                                          minimumSize: const Size(70, 70),
                                           padding: EdgeInsets.zero,
                                           shape: RoundedRectangleBorder(
                                             borderRadius: BorderRadius.circular(8.0),
@@ -1452,7 +1454,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                         child: Icon(
                                           Icons.remove,
                                           color: AppColors.iconDark, 
-                                          size: 20,
+                                          size: 30,
                                         ),
                                       ),
                                       const SizedBox(width: 8.0),                                 
@@ -1465,7 +1467,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                         style: ElevatedButton.styleFrom(
                                           backgroundColor: AppColors.placeholder, 
                                           foregroundColor: AppColors.iconDark, 
-                                          minimumSize: const Size(50, 50),
+                                          minimumSize: const Size(70, 70),
                                           padding: EdgeInsets.zero,
                                           shape: RoundedRectangleBorder(
                                             borderRadius: BorderRadius.circular(8.0),
@@ -1475,7 +1477,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                         child: Icon(
                                           Icons.add,
                                           color: AppColors.iconDark, 
-                                          size: 20,
+                                          size: 30,
                                         ),
                                       ),
 
@@ -1602,7 +1604,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                       style: ElevatedButton.styleFrom(
                                         backgroundColor: AppColors.placeholder, 
                                         foregroundColor: AppColors.iconDark, 
-                                        minimumSize: const Size(50, 50),
+                                        minimumSize: const Size(70, 70),
                                         padding: EdgeInsets.zero,
                                         shape: RoundedRectangleBorder(
                                           borderRadius: BorderRadius.circular(8.0),
@@ -1612,7 +1614,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                       child: Icon(
                                         Icons.remove,
                                         color: AppColors.iconDark, 
-                                        size: 20,
+                                        size: 30,
                                       ),
                                     ),
                                     const SizedBox(width: 8.0),                                 
@@ -1625,7 +1627,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                       style: ElevatedButton.styleFrom(
                                         backgroundColor: AppColors.placeholder, 
                                         foregroundColor: AppColors.iconDark, 
-                                        minimumSize: const Size(50, 50),
+                                        minimumSize: const Size(70, 70),
                                         padding: EdgeInsets.zero,
                                         shape: RoundedRectangleBorder(
                                           borderRadius: BorderRadius.circular(8.0),
@@ -1635,7 +1637,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                       child: Icon(
                                         Icons.add,
                                         color: AppColors.iconDark, 
-                                        size: 20,
+                                        size: 30,
                                       ),
                                     ),
                                   ],
@@ -1653,7 +1655,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                       style: ElevatedButton.styleFrom(
                                         backgroundColor: AppColors.placeholder, 
                                         foregroundColor: AppColors.iconDark, 
-                                        minimumSize: const Size(50, 50),
+                                        minimumSize: const Size(70, 70),
                                         padding: EdgeInsets.zero,
                                         shape: RoundedRectangleBorder(
                                           borderRadius: BorderRadius.circular(8.0),
@@ -1663,7 +1665,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                       child: Icon(
                                         Icons.remove,
                                         color: AppColors.iconDark, 
-                                        size: 20,
+                                        size: 30,
                                       ),
                                     ),
                                     const SizedBox(width: 8.0),                                 
@@ -1676,7 +1678,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                       style: ElevatedButton.styleFrom(
                                         backgroundColor: AppColors.placeholder, 
                                         foregroundColor: AppColors.iconDark, 
-                                        minimumSize: const Size(50, 50),
+                                        minimumSize: const Size(70, 70),
                                         padding: EdgeInsets.zero,
                                         shape: RoundedRectangleBorder(
                                           borderRadius: BorderRadius.circular(8.0),
@@ -1686,7 +1688,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                       child: Icon(
                                         Icons.add,
                                         color: AppColors.iconDark, 
-                                        size: 20,
+                                        size: 30,
                                       ),
                                     ),
                                   ],
@@ -1791,7 +1793,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                       style: ElevatedButton.styleFrom(
                                         backgroundColor: AppColors.placeholder, 
                                         foregroundColor: AppColors.iconDark, 
-                                        minimumSize: const Size(50, 50),
+                                        minimumSize: const Size(70, 70),
                                         padding: EdgeInsets.zero,
                                         shape: RoundedRectangleBorder(
                                           borderRadius: BorderRadius.circular(8.0),
@@ -1801,7 +1803,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                       child: Icon(
                                         Icons.remove,
                                         color: AppColors.iconDark, 
-                                        size: 20,
+                                        size: 30,
                                       ),
                                     ),
                                     const SizedBox(width: 8.0),                                 
@@ -1814,7 +1816,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                       style: ElevatedButton.styleFrom(
                                         backgroundColor: AppColors.placeholder, 
                                         foregroundColor: AppColors.iconDark, 
-                                        minimumSize: const Size(50, 50),
+                                        minimumSize: const Size(70, 70),
                                         padding: EdgeInsets.zero,
                                         shape: RoundedRectangleBorder(
                                           borderRadius: BorderRadius.circular(8.0),
@@ -1824,7 +1826,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                       child: Icon(
                                         Icons.add,
                                         color: AppColors.iconDark, 
-                                        size: 20,
+                                        size: 30,
                                       ),
                                     ),
                                   ],
@@ -1843,7 +1845,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                         style: ElevatedButton.styleFrom(
                                           backgroundColor: AppColors.placeholder, 
                                           foregroundColor: AppColors.iconDark, 
-                                          minimumSize: const Size(50, 50),
+                                          minimumSize: const Size(70, 70),
                                           padding: EdgeInsets.zero,
                                           shape: RoundedRectangleBorder(
                                             borderRadius: BorderRadius.circular(8.0),
@@ -1853,7 +1855,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                         child: Icon(
                                           Icons.remove,
                                           color: AppColors.iconDark, 
-                                          size: 20,
+                                          size: 30,
                                         ),
                                       ),
                                       const SizedBox(width: 8.0),                                 
@@ -1866,7 +1868,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                         style: ElevatedButton.styleFrom(
                                           backgroundColor: AppColors.placeholder, 
                                           foregroundColor: AppColors.iconDark, 
-                                          minimumSize: const Size(50, 50),
+                                          minimumSize: const Size(70, 70),
                                           padding: EdgeInsets.zero,
                                           shape: RoundedRectangleBorder(
                                             borderRadius: BorderRadius.circular(8.0),
@@ -1876,7 +1878,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                         child: Icon(
                                           Icons.add,
                                           color: AppColors.iconDark, 
-                                          size: 20,
+                                          size: 30,
                                         ),
                                       ),
                                     ],
@@ -1959,7 +1961,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                       ),
                                       const SizedBox(width: 25.0),
                                       Text(
-                                        (_counter as num).toInt().toString() + AppStrings.kt,
+                                        '${(_counter as num).toInt().toString()} ${AppStrings.kt}',
                                         style: TextStyle(color: AppColors.placeholderDark),
                                       ),
                                     ],
@@ -1969,7 +1971,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                     children: [
                                       const SizedBox(width: 25.0),
                                       Text(
-                                        (_counter as num).toInt().toString() + AppStrings.kthwc,
+                                        '${(_counter as num).toInt().toString()} ${AppStrings.kthwc}',
                                         style: TextStyle(color: AppColors.textColor3Dark),
                                       ),
                                       const SizedBox(width: 25.0),
@@ -1979,7 +1981,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                       ),
                                       const SizedBox(width: 25.0),
                                       Text(
-                                        (_counter as num).toInt().toString() + AppStrings.ktCwc,
+                                        '${(_counter as num).toInt().toString()} ${AppStrings.ktCwc}',
                                         style: TextStyle(color: AppColors.textColor3Dark),
                                       ),
                                     ],
@@ -1997,7 +1999,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: AppColors.placeholder, 
                                     foregroundColor: AppColors.iconDark, 
-                                    minimumSize: const Size(50, 50),
+                                    minimumSize: const Size(70, 70),
                                     padding: EdgeInsets.zero,
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(8.0),
@@ -2007,7 +2009,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                   child: Icon(
                                     Icons.remove,
                                     color: AppColors.iconDark, 
-                                    size: 20,
+                                    size: 30,
                                   ),
                                 ),
                                 const SizedBox(width: 8.0),                        
@@ -2016,7 +2018,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: AppColors.placeholder, 
                                     foregroundColor: AppColors.iconDark, 
-                                    minimumSize: const Size(50, 50),
+                                    minimumSize: const Size(70, 70),
                                     padding: EdgeInsets.zero,
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(8.0),
@@ -2026,7 +2028,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                   child: Icon(
                                     Icons.add,
                                     color: AppColors.iconDark, 
-                                    size: 20,
+                                    size: 30,
                                   ),
                                 ),
                               ],
