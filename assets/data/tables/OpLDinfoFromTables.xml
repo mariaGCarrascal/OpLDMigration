@@ -17,25 +17,25 @@
 			<runwayDistanceUnits> ft </runwayDistanceUnits>
 			<weightMINvalue>88000</weightMINvalue>
 			<weightMAXvalue>154500</weightMAXvalue>
-			<altitudeMINvalue> -2000 </altitudeMINvalue>
-			<altitudeMAXvalue> 14219 </altitudeMAXvalue>
-			<windMINvalue> -15 </windMINvalue>
-			<windMAXvalue>  40 </windMAXvalue>
+			<altitudeMINvalue>-2000</altitudeMINvalue>
+			<altitudeMAXvalue>14219</altitudeMAXvalue>
+			<windMINvalue>-15</windMINvalue>
+			<windMAXvalue>40</windMAXvalue>
 			<slopeMINvalue>-3.0</slopeMINvalue>
 			<slopeMAXvalue>3.0</slopeMAXvalue>
-			<deltaISA_MINvalue> -20 </deltaISA_MINvalue>
-			<deltaISA_MAXvalue>  60 </deltaISA_MAXvalue>
+			<deltaISA_MINvalue>-20</deltaISA_MINvalue>
+			<deltaISA_MAXvalue>60</deltaISA_MAXvalue>
 			<VrefAdditiveMINvalue>0</VrefAdditiveMINvalue>
 			<VrefAdditiveMAXvalue>30</VrefAdditiveMAXvalue>
 			<reversersInoperativeMINvalue>0</reversersInoperativeMINvalue>
 			<reversersInoperativeMAXvalue>2</reversersInoperativeMAXvalue>
 			<weightDefaultValue>129200</weightDefaultValue>
 			<altitudeDefaultValue>2000</altitudeDefaultValue>
-			<windDefaultValue>      0 </windDefaultValue>
-			<slopeDefaultValue>      0 </slopeDefaultValue>
-			<deltaISA_DefaultValue>     15 </deltaISA_DefaultValue>
+			<windDefaultValue>0</windDefaultValue>
+			<slopeDefaultValue>0</slopeDefaultValue>
+			<deltaISA_DefaultValue>15</deltaISA_DefaultValue>
 			<VrefAdditiveDefaultValue>5</VrefAdditiveDefaultValue>
-			<reversersInoperativeDefaultValue>     0 </reversersInoperativeDefaultValue>
+			<reversersInoperativeDefaultValue>0</reversersInoperativeDefaultValue>
 			<flapDefaultLabel>FLAPS 30</flapDefaultLabel>
 			<reportedBrakingAction_label_ofDefault>DRY</reportedBrakingAction_label_ofDefault>
 			<autobrakeSetting_id_ofDefault>AUTOBRAKE 3</autobrakeSetting_id_ofDefault>
@@ -17783,25 +17783,25 @@
 			<runwayDistanceUnits> ft </runwayDistanceUnits>
 			<weightMINvalue>96000</weightMINvalue>
 			<weightMAXvalue>174200</weightMAXvalue>
-			<altitudeMINvalue> -2000 </altitudeMINvalue>
-			<altitudeMAXvalue> 14219 </altitudeMAXvalue>
-			<windMINvalue> -15 </windMINvalue>
-			<windMAXvalue>  40 </windMAXvalue>
+			<altitudeMINvalue>-2000</altitudeMINvalue>
+			<altitudeMAXvalue>14219</altitudeMAXvalue>
+			<windMINvalue>-15</windMINvalue>
+			<windMAXvalue>40</windMAXvalue>
 			<slopeMINvalue>-3.0</slopeMINvalue>
 			<slopeMAXvalue>3.0</slopeMAXvalue>
-			<deltaISA_MINvalue> -20 </deltaISA_MINvalue>
-			<deltaISA_MAXvalue>  45 </deltaISA_MAXvalue>
+			<deltaISA_MINvalue>-20</deltaISA_MINvalue>
+			<deltaISA_MAXvalue>45</deltaISA_MAXvalue>
 			<VrefAdditiveMINvalue>0</VrefAdditiveMINvalue>
 			<VrefAdditiveMAXvalue>30</VrefAdditiveMAXvalue>
 			<reversersInoperativeMINvalue>0</reversersInoperativeMINvalue>
 			<reversersInoperativeMAXvalue>2</reversersInoperativeMAXvalue>
 			<weightDefaultValue>146300</weightDefaultValue>
 			<altitudeDefaultValue>2000</altitudeDefaultValue>
-			<windDefaultValue>      0 </windDefaultValue>
-			<slopeDefaultValue>      0 </slopeDefaultValue>
-			<deltaISA_DefaultValue>     15 </deltaISA_DefaultValue>
+			<windDefaultValue>0</windDefaultValue>
+			<slopeDefaultValue>0</slopeDefaultValue>
+			<deltaISA_DefaultValue>15</deltaISA_DefaultValue>
 			<VrefAdditiveDefaultValue>5</VrefAdditiveDefaultValue>
-			<reversersInoperativeDefaultValue>     0 </reversersInoperativeDefaultValue>
+			<reversersInoperativeDefaultValue>0</reversersInoperativeDefaultValue>
 			<flapDefaultLabel>FLAPS 30</flapDefaultLabel>
 			<reportedBrakingAction_label_ofDefault>DRY</reportedBrakingAction_label_ofDefault>
 			<autobrakeSetting_id_ofDefault>AUTOBRAKE 3</autobrakeSetting_id_ofDefault>
@@ -35550,7 +35550,7 @@
 			<altitudeMINvalue>-2000</altitudeMINvalue>
 			<altitudeMAXvalue>14219</altitudeMAXvalue>
 			<windMINvalue>-15</windMINvalue>
-			<windMAXvalue> 40</windMAXvalue>
+			<windMAXvalue>40</windMAXvalue>
 			<slopeMINvalue>-3.0</slopeMINvalue>
 			<slopeMAXvalue>3.0</slopeMAXvalue>
 			<deltaISA_MINvalue>-20</deltaISA_MINvalue>
@@ -53273,13 +53273,13 @@
 			<runwayDistanceUnits> ft </runwayDistanceUnits>
 			<weightMINvalue>106000</weightMINvalue>
 			<weightMAXvalue>194000</weightMAXvalue>
-			<altitudeMINvalue> -2000 </altitudeMINvalue>
-			<altitudeMAXvalue> 14219 </altitudeMAXvalue>
-			<windMINvalue> -15 </windMINvalue>
-			<windMAXvalue>  40 </windMAXvalue>
+			<altitudeMINvalue>-2000</altitudeMINvalue>
+			<altitudeMAXvalue>14219</altitudeMAXvalue>
+			<windMINvalue>-15</windMINvalue>
+			<windMAXvalue>40</windMAXvalue>
 			<slopeMINvalue>-3.0</slopeMINvalue>
 			<slopeMAXvalue>3.0</slopeMAXvalue>
-			<deltaISA_MINvalue> -20 </deltaISA_MINvalue>
+			<deltaISA_MINvalue>-20</deltaISA_MINvalue>
 			<deltaISA_MAXvalue>60</deltaISA_MAXvalue>
 			<VrefAdditiveMINvalue>0</VrefAdditiveMINvalue>
 			<VrefAdditiveMAXvalue>30</VrefAdditiveMAXvalue>
@@ -74482,13 +74482,13 @@
 			<runwayDistanceUnits> ft </runwayDistanceUnits>
 			<weightMINvalue>94000</weightMINvalue>
 			<weightMAXvalue>181200</weightMAXvalue>
-			<altitudeMINvalue> -2000 </altitudeMINvalue>
-			<altitudeMAXvalue> 14219 </altitudeMAXvalue>
-			<windMINvalue> -15 </windMINvalue>
-			<windMAXvalue>  40 </windMAXvalue>
+			<altitudeMINvalue>-2000</altitudeMINvalue>
+			<altitudeMAXvalue>14219</altitudeMAXvalue>
+			<windMINvalue>-15</windMINvalue>
+			<windMAXvalue>40</windMAXvalue>
 			<slopeMINvalue>-3.0</slopeMINvalue>
 			<slopeMAXvalue>3.0</slopeMAXvalue>
-			<deltaISA_MINvalue> -20 </deltaISA_MINvalue>
+			<deltaISA_MINvalue>-20</deltaISA_MINvalue>
 			<deltaISA_MAXvalue>60</deltaISA_MAXvalue>
 			<VrefAdditiveMINvalue>0</VrefAdditiveMINvalue>
 			<VrefAdditiveMAXvalue>30</VrefAdditiveMAXvalue>

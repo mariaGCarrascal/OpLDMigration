@@ -9,6 +9,7 @@ import 'package:flutter_application_5/constants/features/calculator/fuctions/cal
 import 'package:flutter_application_5/constants/features/calculator/fuctions/calculatetemperatureincredecre.dart';
 import 'package:flutter_application_5/constants/features/calculator/fuctions/calculatevrefincredecre.dart';
 import 'package:flutter_application_5/constants/features/calculator/fuctions/calculateweightincredecre.dart';
+import 'package:flutter_application_5/constants/features/calculator/fuctions/calculatewind.dart';
 import 'package:flutter_application_5/constants/features/calculator/fuctions/customDigitFormatter.dart';
 import 'package:flutter_application_5/constants/features/calculator/fuctions/loadautobrakes.dart';
 import 'package:flutter_application_5/constants/features/calculator/fuctions/loadcomments.dart';
@@ -36,13 +37,12 @@ class CalculatorPage extends StatefulWidget {
     this.airport, this.airportEl, this.airportQNH, this.airportTemp, this.airportRunway, this.nonflaps
   });
 //Pendientes:
-//Ajuste en los calculos de QNh con la temperatura, se congela cuando se aumenta la elevacion y no se presiona el boton de sum y rest de OAT en XXX.
+//Ajuste en los calculos de QNH con la temperatura y isa, el aumento y decremento es al valor de isa y despues se calcula la temperatura por debajo.
 //Cambiar la visual del card results juntandolo y usar Divider.
-//Calculo de Vientos y traer/usar valores default, min y max de viento, de momento solo se usa windMin.
+//Calculo de Vientos y traer/usar valores default, min y max de viento, de momento solo se usa windMin. (Listo)
 //Uso de valores Mag en vientos cuando sea XXX el aerpuerto.
 //Traer los datos para los calculos que dan resultado del OpLD performance y el calculo de remaing a final (netLDA - opldResults)
-//Logica de cambio de colores en el OpLD.
-//Hay overflow en remaining cuando es vertical y aumentar la longuitud de rwy id. Hay overflow cuando aparece configuration en Homepage al estar horizontal
+//Logica de cambio de colores en el OpLD y longPress en QNH y Elevation (XXX).
 
   @override
   State<CalculatorPage> createState() => _CalculatorPageState();
@@ -50,9 +50,7 @@ class CalculatorPage extends StatefulWidget {
 
 class _CalculatorPageState extends State<CalculatorPage> {
 
-  //Variables para las selecciones 
-  int _counter = 0;
-  //Nota: la reduccion solo permite 5 digitos si son 0, pero si tiene valor que no sea 0 al inicio solo permite 4 digitos
+  //Variables para las selecciones
   String? _currentReduction;
   String? netLDA;
   String? opldResult;
@@ -80,13 +78,16 @@ class _CalculatorPageState extends State<CalculatorPage> {
   String? selectedAirportTemperature;
   String? selectedCondition;
   String? nonFlap;
-  String? selectedSpeedBrakeType = 'AUTOMATIC';
+  String? selectedSpeedBrake;
   String? rwyRcc;
   String? rwyId;
   String? rwySlope;
   String? rwySlopeMin;
   String? rwySlopeMax;
   String? rwyLda;
+  String? windValue;
+  String? headtail;
+  String? crosswind;
   String? vRef;
   String? vMax;
   String? vMin;
@@ -150,10 +151,12 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                       '330', '340', '350', '360'];
   Map<String, List<String>> conditionNotes = Airportdata.rcaTable;
   List<String>? rwyNote = [];
+  List<String>? windValues = [];
 
   @override
   void initState() {
     super.initState();
+    selectedSpeedBrake = 'AUTOMATIC';
     selectedAircraft = widget.aircraft;
     defaultAircraft = Searchdefault(aircraftRef: selectedAircraft)();
     selectedCondition = defaultAircraft?[19];
@@ -163,8 +166,12 @@ class _CalculatorPageState extends State<CalculatorPage> {
     weightMIN = double.parse(defaultAircraft?[6] ?? '0');
     isaMin = defaultAircraft?[13];
     isaMax = defaultAircraft?[14];
+    windValue = defaultAircraft?[20];
+    headtail = '0';
+    crosswind = '0';
     windMin = defaultAircraft?[21];
     windMax = defaultAircraft?[22];
+    selectedWind = '000';
     selectedLanding = widget.normalNon;
     selectedConfiguration = widget.configuration;
     selectedAirport = widget.airport;
@@ -207,7 +214,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
       _currentElevation = double.parse(defaultAircraft?[18] ?? '0');
       altitud = Calculatealtitud(elevationRef: _currentElevation.toString(), qnhRef: selectedAirportQNH)();
       isa = Calculateisa(elevationRef: altitud, temperatureRef: selectedAirportTemperature)();
-      rwyId = '0000'; 
+      rwyId = '000'; 
       rwyLda = '0000'; 
       rwySlope = '0';
       netLDA = rwyLda;
@@ -235,22 +242,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
     if (number == null) return value ?? '0';
     return number == number.toInt() ? number.toInt().toString() : number.toString();
   }
-
-  void _increment() {
-    setState(() {
-      _counter++;
-    });
-  }
-
-  void _decrement() {
-    setState(() {
-      if (_counter > 0) {
-        _counter--;
-      }
-    });
-  }
-  
-
+ 
   @override
   Widget build(BuildContext context) {
 
@@ -337,7 +329,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                     color: AppColors.textColor3Dark,
                                   ),
                                 ),
-                                SizedBox(width: screenSize.width * 0.18),
+                                SizedBox(width: screenSize.width * 0.15),
                                 Expanded(
                                   child: DropdownButtonFormField<String>(
                                     isExpanded: true,
@@ -383,6 +375,10 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                         rwyId = selectedSlopeValues?[0]; 
                                         rwyLda = selectedSlopeValues?[1]; 
                                         rwySlope = selectedSlopeValues?[2];
+                                        windValues =  Calculatewind(rwyidRef: rwyId, windRef: windValue, windpickerRef: selectedWind, operation: '')();
+                                        windValue = windValues?[0];
+                                        headtail = windValues?[1];
+                                        crosswind = windValues?[2];
                                       });
                                     },
                                   ),
@@ -401,6 +397,10 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                   onSelected: (String newValue) {
                                     setState(() {
                                       selectedMag = newValue;
+                                      windValues =  Calculatewind(rwyidRef: selectedMag, windRef: windValue, windpickerRef: selectedWind, operation: '')();
+                                      windValue = windValues?[0];
+                                      headtail = windValues?[1];
+                                      crosswind = windValues?[2];
                                     });
                                   },
                                   itemBuilder: (BuildContext context) {
@@ -1195,7 +1195,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                 Expanded(
                                   child: DropdownButtonFormField<String>(
                                     isExpanded: true,
-                                    initialValue: selectedSpeedBrakeType,
+                                    initialValue: selectedSpeedBrake,
                                     hint: Text(
                                       'AUTOMATIC',
                                       style: TextStyle(
@@ -1233,7 +1233,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                     }).toList(),
                                     onChanged: (newValue) {
                                       setState(() {
-                                        selectedSpeedBrakeType = newValue;
+                                        selectedSpeedBrake = newValue;
                                       }); 
                                     },
                                   ),
@@ -1941,6 +1941,10 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                           onSelected: (String newValue) {
                                             setState(() {
                                               selectedWind = newValue; 
+                                              windValues =  Calculatewind(rwyidRef: rwyId, windRef: windValue, windpickerRef: selectedWind, operation: '')();
+                                              windValue = windValues?[0];
+                                              headtail = windValues?[1];
+                                              crosswind = windValues?[2];
                                             });
                                           },
                                           itemBuilder: (BuildContext context) {            
@@ -1975,11 +1979,11 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                       const SizedBox(width: 25.0),
                                       Text(
                                         '/', 
-                                        style: TextStyle(color: AppColors.cancelPriButBrDark),
+                                        style: TextStyle(color: AppColors.white),
                                       ),
                                       const SizedBox(width: 25.0),
                                       Text(
-                                        '${(_counter as num).toInt().toString()} ${AppStrings.kt}',
+                                        '$windValue ${AppStrings.kt}',
                                         style: TextStyle(color: AppColors.placeholderDark),
                                       ),
                                     ],
@@ -1989,21 +1993,25 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                     children: [
                                       const SizedBox(width: 25.0),
                                       Text(
-                                        '${(_counter as num).toInt().toString()} ${AppStrings.kthwc}',
-                                        style: TextStyle(color: AppColors.textColor3Dark),
-                                      ),
+                                        (int.tryParse(headtail ?? '0') ?? 0) >= 0
+                                        ? '$headtail  ${AppStrings.kthwc}'
+                                        : '$headtail  ${AppStrings.kttwc}',
+                                        style: TextStyle(color: (int.tryParse(headtail ?? '0') ?? 0) < (int.tryParse(windMin ?? '-15') ?? -15)
+                                          ? AppColors.errorColor
+                                          : AppColors.textColor3Dark),
+                                      ),                                     
                                       const SizedBox(width: 25.0),
                                       Text(
                                         '/', 
-                                        style: TextStyle(color: AppColors.cancelPriButBrDark),
+                                        style: TextStyle(color: AppColors.white),
                                       ),
                                       const SizedBox(width: 25.0),
                                       Text(
-                                        '${(_counter as num).toInt().toString()} ${AppStrings.ktCwc}',
+                                        '$crosswind  ${AppStrings.ktCwc}',
                                         style: TextStyle(color: AppColors.textColor3Dark),
                                       ),
                                     ],
-                                  ),
+                                  ),                               
                                 ],
                               ),
                             ),
@@ -2013,7 +2021,14 @@ class _CalculatorPageState extends State<CalculatorPage> {
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 ElevatedButton(
-                                  onPressed: _decrement,
+                                  onPressed: () {
+                                    setState(() {
+                                      windValues =  Calculatewind(rwyidRef: rwyId, windRef: windValue, windpickerRef: selectedWind, operation: 'decrement')();
+                                      windValue = windValues?[0];
+                                      headtail = windValues?[1];
+                                      crosswind = windValues?[2];
+                                    });
+                                  },
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: AppColors.placeholder, 
                                     foregroundColor: AppColors.iconDark, 
@@ -2032,7 +2047,14 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                 ),
                                 const SizedBox(width: 8.0),                        
                                 ElevatedButton(
-                                  onPressed: _increment,
+                                  onPressed: () {
+                                    setState(() {
+                                      windValues =  Calculatewind(rwyidRef: rwyId, windRef: windValue, windpickerRef: selectedWind, operation: 'increment')();
+                                      windValue = windValues?[0];
+                                      headtail = windValues?[1];
+                                      crosswind = windValues?[2];
+                                    });
+                                  },
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: AppColors.placeholder, 
                                     foregroundColor: AppColors.iconDark, 
@@ -2224,13 +2246,13 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                               textAlign: TextAlign.left, 
                                               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppColors.white),
                                             ),
-                                            SizedBox(width: screenSize.width * 0.13),
+                                            SizedBox(width: screenSize.width * 0.12),
                                             Text(
                                               '5608${AppStrings.ft}', 
                                               textAlign: TextAlign.right, 
                                               style: TextStyle(color: AppColors.textColor2Dark, fontSize: 16,),
                                             ),
-                                            const SizedBox(width: 10),
+                                            const SizedBox(width: 5),
                                             Text(
                                               '(1709${AppStrings.m})', 
                                               textAlign: TextAlign.right, 

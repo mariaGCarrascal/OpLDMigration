@@ -61,6 +61,7 @@ class Searchdefault{
           ...c.findAllElements('windDefaultValue'),
           ...c.findAllElements('windMINvalue'),
           ...c.findAllElements('windMAXvalue'),
+          ...c.findAllElements('deltaISA_DefaultValue'),
           ])
             .map((e) => e.innerText)
             .toList();

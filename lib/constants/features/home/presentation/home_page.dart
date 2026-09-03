@@ -24,6 +24,7 @@ class _HomePageState extends State<HomePage> {
   //Nota: Dependiendo de configuracion Non-Normal, el texto de Vref cambia por tener su valor dentro del nodo como VrefLabel, mismo caso para flaps como flapLabel que toma solo la parte de flap del texto.
   //Nota: Los valores en metro al lado cifras en ft son la conversion de pies a metros.
   //Noat: La conversion de pies a metros es multiplicar ft * 0.3048. Usar el metodo .round en la variable de resultado de la operacion.
+  //Nota: la reduccion solo permite 5 digitos si son 0, pero si tiene valor que no sea 0 al inicio solo permite 4 digitos
  
   // Variables clave de listas
   List<String> aircraftTypes = [];
