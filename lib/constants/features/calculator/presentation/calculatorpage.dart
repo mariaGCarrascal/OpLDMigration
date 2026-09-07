@@ -6,7 +6,6 @@ import 'package:flutter_application_5/constants/features/calculator/fuctions/cal
 import 'package:flutter_application_5/constants/features/calculator/fuctions/calculateqnhincredecre.dart';
 import 'package:flutter_application_5/constants/features/calculator/fuctions/calculatereduction.dart';
 import 'package:flutter_application_5/constants/features/calculator/fuctions/calculateslopeincredecre.dart';
-//import 'package:flutter_application_5/constants/features/calculator/fuctions/calculatetemperatureincredecre.dart';
 import 'package:flutter_application_5/constants/features/calculator/fuctions/calculatetempisa.dart';
 import 'package:flutter_application_5/constants/features/calculator/fuctions/calculatevrefincredecre.dart';
 import 'package:flutter_application_5/constants/features/calculator/fuctions/calculateweightincredecre.dart';
@@ -38,9 +37,8 @@ class CalculatorPage extends StatefulWidget {
     this.airport, this.airportEl, this.airportQNH, this.airportTemp, this.airportRunway, this.nonflaps
   });
 //Pendientes:
-//Ajuste en los calculos de QNH con la temperatura y isa, el aumento y decremento es al valor de isa y despues se calcula la temperatura por debajo.
-//Ajustes en cambio de valor en Elevation cuando es XXX con el OAT.
 //Cambiar la visual del card results juntandolo y usar Divider.
+//En VREF, cambia el texto dependiendo de la configuracion Non-Normal.
 //Traer los datos para los calculos que dan resultado del OpLD performance y el calculo de remaing a final (netLDA - opldResults)
 //Logica de cambio de colores en el OpLD y longPress en QNH y Elevation (XXX).
 
@@ -1734,7 +1732,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                         borderRadius: BorderRadius.circular(12.0), 
                         ),
                         child: Padding(
-                          padding: const EdgeInsets.all(8.0),
+                          padding: const EdgeInsets.all(10.0),
                           child: Row(
                             children: [
                               Expanded(flex: 3, child: Text(AppStrings.altitude, style: TextStyle(color: AppColors.white))),
@@ -1791,7 +1789,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                     Text(
                                       '${double.tryParse(selectedAirportTemperature ?? '')?.round() ?? 0} ${AppStrings.celcius}',
                                       style: TextStyle(color: AppColors.okPriButBrDark, fontSize: 15,),
-                                    ),
+                                    ),                                    
                                     const SizedBox(height: 4),
                                     Text(
                                       '${AppStrings.isa} $isa',
@@ -1812,8 +1810,6 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                             tempValues = Calculatetempisa(altitudRef: altitud, temperatureRef: selectedAirportTemperature, isaRef: isa, minRef: isaMin, maxRef: isaMax, operation: 'decrement')();
                                             selectedAirportTemperature = tempValues[1];
                                             isa = tempValues[0];
-                                            //selectedAirportTemperature = Calculatetemperatureincredecre(temperatureRef: selectedAirportTemperature, isaRef: isa, minRef: isaMin, maxRef: isaMax, operation: 'decrement')();
-                                            //isa = Calculateisa(elevationRef: altitud, temperatureRef: selectedAirportTemperature)();
                                           });},
                                       style: ElevatedButton.styleFrom(
                                         backgroundColor: AppColors.placeholder, 
@@ -1838,8 +1834,6 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                             tempValues = Calculatetempisa(altitudRef: altitud, temperatureRef: selectedAirportTemperature, isaRef: isa, minRef: isaMin, maxRef: isaMax, operation: 'increment')();
                                             selectedAirportTemperature = tempValues[1];
                                             isa = tempValues[0];
-                                            //selectedAirportTemperature = Calculatetemperatureincredecre(temperatureRef: selectedAirportTemperature, isaRef: isa, minRef: isaMin, maxRef: isaMax, operation: 'increment')();
-                                            //isa = Calculateisa(elevationRef: altitud, temperatureRef: selectedAirportTemperature)();
                                           });},
                                       style: ElevatedButton.styleFrom(
                                         backgroundColor: AppColors.placeholder, 
@@ -1870,8 +1864,6 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                               tempValues = Calculatetempisa(altitudRef: altitud, temperatureRef: selectedAirportTemperature, isaRef: isa, minRef: isaMin, maxRef: isaMax, operation: 'decrement')();
                                               selectedAirportTemperature = tempValues[1];
                                               isa = tempValues[0];
-                                              //selectedAirportTemperature = Calculatetemperatureincredecre(temperatureRef: selectedAirportTemperature, operation: 'decrement')();
-                                              //isa = Calculateisa(elevationRef: altitud, temperatureRef: selectedAirportTemperature)();
                                             });},
                                         style: ElevatedButton.styleFrom(
                                           backgroundColor: AppColors.placeholder, 
@@ -1896,8 +1888,6 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                               tempValues = Calculatetempisa(altitudRef: altitud, temperatureRef: selectedAirportTemperature, isaRef: isa, minRef: isaMin, maxRef: isaMax, operation: 'increment')();
                                               selectedAirportTemperature = tempValues[1];
                                               isa = tempValues[0];
-                                              //selectedAirportTemperature = Calculatetemperatureincredecre(temperatureRef: selectedAirportTemperature, operation: 'increment')();
-                                              //isa = Calculateisa(elevationRef: altitud, temperatureRef: selectedAirportTemperature)();
                                             });},
                                         style: ElevatedButton.styleFrom(
                                           backgroundColor: AppColors.placeholder, 
@@ -2007,7 +1997,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                   const SizedBox(height: 8.0),
                                   Row(
                                     children: [
-                                      const SizedBox(width: 25.0),
+                                      const SizedBox(width: 20.0),
                                       Text(
                                         (int.tryParse(headtail ?? '0') ?? 0) >= 0
                                         ? '$headtail  ${AppStrings.kthwc}'
