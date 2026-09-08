@@ -38,6 +38,7 @@ class CalculatorPage extends StatefulWidget {
     this.airport, this.airportEl, this.airportQNH, this.airportTemp, this.airportRunway, this.nonflaps
   });
 //Pendientes:
+//Obtener los valores de NonNrmlTemperatureAdjustmentsExist_YESorNO y NonNrmlVREFAdjustmentsExist_YESorNO (solo usa Vref)
 //Cambiar la visual del card results juntandolo y usar Divider.
 //Traer los datos para los calculos que dan resultado del OpLD performance y el calculo de remaining a final (netLDA - opldResults)
 //Logica de cambio de colores en el OpLD y longPress en QNH y Elevation (XXX).
