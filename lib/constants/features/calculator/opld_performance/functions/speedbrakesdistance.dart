@@ -85,7 +85,7 @@ class Speedbrakesdistance{
       if (selectedLanding == 'Non-Normal') {
         result = 0;
       } else {
-        result = double.tryParse(brakesData['$selectedautobrake'] ?? '0') ?? 0;     
+        result = double.tryParse(brakesData[brakesData.keys.first] ?? '0') ?? 0;     
       }
 
 

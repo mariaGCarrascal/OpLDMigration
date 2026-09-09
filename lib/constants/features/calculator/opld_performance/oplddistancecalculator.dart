@@ -92,7 +92,6 @@ class Oplddistancecalculator{
         conditionRef: rwyConditionPicker, autobrakeRef: autobrakePicker, revsrinopRef: revsrinopPicker, baseDetails: baseDetails)();
       
       //Runway Airport reference values
-
       double factor = double.tryParse(factorRef ?? '1') ?? 1;
       double additive = double.tryParse(additiveRef ?? '0') ?? 0;
 
@@ -100,7 +99,20 @@ class Oplddistancecalculator{
       //OpLD Result Value
       finalOpLDResult = (((refDistanceResult + reverserInoperativeAdjustmentResult + weightAdjustmentDistanceResult + altitudeAdjustmentResult
       + windAdjustmentResult + slopeAdjustmentResult + tempAdjustmentResult + approachSpeedAdjustmentResult + speedBrakesAdjustmentResult)*factor) + additive);
+      print('[Resultados]:');
+      print('Resultados de Landing weight (REF DIST): $refDistanceResult');
+      print('Resultados de WT Adjustment (WT ADJ): $weightAdjustmentDistanceResult');
+      print('Resultados de Altitud Adjustment (ALT ADJ): $altitudeAdjustmentResult');
+      print('Resultados de Wind adjustment (WIND ADJ): $windAdjustmentResult');
+      print('Resultados de Slope adjustment (SLOPE ADJ): $slopeAdjustmentResult');
+      print('Resultados de Temperature adjustment (TEMP ADJ): $tempAdjustmentResult');
+      print('Resultados de Approach Speed adjustment (APP SPD ADJ): $approachSpeedAdjustmentResult');
+      print('Resultados de SpeedBrakes adjustment (REF LAND DIST): $speedBrakesAdjustmentResult');
+      print('Resultados de Reverse thrust adjustment (REVERSE THRUST ADJ): $reverserInoperativeAdjustmentResult');
+      print('Resultados de Factor ruway: $factor');
+      print('Resultados de Additive ruway: $additive');
 
+      print('Resultados de OpLD antes de redondear: $finalOpLDResult');
       return finalOpLDResult.round().toString().trim(); 
 
     } catch (e) {

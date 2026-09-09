@@ -137,7 +137,7 @@ class Winddistancecalculation{
       print('Resultado de busqueda en vientos en caso $nodeWindRef: $windData');
       //Operation for adjustement result
       double selectedWind = double.tryParse(windRef ?? '') ?? 0;
-      double windAdjustment = double.tryParse(windData['$selectedautobrake'] ?? '') ?? 0;     
+      double windAdjustment = double.tryParse(windData[windData.keys.first] ?? '') ?? 0;     
       double baseLineRefWind = double.tryParse(baseDetails!['refWind'] ?? '') ?? 0;
       double perHowManyWindSpeedUnits = double.tryParse(baseDetails!['perHowManyWindSpeedUnits'] ?? '') ?? 0;
 

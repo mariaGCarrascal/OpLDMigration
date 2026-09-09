@@ -129,8 +129,8 @@ class Reversethrustadj{
           }
         }
       print('Resultado de busqueda en Reversas: $revsrInopData');
-      //Adjustement result value
-      result = double.tryParse(revsrInopData[selectedautobrake] ?? '') ?? 0;
+      //Adjustement result value 
+      result = double.tryParse(revsrInopData[revsrInopData.keys.first] ?? '') ?? 0;
 
       return result;
 
