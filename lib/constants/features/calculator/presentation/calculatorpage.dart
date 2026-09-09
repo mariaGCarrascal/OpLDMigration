@@ -17,6 +17,7 @@ import 'package:flutter_application_5/constants/features/calculator/fuctions/loa
 import 'package:flutter_application_5/constants/features/calculator/fuctions/loadvreftext.dart';
 import 'package:flutter_application_5/constants/features/calculator/fuctions/searchautobrakedefault.dart';
 import 'package:flutter_application_5/constants/features/calculator/fuctions/searchdefault.dart';
+import 'package:flutter_application_5/constants/features/calculator/opld_performance/oplddistancecalculator.dart';
 import 'package:flutter_application_5/constants/features/home/data/airportdata.dart';
 import 'package:flutter_application_5/constants/strings/app_strings.dart';
 import 'package:flutter/services.dart';
@@ -40,8 +41,7 @@ class CalculatorPage extends StatefulWidget {
 //Pendientes:
 //Obtener los valores de NonNrmlTemperatureAdjustmentsExist_YESorNO y NonNrmlVREFAdjustmentsExist_YESorNO (solo usa Vref)
 //Cambiar la visual del card results juntandolo y usar Divider.
-//Traer los datos para los calculos que dan resultado del OpLD performance y el calculo de remaining a final (netLDA - opldResults)
-//Logica de cambio de colores en el OpLD y longPress en QNH y Elevation (XXX).
+//Logica de cambio de colores en el OpLD, y longPress en QNH y Elevation (XXX).
 
   @override
   State<CalculatorPage> createState() => _CalculatorPageState();
@@ -84,6 +84,8 @@ class _CalculatorPageState extends State<CalculatorPage> {
   String? rwySlopeMin;
   String? rwySlopeMax;
   String? rwyLda;
+  String? rwyFactor;
+  String? rwyAdditive;
   String? windValue;
   String? headtail;
   String? crosswind;
@@ -178,6 +180,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
     selectedAirport = widget.airport;
     selectedAirportQNH = widget.airportQNH;
     reversersList = Loadreversers(valuesRef: defaultAircraft!)();
+    selectedReversers = reversersList![0];
     
     if(selectedLanding == 'Normal') {
       selectedFlaps = defaultAircraft?[1];
@@ -192,7 +195,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
       autoBrakeOptions = Loadautobrakes(aircraftRef: selectedAircraft, landingRef: selectedLanding, configurationRef: selectedConfiguration, flapRef: selectedFlaps, conditionRef: selectedCondition)();
       vrefNonPlus = Loadvreftext(aircraftRef: selectedAircraft, landingRef: selectedLanding, configurationRef: selectedConfiguration)();
     }
-
+    print('Autobrake que se usara en las busquedas de OpLD es: $selectedAutoBrake');
     if(selectedAirport != 'XXX') {
       selectedAirportElevation = widget.airportEl;
       selectedAirportTemperature = widget.airportTemp;
@@ -201,8 +204,9 @@ class _CalculatorPageState extends State<CalculatorPage> {
       selectedSlopeValues = selectedAirportRunway?[selectedRunway];
       rwyId = selectedSlopeValues?[0]; 
       rwyLda = selectedSlopeValues?[1];
-      netLDA = rwyLda;
-      opldResult = rwyLda; 
+      rwyFactor = selectedSlopeValues?[3]; 
+      rwyAdditive = selectedSlopeValues?[4];
+      netLDA = rwyLda; 
       rwySlope = selectedSlopeValues?[2];
       altitud = Calculatealtitud(elevationRef: selectedAirportElevation, qnhRef: selectedAirportQNH)();
       isa = ((double.parse(selectedAirportTemperature!.trim()).round() - 15) + (0.0019812 * double.parse(altitud  ?? '0').round())).round().toString();
@@ -217,9 +221,11 @@ class _CalculatorPageState extends State<CalculatorPage> {
       isa = defaultAircraft?[23];
       tempValues = Calculatetempisa(altitudRef: altitud, temperatureRef: '0', isaRef: defaultAircraft?[23], minRef: isaMin, maxRef: isaMax, operation: '')();
       selectedAirportTemperature = tempValues[1];
-      rwyId = '000'; 
-      rwyLda = '0000'; 
+      rwyId = '0'; 
+      rwyLda = '0'; 
       rwySlope = '0';
+      rwyFactor = '1'; 
+      rwyAdditive = '0';
       netLDA = rwyLda;
       opldResult = '8143';
       rwySlopeMin = defaultAircraft?[11];
@@ -231,6 +237,15 @@ class _CalculatorPageState extends State<CalculatorPage> {
     vRef = defaultAircraft?[0];
     vMin = defaultAircraft?[7];
     vMax = defaultAircraft?[8];
+
+    opldResult = Oplddistancecalculator(
+      aircraftPicker: selectedAircraft, landingPicker: selectedLanding, configurationPicker: selectedConfiguration,
+      factorRef: rwyFactor, rwyPicker: selectedRunway, additiveRef: rwyAdditive, flapPicker: selectedFlaps, rwyConditionPicker: selectedCondition, 
+      autobrakePicker: selectedAutoBrake, revsrinopPicker: selectedReversers, speedbrakesPicker: selectedSpeedBrake, 
+      weightRef: _currentLadWeight.toString(), altitudeRef: altitud, isaRef: isa, slopeRef: rwySlope, windRef: headtail, vrefRef: vRef
+    )();
+
+    remainingResult = ((double.tryParse(netLDA ?? '0') ?? 0) - (double.tryParse(opldResult ?? '0') ?? 0)).toString();
     
   }
 
@@ -2322,13 +2337,13 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                             ),
                                             SizedBox(width: screenSize.width * 0.12),
                                             Text(
-                                              '5608${AppStrings.ft}', 
+                                              '$remainingResult ${AppStrings.ft}', 
                                               textAlign: TextAlign.right, 
                                               style: TextStyle(color: AppColors.textColor2Dark, fontSize: 16,),
                                             ),
                                             const SizedBox(width: 5),
                                             Text(
-                                              '(1709${AppStrings.m})', 
+                                              '(${(double.tryParse(remainingResult ?? '0')! * 0.3048).round()}${AppStrings.m})', 
                                               textAlign: TextAlign.right, 
                                               style: TextStyle(color: AppColors.textColor2Dark, fontSize: 16,),
                                             ),

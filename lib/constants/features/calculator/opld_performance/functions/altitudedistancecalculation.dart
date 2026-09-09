@@ -64,15 +64,18 @@ class Altitudedistancecalculation{
                         selectedCondition!.toUpperCase(),
                   )
                   .expand((c) => c.findAllElements('altitudeAdjustment'))
-                  .where(
-                    (lc) =>
-                        lc.getAttribute('id')?.toUpperCase() ==
-                        selectedautobrake!.toUpperCase(),
+                  .expand(
+                    (altitudeAdjustment) => altitudeAdjustment
+                        .findElements('*')
+                        .where(
+                          (child) =>
+                              child.getAttribute('id')?.toUpperCase() ==
+                              selectedautobrake!.toUpperCase(),
+                        ),
                   )
-                  .expand((ref) => ref.findElements('*')))
+                  .expand((autobrake) => autobrake.findElements('*')))
                 child.name.local: child.innerText.trim(),
             };
-
           }
 
 
@@ -106,25 +109,29 @@ class Altitudedistancecalculation{
                         selectedCondition!.toUpperCase(),
                   )
                   .expand((c) => c.findAllElements('altitudeAdjustment'))
-                  .where(
-                    (lc) =>
-                        lc.getAttribute('id')?.toUpperCase() ==
-                        selectedautobrake!.toUpperCase(),
+                  .expand(
+                    (altitudeAdjustment) => altitudeAdjustment
+                        .findElements('*')
+                        .where(
+                          (child) =>
+                              child.getAttribute('id')?.toUpperCase() ==
+                              selectedautobrake!.toUpperCase(),
+                        ),
                   )
-                  .expand((ref) => ref.findElements('*')))
+                  .expand((autobrake) => autobrake.findElements('*')))
                 child.name.local: child.innerText.trim(),
             };
 
           }
         }
-      
+      print('Resultado de busqueda en altitud: $altitudeData');
       //Operation for adjustement result
-      double selectedAltitude = double.tryParse(altitudeRef ?? '') ?? 0.0;
-      double aboveSwitchAlt = double.tryParse(altitudeData['aboveSwitchAlt'] ?? '') ?? 0.0;
-      double belowSwitchAlt = double.tryParse(altitudeData['belowSwitchAlt'] ?? '') ?? 0.0;
-      double baseLineRefAlt = double.tryParse(baseDetails!['refAlt'] ?? '') ?? 0.0;
-      double perHowManyAltUnits = double.tryParse(baseDetails!['perHowManyAltUnits'] ?? '') ?? 0.0;
-      double switchAlt = double.tryParse(baseDetails!['switchAlt'] ?? '') ?? 0.0;
+      double selectedAltitude = double.tryParse(altitudeRef ?? '') ?? 0;
+      double aboveSwitchAlt = double.tryParse(altitudeData['aboveSwitchAlt'] ?? '') ?? 0;
+      double belowSwitchAlt = double.tryParse(altitudeData['belowSwitchAlt'] ?? '') ?? 0;
+      double baseLineRefAlt = double.tryParse(baseDetails!['refAlt'] ?? '') ?? 0;
+      double perHowManyAltUnits = double.tryParse(baseDetails!['perHowManyAltUnits'] ?? '') ?? 0;
+      double switchAlt = double.tryParse(baseDetails!['switchAlt'] ?? '') ?? 0;
 
       if (selectedAltitude <= switchAlt) {
         double altitudeDifference = selectedAltitude - baseLineRefAlt;

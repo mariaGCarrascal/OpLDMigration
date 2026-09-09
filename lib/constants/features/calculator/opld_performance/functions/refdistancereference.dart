@@ -1,7 +1,7 @@
 import 'package:xml/xml.dart';
 import 'package:flutter_application_5/service_dataxml/opldservice.dart';
 
-class Approachspeeddistancecalculation{
+class Refdistancereference{
 
   final String? aircraftRef;
   final String? landingRef;
@@ -9,16 +9,15 @@ class Approachspeeddistancecalculation{
   final String? flapRef;
   final String? conditionRef;
   final String? autobrakeRef;
-  final String? airspeedRef;
   final Map<String, String>? baseDetails;
 
-    Approachspeeddistancecalculation({ 
+    Refdistancereference({ 
       this.aircraftRef, this.landingRef, this.configurationRef, this.flapRef, 
-      this.conditionRef, this.autobrakeRef, this.airspeedRef, this.baseDetails
+      this.conditionRef, this.autobrakeRef, this.baseDetails
     });
     
   double call() {
-    Map<String, String> airspeedData = {};
+    Map<String, String> distanceData = {};
     double result;
     final XmlDocument document = OpLdService.instance.document;
     XmlDocument? xmlDocument;
@@ -31,7 +30,7 @@ class Approachspeeddistancecalculation{
     final String? selectedautobrake = autobrakeRef;
 
     try {
-      //Search Approach Speed Adjustment Value for APP SPD ADJ
+      //Search Reference DIST Value for REF DIST 
       Iterable<XmlElement> target = [];
 
       if(selectedLanding == 'Normal') {
@@ -54,7 +53,7 @@ class Approachspeeddistancecalculation{
           }
           
           if (selectedflap != null) {
-            airspeedData =  {
+            distanceData =  {
             for (final child in target
                 .where((f) => f.getAttribute('label') == selectedflap)
                 .expand((c) => c.findAllElements('reportedBrakingAction'))
@@ -63,7 +62,7 @@ class Approachspeeddistancecalculation{
                       lc.getAttribute('label')?.toUpperCase() ==
                       selectedCondition!.toUpperCase(),
                 )
-                .expand((c) => c.findAllElements('approachSpeedAdjustment'))
+                .expand((c) => c.findAllElements('refDistance'))
                 .expand((c) => c.children.whereType<XmlElement>())
                 .where(
                   (child) =>
@@ -96,7 +95,7 @@ class Approachspeeddistancecalculation{
           }
           
           if (selectedConfiguration != null) {
-            airspeedData = {
+            distanceData = {
             for (final child in target
                 .where((f) => f.getAttribute('id') == selectedConfiguration)
                 .expand((c) => c.findAllElements('reportedBrakingAction'))
@@ -105,7 +104,7 @@ class Approachspeeddistancecalculation{
                       lc.getAttribute('label')?.toUpperCase() ==
                       selectedCondition!.toUpperCase(),
                 )
-                .expand((c) => c.findAllElements('approachSpeedAdjustment'))
+                .expand((c) => c.findAllElements('refDistance'))
                 .expand((c) => c.children.whereType<XmlElement>())
                 .where(
                   (child) =>
@@ -117,22 +116,9 @@ class Approachspeeddistancecalculation{
 
           }
         }
-      print('Resultado de busqueda en airspeed aprroach (VREF): $airspeedData');
-      //Operation for adjustement result, pendiente validacion de si es N/A el texto, el valor sera 0 de results
-      double selectedVref = double.tryParse(airspeedRef ?? '') ?? 0;
-      double approachSpeedAdjustment = double.tryParse(airspeedData[airspeedData.keys.first] ?? '') ?? 0;
-      double baseLineRefVref = double.tryParse(baseDetails!['refDltaVref'] ?? '') ?? 0;
-      double perHowManyAirspeedUnitsAboveVref = double.tryParse(baseDetails!['perHowManyAirspeedUnitsAboveVref'] ?? '') ?? 0;
-
-      if (selectedVref >= baseLineRefVref) {
-        result = ((approachSpeedAdjustment / perHowManyAirspeedUnitsAboveVref) * (selectedVref - baseLineRefVref));
-
-      } else if (selectedAircraft == "E190 CF34-10E5" && selectedVref >= 0) {
-        result = ((approachSpeedAdjustment / perHowManyAirspeedUnitsAboveVref) * (selectedVref - baseLineRefVref));
-                
-      } else {
-        result = double.nan;
-      }
+      print('Resultado de busqueda en ref distance: $distanceData');
+      //Adjustement result value
+      result = double.tryParse(distanceData[selectedautobrake] ?? '') ?? 0;
 
       return result;
 

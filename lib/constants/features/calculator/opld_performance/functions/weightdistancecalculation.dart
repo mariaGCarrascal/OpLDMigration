@@ -64,12 +64,16 @@ class Weightdistancecalculation{
                         selectedCondition!.toUpperCase(),
                   )
                   .expand((c) => c.findAllElements('weightAdjustment'))
-                  .where(
-                    (lc) =>
-                        lc.getAttribute('id')?.toUpperCase() ==
-                        selectedautobrake!.toUpperCase(),
+                  .expand(
+                    (altitudeAdjustment) => altitudeAdjustment
+                        .findElements('*')
+                        .where(
+                          (child) =>
+                              child.getAttribute('id')?.toUpperCase() ==
+                              selectedautobrake!.toUpperCase(),
+                        ),
                   )
-                  .expand((ref) => ref.findElements('*')))
+                  .expand((autobrake) => autobrake.findElements('*')))
                 child.name.local: child.innerText.trim(),
             };
 
@@ -106,24 +110,28 @@ class Weightdistancecalculation{
                         selectedCondition!.toUpperCase(),
                   )
                   .expand((c) => c.findAllElements('weightAdjustment'))
-                  .where(
-                    (lc) =>
-                        lc.getAttribute('id')?.toUpperCase() ==
-                        selectedautobrake!.toUpperCase(),
+                  .expand(
+                    (altitudeAdjustment) => altitudeAdjustment
+                        .findElements('*')
+                        .where(
+                          (child) =>
+                              child.getAttribute('id')?.toUpperCase() ==
+                              selectedautobrake!.toUpperCase(),
+                        ),
                   )
-                  .expand((ref) => ref.findElements('*')))
+                  .expand((autobrake) => autobrake.findElements('*')))
                 child.name.local: child.innerText.trim(),
             };
 
           }
         }
-      
+      print('Resultado de busqueda en weight: $weightData');
       //Operation for adjustement result
-      double selectedWeight = double.tryParse(weightRef ?? '') ?? 0.0;
-      double aboveRefWgtValue = double.tryParse(weightData['aboveRefWgt'] ?? '') ?? 0.0;
-      double belowRefWgtValue = double.tryParse(weightData['belowRefWgt'] ?? '') ?? 0.0;
-      double baseLineRefWeight = double.tryParse(baseDetails!['refWgt'] ?? '') ?? 0.0;
-      double perHowManyWgtUnits = double.tryParse(baseDetails!['perHowManyWgtUnits'] ?? '') ?? 0.0;
+      double selectedWeight = double.tryParse(weightRef ?? '') ?? 0;
+      double aboveRefWgtValue = double.tryParse(weightData['aboveRefWgt'] ?? '') ?? 0;
+      double belowRefWgtValue = double.tryParse(weightData['belowRefWgt'] ?? '') ?? 0;
+      double baseLineRefWeight = double.tryParse(baseDetails!['refWgt'] ?? '') ?? 0;
+      double perHowManyWgtUnits = double.tryParse(baseDetails!['perHowManyWgtUnits'] ?? '') ?? 0;
 
 
       if (selectedWeight < baseLineRefWeight) {
