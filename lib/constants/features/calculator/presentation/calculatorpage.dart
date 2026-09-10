@@ -14,7 +14,9 @@ import 'package:flutter_application_5/constants/features/calculator/fuctions/cus
 import 'package:flutter_application_5/constants/features/calculator/fuctions/loadautobrakes.dart';
 import 'package:flutter_application_5/constants/features/calculator/fuctions/loadcomments.dart';
 import 'package:flutter_application_5/constants/features/calculator/fuctions/loadreversers.dart';
+import 'package:flutter_application_5/constants/features/calculator/fuctions/loadvrefcondition.dart';
 import 'package:flutter_application_5/constants/features/calculator/fuctions/loadvreftext.dart';
+import 'package:flutter_application_5/constants/features/calculator/fuctions/opldcolorasignator.dart';
 import 'package:flutter_application_5/constants/features/calculator/fuctions/searchautobrakedefault.dart';
 import 'package:flutter_application_5/constants/features/calculator/fuctions/searchdefault.dart';
 import 'package:flutter_application_5/constants/features/calculator/opld_performance/oplddistancecalculator.dart';
@@ -39,9 +41,9 @@ class CalculatorPage extends StatefulWidget {
     this.airport, this.airportEl, this.airportQNH, this.airportTemp, this.airportRunway, this.nonflaps
   });
 //Pendientes:
-//Obtener los valores de NonNrmlTemperatureAdjustmentsExist_YESorNO y NonNrmlVREFAdjustmentsExist_YESorNO (solo usa Vref)
 //Cambiar la visual del card results juntandolo y usar Divider.
-//Logica de cambio de colores en el OpLD, y longPress en QNH y Elevation (XXX).
+//Agregar la funcion de opld result en los setstates clave.
+//LongPress en QNH y Elevation (XXX).
 
   @override
   State<CalculatorPage> createState() => _CalculatorPageState();
@@ -54,6 +56,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
   String? netLDA;
   String? opldResult;
   String? remainingResult;
+  Color? colorResult;
   late double _currentLadWeight;
   late double _currentElevation;
   double? altitudMax;
@@ -100,6 +103,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
   late double weightMAX;
   String? altitud;
   String? vrefNonPlus;
+  String? vrefAdjust;
   bool _isExpanded = false;
   //Variables de listas y Maps de los DropDownlists
   List<String>? listaComments = [];
@@ -184,18 +188,18 @@ class _CalculatorPageState extends State<CalculatorPage> {
     
     if(selectedLanding == 'Normal') {
       selectedFlaps = defaultAircraft?[1];
-      listaComments = Loadcomments(aircraftRef: selectedAircraft, landingRef: selectedLanding,configurationRef: selectedConfiguration, flapRef: selectedFlaps)();
       selectedAutoBrake = defaultAircraft?[2];
       autoBrakeOptions = Loadautobrakes(aircraftRef: selectedAircraft, landingRef: selectedLanding, configurationRef: selectedConfiguration, flapRef: selectedFlaps, conditionRef: selectedCondition)();
+      vrefAdjust = 'YES';
     } else {
       selectedFlaps = widget.nonflaps;
       nonFlap = widget.nonflaps;
-      listaComments = Loadcomments(aircraftRef: selectedAircraft, landingRef: selectedLanding,configurationRef: selectedConfiguration, flapRef: selectedFlaps)();
       selectedAutoBrake = Searchautobrakedefault(aircraftRef: selectedAircraft, landingRef: selectedLanding, configurationRef: selectedConfiguration, conditionRef: selectedCondition)();
       autoBrakeOptions = Loadautobrakes(aircraftRef: selectedAircraft, landingRef: selectedLanding, configurationRef: selectedConfiguration, flapRef: selectedFlaps, conditionRef: selectedCondition)();
       vrefNonPlus = Loadvreftext(aircraftRef: selectedAircraft, landingRef: selectedLanding, configurationRef: selectedConfiguration)();
+      vrefAdjust = Loadvrefcondition(aircraftRef: selectedAircraft, landingRef: selectedLanding, configurationRef: selectedConfiguration)();
     }
-    print('Autobrake que se usara en las busquedas de OpLD es: $selectedAutoBrake');
+    listaComments = Loadcomments(aircraftRef: selectedAircraft, landingRef: selectedLanding,configurationRef: selectedConfiguration, flapRef: selectedFlaps)();
     if(selectedAirport != 'XXX') {
       selectedAirportElevation = widget.airportEl;
       selectedAirportTemperature = widget.airportTemp;
@@ -204,10 +208,10 @@ class _CalculatorPageState extends State<CalculatorPage> {
       selectedSlopeValues = selectedAirportRunway?[selectedRunway];
       rwyId = selectedSlopeValues?[0]; 
       rwyLda = selectedSlopeValues?[1];
+      rwySlope = selectedSlopeValues?[2];
       rwyFactor = selectedSlopeValues?[3]; 
       rwyAdditive = selectedSlopeValues?[4];
-      netLDA = rwyLda; 
-      rwySlope = selectedSlopeValues?[2];
+      netLDA = rwyLda;
       altitud = Calculatealtitud(elevationRef: selectedAirportElevation, qnhRef: selectedAirportQNH)();
       isa = ((double.parse(selectedAirportTemperature!.trim()).round() - 15) + (0.0019812 * double.parse(altitud  ?? '0').round())).round().toString();
     } else {
@@ -221,20 +225,22 @@ class _CalculatorPageState extends State<CalculatorPage> {
       isa = defaultAircraft?[23];
       tempValues = Calculatetempisa(altitudRef: altitud, temperatureRef: '0', isaRef: defaultAircraft?[23], minRef: isaMin, maxRef: isaMax, operation: '')();
       selectedAirportTemperature = tempValues[1];
-      rwyId = '0'; 
-      rwyLda = '0'; 
-      rwySlope = '0';
-      rwyFactor = '1'; 
-      rwyAdditive = '0';
+      selectedAirportRunway = widget.airportRunway;
+      selectedRunway = selectedAirportRunway?.keys.first;
+      selectedSlopeValues = selectedAirportRunway?[selectedRunway];
+      rwyId = selectedSlopeValues?[0] == 'XXX' ? selectedSlopeValues![0] : '0'; 
+      rwyLda = selectedSlopeValues?[1] == 'XXXX' ? selectedSlopeValues![1] : '0'; 
+      rwySlope = selectedSlopeValues?[2] == 'XXX' ? selectedSlopeValues![2] : '0';
+      rwyFactor = selectedSlopeValues?[3]; 
+      rwyAdditive = selectedSlopeValues?[4];
       netLDA = rwyLda;
-      opldResult = '8143';
       rwySlopeMin = defaultAircraft?[11];
       rwySlopeMax = defaultAircraft?[12];
     } 
     _currentLadWeight = double.parse(defaultAircraft?[4] ?? '0');
     weightMAX = double.parse(defaultAircraft?[5] ?? '0');
     weightMIN = double.parse(defaultAircraft?[6] ?? '0');
-    vRef = defaultAircraft?[0];
+    vRef =  vrefAdjust == 'YES' ? defaultAircraft![0] : '0';
     vMin = defaultAircraft?[7];
     vMax = defaultAircraft?[8];
 
@@ -246,7 +252,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
     )();
 
     remainingResult = ((double.tryParse(netLDA ?? '0') ?? 0) - (double.tryParse(opldResult ?? '0') ?? 0)).toString();
-    
+    colorResult = Opldcolorasignator(opldReference: opldResult, netldaReference: netLDA)();
   }
 
   void updateRwyCondition(String condition) {
@@ -285,7 +291,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Columna Izquierda (Airport Information y Aircraft Configuration)
+                //Columna Izquierda (Airport Information y Aircraft Configuration)
                 Expanded(
                   child: Column(
                     children: [
@@ -347,7 +353,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                     color: AppColors.textColor3Dark,
                                   ),
                                 ),
-                                SizedBox(width: screenSize.width * 0.15),
+                                SizedBox(width: screenSize.width * 0.10),
                                 Expanded(
                                   child: DropdownButtonFormField<String>(
                                     isExpanded: true,
@@ -477,7 +483,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                   color: AppColors.white, 
                                 ),
                               ),
-                              SizedBox(width: screenSize.width * 0.10),
+                              SizedBox(width: screenSize.width * 0.05),
                               Expanded(
                                 child: DropdownButtonFormField<String>(
                                   isExpanded: true, 
@@ -1276,7 +1282,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                 ),
                               ),
                               SizedBox(width: screenSize.width * 0.10),
-                              if (selectedLanding != 'Non-Normal')
+                              if (selectedLanding != 'Non-Normal') ...[
                                 Expanded(
                                   child: DropdownButtonFormField<String>(
                                     isExpanded: true,
@@ -1323,7 +1329,8 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                     },
                                   ),
                                 )
-                              else
+                              ] else ...[
+                                SizedBox(width: screenSize.width * 0.10),
                                 Expanded (child: Text(
                                     AppStrings.na,
                                     style: TextStyle(
@@ -1332,6 +1339,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                     ),
                                   ),
                                 ),
+                              ],
                             ],
                           ),
                         ),
@@ -1421,7 +1429,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                   ],
                                 ),
                               ]  else ...[
-                                    if(selectedConfiguration?.contains('Airspeed Unreliable') == true) ...[
+                                    if(vrefAdjust == 'NO') ...[
                                       Expanded(
                                         child: Text(
                                           '$vrefNonPlus',
@@ -1607,7 +1615,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
 
                 const SizedBox(width: 8),
 
-                // Columna Derecha (Weather y Landing Performance)
+                //Columna Derecha (Weather y Landing Performance)
                 Expanded(
                   child: Column(
                     children: [
@@ -1853,7 +1861,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                         borderRadius: BorderRadius.circular(12.0), 
                         ),
                         child: Padding(
-                          padding: const EdgeInsets.all(8.0),
+                          padding: const EdgeInsets.all(10.0),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
@@ -1869,9 +1877,12 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   mainAxisSize: MainAxisSize.min, 
                                   children: [ 
-                                    Text(
-                                      '${double.tryParse(selectedAirportTemperature ?? '')?.round() ?? 0} ${AppStrings.celcius}',
-                                      style: TextStyle(color: AppColors.okPriButBrDark, fontSize: 15,),
+                                    Padding(
+                                      padding: const EdgeInsets.only(left: 10),
+                                      child: Text(
+                                        '${double.tryParse(selectedAirportTemperature ?? '')?.round() ?? 0} ${AppStrings.celcius}',
+                                        style: TextStyle(color: AppColors.okPriButBrDark, fontSize: 15,),
+                                      ),
                                     ),                                    
                                     const SizedBox(height: 4),
                                     Text(
@@ -2192,7 +2203,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                   Text(
                                     '$selectedConfiguration',
                                     style: TextStyle(
-                                      fontSize: 12,
+                                      fontSize: 15,
                                       fontWeight: FontWeight.bold,
                                       color: AppColors.white),
                                   ),
@@ -2277,23 +2288,29 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                               ),
                                             ),
                                             const SizedBox(width: 15),
+
                                             Text(
                                               '$opldResult ${AppStrings.ft}',
                                               style: TextStyle(
                                                 fontWeight: FontWeight.bold,
-                                                color: AppColors.textColor2Dark,
+                                                color: selectedAirport != 'XXX'
+                                                  ? colorResult
+                                                  : AppColors.white,
                                                 fontSize: 16,
                                               ),
                                             ),
-                                          
+
                                             Text(
                                               '(${(double.tryParse(opldResult ?? '0')! * 0.3048).round()}${AppStrings.m})',
                                               style: TextStyle(
                                                 fontWeight: FontWeight.bold,
-                                                color: AppColors.textColor2Dark,
+                                                color: selectedAirport != 'XXX'
+                                                  ? colorResult
+                                                  : AppColors.white,
                                                 fontSize: 16,
                                               ),
                                             ),
+
                                             const SizedBox(width: 4),
                                           ],
                                         ),
@@ -2339,13 +2356,13 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                             Text(
                                               '$remainingResult ${AppStrings.ft}', 
                                               textAlign: TextAlign.right, 
-                                              style: TextStyle(color: AppColors.textColor2Dark, fontSize: 16,),
+                                              style: TextStyle(color: colorResult, fontSize: 16,),
                                             ),
                                             const SizedBox(width: 5),
                                             Text(
                                               '(${(double.tryParse(remainingResult ?? '0')! * 0.3048).round()}${AppStrings.m})', 
                                               textAlign: TextAlign.right, 
-                                              style: TextStyle(color: AppColors.textColor2Dark, fontSize: 16,),
+                                              style: TextStyle(color: colorResult, fontSize: 16,),
                                             ),
                                           ],
                                         )

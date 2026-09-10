@@ -112,7 +112,6 @@ class Oplddistancecalculator{
       print('Resultados de Factor ruway: $factor');
       print('Resultados de Additive ruway: $additive');
 
-      print('Resultados de OpLD antes de redondear: $finalOpLDResult');
       return finalOpLDResult.round().toString().trim(); 
 
     } catch (e) {
