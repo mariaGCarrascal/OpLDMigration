@@ -261,6 +261,17 @@ class _CalculatorPageState extends State<CalculatorPage> {
     rwyNote = values.skip(1).toList();
   }
 
+  void updateOpld() {
+    opldResult = Oplddistancecalculator(
+      aircraftPicker: selectedAircraft, landingPicker: selectedLanding, configurationPicker: selectedConfiguration,
+      factorRef: rwyFactor, rwyPicker: selectedRunway, additiveRef: rwyAdditive, flapPicker: selectedFlaps, rwyConditionPicker: selectedCondition, 
+      autobrakePicker: selectedAutoBrake, revsrinopPicker: selectedReversers, speedbrakesPicker: selectedSpeedBrake, 
+      weightRef: _currentLadWeight.toString(), altitudeRef: altitud, isaRef: isa, slopeRef: rwySlope, windRef: headtail, vrefRef: vRef
+    )();
+    remainingResult = ((double.tryParse(netLDA ?? '0') ?? 0) - (double.tryParse(opldResult ?? '0') ?? 0)).toString();
+    colorResult = Opldcolorasignator(opldReference: opldResult, netldaReference: netLDA)();
+  }
+
   String _formatSlope(String? value) {
     final number = double.tryParse(value ?? '');
     if (number == null) return value ?? '0';
@@ -862,6 +873,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                             _isExpanded = !_isExpanded;
                                             _currentReduction = '';
                                             netLDA = rwyLda;
+                                            updateOpld();
                                           });
                                         },
                                         style: ElevatedButton.styleFrom(
@@ -905,6 +917,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                               setState(() {
                                                 _currentReduction = newValue; 
                                                 netLDA = Calculatereduction(netRef: netLDA, ldaRef: rwyLda, reductionRef: _currentReduction)();
+                                                updateOpld();
                                               });
                                             },
                                             textAlign: TextAlign.center,
