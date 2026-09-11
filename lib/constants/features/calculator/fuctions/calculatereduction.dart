@@ -1,11 +1,10 @@
 class Calculatereduction{
 
-  final String? netRef;
   final String? reductionRef;
   final String? ldaRef;
 
     Calculatereduction({ 
-    this.netRef, this.ldaRef, this.reductionRef
+      this.ldaRef, this.reductionRef
     });
     
   String call() {
@@ -14,10 +13,10 @@ class Calculatereduction{
     }
 
     try {
-      final int netlda = int.parse(netRef!.trim());
+      final int lda = int.parse(ldaRef!.trim());
       final int reduction = int.parse(reductionRef!.trim());
 
-      final int result = (reduction - netlda).abs();
+      final int result = (lda - (reduction * 3.28084).round());
 
       return result.round().toString();
     } catch (e) {

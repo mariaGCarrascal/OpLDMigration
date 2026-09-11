@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_application_5/constants/colors/app_colors.dart';
 import 'package:flutter_application_5/constants/features/calculator/fuctions/calculateAltitud.dart';
@@ -52,6 +54,7 @@ class CalculatorPage extends StatefulWidget {
 class _CalculatorPageState extends State<CalculatorPage> {
 
   //Variables para las selecciones
+  Timer? _opldDebounce;
   String? _currentReduction;
   String? netLDA;
   String? opldResult;
@@ -61,9 +64,12 @@ class _CalculatorPageState extends State<CalculatorPage> {
   late double _currentElevation;
   double? altitudMax;
   double? altitudMin;
-  late double sliderMin;
-  late double sliderMax;
-  int? _divisions;
+  late double sliderMinAltitud;
+  late double sliderMaxAltitud;
+  int? _divisionsAltitud;
+  late double sliderMinWeight;
+  late double sliderMaxWeight;
+  int? _divisionsWeight;
   String? isa;
   String? selectedRunway;
   String? selectedMag;
@@ -217,9 +223,9 @@ class _CalculatorPageState extends State<CalculatorPage> {
     } else {
       altitudMin = double.parse(defaultAircraft?[9] ?? '0');
       altitudMax = double.parse(defaultAircraft?[10] ?? '0');
-      sliderMin = (altitudMin! / 1000).ceil() * 1000;
-      sliderMax = (altitudMax! / 1000).floor() * 1000;
-      _divisions = ((sliderMax - sliderMin) / 1000).round();
+      sliderMinAltitud = (altitudMin! / 1000).ceil() * 1000;
+      sliderMaxAltitud = (altitudMax! / 1000).floor() * 1000;
+      _divisionsAltitud = ((sliderMaxAltitud - sliderMinAltitud) / 1000).round();
       _currentElevation = double.parse(defaultAircraft?[18] ?? '0');
       altitud = Calculatealtitud(elevationRef: _currentElevation.toString(), qnhRef: selectedAirportQNH)();
       isa = defaultAircraft?[23];
@@ -240,6 +246,9 @@ class _CalculatorPageState extends State<CalculatorPage> {
     _currentLadWeight = double.parse(defaultAircraft?[4] ?? '0');
     weightMAX = double.parse(defaultAircraft?[5] ?? '0');
     weightMIN = double.parse(defaultAircraft?[6] ?? '0');
+    sliderMinWeight = (weightMIN / 1000).ceil() * 1000;
+    sliderMaxWeight = (weightMAX / 1000).floor() * 1000;
+    _divisionsWeight = ((sliderMaxWeight - sliderMinWeight) / 1000).round();
     vRef =  vrefAdjust == 'YES' ? defaultAircraft![0] : '0';
     vMin = defaultAircraft?[7];
     vMax = defaultAircraft?[8];
@@ -411,12 +420,14 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                       setState(() {
                                         selectedSlopeValues = selectedAirportRunway?[newValue];
                                         rwyId = selectedSlopeValues?[0]; 
-                                        rwyLda = selectedSlopeValues?[1]; 
+                                        rwyLda = selectedSlopeValues?[1];
+                                        netLDA = rwyLda; 
                                         rwySlope = selectedSlopeValues?[2];
                                         windValues =  Calculatewind(rwyidRef: rwyId, windRef: windValue, windpickerRef: selectedWind, operation: '')();
                                         windValue = windValues?[0];
                                         headtail = windValues?[1];
                                         crosswind = windValues?[2];
+                                        updateOpld();
                                       });
                                     },
                                   ),
@@ -439,6 +450,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                       windValue = windValues?[0];
                                       headtail = windValues?[1];
                                       crosswind = windValues?[2];
+                                      updateOpld();
                                     });
                                   },
                                   itemBuilder: (BuildContext context) {
@@ -469,8 +481,6 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                   ),
                                 ),
                               ],
-
-
                             ],
                           ),
                         ),
@@ -551,6 +561,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                       } else {
                                         autoBrakeOptions = Loadautobrakes(aircraftRef: selectedAircraft, landingRef: selectedLanding, configurationRef: selectedConfiguration, flapRef: selectedFlaps, conditionRef: selectedCondition)();
                                       }
+                                      updateOpld();
                                     });
                                   },
                                 ),
@@ -600,6 +611,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                   onPressed: () {
                                       setState(() {
                                           rwySlope = Calculateslopeincredecre(slopeReference: rwySlope, minReference: rwySlopeMin, maxReference: rwySlopeMax, operation: 'decrement')();
+                                          updateOpld();
                                         });
                                       },
                                   style: ElevatedButton.styleFrom(
@@ -624,6 +636,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                   onPressed: () {
                                     setState(() {
                                         rwySlope = Calculateslopeincredecre(slopeReference: rwySlope, minReference: rwySlopeMin, maxReference: rwySlopeMax, operation: 'increment')();
+                                        updateOpld();
                                       });
                                     },
                                   style: ElevatedButton.styleFrom(
@@ -712,6 +725,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                             temperatureRef:
                                                 selectedAirportTemperature,
                                           )();
+                                          updateOpld();
                                         });
                                       },
                                       style: ElevatedButton.styleFrom(
@@ -759,6 +773,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                             temperatureRef:
                                                 selectedAirportTemperature,
                                           )();
+                                          updateOpld();
                                         });
                                       },
                                       style: ElevatedButton.styleFrom(
@@ -808,26 +823,26 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                     activeColor: AppColors.iconDark,
                                     thumbColor: AppColors.iconDark,
                                     value: _currentElevation.clamp(
-                                      sliderMin,
-                                      sliderMax,
+                                      sliderMinAltitud,
+                                      sliderMaxAltitud,
                                     ),
-                                    min: sliderMin,
-                                    max: sliderMax,
-                                    divisions: _divisions,
+                                    min: sliderMinAltitud,
+                                    max: sliderMaxAltitud,
+                                    divisions: _divisionsAltitud,
                                     onChanged: (double val) {
                                       setState(() {
                                         _currentElevation = val;
-                                        altitud = Calculatealtitud(
-                                          elevationRef: _currentElevation
-                                              .toString(),
-                                          qnhRef: selectedAirportQNH,
-                                        )();
-                                        isa = Calculateisa(
-                                          elevationRef: altitud,
-                                          temperatureRef:
-                                              selectedAirportTemperature,
-                                        )();
+                                        altitud = Calculatealtitud(elevationRef: _currentElevation.toString(), qnhRef: selectedAirportQNH)();
+                                        isa = Calculateisa(elevationRef: altitud, temperatureRef: selectedAirportTemperature)();
                                       });
+
+                                      _opldDebounce?.cancel();
+                                      _opldDebounce = Timer(
+                                        const Duration(milliseconds: 300),
+                                        () {
+                                          updateOpld();
+                                        },
+                                      );
                                     },
                                   ),
                                 ),
@@ -928,72 +943,121 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                     SizedBox(
                                       width: 100,
                                       height: 50,
-                                      child: TextField(
-                                        controller: TextEditingController(
-                                          text: _currentReduction,
-                                        )..selection = TextSelection.fromPosition(
-                                            TextPosition(
-                                              offset: (_currentReduction ?? '').length,
+                                      child: Stack(
+                                        children: [
+                                          TextField(
+                                            controller: TextEditingController(
+                                              text: _currentReduction,
+                                            )..selection = TextSelection.fromPosition(
+                                                TextPosition(
+                                                  offset: (_currentReduction ?? '').length,
+                                                ),
+                                              ),
+                                            keyboardType: TextInputType.number,
+                                            inputFormatters: <TextInputFormatter>[
+                                              FilteringTextInputFormatter.digitsOnly,
+                                              Customdigitformatter(),
+                                            ],
+                                            onChanged: (String newValue) {
+                                              setState(() {
+                                                _currentReduction = newValue;
+
+                                                netLDA = Calculatereduction(
+                                                  ldaRef: rwyLda,
+                                                  reductionRef: _currentReduction,
+                                                )();
+
+                                                updateOpld();
+                                              });
+                                            },
+                                            textAlign: TextAlign.center,
+                                            style: const TextStyle(
+                                              color: AppColors.iconDark,
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                            decoration: InputDecoration(
+                                              hintText: AppStrings.reductionLow,
+                                              hintStyle: const TextStyle(
+                                                color: AppColors.reductionPlace,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                              filled: true,
+                                              fillColor: AppColors.placeholder,
+
+                                              // Para el espacio del boton X
+                                              contentPadding: const EdgeInsets.only(
+                                                left: 8,
+                                                right: 28,
+                                                top: 12,
+                                                bottom: 12,
+                                              ),
+
+                                              border: OutlineInputBorder(
+                                                borderRadius: BorderRadius.circular(8.0),
+                                                borderSide: const BorderSide(
+                                                  color: AppColors.placeholder,
+                                                  width: 1.0,
+                                                ),
+                                              ),
+                                              enabledBorder: OutlineInputBorder(
+                                                borderRadius: BorderRadius.circular(8.0),
+                                                borderSide: const BorderSide(
+                                                  color: AppColors.placeholder,
+                                                  width: 1.0,
+                                                ),
+                                              ),
+                                              focusedBorder: OutlineInputBorder(
+                                                borderRadius: BorderRadius.circular(8.0),
+                                                borderSide: const BorderSide(
+                                                  color: AppColors.placeholder,
+                                                  width: 1.0,
+                                                ),
+                                              ),
                                             ),
                                           ),
-                                        keyboardType: TextInputType.number,
-                                        inputFormatters: <TextInputFormatter>[
-                                          FilteringTextInputFormatter.digitsOnly,
-                                          Customdigitformatter(),
+
+                                          // Botón para eliminar input de reduction
+                                          if (_currentReduction?.isNotEmpty ?? false)
+                                            Positioned(
+                                              right: 0,
+                                              top: 5,
+                                              child: SizedBox(
+                                                width: 40,
+                                                height: 40,
+                                                child: IconButton(
+                                                  padding: EdgeInsets.zero,
+                                                  onPressed: () {
+                                                    setState(() {
+                                                      _currentReduction = '';
+                                                      netLDA = rwyLda;
+                                                      updateOpld();
+                                                    });
+                                                  },
+                                                icon: Container(
+                                                  width: 20,
+                                                  height: 20,
+                                                  decoration: BoxDecoration(
+                                                    color: AppColors.iconDark.withValues(alpha: 0.5),
+                                                    shape: BoxShape.circle,
+                                                  ),
+                                                  child: Center(
+                                                    child: Icon(
+                                                      Icons.close,
+                                                      color: AppColors.placeholder.withValues(alpha: 0.7),
+                                                      size: 13,
+                                                      fontWeight: FontWeight.bold,
+                                                    ),
+                                                  ),
+                                                ),
+
+                                                ),
+                                              ),
+                                            ),
                                         ],
-                                        onChanged: (String newValue) {
-                                          setState(() {
-                                            _currentReduction = newValue;
-
-                                            netLDA = Calculatereduction(
-                                              netRef: netLDA,
-                                              ldaRef: rwyLda,
-                                              reductionRef: _currentReduction,
-                                            )();
-
-                                            updateOpld();
-                                          });
-                                        },
-                                        textAlign: TextAlign.center,
-                                        style: const TextStyle(
-                                          color: AppColors.iconDark,
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w500,
-                                        ),
-                                        decoration: InputDecoration(
-                                          hintText: AppStrings.reductionLow,
-                                          hintStyle: const TextStyle(
-                                            color: AppColors.iconDark,
-                                          ),
-                                          filled: true,
-                                          fillColor: AppColors.placeholder,
-                                          contentPadding: const EdgeInsets.symmetric(
-                                            vertical: 12.0,
-                                          ),
-                                          border: OutlineInputBorder(
-                                            borderRadius: BorderRadius.circular(8.0),
-                                            borderSide: const BorderSide(
-                                              color: AppColors.placeholder,
-                                              width: 1.0,
-                                            ),
-                                          ),
-                                          enabledBorder: OutlineInputBorder(
-                                            borderRadius: BorderRadius.circular(8.0),
-                                            borderSide: const BorderSide(
-                                              color: AppColors.placeholder,
-                                              width: 1.0,
-                                            ),
-                                          ),
-                                          focusedBorder: OutlineInputBorder(
-                                            borderRadius: BorderRadius.circular(8.0),
-                                            borderSide: const BorderSide(
-                                              color: AppColors.placeholder,
-                                              width: 1.0,
-                                            ),
-                                          ),
-                                        ),
                                       ),
                                     ),
+                                   
                                     const SizedBox(width: 10),
 
                                     Text(
@@ -1129,6 +1193,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                         selectedFlaps = newValue;
                                         listaComments = Loadcomments(aircraftRef: selectedAircraft, landingRef: selectedLanding,configurationRef: selectedConfiguration, flapRef: selectedFlaps)();
                                         autoBrakeOptions = Loadautobrakes(aircraftRef: selectedAircraft, landingRef: selectedLanding, configurationRef: selectedConfiguration, flapRef: selectedFlaps, conditionRef: selectedCondition)();
+                                        updateOpld();
                                       });
                                     },
                                   ),
@@ -1178,6 +1243,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                       onChanged: (newValue) {
                                         setState(() {
                                           selectedFlaps = newValue;
+                                          updateOpld();
                                         });
                                       },
                                     ),
@@ -1254,6 +1320,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                   onChanged: (newValue) {
                                     setState(() {
                                       selectedAutoBrake = newValue;
+                                      updateOpld();
                                     });
                                   },
                                 ),
@@ -1328,6 +1395,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                   onChanged: (newValue) {
                                     setState(() {
                                       selectedReversers = newValue;
+                                      updateOpld();
                                     });
                                   },
                                 ),
@@ -1404,6 +1472,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                     onChanged: (newValue) {
                                       setState(() {
                                         selectedSpeedBrake = newValue;
+                                        updateOpld();
                                       }); 
                                     },
                                   ),
@@ -1465,6 +1534,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                       onPressed: () {
                                         setState(() {
                                           vRef = Calculatevrefincredecre(vReference: vRef, minReference: vMin, maxReference: vMax, operation: 'decrement')();
+                                          updateOpld();
                                         });
                                       },
                                       style: ElevatedButton.styleFrom(
@@ -1489,6 +1559,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                       onPressed: () {
                                         setState(() {
                                           vRef = Calculatevrefincredecre(vReference: vRef, minReference: vMin, maxReference: vMax, operation: 'increment')();
+                                          updateOpld();
                                         });
                                       },
                                       style: ElevatedButton.styleFrom(
@@ -1549,6 +1620,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                               onPressed: () {
                                                 setState(() {
                                                   vRef = Calculatevrefincredecre(vReference: vRef, minReference: vMin, maxReference: vMax, operation: 'decrement')();
+                                                  updateOpld();
                                                 });
                                               },
                                               style: ElevatedButton.styleFrom(
@@ -1573,6 +1645,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                               onPressed: () {
                                                 setState(() {
                                                   vRef = Calculatevrefincredecre(vReference: vRef, minReference: vMin, maxReference: vMax, operation: 'increment')();
+                                                  updateOpld();
                                                 });
                                               },
                                               style: ElevatedButton.styleFrom(
@@ -1633,6 +1706,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                         onPressed: () {
                                           setState(() {
                                             _currentLadWeight = Calculateweightincredecre(weightReference: _currentLadWeight, minReference: weightMIN, maxReference: weightMAX, operation: 'decrement')();
+                                            updateOpld();
                                           });
                                         },
                                         style: ElevatedButton.styleFrom(
@@ -1657,6 +1731,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                         onPressed:  () {
                                           setState(() {
                                             _currentLadWeight = Calculateweightincredecre(weightReference: _currentLadWeight, minReference: weightMIN, maxReference: weightMAX, operation: 'increment')();
+                                            updateOpld();
                                           });
                                         },
                                         style: ElevatedButton.styleFrom(
@@ -1679,17 +1754,37 @@ class _CalculatorPageState extends State<CalculatorPage> {
 
                                     ],
                                   ),
-                                  Slider(
-                                    activeColor: AppColors.iconDark,
-                                    thumbColor: AppColors.iconDark,
-                                    value: _currentLadWeight,
-                                    min: weightMIN,
-                                    max: weightMAX,
-                                    onChanged: (double val) {
-                                      setState(() {
-                                        _currentLadWeight = val;
-                                      });
-                                    },
+                                  
+                                  SliderTheme(
+                                    data: SliderTheme.of(context).copyWith(
+                                      tickMarkShape:
+                                          const RoundSliderTickMarkShape(
+                                            tickMarkRadius: 0,
+                                          ),
+                                    ),
+                                    child: Slider(
+                                      activeColor: AppColors.iconDark,
+                                      thumbColor: AppColors.iconDark,
+                                      value: _currentLadWeight.clamp(
+                                        sliderMinWeight,
+                                        sliderMaxWeight,
+                                      ),
+                                      min: sliderMinWeight,
+                                      max: sliderMaxWeight,
+                                      divisions: _divisionsWeight,
+                                      onChanged: (double val) {
+                                        setState(() {
+                                          _currentLadWeight = val;
+                                        });
+                                        _opldDebounce?.cancel();
+                                        _opldDebounce = Timer(
+                                          const Duration(milliseconds: 300),
+                                          () {
+                                            updateOpld();
+                                          },
+                                        );
+                                      },
+                                    ),
                                   ),
                                 ],
                               ),
@@ -1800,6 +1895,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                           setState(() {
                                             selectedAirportQNH = Calculateqnhincredecre(qnhRef: selectedAirportQNH, operation: 'decrement')();
                                             altitud = Calculatealtitud(elevationRef: selectedAirportElevation, qnhRef: selectedAirportQNH)();
+                                            updateOpld();
                                           });},
                                       style: ElevatedButton.styleFrom(
                                         backgroundColor: AppColors.placeholder, 
@@ -1824,6 +1920,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                           setState(() {
                                             selectedAirportQNH = Calculateqnhincredecre(qnhRef: selectedAirportQNH, operation: 'increment')();
                                             altitud = Calculatealtitud(elevationRef: selectedAirportElevation, qnhRef: selectedAirportQNH)();
+                                            updateOpld();
                                           });},
                                       style: ElevatedButton.styleFrom(
                                         backgroundColor: AppColors.placeholder, 
@@ -1853,6 +1950,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                           setState(() {
                                             selectedAirportQNH = Calculateqnhincredecre(qnhRef: selectedAirportQNH, operation: 'decrement')();
                                             altitud = Calculatealtitud(elevationRef: _currentElevation.toString(), qnhRef: selectedAirportQNH)();
+                                            updateOpld();
                                           });},
                                       style: ElevatedButton.styleFrom(
                                         backgroundColor: AppColors.placeholder, 
@@ -1877,6 +1975,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                           setState(() {
                                             selectedAirportQNH = Calculateqnhincredecre(qnhRef: selectedAirportQNH, operation: 'increment')();
                                             altitud = Calculatealtitud(elevationRef: _currentElevation.toString(), qnhRef: selectedAirportQNH)();
+                                            updateOpld();
                                           });},
                                       style: ElevatedButton.styleFrom(
                                         backgroundColor: AppColors.placeholder, 
@@ -1971,7 +2070,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                       padding: const EdgeInsets.only(left: 10),
                                       child: Text(
                                         '${double.tryParse(selectedAirportTemperature ?? '')?.round() ?? 0} ${AppStrings.celcius}',
-                                        style: TextStyle(color: AppColors.okPriButBrDark, fontSize: 15, fontWeight: FontWeight.bold),
+                                        style: TextStyle(color: AppColors.textColor3Dark, fontSize: 15, fontWeight: FontWeight.bold),
                                       ),
                                     ),                                    
                                     const SizedBox(height: 4),
@@ -1994,6 +2093,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                             tempValues = Calculatetempisa(altitudRef: altitud, temperatureRef: selectedAirportTemperature, isaRef: isa, minRef: isaMin, maxRef: isaMax, operation: 'decrement')();
                                             selectedAirportTemperature = tempValues[1];
                                             isa = tempValues[0];
+                                            updateOpld();
                                           });},
                                       style: ElevatedButton.styleFrom(
                                         backgroundColor: AppColors.placeholder, 
@@ -2019,6 +2119,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                             tempValues = Calculatetempisa(altitudRef: altitud, temperatureRef: selectedAirportTemperature, isaRef: isa, minRef: isaMin, maxRef: isaMax, operation: 'increment')();
                                             selectedAirportTemperature = tempValues[1];
                                             isa = tempValues[0];
+                                            updateOpld();
                                           });},
                                       style: ElevatedButton.styleFrom(
                                         backgroundColor: AppColors.placeholder, 
@@ -2050,6 +2151,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                               tempValues = Calculatetempisa(altitudRef: altitud, temperatureRef: selectedAirportTemperature, isaRef: isa, minRef: isaMin, maxRef: isaMax, operation: 'decrement')();
                                               selectedAirportTemperature = tempValues[1];
                                               isa = tempValues[0];
+                                              updateOpld();
                                             });},
                                         style: ElevatedButton.styleFrom(
                                           backgroundColor: AppColors.placeholder, 
@@ -2075,6 +2177,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                               tempValues = Calculatetempisa(altitudRef: altitud, temperatureRef: selectedAirportTemperature, isaRef: isa, minRef: isaMin, maxRef: isaMax, operation: 'increment')();
                                               selectedAirportTemperature = tempValues[1];
                                               isa = tempValues[0];
+                                              updateOpld();
                                             });},
                                         style: ElevatedButton.styleFrom(
                                           backgroundColor: AppColors.placeholder, 
@@ -2139,6 +2242,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                                 windValue = windValues?[0];
                                                 headtail = windValues?[1];
                                                 crosswind = windValues?[2];
+                                                updateOpld();
                                               });
                                             },
                                             itemBuilder: (BuildContext context) {            
@@ -2222,6 +2326,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                         windValue = windValues?[0];
                                         headtail = windValues?[1];
                                         crosswind = windValues?[2];
+                                        updateOpld();
                                       });
                                     },
                                     style: ElevatedButton.styleFrom(
@@ -2249,6 +2354,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                         windValue = windValues?[0];
                                         headtail = windValues?[1];
                                         crosswind = windValues?[2];
+                                        updateOpld();
                                       });
                                     },
                                     style: ElevatedButton.styleFrom(

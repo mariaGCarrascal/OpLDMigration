@@ -29,6 +29,7 @@ static const Color cardDark = Color.fromARGB(255, 26, 24, 24);
 static const Color activeColor = Color(0xFFFFCC00);
 static const Color errorColor = Color.fromARGB(255, 255, 30, 0);
 static const Color borderHomeDropdowns = Color(0xFF7C7C7C);
+static const Color reductionPlace = Color(0xFFC0BABA);
  
  
 }
