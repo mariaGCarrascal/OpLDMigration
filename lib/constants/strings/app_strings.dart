@@ -19,12 +19,12 @@ class AppStrings {
   static const String rwyMag = "RWY MAG HDG";
   static const String rwyCond = "RWY CONDITION";
   static const String rwySlop = "RWY SLOPE";
-  static const String elevation = "Elevation";
+  static const String elevation = "ELEVATION";
   static const String lda = "LDA*";
   static const String ldaAdjust = "ADJUSTMENT";
   static const String reduction = "REDUCTION";
   static const String reductionLow = "reduction";
-  static const String refOnly = "FOR REFERENCE ONLY;IT MIGHT NOT BE KEPT UP TO DATE.";
+  static const String refOnly = "*FOR REFERENCE ONLY; IT MIGHT NOT BE KEPT UP TO DATE.";
   static const String flap = "FLAP";
   static const String autobrake = "AUTOBRAKE";
   static const String reversers = "REVERSERS";

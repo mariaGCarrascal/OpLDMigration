@@ -228,9 +228,9 @@ class _CalculatorPageState extends State<CalculatorPage> {
       selectedAirportRunway = widget.airportRunway;
       selectedRunway = selectedAirportRunway?.keys.first;
       selectedSlopeValues = selectedAirportRunway?[selectedRunway];
-      rwyId = selectedSlopeValues?[0] == 'XXX' ? selectedSlopeValues![0] : '0'; 
-      rwyLda = selectedSlopeValues?[1] == 'XXXX' ? selectedSlopeValues![1] : '0'; 
-      rwySlope = selectedSlopeValues?[2] == 'XXX' ? selectedSlopeValues![2] : '0';
+      rwyId = selectedSlopeValues?[0] != 'XXX' ? selectedSlopeValues![0] : '000'; 
+      rwyLda = selectedSlopeValues?[1] != 'XXXX' ? selectedSlopeValues![1] : '0'; 
+      rwySlope = selectedSlopeValues?[2] != 'XXX' ? selectedSlopeValues![2] : '0';
       rwyFactor = selectedSlopeValues?[3]; 
       rwyAdditive = selectedSlopeValues?[4];
       netLDA = rwyLda;
@@ -268,7 +268,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
       autobrakePicker: selectedAutoBrake, revsrinopPicker: selectedReversers, speedbrakesPicker: selectedSpeedBrake, 
       weightRef: _currentLadWeight.toString(), altitudeRef: altitud, isaRef: isa, slopeRef: rwySlope, windRef: headtail, vrefRef: vRef
     )();
-    remainingResult = ((double.tryParse(netLDA ?? '0') ?? 0) - (double.tryParse(opldResult ?? '0') ?? 0)).toString();
+    remainingResult = ((double.tryParse(netLDA ?? '0') ?? 0) - (double.tryParse(opldResult ?? '0') ?? 0)).round().toString();
     colorResult = Opldcolorasignator(opldReference: opldResult, netldaReference: netLDA)();
   }
 
@@ -321,13 +321,13 @@ class _CalculatorPageState extends State<CalculatorPage> {
                               Text(
                                 AppStrings.airportInfo,
                                 style: TextStyle(
-                                  fontSize: 15,
+                                  fontSize: 18,
                                   fontWeight: FontWeight.bold,
                                   color: AppColors.white),
                               ),
                               Text(
                                 '$selectedAirport', // TextForSelectedAirport
-                                style: TextStyle(color: AppColors.iconDark),
+                                style: TextStyle(color: AppColors.iconDark, fontSize: 18, fontWeight: FontWeight.bold),
                               ),
                             ],
                           ),
@@ -353,6 +353,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                 Text(
                                   AppStrings.rwyId,
                                   style: TextStyle(
+                                    fontSize: 15,
                                     color: AppColors.white,
                                   ),
                                 ),
@@ -360,6 +361,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                 Text(
                                   '(${rwyId!.trim()}°)',
                                   style: TextStyle(
+                                    fontSize: 15,
                                     fontWeight: FontWeight.bold,
                                     color: AppColors.textColor3Dark,
                                   ),
@@ -368,6 +370,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                 Expanded(
                                   child: DropdownButtonFormField<String>(
                                     isExpanded: true,
+                                    icon: const SizedBox.shrink(),
                                     initialValue: selectedRunway,
                                     hint: Text(
                                      '$selectedRunway',
@@ -422,7 +425,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                 Text(
                                   AppStrings.rwyMag, 
                                   style: TextStyle(
-                                    fontWeight: FontWeight.bold,
+                                    fontSize: 15,
                                     color: AppColors.white,
                                   ),
                                 ),
@@ -491,13 +494,15 @@ class _CalculatorPageState extends State<CalculatorPage> {
                               Text(
                                 AppStrings.rwyCond,
                                 style: TextStyle(
+                                  fontSize: 15,
                                   color: AppColors.white, 
                                 ),
                               ),
-                              SizedBox(width: screenSize.width * 0.05),
+                              SizedBox(width: screenSize.width * 0.08),
                               Expanded(
                                 child: DropdownButtonFormField<String>(
                                   isExpanded: true, 
+                                  icon: const SizedBox.shrink(),
                                   initialValue: selectedCondition,
                                   hint: Text(
                                     '$selectedCondition',
@@ -550,6 +555,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                   },
                                 ),
                               ),
+                            
                             ],
                           ),
                         ),
@@ -572,7 +578,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                               Expanded(
                                 child: Text(
                                   AppStrings.rwySlop,
-                                  style: TextStyle(color: AppColors.white),
+                                  style: TextStyle(color: AppColors.white, fontSize: 15),
                                 ),
                               ),
                               const Spacer(),
@@ -580,14 +586,14 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                 Expanded(
                                   child: Text(
                                     '${_formatSlope(rwySlope)} %',
-                                    style: TextStyle(color: AppColors.textColor3Dark, fontSize: 16,),
+                                    style: TextStyle(color: AppColors.textColor3Dark, fontSize: 16, fontWeight: FontWeight.bold),
                                   ),
                                 )
                               else ...[
                                 Expanded(
                                   child: Text(
                                     '$rwySlope %',
-                                    style: TextStyle(fontSize: 16, color: AppColors.textColor2Dark),
+                                    style: TextStyle(fontSize: 16, color: AppColors.textColor2Dark, fontWeight: FontWeight.bold),
                                   ),
                                 ),
                                 ElevatedButton(
@@ -603,13 +609,14 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                     padding: EdgeInsets.zero,
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(8.0),
-                                      side: const BorderSide(color: AppColors.placeholder, width: 1.0),
+                                      side: const BorderSide(color: AppColors.white, width: 1.0),
                                     ),
                                   ),
                                   child: Icon(
                                     Icons.remove,
                                     color: AppColors.iconDark,
                                     size: 30,
+                                    fontWeight: FontWeight.bold,
                                   ),
                                 ),
                                 const SizedBox(width: 8.0),
@@ -626,13 +633,14 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                     padding: EdgeInsets.zero,
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(8.0),
-                                      side: const BorderSide(color: AppColors.placeholder, width: 1.0),
+                                      side: const BorderSide(color: AppColors.white, width: 1.0),
                                     ),
                                   ),
                                   child: Icon(
                                     Icons.add,
                                     color: AppColors.iconDark,
                                     size: 30,
+                                    fontWeight: FontWeight.bold,
                                   ),
                                 ),
                               ],
@@ -662,6 +670,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                     AppStrings.elevation,
                                     style: const TextStyle(
                                       color: AppColors.white,
+                                      fontSize: 15,
                                     ),
                                   ),
                                   if (selectedAirport == 'XXX') ...[
@@ -676,6 +685,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                         style: const TextStyle(
                                           color: AppColors.textColor3Dark,
                                           fontSize: 15,
+                                          fontWeight: FontWeight.bold,
                                         ),
                                       ),
                                     ),
@@ -714,7 +724,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                             8.0,
                                           ),
                                           side: const BorderSide(
-                                            color: AppColors.placeholder,
+                                            color: AppColors.white,
                                             width: 1.0,
                                           ),
                                         ),
@@ -723,6 +733,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                         Icons.remove,
                                         color: AppColors.iconDark,
                                         size: 30,
+                                        fontWeight: FontWeight.bold,
                                       ),
                                     ),
  
@@ -760,7 +771,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                             8.0,
                                           ),
                                           side: const BorderSide(
-                                            color: AppColors.placeholder,
+                                            color: AppColors.white,
                                             width: 1.0,
                                           ),
                                         ),
@@ -769,6 +780,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                         Icons.add,
                                         color: AppColors.iconDark,
                                         size: 30,
+                                        fontWeight: FontWeight.bold,
                                       ),
                                     ),
                                   ] else ...[
@@ -778,6 +790,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                       style: TextStyle(
                                         color: AppColors.textColor3Dark,
                                         fontSize: 16,
+                                        fontWeight: FontWeight.bold,
                                       ),
                                     ),
                                   ],
@@ -825,162 +838,206 @@ class _CalculatorPageState extends State<CalculatorPage> {
 
                       //LDA y boton de ajustes de reduccion, no se muestra si el aeropuerto es XXX
                       if (selectedAirport != 'XXX') 
-                       Card(
-                            color: AppColors.cardDark,
-                            shape: RoundedRectangleBorder(
-                            side: BorderSide(
-                              color: AppColors.placeholder, 
-                              width: 2.0,         
-                            ),
-                            borderRadius: BorderRadius.circular(12.0), 
+                      Card(
+                        color: AppColors.cardDark,
+                        shape: RoundedRectangleBorder(
+                          side: BorderSide(
+                            color: AppColors.placeholder,
+                            width: 2.0,
                           ),
-                            child: Padding(
-                              padding: const EdgeInsets.all(20.0),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisSize: MainAxisSize.min, 
+                          borderRadius: BorderRadius.circular(12.0),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(20.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Row(
                                 children: [
-                                  Row(
-                                    children: [
-                                      Text(
-                                        AppStrings.lda,
-                                        style: TextStyle(
-                                          color: AppColors.white,
-                                        ),
-                                      ),
-                                      const Spacer(),
-                                      Text(
-                                        '$rwyLda ${AppStrings.ft}',
-                                        style: TextStyle(
-                                          fontSize: 16,
-                                          color: AppColors.textColor3Dark,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                      const Spacer(),
-                                      Text(
-                                        '(${(double.tryParse(rwyLda ?? '0')! * 0.3048).round()}${AppStrings.m})',
-                                        style: TextStyle(
-                                          fontSize: 16,
-                                          color: AppColors.textColor3Dark,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                      const Spacer(),
-                                      ElevatedButton(
-                                        onPressed: () {
-                                          setState(() {
-                                            _isExpanded = !_isExpanded;
-                                            _currentReduction = '';
-                                            netLDA = rwyLda;
-                                            updateOpld();
-                                          });
-                                        },
-                                        style: ElevatedButton.styleFrom(
-                                          backgroundColor: AppColors.black,
-                                          side: BorderSide(color: AppColors.placeholderDark),
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(15),
-                                          ),
-                                        ),
-                                        child: Text(
-                                          AppStrings.ldaAdjust,
-                                          style: TextStyle(color: AppColors.white),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  
-                                  if (_isExpanded) ...[
-                                    const SizedBox(height: 10), 
-                                    Row(
-                                      children: [
-                                        Text(
-                                          AppStrings.reduction,
-                                          style: TextStyle(color: AppColors.white, fontSize: 15),
-                                        ),
-                                        const SizedBox(width: 45), 
-                                        SizedBox(
-                                          width: 150,
-                                          height: 50,
-                                          child: TextField(
-                                            controller: TextEditingController(text: _currentReduction)
-                                              ..selection = TextSelection.fromPosition(
-                                                TextPosition(offset: (_currentReduction ?? '').length),
-                                              ),
-                                            keyboardType: TextInputType.number, 
-                                            inputFormatters: <TextInputFormatter>[
-                                              FilteringTextInputFormatter.digitsOnly,
-                                              Customdigitformatter(),
-                                            ],
-                                            onChanged: (String newValue) {
-                                              setState(() {
-                                                _currentReduction = newValue; 
-                                                netLDA = Calculatereduction(netRef: netLDA, ldaRef: rwyLda, reductionRef: _currentReduction)();
-                                                updateOpld();
-                                              });
-                                            },
-                                            textAlign: TextAlign.center,
-                                            style: const TextStyle(
-                                              color: AppColors.iconDark,
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.w500,
-                                            ),
-                                            decoration: InputDecoration(
-                                              hintText: AppStrings.reductionLow,
-                                              hintStyle: const TextStyle(color: AppColors.iconDark),
-                                              filled: true,
-                                              fillColor: AppColors.placeholder,
-                                              contentPadding: const EdgeInsets.symmetric(vertical: 12.0),
-                                              border: OutlineInputBorder(
-                                                borderRadius: BorderRadius.circular(8.0),
-                                                borderSide: const BorderSide(color: AppColors.placeholder, width: 1.0),
-                                              ),
-                                              enabledBorder: OutlineInputBorder(
-                                                borderRadius: BorderRadius.circular(8.0),
-                                                borderSide: const BorderSide(color: AppColors.placeholder, width: 1.0),
-                                              ),
-                                              focusedBorder: OutlineInputBorder(
-                                                borderRadius: BorderRadius.circular(8.0),
-                                                borderSide: const BorderSide(color: AppColors.placeholder, width: 1.0),
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                        const SizedBox(width: 15), 
-                                        Text(
-                                          AppStrings.m,
-                                          style: TextStyle(color: AppColors.placeholderDark, fontSize: 15),
-                                        ),
-                                        if (_currentReduction?.isNotEmpty ?? false) ...[
-                                          const SizedBox(width: 25),
-                                          Text(
-                                            '(${(double.tryParse(_currentReduction ?? '0')! * 3.28084).toStringAsFixed(1)}${AppStrings.ft})',
-                                            style: const TextStyle(
-                                              color: AppColors.textColor3Dark,
-                                              fontSize: 15,
-                                            ),
-                                          ),
-                                        ],
-
-                                      ],
-                                    ),
-                                  ],
-
-                                  const SizedBox(height: 8), 
                                   Text(
-                                    AppStrings.refOnly,
+                                    AppStrings.lda,
                                     style: TextStyle(
-                                      fontSize: 10,
-                                      fontStyle: FontStyle.italic,
-                                      color: AppColors.activeColor,
+                                      color: AppColors.white,
+                                      fontSize: 15,
+                                    ),
+                                  ),
+                                  const Spacer(),
+
+                                  Text(
+                                    '$rwyLda ${AppStrings.ft}',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      color: AppColors.textColor3Dark,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  const Spacer(),
+
+                                  Text(
+                                    '(${(double.tryParse(rwyLda ?? '0')! * 0.3048).round()}${AppStrings.m})',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      color: AppColors.textColor3Dark,
+                                    ),
+                                  ),
+                                  const Spacer(),
+
+                                  ElevatedButton(
+                                    onPressed: () {
+                                      setState(() {
+                                        _isExpanded = !_isExpanded;
+                                        _currentReduction = '';
+                                        netLDA = rwyLda;
+                                        updateOpld();
+                                      });
+                                    },
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: AppColors.black,
+                                      side: BorderSide(
+                                        color: AppColors.placeholderDark,
+                                      ),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(15),
+                                      ),
+                                    ),
+                                    child: Text(
+                                      AppStrings.ldaAdjust,
+                                      style: TextStyle(
+                                        color: AppColors.white,
+                                      ),
                                     ),
                                   ),
                                 ],
                               ),
-                            ),
-                          ),
 
+                              if (_isExpanded) ...[
+                                const SizedBox(height: 10),
+
+                                Row(
+                                  children: [
+                                    Text(
+                                      AppStrings.reduction,
+                                      style: const TextStyle(
+                                        color: AppColors.white,
+                                        fontSize: 15,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 15),
+
+                                    SizedBox(
+                                      width: 100,
+                                      height: 50,
+                                      child: TextField(
+                                        controller: TextEditingController(
+                                          text: _currentReduction,
+                                        )..selection = TextSelection.fromPosition(
+                                            TextPosition(
+                                              offset: (_currentReduction ?? '').length,
+                                            ),
+                                          ),
+                                        keyboardType: TextInputType.number,
+                                        inputFormatters: <TextInputFormatter>[
+                                          FilteringTextInputFormatter.digitsOnly,
+                                          Customdigitformatter(),
+                                        ],
+                                        onChanged: (String newValue) {
+                                          setState(() {
+                                            _currentReduction = newValue;
+
+                                            netLDA = Calculatereduction(
+                                              netRef: netLDA,
+                                              ldaRef: rwyLda,
+                                              reductionRef: _currentReduction,
+                                            )();
+
+                                            updateOpld();
+                                          });
+                                        },
+                                        textAlign: TextAlign.center,
+                                        style: const TextStyle(
+                                          color: AppColors.iconDark,
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                        decoration: InputDecoration(
+                                          hintText: AppStrings.reductionLow,
+                                          hintStyle: const TextStyle(
+                                            color: AppColors.iconDark,
+                                          ),
+                                          filled: true,
+                                          fillColor: AppColors.placeholder,
+                                          contentPadding: const EdgeInsets.symmetric(
+                                            vertical: 12.0,
+                                          ),
+                                          border: OutlineInputBorder(
+                                            borderRadius: BorderRadius.circular(8.0),
+                                            borderSide: const BorderSide(
+                                              color: AppColors.placeholder,
+                                              width: 1.0,
+                                            ),
+                                          ),
+                                          enabledBorder: OutlineInputBorder(
+                                            borderRadius: BorderRadius.circular(8.0),
+                                            borderSide: const BorderSide(
+                                              color: AppColors.placeholder,
+                                              width: 1.0,
+                                            ),
+                                          ),
+                                          focusedBorder: OutlineInputBorder(
+                                            borderRadius: BorderRadius.circular(8.0),
+                                            borderSide: const BorderSide(
+                                              color: AppColors.placeholder,
+                                              width: 1.0,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(width: 10),
+
+                                    Text(
+                                      AppStrings.m,
+                                      style: const TextStyle(
+                                        color: AppColors.placeholderDark,
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+
+                                    if (_currentReduction?.isNotEmpty ?? false) ...[
+                                      const SizedBox(width: 10),
+
+                                      Flexible(
+                                        child: Text(
+                                          '(${(double.tryParse(_currentReduction ?? '0')! * 3.28084).toStringAsFixed(1)}${AppStrings.ft})',
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: const TextStyle(
+                                            color: AppColors.textColor3Dark,
+                                            fontSize: 15,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ],
+                                ),
+                              ],
+                              const SizedBox(height: 8),
+
+                              Text(
+                                AppStrings.refOnly,
+                                style: TextStyle(
+                                  fontSize: 10,
+                                  fontStyle: FontStyle.italic,
+                                  color: AppColors.activeColor,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      
                       //Aircraft Configuration header
                       Card(
                         color: AppColors.black,
@@ -995,7 +1052,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                             child: Text(
                               AppStrings.aircraftConfig,
                               style: TextStyle(
-                                fontSize: 15,
+                                fontSize: 18,
                                 fontWeight: FontWeight.bold,
                                 color: AppColors.white),
                             ),
@@ -1021,7 +1078,8 @@ class _CalculatorPageState extends State<CalculatorPage> {
                               Text(
                                 AppStrings.flap,
                                 style: TextStyle(
-                                  color: AppColors.white, 
+                                  color: AppColors.white,
+                                  fontSize: 15, 
                                 ),
                               ),
                               SizedBox(width: screenSize.width * 0.10),
@@ -1029,6 +1087,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                 Expanded(
                                   child: DropdownButtonFormField<String>(
                                     isExpanded: true, 
+                                    icon: const SizedBox.shrink(),
                                     initialValue: selectedFlaps,
                                     hint: Text(
                                       '$selectedFlaps',
@@ -1078,6 +1137,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                   Expanded(
                                     child: DropdownButtonFormField<String>(
                                       isExpanded: true,
+                                      icon: const SizedBox.shrink(),
                                       initialValue: selectedFlaps,
                                       hint: Text(
                                         '$selectedFlaps',
@@ -1147,12 +1207,14 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                 AppStrings.autobrake,
                                 style: TextStyle(
                                   color: AppColors.white, 
+                                  fontSize: 15,
                                 ),
                               ),
                               SizedBox(width: screenSize.width * 0.12),
                               Expanded(
                                 child: DropdownButtonFormField<String>(
                                   isExpanded: true, 
+                                  icon: const SizedBox.shrink(),
                                   initialValue: selectedAutoBrake,
                                   hint: Text(
                                     '$selectedAutoBrake',
@@ -1219,13 +1281,15 @@ class _CalculatorPageState extends State<CalculatorPage> {
                               Text(
                                 AppStrings.reversers,
                                 style: TextStyle(
-                                  color: AppColors.white, 
+                                  color: AppColors.white,
+                                  fontSize: 15, 
                                 ),
                               ),
                               SizedBox(width: screenSize.width * 0.11),
                               Expanded(
                                 child: DropdownButtonFormField<String>(
                                   isExpanded: true, 
+                                  icon: const SizedBox.shrink(),
                                   initialValue: selectedReversers,
                                   hint: Text(
                                     reversersList![0],
@@ -1291,7 +1355,8 @@ class _CalculatorPageState extends State<CalculatorPage> {
                               Text(
                                 AppStrings.speedbrakes,
                                 style: TextStyle(
-                                  color: AppColors.white, 
+                                  color: AppColors.white,
+                                  fontSize: 15, 
                                 ),
                               ),
                               SizedBox(width: screenSize.width * 0.10),
@@ -1299,6 +1364,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                 Expanded(
                                   child: DropdownButtonFormField<String>(
                                     isExpanded: true,
+                                    icon: const SizedBox.shrink(),
                                     initialValue: selectedSpeedBrake,
                                     hint: Text(
                                       'AUTOMATIC',
@@ -1349,6 +1415,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                     style: TextStyle(
                                       fontSize: 18,
                                       color: AppColors.textColor3Dark,
+                                      fontWeight: FontWeight.bold,
                                     ),
                                   ),
                                 ),
@@ -1378,14 +1445,14 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                 Expanded(
                                   child: Text(
                                     AppStrings.vrefAdd,
-                                    style: TextStyle(color: AppColors.white),
+                                    style: TextStyle(color: AppColors.white, fontSize: 15),
                                   ),
                                 ),
                                 const SizedBox(width: 10.0),
                                 Expanded(
                                   child: Text(
                                   '$vRef ${AppStrings.kt}',
-                                    style: TextStyle(fontSize: 18, color: AppColors.placeholderDark),
+                                    style: TextStyle(fontSize: 18, color: AppColors.placeholderDark, fontWeight: FontWeight.bold),
                                   ),
                                 ),
                                 const SizedBox(width: 10.0),
@@ -1407,13 +1474,14 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                         padding: EdgeInsets.zero,
                                         shape: RoundedRectangleBorder(
                                           borderRadius: BorderRadius.circular(8.0),
-                                          side: const BorderSide(color: AppColors.placeholder, width: 1.0), 
+                                          side: const BorderSide(color: AppColors.white, width: 1.0), 
                                         ),
                                       ),
                                       child: Icon(
                                         Icons.remove,
                                         color: AppColors.iconDark, 
                                         size: 30,
+                                        fontWeight: FontWeight.bold,
                                       ),
                                     ),
                                     const SizedBox(width: 8.0),                                 
@@ -1430,13 +1498,14 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                         padding: EdgeInsets.zero,
                                         shape: RoundedRectangleBorder(
                                           borderRadius: BorderRadius.circular(8.0),
-                                          side: const BorderSide(color: AppColors.placeholder, width: 1.0), 
+                                          side: const BorderSide(color: AppColors.white, width: 1.0), 
                                         ),
                                       ),
                                       child: Icon(
                                         Icons.add,
                                         color: AppColors.iconDark, 
                                         size: 30,
+                                        fontWeight: FontWeight.bold,
                                       ),
                                     ),
                                   ],
@@ -1453,7 +1522,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                       Expanded(
                                         child: Text(
                                         AppStrings.na,
-                                          style: TextStyle(fontSize: 18, color: AppColors.textColor3Dark),
+                                          style: TextStyle(fontSize: 18, color: AppColors.textColor3Dark, fontWeight: FontWeight.bold),
                                         ),
                                       ),  
                                     ] else ...[
@@ -1467,7 +1536,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                         Expanded(
                                           child: Text(
                                           '$vRef ${AppStrings.kt}',
-                                            style: TextStyle(fontSize: 18, color: AppColors.placeholderDark),
+                                            style: TextStyle(fontSize: 18, color: AppColors.placeholderDark, fontWeight: FontWeight.bold),
                                           ),
                                         ),
                                         const SizedBox(width: 10.0),
@@ -1489,13 +1558,14 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                                 padding: EdgeInsets.zero,
                                                 shape: RoundedRectangleBorder(
                                                   borderRadius: BorderRadius.circular(8.0),
-                                                  side: const BorderSide(color: AppColors.placeholder, width: 1.0), 
+                                                  side: const BorderSide(color: AppColors.white, width: 1.0), 
                                                 ),
                                               ),
                                               child: Icon(
                                                 Icons.remove,
                                                 color: AppColors.iconDark, 
                                                 size: 30,
+                                                fontWeight: FontWeight.bold,
                                               ),
                                             ),
                                             const SizedBox(width: 8.0),                                 
@@ -1512,13 +1582,14 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                                 padding: EdgeInsets.zero,
                                                 shape: RoundedRectangleBorder(
                                                   borderRadius: BorderRadius.circular(8.0),
-                                                  side: const BorderSide(color: AppColors.placeholder, width: 1.0), 
+                                                  side: const BorderSide(color: AppColors.white, width: 1.0), 
                                                 ),
                                               ),
                                               child: Icon(
                                                 Icons.add,
                                                 color: AppColors.iconDark, 
                                                 size: 30,
+                                                fontWeight: FontWeight.bold,
                                               ),
                                             ),
                                           ], 
@@ -1549,11 +1620,11 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                     children: [
                                       Column(
                                         children: [
-                                          Text(AppStrings.landWeight, style: const TextStyle(color: AppColors.white)),
+                                          Text(AppStrings.landWeight, style: const TextStyle(color: AppColors.white, fontSize: 15)),
                                           const SizedBox(height: 5.0),
                                           Text(
                                             '${(_currentLadWeight as num).toInt().toString()} ${AppStrings.lb}',
-                                            style: const TextStyle(fontSize: 18, color: AppColors.textColor2Dark),
+                                            style: const TextStyle(fontSize: 18, color: AppColors.textColor2Dark, fontWeight: FontWeight.bold),
                                           ),
                                         ],
                                       ),
@@ -1571,13 +1642,14 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                           padding: EdgeInsets.zero,
                                           shape: RoundedRectangleBorder(
                                             borderRadius: BorderRadius.circular(8.0),
-                                            side: const BorderSide(color: AppColors.placeholder, width: 1.0), 
+                                            side: const BorderSide(color: AppColors.white, width: 1.0), 
                                           ),
                                         ),
                                         child: Icon(
                                           Icons.remove,
                                           color: AppColors.iconDark, 
                                           size: 30,
+                                          fontWeight: FontWeight.bold,
                                         ),
                                       ),
                                       const SizedBox(width: 8.0),                                 
@@ -1594,13 +1666,14 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                           padding: EdgeInsets.zero,
                                           shape: RoundedRectangleBorder(
                                             borderRadius: BorderRadius.circular(8.0),
-                                            side: const BorderSide(color: AppColors.placeholder, width: 1.0), 
+                                            side: const BorderSide(color: AppColors.white, width: 1.0), 
                                           ),
                                         ),
                                         child: Icon(
                                           Icons.add,
                                           color: AppColors.iconDark, 
                                           size: 30,
+                                          fontWeight: FontWeight.bold,
                                         ),
                                       ),
 
@@ -1646,7 +1719,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                             child: Text(
                               AppStrings.weatherCond,
                               style: TextStyle(
-                                fontSize: 15,
+                                fontSize: 18,
                                 fontWeight: FontWeight.bold,
                                 color: AppColors.white),
                             ),
@@ -1672,7 +1745,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                               Expanded(
                                 child: Text(
                                   AppStrings.qnh,
-                                  style: TextStyle(color: AppColors.white),
+                                  style: TextStyle(color: AppColors.white, fontSize: 15),
                                 ),
                               ),
                               const SizedBox(width: 5.0),
@@ -1684,12 +1757,15 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                   children: [ 
                                     Text(
                                       '$selectedAirportQNH',
-                                      style: TextStyle(color: AppColors.placeholderDark, fontSize: 15,),
+                                      style: TextStyle(color: AppColors.placeholderDark, fontSize: 15, fontWeight: FontWeight.bold),
                                     ),
                                     const SizedBox(height: 4),
-                                    Text(
-                                      (0.02953 * (double.tryParse(selectedAirportQNH ?? '') ?? 0)).toStringAsFixed(2),
-                                      style: TextStyle(color: AppColors.placeholderDark, fontSize: 15,),
+                                    Padding(
+                                      padding: const EdgeInsets.only(left: 10),
+                                      child:Text(
+                                        (0.02953 * (double.tryParse(selectedAirportQNH ?? '') ?? 0)).toStringAsFixed(2),
+                                        style: TextStyle(color: AppColors.placeholderDark, fontSize: 15, fontWeight: FontWeight.bold),
+                                      ),
                                     ),
                                 ]
                                 ),
@@ -1703,12 +1779,12 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                   children: [ 
                                     Text(
                                       AppStrings.hpa,
-                                      style: TextStyle(color: AppColors.placeholderDark, fontSize: 15,),
+                                      style: TextStyle(color: AppColors.placeholderDark, fontSize: 15, fontWeight: FontWeight.bold),
                                     ),
                                     const SizedBox(height: 4),
                                     Text(
                                       AppStrings.inhg,
-                                      style: TextStyle(color: AppColors.placeholderDark, fontSize: 15,),
+                                      style: TextStyle(color: AppColors.placeholderDark, fontSize: 15, fontWeight: FontWeight.bold),
                                     ),
                                 ]
                                 ),
@@ -1732,13 +1808,14 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                         padding: EdgeInsets.zero,
                                         shape: RoundedRectangleBorder(
                                           borderRadius: BorderRadius.circular(8.0),
-                                          side: const BorderSide(color: AppColors.placeholder, width: 1.0), 
+                                          side: const BorderSide(color: AppColors.white, width: 1.0), 
                                         ),
                                       ),
                                       child: Icon(
                                         Icons.remove,
                                         color: AppColors.iconDark, 
                                         size: 30,
+                                        fontWeight: FontWeight.bold,
                                       ),
                                     ),
                                     const SizedBox(width: 8.0),                                 
@@ -1755,13 +1832,14 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                         padding: EdgeInsets.zero,
                                         shape: RoundedRectangleBorder(
                                           borderRadius: BorderRadius.circular(8.0),
-                                          side: const BorderSide(color: AppColors.placeholder, width: 1.0), 
+                                          side: const BorderSide(color: AppColors.white, width: 1.0), 
                                         ),
                                       ),
                                       child: Icon(
                                         Icons.add,
                                         color: AppColors.iconDark, 
                                         size: 30,
+                                        fontWeight: FontWeight.bold,
                                       ),
                                     ),
                                   ],
@@ -1783,13 +1861,14 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                         padding: EdgeInsets.zero,
                                         shape: RoundedRectangleBorder(
                                           borderRadius: BorderRadius.circular(8.0),
-                                          side: const BorderSide(color: AppColors.placeholder, width: 1.0), 
+                                          side: const BorderSide(color: AppColors.white, width: 1.0), 
                                         ),
                                       ),
                                       child: Icon(
                                         Icons.remove,
                                         color: AppColors.iconDark, 
                                         size: 30,
+                                        fontWeight: FontWeight.bold,
                                       ),
                                     ),
                                     const SizedBox(width: 8.0),                                 
@@ -1806,13 +1885,14 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                         padding: EdgeInsets.zero,
                                         shape: RoundedRectangleBorder(
                                           borderRadius: BorderRadius.circular(8.0),
-                                          side: const BorderSide(color: AppColors.placeholder, width: 1.0), 
+                                          side: const BorderSide(color: AppColors.white, width: 1.0), 
                                         ),
                                       ),
                                       child: Icon(
                                         Icons.add,
                                         color: AppColors.iconDark, 
                                         size: 30,
+                                        fontWeight: FontWeight.bold,
                                       ),
                                     ),
                                   ],
@@ -1839,25 +1919,22 @@ class _CalculatorPageState extends State<CalculatorPage> {
                             padding: const EdgeInsets.all(10.0),
                             child: Row(
                               children: [
-                                Expanded(flex: 3, child: Text(AppStrings.altitude, style: TextStyle(color: AppColors.white))),
+                                Expanded(
+                                  flex: 3, 
+                                  child: Text(
+                                    AppStrings.altitude, 
+                                    style: TextStyle(color: AppColors.white, fontSize: 15)
+                                  ),
+                                ),
                                 const SizedBox(width: 120.0),
-                                if (selectedAirport != 'XXX') ...[
-                                  Expanded(
-                                    flex: 7,
-                                    child: Text(
-                                      '$altitud ${AppStrings.palt}',
-                                      style: TextStyle(color: AppColors.textColor3Dark, fontSize: 15,),
-                                    ),
+                                Expanded(
+                                  flex: 7,
+                                  child: Text(
+                                    '$altitud ${AppStrings.palt}',
+                                    style: TextStyle(color: AppColors.textColor3Dark, fontSize: 15, fontWeight: FontWeight.bold),
                                   ),
-                                ] else ...[
-                                  Expanded(
-                                    flex: 7,
-                                    child: Text(
-                                      '$altitud ${AppStrings.palt}',
-                                      style: TextStyle(color: AppColors.textColor3Dark, fontSize: 15,),
-                                    ),
-                                  ),
-                                ]
+                                ),
+
                               ],
                             ),
                           ),
@@ -1881,7 +1958,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                               Expanded(
                                 child: Text(
                                   AppStrings.oat,
-                                  style: TextStyle(color: AppColors.white),
+                                  style: TextStyle(color: AppColors.white, fontSize: 15),
                                 ),
                               ),
                               const SizedBox(width: 10.0),
@@ -1894,13 +1971,13 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                       padding: const EdgeInsets.only(left: 10),
                                       child: Text(
                                         '${double.tryParse(selectedAirportTemperature ?? '')?.round() ?? 0} ${AppStrings.celcius}',
-                                        style: TextStyle(color: AppColors.okPriButBrDark, fontSize: 15,),
+                                        style: TextStyle(color: AppColors.okPriButBrDark, fontSize: 15, fontWeight: FontWeight.bold),
                                       ),
                                     ),                                    
                                     const SizedBox(height: 4),
                                     Text(
                                       '${AppStrings.isa} $isa',
-                                      style: TextStyle(color: AppColors.placeholderDark, fontSize: 15,),
+                                      style: TextStyle(color: AppColors.placeholderDark, fontSize: 15, fontWeight: FontWeight.bold),
                                     ),
                                 ]
                                 ),
@@ -1925,13 +2002,14 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                         padding: EdgeInsets.zero,
                                         shape: RoundedRectangleBorder(
                                           borderRadius: BorderRadius.circular(8.0),
-                                          side: const BorderSide(color: AppColors.placeholder, width: 1.0), 
+                                          side: const BorderSide(color: AppColors.white, width: 1.0), 
                                         ),
                                       ),
                                       child: Icon(
                                         Icons.remove,
                                         color: AppColors.iconDark, 
                                         size: 30,
+                                        fontWeight: FontWeight.bold,
                                       ),
                                     ),
                                     const SizedBox(width: 8.0),                                 
@@ -1949,13 +2027,14 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                         padding: EdgeInsets.zero,
                                         shape: RoundedRectangleBorder(
                                           borderRadius: BorderRadius.circular(8.0),
-                                          side: const BorderSide(color: AppColors.placeholder, width: 1.0), 
+                                          side: const BorderSide(color: AppColors.white, width: 1.0), 
                                         ),
                                       ),
                                       child: Icon(
                                         Icons.add,
                                         color: AppColors.iconDark, 
                                         size: 30,
+                                        fontWeight: FontWeight.bold,
                                       ),
                                     ),
                                   ],
@@ -1979,13 +2058,14 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                           padding: EdgeInsets.zero,
                                           shape: RoundedRectangleBorder(
                                             borderRadius: BorderRadius.circular(8.0),
-                                            side: const BorderSide(color: AppColors.placeholder, width: 1.0), 
+                                            side: const BorderSide(color: AppColors.white, width: 1.0), 
                                           ),
                                         ),
                                         child: Icon(
                                           Icons.remove,
                                           color: AppColors.iconDark, 
                                           size: 30,
+                                          fontWeight: FontWeight.bold,
                                         ),
                                       ),
                                       const SizedBox(width: 8.0),                                 
@@ -2003,13 +2083,14 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                           padding: EdgeInsets.zero,
                                           shape: RoundedRectangleBorder(
                                             borderRadius: BorderRadius.circular(8.0),
-                                            side: const BorderSide(color: AppColors.placeholder, width: 1.0), 
+                                            side: const BorderSide(color: AppColors.white, width: 1.0), 
                                           ),
                                         ),
                                         child: Icon(
                                           Icons.add,
                                           color: AppColors.iconDark, 
                                           size: 30,
+                                          fontWeight: FontWeight.bold,
                                         ),
                                       ),
                                     ],
@@ -2042,7 +2123,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                   children: [
                                     Text(
                                       AppStrings.wind,
-                                      style: TextStyle(color: AppColors.white),
+                                      style: TextStyle(color: AppColors.white, fontSize: 15),
                                     ),
                                     const SizedBox(height: 8.0),
                                     Row(
@@ -2082,7 +2163,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                                 style: TextStyle(
                                                   color: AppColors.iconDark,
                                                   fontSize: 14,
-                                                  fontWeight: FontWeight.w500,
+                                                  fontWeight: FontWeight.bold,
                                                 ),
                                               ),
                                             ),
@@ -2092,12 +2173,12 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                         const SizedBox(width: 25.0),
                                         Text(
                                           '/', 
-                                          style: TextStyle(color: AppColors.white),
+                                          style: TextStyle(color: AppColors.white, fontWeight: FontWeight.bold,),
                                         ),
                                         const SizedBox(width: 25.0),
                                         Text(
                                           '$windValue ${AppStrings.kt}',
-                                          style: TextStyle(color: AppColors.placeholderDark),
+                                          style: TextStyle(color: AppColors.placeholderDark, fontWeight: FontWeight.bold),
                                         ),
                                       ],
                                     ),
@@ -2111,17 +2192,18 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                           : '$headtail  ${AppStrings.kttwc}',
                                           style: TextStyle(color: (int.tryParse(headtail ?? '0') ?? 0) < (int.tryParse(windMin ?? '-15') ?? -15)
                                             ? AppColors.errorColor
-                                            : AppColors.textColor3Dark),
+                                            : AppColors.textColor3Dark,
+                                          fontWeight: FontWeight.bold),
                                         ),                                     
                                         const SizedBox(width: 25.0),
                                         Text(
                                           '/', 
-                                          style: TextStyle(color: AppColors.white),
+                                          style: TextStyle(color: AppColors.white, fontWeight: FontWeight.bold,),
                                         ),
                                         const SizedBox(width: 25.0),
                                         Text(
                                           '$crosswind  ${AppStrings.ktCwc}',
-                                          style: TextStyle(color: AppColors.textColor3Dark),
+                                          style: TextStyle(color: AppColors.textColor3Dark, fontWeight: FontWeight.bold),
                                         ),
                                       ],
                                     ),                               
@@ -2149,13 +2231,14 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                       padding: EdgeInsets.zero,
                                       shape: RoundedRectangleBorder(
                                         borderRadius: BorderRadius.circular(8.0),
-                                        side: const BorderSide(color: AppColors.placeholder, width: 1.0), 
+                                        side: const BorderSide(color: AppColors.white, width: 1.0), 
                                       ),
                                     ),
                                     child: Icon(
                                       Icons.remove,
                                       color: AppColors.iconDark, 
                                       size: 30,
+                                      fontWeight: FontWeight.bold,
                                     ),
                                   ),
                                   const SizedBox(width: 8.0),                        
@@ -2175,13 +2258,14 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                       padding: EdgeInsets.zero,
                                       shape: RoundedRectangleBorder(
                                         borderRadius: BorderRadius.circular(8.0),
-                                        side: const BorderSide(color: AppColors.placeholder, width: 1.0), 
+                                        side: const BorderSide(color: AppColors.white, width: 1.0), 
                                       ),
                                     ),
                                     child: Icon(
                                       Icons.add,
                                       color: AppColors.iconDark, 
                                       size: 30,
+                                      fontWeight: FontWeight.bold,
                                     ),
                                   ),
                                 ],
@@ -2208,7 +2292,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                 Text(
                                   AppStrings.landingTittle,
                                   style: TextStyle(
-                                    fontSize: 15,
+                                    fontSize: 18,
                                     fontWeight: FontWeight.bold,
                                     color: AppColors.white),
                                 ),
@@ -2216,7 +2300,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                   Text(
                                     '$selectedConfiguration',
                                     style: TextStyle(
-                                      fontSize: 15,
+                                      fontSize: 18,
                                       fontWeight: FontWeight.bold,
                                       color: AppColors.white),
                                   ),
@@ -2233,7 +2317,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                           horizontal: 16,
                                         ),
                                         decoration: BoxDecoration(
-                                          color: AppColors.white.withValues(alpha: 0.1),
+                                          color: AppColors.black,
                                           borderRadius: BorderRadius.circular(4),
                                           border: Border.all(
                                             color: AppColors.white.withValues(alpha: 0.3),
@@ -2256,14 +2340,13 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                               style: TextStyle(
                                                 fontWeight: FontWeight.bold,
                                                 color: AppColors.textColor3Dark,
-                                                fontSize: 16,
+                                                fontSize: 18,
                                               ),
                                             ),
                                             
                                             Text(
                                               '(${(double.tryParse(netLDA ?? '0')! * 0.3048).round()}${AppStrings.m})',
                                               style: TextStyle(
-                                                fontWeight: FontWeight.bold,
                                                 color: AppColors.textColor3Dark,
                                                 fontSize: 16,
                                               ),
@@ -2283,7 +2366,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                           horizontal: 16,
                                         ),
                                         decoration: BoxDecoration(
-                                          color: AppColors.white.withValues(alpha: 0.1),
+                                          color: AppColors.black,
                                           borderRadius: BorderRadius.circular(4),
                                           border: Border.all(
                                             color: AppColors.white.withValues(alpha: 0.3),
@@ -2309,14 +2392,13 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                                 color: selectedAirport != 'XXX'
                                                   ? colorResult
                                                   : AppColors.white,
-                                                fontSize: 16,
+                                                fontSize: 18,
                                               ),
                                             ),
 
                                             Text(
                                               '(${(double.tryParse(opldResult ?? '0')! * 0.3048).round()}${AppStrings.m})',
                                               style: TextStyle(
-                                                fontWeight: FontWeight.bold,
                                                 color: selectedAirport != 'XXX'
                                                   ? colorResult
                                                   : AppColors.white,
@@ -2369,32 +2451,32 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                             Text(
                                               '$remainingResult ${AppStrings.ft}', 
                                               textAlign: TextAlign.right, 
-                                              style: TextStyle(color: colorResult, fontSize: 16,),
+                                              style: TextStyle(color: colorResult, fontSize: 16,fontWeight: FontWeight.bold),
                                             ),
                                             const SizedBox(width: 5),
                                             Text(
                                               '(${(double.tryParse(remainingResult ?? '0')! * 0.3048).round()}${AppStrings.m})', 
                                               textAlign: TextAlign.right, 
-                                              style: TextStyle(color: colorResult, fontSize: 16,),
+                                              style: TextStyle(color: colorResult, fontSize: 18),
                                             ),
                                           ],
                                         )
 
                                       ],
                                       const SizedBox(height: 12),
-                                      Text('$selectedFlaps', textAlign: TextAlign.left, style: TextStyle(color: AppColors.placeholder)),
+                                      Text('$selectedFlaps', textAlign: TextAlign.left, style: TextStyle(color: AppColors.placeholder, fontWeight: FontWeight.bold)),
                                       const SizedBox(height: 12),
-                                      Text('$selectedAutoBrake', textAlign: TextAlign.left, style: TextStyle(color: AppColors.placeholder)),
+                                      Text('$selectedAutoBrake', textAlign: TextAlign.left, style: TextStyle(color: AppColors.placeholder, fontWeight: FontWeight.bold)),
                                       const SizedBox(height: 50),
                                      
                                       Row(
                                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                         children: [
                                           Expanded(child: 
-                                          Text('$selectedCondition rwy Condition:', textAlign: TextAlign.left, style: TextStyle(color: AppColors.placeholder)),
+                                          Text('$selectedCondition rwy Condition:', textAlign: TextAlign.left, style: TextStyle(color: AppColors.placeholder, fontWeight: FontWeight.bold)),
                                           ),
                                           SizedBox(width: screenSize.width * 0.10),
-                                          Text('(''$rwyRcc'')', textAlign: TextAlign.right, style: TextStyle(color: AppColors.placeholder)),
+                                          Text('(''$rwyRcc'')', textAlign: TextAlign.right, style: TextStyle(color: AppColors.placeholder, fontWeight: FontWeight.bold)),
                                         ]
                                       ),
                                       const SizedBox(height: 20),
@@ -2417,8 +2499,12 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                   foregroundColor: AppColors.placeholderDark,
                                   side: const BorderSide(
                                     color: AppColors.placeholderDark,
-                                    width: 2.5,
+                                    width: 1,
                                   ),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(5),
+                                  ),
+                                  fixedSize: const Size(170, 20)
                                 ),
                                 onPressed: () {
                                   showDialog(

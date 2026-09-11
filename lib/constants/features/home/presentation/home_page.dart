@@ -460,7 +460,7 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
               const SizedBox(height: 50),
-              // Boton GO para ir a la pantalla de calculadora
+              // Boton GO para ir a la pantalla de calculaPage
               Center(
                 child: ElevatedButton(
                   onPressed: _isReady ? _onGoPressed : null,
