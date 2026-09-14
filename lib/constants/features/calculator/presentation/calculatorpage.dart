@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_application_5/constants/colors/app_colors.dart';
 import 'package:flutter_application_5/constants/features/calculator/fuctions/calculateAltitud.dart';
@@ -43,8 +42,9 @@ class CalculatorPage extends StatefulWidget {
     this.airport, this.airportEl, this.airportQNH, this.airportTemp, this.airportRunway, this.nonflaps
   });
 //Pendientes:
-//Cambiar la visual del card results juntandolo y usar Divider.
-//Agregar la funcion de opld result en los setstates clave.
+//Cambiar la visual del card results juntandolo y usar Divider, cambio de color en los Card().
+//Slider en XXX Elevation y LandingWeight (en cualquier aeropuerto), no da el valor correcto de OpLD, si hay mejor opcion para el controlador del slider. (Revisar)
+//Ajustes a los dropdownlist para que se vean la seleccion como en iOS.
 //LongPress en QNH y Elevation (XXX).
 
   @override
@@ -253,15 +253,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
     vMin = defaultAircraft?[7];
     vMax = defaultAircraft?[8];
 
-    opldResult = Oplddistancecalculator(
-      aircraftPicker: selectedAircraft, landingPicker: selectedLanding, configurationPicker: selectedConfiguration,
-      factorRef: rwyFactor, rwyPicker: selectedRunway, additiveRef: rwyAdditive, flapPicker: selectedFlaps, rwyConditionPicker: selectedCondition, 
-      autobrakePicker: selectedAutoBrake, revsrinopPicker: selectedReversers, speedbrakesPicker: selectedSpeedBrake, 
-      weightRef: _currentLadWeight.toString(), altitudeRef: altitud, isaRef: isa, slopeRef: rwySlope, windRef: headtail, vrefRef: vRef
-    )();
-
-    remainingResult = ((double.tryParse(netLDA ?? '0') ?? 0) - (double.tryParse(opldResult ?? '0') ?? 0)).toString();
-    colorResult = Opldcolorasignator(opldReference: opldResult, netldaReference: netLDA)();
+    updateOpld();
   }
 
   void updateRwyCondition(String condition) {
@@ -398,6 +390,12 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                             width: 1,
                                           ),
                                         ),
+                                        focusedBorder: OutlineInputBorder(
+                                          borderSide: BorderSide(
+                                            color: AppColors.placeholder, 
+                                          ),
+                                          borderRadius: BorderRadius.circular(5.0),
+                                        ),
                                         border: OutlineInputBorder(
                                           borderRadius: BorderRadius.circular(5.0),
                                         ),
@@ -413,8 +411,8 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                           value,
                                           style: TextStyle(color: AppColors.placeholderDark),
                                           overflow: TextOverflow.ellipsis,
-                                        ),
-                                      );
+                                          ),
+                                        );
                                     }).toList(),
                                     onChanged: (newValue) {
                                       setState(() {
@@ -466,9 +464,9 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                     height: 50,
                                     alignment: Alignment.center,
                                     decoration: BoxDecoration(
-                                      color: AppColors.placeholder,
+                                      color: AppColors.grey,
                                       borderRadius: BorderRadius.circular(8.0),
-                                      border: Border.all(color: AppColors.placeholder, width: 1.0),
+                                      border: Border.all(color: AppColors.grey, width: 1.0),
                                     ),
                                     child: Text(
                                       selectedMag ?? '000',
@@ -530,6 +528,12 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                           color: AppColors.placeholder,
                                           width: 1,
                                         ),
+                                      ),
+                                      focusedBorder: OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                          color: AppColors.placeholder, 
+                                        ),
+                                        borderRadius: BorderRadius.circular(5.0),
                                       ),
                                       border: OutlineInputBorder(
                                         borderRadius: BorderRadius.circular(5.0),
@@ -615,7 +619,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                         });
                                       },
                                   style: ElevatedButton.styleFrom(
-                                    backgroundColor: AppColors.placeholder,
+                                    backgroundColor: AppColors.grey,
                                     foregroundColor: AppColors.iconDark,
                                     minimumSize: const Size(70, 70),
                                     padding: EdgeInsets.zero,
@@ -640,7 +644,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                       });
                                     },
                                   style: ElevatedButton.styleFrom(
-                                    backgroundColor: AppColors.placeholder,
+                                    backgroundColor: AppColors.grey,
                                     foregroundColor: AppColors.iconDark,
                                     minimumSize: const Size(70, 70),
                                     padding: EdgeInsets.zero,
@@ -729,7 +733,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                         });
                                       },
                                       style: ElevatedButton.styleFrom(
-                                        backgroundColor: AppColors.placeholder,
+                                        backgroundColor: AppColors.grey,
                                         foregroundColor: AppColors.iconDark,
                                         minimumSize: const Size(70, 70),
                                         padding: EdgeInsets.zero,
@@ -777,7 +781,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                         });
                                       },
                                       style: ElevatedButton.styleFrom(
-                                        backgroundColor: AppColors.placeholder,
+                                        backgroundColor: AppColors.grey,
                                         foregroundColor: AppColors.iconDark,
                                         minimumSize: const Size(70, 70),
                                         padding: EdgeInsets.zero,
@@ -870,13 +874,28 @@ class _CalculatorPageState extends State<CalculatorPage> {
                             children: [
                               Row(
                                 children: [
-                                  Text(
-                                    AppStrings.lda,
-                                    style: TextStyle(
-                                      color: AppColors.white,
-                                      fontSize: 15,
+                                  Text.rich(
+                                    TextSpan(
+                                      style: const TextStyle(
+                                        fontSize: 15,
+                                      ),
+                                      children: [
+                                        TextSpan(
+                                          text: AppStrings.lda,
+                                          style: TextStyle(
+                                            color: AppColors.white,
+                                          ),
+                                        ),
+                                        TextSpan(
+                                          text: '*',
+                                          style: TextStyle(
+                                            color: AppColors.activeColor,
+                                          ),
+                                        ),
+                                      ],
                                     ),
                                   ),
+
                                   const Spacer(),
 
                                   Text(
@@ -1170,6 +1189,12 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                             width: 1,
                                           ),
                                         ),
+                                        focusedBorder: OutlineInputBorder(
+                                          borderSide: BorderSide(
+                                            color: AppColors.placeholder, 
+                                          ),
+                                          borderRadius: BorderRadius.circular(5.0),
+                                        ),
                                         border: OutlineInputBorder(
                                           borderRadius: BorderRadius.circular(5.0),
                                         ),
@@ -1220,6 +1245,12 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                               color: AppColors.placeholder,
                                               width: 1,
                                             ),
+                                          ),
+                                          focusedBorder: OutlineInputBorder(
+                                            borderSide: BorderSide(
+                                              color: AppColors.placeholder, 
+                                            ),
+                                            borderRadius: BorderRadius.circular(5.0),
                                           ),
                                           border: OutlineInputBorder(
                                             borderRadius: BorderRadius.circular(5.0),
@@ -1299,6 +1330,12 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                           width: 1,
                                         ),
                                       ),
+                                      focusedBorder: OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                          color: AppColors.placeholder, 
+                                        ),
+                                        borderRadius: BorderRadius.circular(5.0),
+                                      ),
                                       border: OutlineInputBorder(
                                         borderRadius: BorderRadius.circular(5.0),
                                       ),
@@ -1373,6 +1410,12 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                         color: AppColors.placeholder,
                                         width: 1,
                                       ),
+                                    ),
+                                    focusedBorder: OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                        color: AppColors.placeholder, 
+                                      ),
+                                      borderRadius: BorderRadius.circular(5.0),
                                     ),
                                     border: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(5.0),
@@ -1450,6 +1493,12 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                           color: AppColors.placeholder,
                                           width: 1,
                                         ),
+                                      ),
+                                      focusedBorder: OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                          color: AppColors.placeholder, 
+                                        ),
+                                        borderRadius: BorderRadius.circular(5.0),
                                       ),
                                       border: OutlineInputBorder(
                                         borderRadius: BorderRadius.circular(5.0),
@@ -1538,7 +1587,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                         });
                                       },
                                       style: ElevatedButton.styleFrom(
-                                        backgroundColor: AppColors.placeholder, 
+                                        backgroundColor: AppColors.grey, 
                                         foregroundColor: AppColors.iconDark, 
                                         minimumSize: const Size(70, 70),
                                         padding: EdgeInsets.zero,
@@ -1563,7 +1612,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                         });
                                       },
                                       style: ElevatedButton.styleFrom(
-                                        backgroundColor: AppColors.placeholder, 
+                                        backgroundColor: AppColors.grey, 
                                         foregroundColor: AppColors.iconDark, 
                                         minimumSize: const Size(70, 70),
                                         padding: EdgeInsets.zero,
@@ -1624,7 +1673,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                                 });
                                               },
                                               style: ElevatedButton.styleFrom(
-                                                backgroundColor: AppColors.placeholder, 
+                                                backgroundColor: AppColors.grey, 
                                                 foregroundColor: AppColors.iconDark, 
                                                 minimumSize: const Size(70, 70),
                                                 padding: EdgeInsets.zero,
@@ -1649,7 +1698,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                                 });
                                               },
                                               style: ElevatedButton.styleFrom(
-                                                backgroundColor: AppColors.placeholder, 
+                                                backgroundColor: AppColors.grey, 
                                                 foregroundColor: AppColors.iconDark, 
                                                 minimumSize: const Size(70, 70),
                                                 padding: EdgeInsets.zero,
@@ -1710,7 +1759,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                           });
                                         },
                                         style: ElevatedButton.styleFrom(
-                                          backgroundColor: AppColors.placeholder, 
+                                          backgroundColor: AppColors.grey, 
                                           foregroundColor: AppColors.iconDark, 
                                           minimumSize: const Size(70, 70),
                                           padding: EdgeInsets.zero,
@@ -1735,7 +1784,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                           });
                                         },
                                         style: ElevatedButton.styleFrom(
-                                          backgroundColor: AppColors.placeholder, 
+                                          backgroundColor: AppColors.grey, 
                                           foregroundColor: AppColors.iconDark, 
                                           minimumSize: const Size(70, 70),
                                           padding: EdgeInsets.zero,
@@ -1898,7 +1947,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                             updateOpld();
                                           });},
                                       style: ElevatedButton.styleFrom(
-                                        backgroundColor: AppColors.placeholder, 
+                                        backgroundColor: AppColors.grey, 
                                         foregroundColor: AppColors.iconDark, 
                                         minimumSize: const Size(70, 70),
                                         padding: EdgeInsets.zero,
@@ -1923,7 +1972,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                             updateOpld();
                                           });},
                                       style: ElevatedButton.styleFrom(
-                                        backgroundColor: AppColors.placeholder, 
+                                        backgroundColor: AppColors.grey, 
                                         foregroundColor: AppColors.iconDark, 
                                         minimumSize: const Size(70, 70),
                                         padding: EdgeInsets.zero,
@@ -1953,7 +2002,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                             updateOpld();
                                           });},
                                       style: ElevatedButton.styleFrom(
-                                        backgroundColor: AppColors.placeholder, 
+                                        backgroundColor: AppColors.grey, 
                                         foregroundColor: AppColors.iconDark, 
                                         minimumSize: const Size(70, 70),
                                         padding: EdgeInsets.zero,
@@ -1978,7 +2027,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                             updateOpld();
                                           });},
                                       style: ElevatedButton.styleFrom(
-                                        backgroundColor: AppColors.placeholder, 
+                                        backgroundColor: AppColors.grey, 
                                         foregroundColor: AppColors.iconDark, 
                                         minimumSize: const Size(70, 70),
                                         padding: EdgeInsets.zero,
@@ -2096,7 +2145,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                             updateOpld();
                                           });},
                                       style: ElevatedButton.styleFrom(
-                                        backgroundColor: AppColors.placeholder, 
+                                        backgroundColor: AppColors.grey, 
                                         foregroundColor: AppColors.iconDark, 
                                         minimumSize: const Size(70, 70),
                                         padding: EdgeInsets.zero,
@@ -2122,7 +2171,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                             updateOpld();
                                           });},
                                       style: ElevatedButton.styleFrom(
-                                        backgroundColor: AppColors.placeholder, 
+                                        backgroundColor: AppColors.grey, 
                                         foregroundColor: AppColors.iconDark, 
                                         minimumSize: const Size(70, 70),
                                         padding: EdgeInsets.zero,
@@ -2154,7 +2203,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                               updateOpld();
                                             });},
                                         style: ElevatedButton.styleFrom(
-                                          backgroundColor: AppColors.placeholder, 
+                                          backgroundColor: AppColors.grey, 
                                           foregroundColor: AppColors.iconDark, 
                                           minimumSize: const Size(70, 70),
                                           padding: EdgeInsets.zero,
@@ -2180,7 +2229,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                               updateOpld();
                                             });},
                                         style: ElevatedButton.styleFrom(
-                                          backgroundColor: AppColors.placeholder, 
+                                          backgroundColor: AppColors.grey, 
                                           foregroundColor: AppColors.iconDark, 
                                           minimumSize: const Size(70, 70),
                                           padding: EdgeInsets.zero,
@@ -2258,9 +2307,9 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                               height: 50,
                                               alignment: Alignment.center,
                                               decoration: BoxDecoration(
-                                                color: AppColors.placeholder,
+                                                color: AppColors.grey,
                                                 borderRadius: BorderRadius.circular(8.0),
-                                                border: Border.all(color: AppColors.placeholder, width: 1.0),
+                                                border: Border.all(color: AppColors.grey, width: 1.0),
                                               ),
                                               child: Text(
                                                 selectedWind ?? '000', 
@@ -2330,7 +2379,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                       });
                                     },
                                     style: ElevatedButton.styleFrom(
-                                      backgroundColor: AppColors.placeholder, 
+                                      backgroundColor: AppColors.grey, 
                                       foregroundColor: AppColors.iconDark, 
                                       minimumSize: const Size(70, 70),
                                       padding: EdgeInsets.zero,
@@ -2358,7 +2407,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                       });
                                     },
                                     style: ElevatedButton.styleFrom(
-                                      backgroundColor: AppColors.placeholder, 
+                                      backgroundColor: AppColors.grey, 
                                       foregroundColor: AppColors.iconDark, 
                                       minimumSize: const Size(70, 70),
                                       padding: EdgeInsets.zero,
@@ -2570,19 +2619,19 @@ class _CalculatorPageState extends State<CalculatorPage> {
 
                                       ],
                                       const SizedBox(height: 12),
-                                      Text('$selectedFlaps', textAlign: TextAlign.left, style: TextStyle(color: AppColors.placeholder, fontWeight: FontWeight.bold)),
+                                      Text('$selectedFlaps', textAlign: TextAlign.left, style: TextStyle(color: AppColors.resultNotes, fontWeight: FontWeight.bold)),
                                       const SizedBox(height: 12),
-                                      Text('$selectedAutoBrake', textAlign: TextAlign.left, style: TextStyle(color: AppColors.placeholder, fontWeight: FontWeight.bold)),
+                                      Text('$selectedAutoBrake', textAlign: TextAlign.left, style: TextStyle(color: AppColors.resultNotes, fontWeight: FontWeight.bold)),
                                       const SizedBox(height: 50),
                                      
                                       Row(
                                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                         children: [
                                           Expanded(child: 
-                                          Text('$selectedCondition rwy Condition:', textAlign: TextAlign.left, style: TextStyle(color: AppColors.placeholder, fontWeight: FontWeight.bold)),
+                                          Text('$selectedCondition rwy Condition:', textAlign: TextAlign.left, style: TextStyle(color: AppColors.resultNotes, fontWeight: FontWeight.bold)),
                                           ),
                                           SizedBox(width: screenSize.width * 0.10),
-                                          Text('(''$rwyRcc'')', textAlign: TextAlign.right, style: TextStyle(color: AppColors.placeholder, fontWeight: FontWeight.bold)),
+                                          Text('(''$rwyRcc'')', textAlign: TextAlign.right, style: TextStyle(color: AppColors.resultNotes, fontWeight: FontWeight.bold)),
                                         ]
                                       ),
                                       const SizedBox(height: 20),
@@ -2590,7 +2639,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                                 padding: const EdgeInsets.symmetric(vertical: 5.0),
                                                 child: Text(
                                                   nota,
-                                                  style: const TextStyle(color: AppColors.placeholder),
+                                                  style: const TextStyle(color: AppColors.resultNotes),
                                                   textAlign: TextAlign.start,
                                                 ),
                                               )),

@@ -6,6 +6,7 @@ import 'package:flutter_application_5/constants/features/home/data/airportdata.d
 import 'package:flutter_application_5/constants/design/text/app_text.dart';
 import 'package:flutter_application_5/constants/features/calculator/presentation/calculatorpage.dart';
 import 'package:flutter_application_5/service_dataxml/opldservice.dart';
+import 'package:dropdown_search/dropdown_search.dart';
  
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -190,13 +191,14 @@ class _HomePageState extends State<HomePage> {
                   color: Colors.black,
                   borderRadius: BorderRadius.circular(10.0),
                   border: Border.all(
-                    color: AppColors.borderHomeDropdowns,
+                    color: AppColors.borderDropdowns,
                     width: 2,
                   ),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+
                     // Label Aircraft Selection
                     const Text(
                       AppStrings.aircraftSection,
@@ -206,10 +208,13 @@ class _HomePageState extends State<HomePage> {
                         fontSize: 25,
                       ),
                     ),
+
                     const SizedBox(height: 8.0),
+
                     // Aircraft Picker
                     DropdownButtonFormField<String>(
                       isExpanded: true,
+                      icon: const SizedBox.shrink(),
                       initialValue: selectedAircraftType,
                       hint: Text(
                         '737-700W/CFM56-7B22',
@@ -227,6 +232,12 @@ class _HomePageState extends State<HomePage> {
                             color: AppColors.placeholder,
                             width: 1,
                           ),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: AppColors.placeholder, 
+                          ),
+                          borderRadius: BorderRadius.circular(5.0),
                         ),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(5.0),
@@ -272,10 +283,13 @@ class _HomePageState extends State<HomePage> {
                         ),
                       ),
                     ),
+
                     const SizedBox(height: 8.0),
+
                     // Landing picker
                     DropdownButtonFormField<String>(
                       isExpanded: true,
+                      icon: const SizedBox.shrink(),
                       initialValue: selectedLandingType,
                       hint: const Text(
                         'Normal',
@@ -293,6 +307,12 @@ class _HomePageState extends State<HomePage> {
                             color: AppColors.placeholder,
                             width: 1,
                           ),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: AppColors.placeholder, 
+                          ),
+                          borderRadius: BorderRadius.circular(5.0),
                         ),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(5.0),
@@ -341,10 +361,13 @@ class _HomePageState extends State<HomePage> {
                           ),
                         ),
                       ),
+
                       const SizedBox(height: 8.0),
+
                       // Configuration Picker
                       DropdownButtonFormField<String>(
                         isExpanded: true,
+                        icon: const SizedBox.shrink(),
                         initialValue:
                             configurationTypes.contains(
                               selectedConfigurationType,
@@ -367,6 +390,12 @@ class _HomePageState extends State<HomePage> {
                               color: AppColors.placeholder,
                               width: 1,
                             ),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderSide: BorderSide(
+                              color: AppColors.placeholder, 
+                            ),
+                            borderRadius: BorderRadius.circular(5.0),
                           ),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(5.0),
@@ -409,57 +438,100 @@ class _HomePageState extends State<HomePage> {
                         ),
                       ),
                     ),
+
                     const SizedBox(height: 8.0),
+
                     // Airport Picker
-                    DropdownButtonFormField<String>(
-                      isExpanded: true,
-                      initialValue: selectedAirportType,
-                      hint: Text(
-                        'PTY',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: AppColors.placeholderDark,
-                          fontSize: 25,
-                        ),
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      decoration: InputDecoration(
-                        filled: true,
-                        fillColor: AppColors.placeholder,
-                        enabledBorder: OutlineInputBorder(
-                          borderSide: BorderSide(
-                            color: AppColors.placeholder,
-                            width: 1,
+                    DropdownSearch<String>(
+                      items: (filter, loadProps) => airportTypes,
+                      selectedItem: selectedAirportType,
+
+                      decoratorProps: DropDownDecoratorProps(
+                        decoration: InputDecoration(
+                          filled: true,
+                          fillColor: AppColors.placeholder,
+
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(
+                              color: AppColors.placeholder,
+                              width: 1,
+                            ),
+                            borderRadius: BorderRadius.circular(5.0),
+                          ),
+
+                          focusedBorder: OutlineInputBorder(
+                            borderSide: BorderSide(
+                              color: AppColors.placeholder,
+                              width: 1,
+                            ),
+                            borderRadius: BorderRadius.circular(5.0),
+                          ),
+
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(5.0),
+                          ),
+
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 10,
+                            vertical: 5,
                           ),
                         ),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(5.0),
-                        ),
-                        contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 10,
-                          vertical: 5,
-                        ),
                       ),
-                      items: airportTypes.map((String value) {
-                        return DropdownMenuItem<String>(
-                          value: value,
-                          child: Text(
-                            value,
-                            style: TextStyle(color: AppColors.placeholderDark),
-                            overflow: TextOverflow.ellipsis,
+
+                      compareFn: (item1, item2) => item1 == item2,
+
+                      popupProps: PopupProps.menu(
+                        showSearchBox: true,
+
+                        searchFieldProps: TextFieldProps(
+                          decoration: InputDecoration(
+                            hintText: 'Search Airport',
+                            prefixIcon: const Icon(Icons.search),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(5),
+                            ),
                           ),
+                        ),
+
+                        itemBuilder: (context, item, isDisabled, isSelected) {
+                          return Padding(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 10,
+                              vertical: 12,
+                            ),
+                            child: Text(
+                              item,
+                              style: TextStyle(
+                                color: AppColors.placeholderDark,
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+
+                      dropdownBuilder: (context, selectedItem) {
+                        return Text(
+                          selectedItem ?? 'PTY',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: AppColors.placeholderDark,
+                          ),
+                          overflow: TextOverflow.ellipsis,
                         );
-                      }).toList(),
-                      onChanged: (newValue) {
+                      },
+
+                      onSelected: (newValue) {
                         setState(() {
                           selectedAirportType = newValue;
                         });
                       },
-                    ),
+                    ),              
                   ],
                 ),
               ),
+
               const SizedBox(height: 50),
+
               // Boton GO para ir a la pantalla de calculaPage
               Center(
                 child: ElevatedButton(
@@ -486,7 +558,7 @@ class _HomePageState extends State<HomePage> {
             bottom: 0,
             child: OpLDAppText.regular(
               AppStrings.appVersionNumber,
-              color: AppColors.placeholder,
+              color: AppColors.grey,
             ),
           ),
         ],

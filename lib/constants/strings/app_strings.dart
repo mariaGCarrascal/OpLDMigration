@@ -20,7 +20,7 @@ class AppStrings {
   static const String rwyCond = "RWY CONDITION";
   static const String rwySlop = "RWY SLOPE";
   static const String elevation = "ELEVATION";
-  static const String lda = "LDA*";
+  static const String lda = "LDA";
   static const String ldaAdjust = "ADJUSTMENT";
   static const String reduction = "REDUCTION";
   static const String reductionLow = "reduction";
