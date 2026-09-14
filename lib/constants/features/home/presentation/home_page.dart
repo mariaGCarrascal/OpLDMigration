@@ -45,7 +45,7 @@ class _HomePageState extends State<HomePage> {
   String? qnh;
   String? temperature;
   bool _isReady = false;
-  String? selectedAircraftType = '737-700W/CFM56-7B22';
+  String? selectedAircraftType = '737-800W/CFM56-7B26';
   String? selectedLandingType = 'Normal';
   String? selectedAirportType = 'PTY';
   String? selectedConfigurationType;
@@ -217,7 +217,7 @@ class _HomePageState extends State<HomePage> {
                       icon: const SizedBox.shrink(),
                       initialValue: selectedAircraftType,
                       hint: Text(
-                        '737-700W/CFM56-7B22',
+                        'Select Aircraft Type',
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           color: AppColors.placeholderDark,
@@ -292,7 +292,7 @@ class _HomePageState extends State<HomePage> {
                       icon: const SizedBox.shrink(),
                       initialValue: selectedLandingType,
                       hint: const Text(
-                        'Normal',
+                        'Select Type of Landing',
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           color: AppColors.placeholderDark,
@@ -375,7 +375,7 @@ class _HomePageState extends State<HomePage> {
                             ? selectedConfigurationType
                             : null,
                         hint: const Text(
-                          'Seleccionar una configuracion',
+                          'Select Configuration Type',
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                             color: AppColors.placeholderDark,
@@ -445,6 +445,11 @@ class _HomePageState extends State<HomePage> {
                     DropdownSearch<String>(
                       items: (filter, loadProps) => airportTypes,
                       selectedItem: selectedAirportType,
+                      suffixProps: DropdownSuffixProps(
+                        dropdownButtonProps: DropdownButtonProps(
+                          isVisible: false,
+                        ),
+                      ),
 
                       decoratorProps: DropDownDecoratorProps(
                         decoration: InputDecoration(
@@ -525,7 +530,7 @@ class _HomePageState extends State<HomePage> {
                           selectedAirportType = newValue;
                         });
                       },
-                    ),              
+                    ),                                
                   ],
                 ),
               ),
