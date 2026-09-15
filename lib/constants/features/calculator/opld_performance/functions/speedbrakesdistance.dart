@@ -50,17 +50,11 @@ class Speedbrakesdistance{
                 )
                 .expand((f) => f.findAllElements('Flap'));
           }
-          
+
           if (selectedflap != null) {
             brakesData =  {
             for (final child in target
                 .where((f) => f.getAttribute('label') == selectedflap)
-                .expand((c) => c.findAllElements('reportedBrakingAction'))
-                .where(
-                  (lc) =>
-                      lc.getAttribute('label')?.toUpperCase() ==
-                      selectedCondition!.toUpperCase(),
-                )
                 .expand((c) => c.findAllElements('SpeedBrakesAdjustment'))
                 .where(
                   (lc) =>
