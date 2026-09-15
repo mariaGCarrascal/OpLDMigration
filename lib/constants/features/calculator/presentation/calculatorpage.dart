@@ -43,7 +43,7 @@ class CalculatorPage extends StatefulWidget {
     this.airport, this.airportEl, this.airportQNH, this.airportTemp, this.airportRunway, this.nonflaps
   });
 //Pendientes:
-//Cambiar la visual del card results juntandolo y usar Divider, cambio de color en los Card().
+//Cambiar la visual del card results juntandolo y usar Divider.
 //Slider en XXX Elevation y LandingWeight (en cualquier aeropuerto), no da el valor correcto de OpLD, si hay mejor opcion para el controlador del slider. (Revisar)
 //LongPress en QNH y Elevation (XXX).
 
@@ -1021,7 +1021,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                     const SizedBox(width: 15),
 
                                     SizedBox(
-                                      width: 100,
+                                      width: 110,
                                       height: 50,
                                       child: Stack(
                                         children: [
@@ -1094,7 +1094,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                                   width: 1.0,
                                                 ),
                                               ),
-                                            ),
+                                            ),                                         
                                           ),
 
                                           // Botón para eliminar input de reduction
