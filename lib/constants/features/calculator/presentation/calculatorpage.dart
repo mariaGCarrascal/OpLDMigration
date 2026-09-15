@@ -628,7 +628,9 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                         selectedAutoBrake = Searchautobrakedefault(aircraftRef: selectedAircraft, landingRef: selectedLanding, configurationRef: selectedConfiguration, conditionRef: selectedCondition)();
                                         autoBrakeOptions = Loadautobrakes(aircraftRef: selectedAircraft, landingRef: selectedLanding, configurationRef: selectedConfiguration, flapRef: selectedFlaps, conditionRef: selectedCondition)();
                                         reversersList = Loadnonreversers(aircraftRef: selectedAircraft, landingRef: selectedLanding, configurationRef: selectedConfiguration, conditionRef: selectedCondition)();
-                                        selectedReversers = reversersList![0];
+                                        if (!reversersList!.contains(selectedReversers)) {
+                                          selectedReversers = reversersList![0];
+                                        }
                                       } else {
                                         autoBrakeOptions = Loadautobrakes(aircraftRef: selectedAircraft, landingRef: selectedLanding, configurationRef: selectedConfiguration, flapRef: selectedFlaps, conditionRef: selectedCondition)();
                                       }
