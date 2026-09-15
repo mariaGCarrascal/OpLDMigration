@@ -45,8 +45,8 @@ class Oplddistancecalculator{
     try {
       
       //OpLD Calculation Result values Order:
-      print('Valor de Altitud en $landingPicker en modelo $aircraftPicker: $altitudeRef');
-      print('Resultados de busquedas generales del OpLD en $landingPicker en modelo $aircraftPicker:');
+      //print('Valor de Altitud en $landingPicker en modelo $aircraftPicker: $altitudeRef');
+      //print('Resultados de busquedas generales del OpLD en $landingPicker en modelo $aircraftPicker:');
       //Landing weight (REF DIST)
       double refDistanceResult = Refdistancereference(
         aircraftRef: aircraftPicker, landingRef: landingPicker, configurationRef: configurationPicker, flapRef: flapPicker, 
@@ -96,23 +96,22 @@ class Oplddistancecalculator{
       double factor = double.tryParse(factorRef ?? '1') ?? 1;
       double additive = double.tryParse(additiveRef ?? '0') ?? 0;
 
-
       //OpLD Result Value
       finalOpLDResult = (((refDistanceResult + reverserInoperativeAdjustmentResult + weightAdjustmentDistanceResult + altitudeAdjustmentResult
       + windAdjustmentResult + slopeAdjustmentResult + tempAdjustmentResult + approachSpeedAdjustmentResult + speedBrakesAdjustmentResult)*factor) + additive);
-      print('[Resultados de variables del $aircraftPicker]:');
-      print('Resultados de Landing weight (REF DIST): $refDistanceResult');
-      print('Resultados de WT Adjustment (WT ADJ): $weightAdjustmentDistanceResult');
-      print('Resultados de Altitud Adjustment (ALT ADJ): $altitudeAdjustmentResult');
-      print('Resultados de Wind adjustment (WIND ADJ): $windAdjustmentResult');
-      print('Resultados de Slope adjustment (SLOPE ADJ): $slopeAdjustmentResult');
-      print('Resultados de Temperature adjustment (TEMP ADJ): $tempAdjustmentResult');
-      print('Resultados de Approach Speed adjustment (APP SPD ADJ): $approachSpeedAdjustmentResult');
-      print('Resultados de SpeedBrakes adjustment (REF LAND DIST): $speedBrakesAdjustmentResult');
-      print('Resultados de Reverse thrust adjustment (REVERSE THRUST ADJ): $reverserInoperativeAdjustmentResult');
-      print('Resultados de Factor ruway: $factor');
-      print('Resultados de Additive ruway: $additive');
-      print('Resultado del OpLD: ${finalOpLDResult.round()}');
+      //print('[Resultados de variables del $aircraftPicker]:');
+      //print('Resultados de Landing weight (REF DIST): $refDistanceResult');
+      //print('Resultados de WT Adjustment (WT ADJ): $weightAdjustmentDistanceResult');
+      //print('Resultados de Altitud Adjustment (ALT ADJ): $altitudeAdjustmentResult');
+      //print('Resultados de Wind adjustment (WIND ADJ): $windAdjustmentResult');
+      //print('Resultados de Slope adjustment (SLOPE ADJ): $slopeAdjustmentResult');
+      //print('Resultados de Temperature adjustment (TEMP ADJ): $tempAdjustmentResult');
+      //print('Resultados de Approach Speed adjustment (APP SPD ADJ): $approachSpeedAdjustmentResult');
+      //print('Resultados de SpeedBrakes adjustment (REF LAND DIST): $speedBrakesAdjustmentResult');
+      //print('Resultados de Reverse thrust adjustment (REVERSE THRUST ADJ): $reverserInoperativeAdjustmentResult');
+      //print('Resultados de Factor ruway: $factor');
+      //print('Resultados de Additive ruway: $additive');
+      //print('Resultado del OpLD: ${finalOpLDResult.round()}');
       return finalOpLDResult.round().toString().trim(); 
 
     } catch (e) {

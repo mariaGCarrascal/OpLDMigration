@@ -15,6 +15,7 @@ import 'package:flutter_application_5/constants/features/calculator/fuctions/cal
 import 'package:flutter_application_5/constants/features/calculator/fuctions/customDigitFormatter.dart';
 import 'package:flutter_application_5/constants/features/calculator/fuctions/loadautobrakes.dart';
 import 'package:flutter_application_5/constants/features/calculator/fuctions/loadcomments.dart';
+import 'package:flutter_application_5/constants/features/calculator/fuctions/loadnonreversers.dart';
 import 'package:flutter_application_5/constants/features/calculator/fuctions/loadreversers.dart';
 import 'package:flutter_application_5/constants/features/calculator/fuctions/loadvrefcondition.dart';
 import 'package:flutter_application_5/constants/features/calculator/fuctions/loadvreftext.dart';
@@ -189,14 +190,15 @@ class _CalculatorPageState extends State<CalculatorPage> {
     selectedConfiguration = widget.configuration;
     selectedAirport = widget.airport;
     selectedAirportQNH = widget.airportQNH;
-    reversersList = Loadreversers(valuesRef: defaultAircraft!)();
-    selectedReversers = reversersList![0];
     
     if(selectedLanding == 'Normal') {
       selectedFlaps = defaultAircraft?[1];
       selectedAutoBrake = defaultAircraft?[2];
       autoBrakeOptions = Loadautobrakes(aircraftRef: selectedAircraft, landingRef: selectedLanding, configurationRef: selectedConfiguration, flapRef: selectedFlaps, conditionRef: selectedCondition)();
       vrefAdjust = 'YES';
+      reversersList = Loadreversers(valuesRef: defaultAircraft!)();
+      selectedReversers = reversersList![0];
+    
     } else {
       selectedFlaps = widget.nonflaps;
       nonFlap = widget.nonflaps;
@@ -204,6 +206,8 @@ class _CalculatorPageState extends State<CalculatorPage> {
       autoBrakeOptions = Loadautobrakes(aircraftRef: selectedAircraft, landingRef: selectedLanding, configurationRef: selectedConfiguration, flapRef: selectedFlaps, conditionRef: selectedCondition)();
       vrefNonPlus = Loadvreftext(aircraftRef: selectedAircraft, landingRef: selectedLanding, configurationRef: selectedConfiguration)();
       vrefAdjust = Loadvrefcondition(aircraftRef: selectedAircraft, landingRef: selectedLanding, configurationRef: selectedConfiguration)();
+      reversersList = Loadnonreversers(aircraftRef: selectedAircraft, landingRef: selectedLanding, configurationRef: selectedConfiguration, conditionRef: selectedCondition)();
+      selectedReversers = reversersList![0];
     }
     listaComments = Loadcomments(aircraftRef: selectedAircraft, landingRef: selectedLanding,configurationRef: selectedConfiguration, flapRef: selectedFlaps)();
     if(selectedAirport != 'XXX') {
@@ -623,6 +627,8 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                       if(selectedLanding == 'Non-Normal') {
                                         selectedAutoBrake = Searchautobrakedefault(aircraftRef: selectedAircraft, landingRef: selectedLanding, configurationRef: selectedConfiguration, conditionRef: selectedCondition)();
                                         autoBrakeOptions = Loadautobrakes(aircraftRef: selectedAircraft, landingRef: selectedLanding, configurationRef: selectedConfiguration, flapRef: selectedFlaps, conditionRef: selectedCondition)();
+                                        reversersList = Loadnonreversers(aircraftRef: selectedAircraft, landingRef: selectedLanding, configurationRef: selectedConfiguration, conditionRef: selectedCondition)();
+                                        selectedReversers = reversersList![0];
                                       } else {
                                         autoBrakeOptions = Loadautobrakes(aircraftRef: selectedAircraft, landingRef: selectedLanding, configurationRef: selectedConfiguration, flapRef: selectedFlaps, conditionRef: selectedCondition)();
                                       }
@@ -1456,7 +1462,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                   icon: const SizedBox.shrink(),
                                   initialValue: selectedReversers,
                                   hint: Text(
-                                    reversersList![0],
+                                    '$selectedReversers',
                                     style: TextStyle(
                                       color: AppColors.placeholderDark,
                                     ),
