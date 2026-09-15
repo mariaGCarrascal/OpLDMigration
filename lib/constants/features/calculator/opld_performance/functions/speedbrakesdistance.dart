@@ -6,14 +6,13 @@ class Speedbrakesdistance{
   final String? aircraftRef;
   final String? landingRef;
   final String? flapRef;
-  final String? conditionRef;
   final String? autobrakeRef;
   final String? speedbrakeRef;
   final Map<String, String>? baseDetails;
 
     Speedbrakesdistance({ 
       this.aircraftRef, this.landingRef, this.flapRef, 
-      this.conditionRef, this.autobrakeRef, this.speedbrakeRef, this.baseDetails
+      this.autobrakeRef, this.speedbrakeRef, this.baseDetails
     });
     
   double call() {
@@ -25,7 +24,6 @@ class Speedbrakesdistance{
     final String? selectedAircraft = aircraftRef;
     final String? selectedLanding = landingRef;
     final String? selectedflap = flapRef;
-    final String? selectedCondition = conditionRef;
     final String? selectedautobrake = autobrakeRef;
 
     try {
@@ -74,7 +72,7 @@ class Speedbrakesdistance{
 
 
       }
-      print('Resultado de busqueda en speedbrakes en condicion $selectedCondition: $brakesData');
+      print('Resultado de busqueda en speedbrakes en $speedbrakeRef: $brakesData');
       //Adjustement result
       if (selectedLanding == 'Non-Normal') {
         result = 0;

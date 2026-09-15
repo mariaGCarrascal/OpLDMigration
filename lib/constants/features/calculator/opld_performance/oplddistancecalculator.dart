@@ -85,7 +85,7 @@ class Oplddistancecalculator{
       //SpeedBrakes adjustment (REF LAND DIST)
       double speedBrakesAdjustmentResult = Speedbrakesdistance(
         aircraftRef: aircraftPicker, landingRef: landingPicker, flapRef: flapPicker, 
-        conditionRef: rwyConditionPicker, autobrakeRef: autobrakePicker, speedbrakeRef: speedbrakesPicker, baseDetails: baseDetails)();
+        autobrakeRef: autobrakePicker, speedbrakeRef: speedbrakesPicker, baseDetails: baseDetails)();
 
       //Reverse thrust adjustment (REVERSE THRUST ADJ)
       double reverserInoperativeAdjustmentResult = Reversethrustadj(
