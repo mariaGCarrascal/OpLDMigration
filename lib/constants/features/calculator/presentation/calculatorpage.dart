@@ -1702,7 +1702,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                     if(vrefAdjust == 'NO') ...[
                                       Expanded(
                                         child: Text(
-                                          '$vrefNonPlus',
+                                          '$vrefNonPlus +',
                                           style: TextStyle(color: AppColors.white),
                                         ),
                                       ),
@@ -1716,7 +1716,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                     ] else ...[
                                         Expanded(
                                           child: Text(
-                                            '$vrefNonPlus',
+                                            '$vrefNonPlus +',
                                             style: TextStyle(color: AppColors.white),
                                           ),
                                         ),
@@ -2585,7 +2585,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                 ),
                                ] else ...[
                                   Text(
-                                    '$selectedConfiguration',
+                                    selectedConfiguration!.toUpperCase(),
                                     style: TextStyle(
                                       fontSize: 18,
                                       fontWeight: FontWeight.bold,
