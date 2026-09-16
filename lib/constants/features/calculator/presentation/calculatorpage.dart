@@ -395,6 +395,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                               textAlign: TextAlign.right,
                                               style: TextStyle(
                                                 color: AppColors.placeholderDark,
+                                                fontWeight: FontWeight.bold
                                               ),
                                               overflow: TextOverflow.ellipsis,
                                             ),
@@ -431,7 +432,6 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                           value,
                                           style: TextStyle(
                                             color: AppColors.placeholderDark, 
-                                            fontWeight: FontWeight.bold
                                           ),
                                           overflow: TextOverflow.ellipsis,
                                           ),
@@ -680,14 +680,19 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                       selectedCondition = newValue;
                                       updateRwyCondition(newValue);
                                       if(selectedLanding == 'Non-Normal') {
-                                        selectedAutoBrake = Searchautobrakedefault(aircraftRef: selectedAircraft, landingRef: selectedLanding, configurationRef: selectedConfiguration, conditionRef: selectedCondition)();
                                         autoBrakeOptions = Loadautobrakes(aircraftRef: selectedAircraft, landingRef: selectedLanding, configurationRef: selectedConfiguration, flapRef: selectedFlaps, conditionRef: selectedCondition)();
+                                        if (!autoBrakeOptions!.contains(selectedAutoBrake)) {
+                                          selectedAutoBrake = autoBrakeOptions![0];
+                                        }
                                         reversersList = Loadnonreversers(aircraftRef: selectedAircraft, landingRef: selectedLanding, configurationRef: selectedConfiguration, conditionRef: selectedCondition)();
                                         if (!reversersList!.contains(selectedReversers)) {
                                           selectedReversers = reversersList![0];
                                         }
                                       } else {
                                         autoBrakeOptions = Loadautobrakes(aircraftRef: selectedAircraft, landingRef: selectedLanding, configurationRef: selectedConfiguration, flapRef: selectedFlaps, conditionRef: selectedCondition)();
+                                        if (!autoBrakeOptions!.contains(selectedAutoBrake)) {
+                                          selectedAutoBrake = autoBrakeOptions![0];
+                                        }
                                       }
                                       updateOpld();
                                     });
@@ -1445,7 +1450,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                         ),
                       ),
 
-                      //Autobrake, raramente pasa que se congela
+                      //Autobrake
                       Card(
                         color: AppColors.cardDark,
                         shape: RoundedRectangleBorder(
