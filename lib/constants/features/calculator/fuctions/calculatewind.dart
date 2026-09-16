@@ -43,7 +43,7 @@ class Calculatewind{
       double crossWindVal = (windInput * math.sin(radianes)).round().toDouble();
       String headtailVal = windTagVal.toString();
       String crossWind = crossWindVal.toString();
-
+      
       results.addAll(['$windInput', headtailVal, crossWind]);
         
       return results;

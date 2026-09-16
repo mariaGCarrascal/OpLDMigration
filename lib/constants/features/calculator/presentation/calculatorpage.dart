@@ -2617,8 +2617,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                                 ),
                                               ),
                                             ),
-                                          ),
-                                                                                
+                                          ),                                                                               
                                         ],
                                       ),
                                         const SizedBox(width: 25.0),
@@ -2639,8 +2638,8 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                         const SizedBox(width: 20.0),
                                         Text(
                                           (int.tryParse(headtail ?? '0') ?? 0).round() >= 0
-                                          ? '$headtail  ${AppStrings.kthwc}'
-                                          : '$headtail  ${AppStrings.kttwc}',
+                                          ? '${(double.tryParse(headtail ?? '0') ?? 0).round()}  ${AppStrings.kthwc}'
+                                          : '${(double.tryParse(headtail ?? '0') ?? 0).round()}  ${AppStrings.kttwc}',
                                           style: TextStyle(color: (int.tryParse(headtail ?? '0') ?? 0) < (int.tryParse(windMin ?? '-15') ?? -15)
                                             ? AppColors.errorColor
                                             : AppColors.textColor3Dark,
@@ -2653,7 +2652,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                         ),
                                         const SizedBox(width: 25.0),
                                         Text(
-                                          '${(int.tryParse(crosswind ?? '0') ?? 0).round()}  ${AppStrings.ktCwc}',
+                                          '${(double.tryParse(crosswind ?? '0') ?? 0).round()} ${AppStrings.ktCwc}',
                                           style: TextStyle(color: AppColors.textColor3Dark, fontWeight: FontWeight.bold),
                                         ),
                                       ],
