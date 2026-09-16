@@ -339,7 +339,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                         ),
                       ),
 
-                      //Rwy ID, si es XXX, se muestra el texto RWY MAG HDG y los valores pasan a ser numerico como Wind. En aumento de +1 hasta 360
+                      //Rwy ID, si es XXX, se muestra el texto RWY MAG HDG y los valores pasan a ser numericos como Wind. En aumento de +1 hasta 360
                       Card(
                         color: AppColors.cardDark,
                         shape: RoundedRectangleBorder(
@@ -379,12 +379,28 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                     initialValue: selectedRunway,
                                     hint: Text(
                                      '$selectedRunway',
+                                      textAlign: TextAlign.right,
                                       style: TextStyle(
                                         fontWeight: FontWeight.bold,
                                         color: AppColors.placeholderDark,
                                       ),
                                       overflow: TextOverflow.ellipsis,
                                     ),
+                                      selectedItemBuilder: (BuildContext context) {
+                                        return (selectedAirportRunway?.keys ?? <String>{}).map((value) {
+                                          return Align(
+                                            alignment: Alignment.centerRight,
+                                            child: Text(
+                                              value,
+                                              textAlign: TextAlign.right,
+                                              style: TextStyle(
+                                                color: AppColors.placeholderDark,
+                                              ),
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                          );
+                                        }).toList();
+                                      },
                                     decoration: InputDecoration(
                                         filled: true,
                                         fillColor: AppColors.placeholder,
@@ -413,7 +429,10 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                         value: value,
                                         child: Text(
                                           value,
-                                          style: TextStyle(color: AppColors.placeholderDark),
+                                          style: TextStyle(
+                                            color: AppColors.placeholderDark, 
+                                            fontWeight: FontWeight.bold
+                                          ),
                                           overflow: TextOverflow.ellipsis,
                                           ),
                                         );
@@ -432,7 +451,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                         updateOpld();
                                       });
                                     },
-                                  ),
+                                  ),                               
                                 ),
                               ] else ...[
                                 Text(
@@ -460,37 +479,54 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                       builder: (context) {
                                         return Container(
                                           height: 300,
-                                          color: AppColors.white,
+                                          color: AppColors.backgroundDark,
                                           child: Column(
                                             children: [
-                                              Align(
-                                                alignment: Alignment.centerRight,
-                                                child: CupertinoButton(
-                                                  child: const Text('Done', style: TextStyle(color: AppColors.textColor3Dark),),
-                                                  onPressed: () {
-                                                    String newValue = rwymagOptions[selectedIndex];
+                                              Container(
+                                                width: double.infinity,
+                                                height: 55,
+                                                color: AppColors.black,
+                                                child: Align(
+                                                  alignment: Alignment.centerRight,
+                                                  child: CupertinoButton(
+                                                    padding: const EdgeInsets.symmetric(
+                                                      horizontal: 16,
+                                                      vertical: 8,
+                                                    ),
+                                                    child: const Text(
+                                                      'Done',
+                                                      style: TextStyle(
+                                                        color: AppColors.textColor3Dark,
+                                                        fontWeight: FontWeight.bold,
+                                                      ),
+                                                    ),
+                                                    onPressed: () {
+                                                      String newValue = rwymagOptions[selectedIndex];
 
-                                                    setState(() {
-                                                      selectedMag = newValue;
+                                                      setState(() {
+                                                        selectedMag = newValue;
 
-                                                      windValues = Calculatewind(
-                                                        rwyidRef: selectedMag,
-                                                        windRef: windValue,
-                                                        windpickerRef: selectedWind,
-                                                        operation: '',
-                                                      )();
+                                                        windValues = Calculatewind(
+                                                          rwyidRef: selectedMag,
+                                                          windRef: windValue,
+                                                          windpickerRef: selectedWind,
+                                                          operation: '',
+                                                        )();
 
-                                                      windValue = windValues?[0];
-                                                      headtail = windValues?[1];
-                                                      crosswind = windValues?[2];
-                                                      updateOpld();
-                                                    });
+                                                        windValue = windValues?[0];
+                                                        headtail = windValues?[1];
+                                                        crosswind = windValues?[2];
 
-                                                    Navigator.pop(context);
-                                                  },
+                                                        updateOpld();
+                                                      });
+
+                                                      Navigator.pop(context);
+                                                    },
+                                                  ),
                                                 ),
                                               ),
 
+                                              // Picker
                                               Expanded(
                                                 child: CupertinoPicker(
                                                   itemExtent: 45,
@@ -506,7 +542,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                                         opcion,
                                                         style: TextStyle(
                                                           fontSize: 22,
-                                                          color: AppColors.black,
+                                                          color: AppColors.white,
                                                           fontWeight: FontWeight.w500,
                                                         ),
                                                       ),
@@ -538,11 +574,11 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                       style: TextStyle(
                                         color: AppColors.iconDark,
                                         fontSize: 14,
-                                        fontWeight: FontWeight.w500,
+                                        fontWeight: FontWeight.bold,
                                       ),
                                     ),
                                   ),
-                                ),                                                             
+                                ),                                                          
                               ],
                             ],
                           ),
@@ -579,12 +615,29 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                   initialValue: selectedCondition,
                                   hint: Text(
                                     '$selectedCondition',
+                                    textAlign: TextAlign.right,
                                     style: TextStyle(
                                       fontWeight: FontWeight.bold,
                                       color: AppColors.placeholderDark,
                                     ),
                                     overflow: TextOverflow.ellipsis,
                                   ),
+                                    selectedItemBuilder: (BuildContext context) {
+                                      return rwyConditions.map((String value) {
+                                        return Align(
+                                          alignment: Alignment.centerRight,
+                                          child: Text(
+                                            value,
+                                            textAlign: TextAlign.right,
+                                            style: TextStyle(
+                                              color: AppColors.placeholderDark,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        );
+                                      }).toList();
+                                    },
                                   decoration: InputDecoration(
                                       filled: true,
                                       fillColor: AppColors.placeholder,
@@ -613,7 +666,9 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                       value: value,
                                       child: Text(
                                         value,
-                                        style: TextStyle(color: AppColors.placeholderDark),
+                                        style: TextStyle(
+                                          color: AppColors.placeholderDark,
+                                        ),
                                         overflow: TextOverflow.ellipsis,
                                       ),
                                     );
@@ -637,7 +692,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                       updateOpld();
                                     });
                                   },
-                                ),
+                                ),                            
                               ),
                             
                             ],
@@ -1243,12 +1298,29 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                     initialValue: selectedFlaps,
                                     hint: Text(
                                       '$selectedFlaps',
+                                      textAlign: TextAlign.right,
                                       style: TextStyle(
                                         fontWeight: FontWeight.bold,
                                         color: AppColors.placeholderDark,
                                       ),
                                       overflow: TextOverflow.ellipsis,
                                     ),
+                                      selectedItemBuilder: (BuildContext context) {
+                                        return normalFlaps.map((String value) {
+                                          return Align(
+                                            alignment: Alignment.centerRight,
+                                            child: Text(
+                                              value,
+                                              textAlign: TextAlign.right,
+                                              style: TextStyle(
+                                                color: AppColors.placeholderDark,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                          );
+                                        }).toList();
+                                      },
                                     decoration: InputDecoration(
                                         filled: true,
                                         fillColor: AppColors.placeholder,
@@ -1290,7 +1362,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                         updateOpld();
                                       });
                                     },
-                                  ),
+                                  ),                               
                                 ),
                               ] else ... [
                                   Expanded(
@@ -1300,12 +1372,31 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                       initialValue: selectedFlaps,
                                       hint: Text(
                                         '$selectedFlaps',
+                                        textAlign: TextAlign.right,
                                         style: TextStyle(
                                           fontWeight: FontWeight.bold,
                                           color: AppColors.placeholderDark,
                                         ),
                                         overflow: TextOverflow.ellipsis,
                                       ),
+                                        selectedItemBuilder: (BuildContext context) {
+                                          return [nonFlap]
+                                              .where((value) => value != null)
+                                              .map((value) {
+                                            return Align(
+                                              alignment: Alignment.centerRight,
+                                              child: Text(
+                                                value!,
+                                                textAlign: TextAlign.right,
+                                                style: TextStyle(
+                                                  color: AppColors.placeholderDark,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                                overflow: TextOverflow.ellipsis,
+                                              ),
+                                            );
+                                          }).toList();
+                                        },
                                       decoration: InputDecoration(
                                           filled: true,
                                           fillColor: AppColors.placeholder,
@@ -1346,7 +1437,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                           updateOpld();
                                         });
                                       },
-                                    ),
+                                    ),                               
                                   ),
                               ],
                             ],
@@ -1354,7 +1445,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                         ),
                       ),
 
-                      //Autobrake
+                      //Autobrake, raramente pasa que se congela
                       Card(
                         color: AppColors.cardDark,
                         shape: RoundedRectangleBorder(
@@ -1384,11 +1475,28 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                   initialValue: selectedAutoBrake,
                                   hint: Text(
                                     '$selectedAutoBrake',
+                                    textAlign: TextAlign.right,
                                     style: TextStyle(
                                       color: AppColors.placeholderDark,
                                     ),
                                     overflow: TextOverflow.ellipsis,
                                   ),
+                                    selectedItemBuilder: (BuildContext context) {
+                                      return autoBrakeOptions!.map((String value) {
+                                        return Align(
+                                          alignment: Alignment.centerRight,
+                                          child: Text(
+                                            value,
+                                            textAlign: TextAlign.right,
+                                            style: TextStyle(
+                                              color: AppColors.placeholderDark,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        );
+                                      }).toList();
+                                    },
                                   decoration: InputDecoration(
                                       filled: true,
                                       fillColor: AppColors.placeholder,
@@ -1428,7 +1536,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                       updateOpld();
                                     });
                                   },
-                                ),
+                                ),                           
                               ),
                             ],
                           ),
@@ -1465,11 +1573,28 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                   initialValue: selectedReversers,
                                   hint: Text(
                                     '$selectedReversers',
+                                    textAlign: TextAlign.right,
                                     style: TextStyle(
                                       color: AppColors.placeholderDark,
                                     ),
                                     overflow: TextOverflow.ellipsis,
                                   ),
+                                    selectedItemBuilder: (BuildContext context) {
+                                      return reversersList!.map((String value) {
+                                        return Align(
+                                          alignment: Alignment.centerRight,
+                                          child: Text(
+                                            value,
+                                            textAlign: TextAlign.right,
+                                            style: TextStyle(
+                                              color: AppColors.placeholderDark,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        );
+                                      }).toList();
+                                    },
                                   decoration: InputDecoration(
                                     filled: true,
                                     fillColor: AppColors.placeholder,
@@ -1498,7 +1623,10 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                       value: value,
                                       child: Text(
                                         value,
-                                        style: TextStyle(color: AppColors.placeholderDark),
+                                        style: TextStyle(
+                                          color: AppColors.placeholderDark,
+                                          fontWeight: FontWeight.bold
+                                        ),
                                         overflow: TextOverflow.ellipsis,
                                       ),
                                     );
@@ -1510,6 +1638,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                     });
                                   },
                                 ),
+                              
                               ),
                             ],
                           ),
@@ -1547,12 +1676,29 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                     initialValue: selectedSpeedBrake,
                                     hint: Text(
                                       'AUTOMATIC',
+                                      textAlign: TextAlign.right,
                                       style: TextStyle(
                                         fontWeight: FontWeight.bold,
                                         color: AppColors.placeholderDark,
                                       ),
                                       overflow: TextOverflow.ellipsis,
                                     ),
+                                      selectedItemBuilder: (BuildContext context) {
+                                        return speedBrakesTypes.map((String value) {
+                                          return Align(
+                                            alignment: Alignment.centerRight,
+                                            child: Text(
+                                              value,
+                                              textAlign: TextAlign.right,
+                                              style: TextStyle(
+                                                color: AppColors.placeholderDark,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                          );
+                                        }).toList();
+                                      },
                                     decoration: InputDecoration(
                                       filled: true,
                                       fillColor: AppColors.placeholder,
@@ -1592,7 +1738,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                         updateOpld();
                                       }); 
                                     },
-                                  ),
+                                  ),                               
                                 )
                               ] else ...[
                                 SizedBox(width: screenSize.width * 0.10),
@@ -2350,109 +2496,124 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                       children: [
                                       Row(
                                         children: [
-                                        GestureDetector(
-                                          onTap: () {
-                                            if (windDirection.isEmpty) return;
+                                          GestureDetector(
+                                            onTap: () {
+                                              if (windDirection.isEmpty) return;
 
-                                            int selectedIndex = selectedWind != null
-                                                ? windDirection.indexOf(selectedWind!)
-                                                : 0;
+                                              int selectedIndex = selectedWind != null
+                                                  ? windDirection.indexOf(selectedWind!)
+                                                  : 0;
 
-                                            if (selectedIndex < 0) {
-                                              selectedIndex = 0;
-                                            }
+                                              if (selectedIndex < 0) {
+                                                selectedIndex = 0;
+                                              }
 
-                                            showCupertinoModalPopup(
-                                              context: context,
-                                              builder: (context) {
-                                                return Container(
-                                                  height: 300,
-                                                  color: AppColors.white,
-                                                  child: Column(
-                                                    children: [
-                                                      // Done
-                                                      Align(
-                                                        alignment: Alignment.centerRight,
-                                                        child: CupertinoButton(
-                                                          child: const Text('Done', style: TextStyle(color: AppColors.textColor3Dark),),
-                                                          onPressed: () {
-                                                            final newValue = windDirection[selectedIndex];
-
-                                                            setState(() {
-                                                              selectedWind = newValue;
-
-                                                              windValues = Calculatewind(
-                                                                rwyidRef: rwyId,
-                                                                windRef: windValue,
-                                                                windpickerRef: selectedWind,
-                                                                operation: '',
-                                                              )();
-
-                                                              windValue = windValues?[0];
-                                                              headtail = windValues?[1];
-                                                              crosswind = windValues?[2];
-
-                                                              updateOpld();
-                                                            });
-
-                                                            Navigator.pop(context);
-                                                          },
-                                                        ),
-                                                      ),
-
-                                                      // Picker
-                                                      Expanded(
-                                                        child: CupertinoPicker(
-                                                          itemExtent: 45,
-                                                          scrollController: FixedExtentScrollController(
-                                                            initialItem: selectedIndex,
-                                                          ),
-                                                          onSelectedItemChanged: (index) {
-                                                            selectedIndex = index;
-                                                          },
-                                                          children: windDirection.map((value) {
-                                                            return Center(
-                                                              child: Text(
-                                                                value,
+                                              showCupertinoModalPopup(
+                                                context: context,
+                                                builder: (context) {
+                                                  return Container(
+                                                    height: 300,
+                                                    color: AppColors.backgroundDark,
+                                                    child: Column(
+                                                      children: [
+                                                        Container(
+                                                          width: double.infinity,
+                                                          height: 55,
+                                                          color: AppColors.black,
+                                                          child: Align(
+                                                            alignment: Alignment.centerRight,
+                                                            child: CupertinoButton(
+                                                              padding: const EdgeInsets.symmetric(
+                                                                horizontal: 16,
+                                                                vertical: 8,
+                                                              ),
+                                                              child: const Text(
+                                                                'Done',
                                                                 style: TextStyle(
-                                                                  fontSize: 22,
-                                                                  color: AppColors.black,
-                                                                  fontWeight: FontWeight.w500,
+                                                                  color: AppColors.textColor3Dark,
+                                                                  fontWeight: FontWeight.bold,
                                                                 ),
                                                               ),
-                                                            );
-                                                          }).toList(),
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                );
-                                              },
-                                            );
-                                          },
+                                                              onPressed: () {
+                                                                final newValue = windDirection[selectedIndex];
 
-                                          child: Container(
-                                            width: 120,
-                                            height: 50,
-                                            alignment: Alignment.center,
-                                            decoration: BoxDecoration(
-                                              color: AppColors.grey,
-                                              borderRadius: BorderRadius.circular(8.0),
-                                              border: Border.all(
+                                                                setState(() {
+                                                                  selectedWind = newValue;
+
+                                                                  windValues = Calculatewind(
+                                                                    rwyidRef: rwyId,
+                                                                    windRef: windValue,
+                                                                    windpickerRef: selectedWind,
+                                                                    operation: '',
+                                                                  )();
+
+                                                                  windValue = windValues?[0];
+                                                                  headtail = windValues?[1];
+                                                                  crosswind = windValues?[2];
+
+                                                                  updateOpld();
+                                                                });
+
+                                                                Navigator.pop(context);
+                                                              },
+                                                            ),
+                                                          ),
+                                                        ),
+
+                                                        // Picker
+                                                        Expanded(
+                                                          child: CupertinoPicker(
+                                                            itemExtent: 45,
+                                                            scrollController: FixedExtentScrollController(
+                                                              initialItem: selectedIndex,
+                                                            ),
+                                                            onSelectedItemChanged: (index) {
+                                                              selectedIndex = index;
+                                                            },
+                                                            children: windDirection.map((value) {
+                                                              return Center(
+                                                                child: Text(
+                                                                  value,
+                                                                  style: TextStyle(
+                                                                    fontSize: 22,
+                                                                    color: AppColors.white,
+                                                                    fontWeight: FontWeight.w500,
+                                                                  ),
+                                                                ),
+                                                              );
+                                                            }).toList(),
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  );
+                                                },
+                                              );
+                                            },
+
+                                            child: Container(
+                                              width: 120,
+                                              height: 50,
+                                              alignment: Alignment.center,
+                                              decoration: BoxDecoration(
                                                 color: AppColors.grey,
-                                                width: 1.0,
+                                                borderRadius: BorderRadius.circular(8.0),
+                                                border: Border.all(
+                                                  color: AppColors.grey,
+                                                  width: 1.0,
+                                                ),
                                               ),
-                                            ),
-                                            child: Text(
-                                              selectedWind ?? '000',
-                                              style: TextStyle(
-                                                color: AppColors.iconDark,
-                                                fontSize: 14,
-                                                fontWeight: FontWeight.bold,
+                                              child: Text(
+                                                selectedWind ?? '000',
+                                                style: TextStyle(
+                                                  color: AppColors.iconDark,
+                                                  fontSize: 14,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
                                               ),
                                             ),
                                           ),
-                                        ),                                      
+                                                                                
                                         ],
                                       ),
                                         const SizedBox(width: 25.0),
@@ -2472,7 +2633,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                       children: [
                                         const SizedBox(width: 20.0),
                                         Text(
-                                          (int.tryParse(headtail ?? '0') ?? 0) >= 0
+                                          (int.tryParse(headtail ?? '0') ?? 0).round() >= 0
                                           ? '$headtail  ${AppStrings.kthwc}'
                                           : '$headtail  ${AppStrings.kttwc}',
                                           style: TextStyle(color: (int.tryParse(headtail ?? '0') ?? 0) < (int.tryParse(windMin ?? '-15') ?? -15)
@@ -2487,7 +2648,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                         ),
                                         const SizedBox(width: 25.0),
                                         Text(
-                                          '$crosswind  ${AppStrings.ktCwc}',
+                                          '${(int.tryParse(crosswind ?? '0') ?? 0).round()}  ${AppStrings.ktCwc}',
                                           style: TextStyle(color: AppColors.textColor3Dark, fontWeight: FontWeight.bold),
                                         ),
                                       ],

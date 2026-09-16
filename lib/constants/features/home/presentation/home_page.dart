@@ -252,7 +252,10 @@ class _HomePageState extends State<HomePage> {
                           value: value,
                           child: Text(
                             value,
-                            style: TextStyle(color: AppColors.placeholderDark),
+                            style: TextStyle(
+                              color: AppColors.placeholderDark, 
+                              fontWeight: FontWeight.bold
+                            ),
                             overflow: TextOverflow.ellipsis,
                           ),
                         );
@@ -327,7 +330,10 @@ class _HomePageState extends State<HomePage> {
                           value: value,
                           child: Text(
                             value,
-                            style: TextStyle(color: AppColors.placeholderDark),
+                            style: TextStyle(
+                              color: AppColors.placeholderDark, 
+                              fontWeight: FontWeight.bold
+                            ),
                             overflow: TextOverflow.ellipsis,
                           ),
                         );
@@ -412,6 +418,7 @@ class _HomePageState extends State<HomePage> {
                               value,
                               style: TextStyle(
                                 color: AppColors.placeholderDark,
+                                fontWeight: FontWeight.bold,
                               ),
                               overflow: TextOverflow.ellipsis,
                             ),

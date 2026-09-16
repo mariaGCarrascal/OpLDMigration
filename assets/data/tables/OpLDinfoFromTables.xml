@@ -11981,12 +11981,6 @@
 						<autobrake2 id='AUTOBRAKE 2' label='Autobrake 2'> 370 </autobrake2>
 					</approachSpeedAdjustment>
 					<!--F30-DRY-->
-					<ReverserInoperativeAdjustment id='NO REV INOP ADJ' AmountOfRevInop = '0' >
-						<maxManual id='MAX MANUAL' label='A/B Max Manual'> 0 </maxManual>
-						<autobrakeMAX id='AUTOBRAKE MAX' label='Autobrake MAX'> 0 </autobrakeMAX>
-						<autobrake2 id='AUTOBRAKE 2' label='Autobrake 2'> 0 </autobrake2>
-					</ReverserInoperativeAdjustment>
-					<!--F30-DRY-->
 					<ReverserInoperativeAdjustment id='ONE REV INOP ADJ' AmountOfRevInop = '1' >
 						<maxManual id='MAX MANUAL' label='A/B Max Manual'> 0 </maxManual>
 						<autobrakeMAX id='AUTOBRAKE MAX' label='Autobrake MAX'> 0 </autobrakeMAX>
