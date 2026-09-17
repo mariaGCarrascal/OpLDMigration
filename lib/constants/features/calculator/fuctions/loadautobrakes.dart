@@ -24,10 +24,6 @@ class Loadautobrakes{
     final String? selectedflap = flapRef;
     final String? selectedCondition = conditionRef;
 
-    if (aircraftRef == null || landingRef == null || configurationRef == null || flapRef == null || conditionRef == null) {
-      return autobrakesSettings = [];
-    }
-
     try {
 
       Iterable<XmlElement> target = [];

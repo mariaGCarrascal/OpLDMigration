@@ -676,7 +676,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                   }).toList(),
                                   onChanged: (newValue) {
                                     if (newValue == null) return;
-
+//VER EL PONER QUE CARGUE LAS REVERSAS TAMBIEN PARA NORMAL LANDING
                                     setState(() {
                                       selectedCondition = newValue;
                                       updateRwyCondition(newValue);
@@ -2744,6 +2744,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [ 
                               if(selectedLanding != 'Non-Normal') ...[
+                                Center( child:
                                 Text(
                                   AppStrings.landingTittle,
                                   style: TextStyle(
@@ -2751,7 +2752,9 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                     fontWeight: FontWeight.bold,
                                     color: AppColors.white),
                                 ),
+                                ),
                                ] else ...[
+                                Center( child:
                                   Text(
                                     selectedConfiguration!.toUpperCase(),
                                     style: TextStyle(
@@ -2759,6 +2762,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                       fontWeight: FontWeight.bold,
                                       color: AppColors.white),
                                   ),
+                                ),
                                ],
 
                               const SizedBox(height: 12),

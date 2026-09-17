@@ -22,10 +22,6 @@ class Loadcomments{
     final String? selectedConfigurationType = configurationRef;
     final String? selectedflap = flapRef;
 
-    if (aircraftRef == null || landingRef == null || configurationRef == null || flapRef == null) {
-      return comentarios = [];
-    }
-
     try {
 
       Iterable<XmlElement> target = [];
