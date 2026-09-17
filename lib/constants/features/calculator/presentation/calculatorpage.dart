@@ -287,6 +287,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
   Widget build(BuildContext context) {
 
     final Size screenSize = MediaQuery.of(context).size;
+    final headtailValue = (num.tryParse((headtail ?? '0').replaceAll('−', '-').replaceAll('–', '-')) ?? 0).round();
 
     return Scaffold(
       backgroundColor: AppColors.backgroundDark,
@@ -2633,16 +2634,18 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                       ],
                                     ),
                                     const SizedBox(height: 8.0),
+
                                     Row(
                                       children: [
                                         const SizedBox(width: 20.0),
                                         Text(
-                                          (int.tryParse(headtail ?? '0') ?? 0).round() >= 0
-                                          ? '${(double.tryParse(headtail ?? '0') ?? 0).round()}  ${AppStrings.kthwc}'
-                                          : '${(double.tryParse(headtail ?? '0') ?? 0).round()}  ${AppStrings.kttwc}',
-                                          style: TextStyle(color: (int.tryParse(headtail ?? '0') ?? 0) < (int.tryParse(windMin ?? '-15') ?? -15)
-                                            ? AppColors.errorColor
-                                            : AppColors.textColor3Dark,
+                                          headtailValue >= 0
+                                                  ? '$headtailValue  ${AppStrings.kthwc}'
+                                                  : '$headtailValue  ${AppStrings.kttwc}',
+                                          style: TextStyle(color: (num.tryParse((headtail ?? '0').replaceAll('−', '-').replaceAll('–', '-')) ?? 0) 
+                                            < (num.tryParse((windMin ?? '-15').replaceAll('−', '-').replaceAll('–', '-')) ?? -15)
+                                                ? AppColors.errorColor
+                                                : AppColors.textColor3Dark,
                                           fontWeight: FontWeight.bold),
                                         ),                                     
                                         const SizedBox(width: 25.0),
