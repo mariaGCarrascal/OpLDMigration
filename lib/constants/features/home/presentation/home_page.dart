@@ -16,8 +16,8 @@ class HomePage extends StatefulWidget {
 }
  
 class _HomePageState extends State<HomePage> {
-  //Ruta hacia la etiqueta o nodo comments para obtener los valores internos de ese nodo en Normal = <aircraft id="737-700W/CFM56-7B22"> -> <landingCondition id="NORMAL LANDING> -> <Flap id='Flaps 15' flapValue='15' label='FLAPS 15'> ->Comments
-  //Ruta hacia la etiqueta o nodo de comments en Nonnormal = <aircraft id="737-700W/CFM56-7B22"-> <landingCondition id="NON-NORMAL LANDING"> -> <nonNormalConfiguration id= 'Airspeed Unreliable (Flaps 15)> -> Comments
+  //Ruta hacia la etiqueta o nodo comments para obtener los valores internos de ese nodo en Normal = <aircraft> -> <landingCondition id="NORMAL LANDING> -> <Flap> -> <Comments>
+  //Ruta hacia la etiqueta o nodo de comments en Nonnormal = <aircraft> -> <landingCondition id="NON-NORMAL LANDING"> -> <nonNormalConfiguration> -> <Comments>
   //Nota: Los comentarios que se traen cuando es Normal, son solo de Flap 15 y varian es por el tipo de avion solamente, si non-normal, ya es por el tipo de configuracion.
   //Nota: Los Flaps inician en 30 y el autobrake en 3 en Normal, en Non-normal varian por la configuracion el Flap y el autobrake en automatic.
   //Nota: Los reversers se mantienen en default en el 1er valor de los datos del Aeropuerto, Reversers en 0 revsr Inop y Speedbrakes en Automatic (excepto en Non-Nomral que sale N/A) en Normal y Non-Normal.
@@ -216,6 +216,7 @@ class _HomePageState extends State<HomePage> {
                       isExpanded: true,
                       icon: const SizedBox.shrink(),
                       initialValue: selectedAircraftType,
+                      dropdownColor: AppColors.surfaceDark,
                       hint: Text(
                         'Select Aircraft Type',
                         style: TextStyle(
@@ -254,7 +255,8 @@ class _HomePageState extends State<HomePage> {
                             value,
                             style: TextStyle(
                               color: AppColors.placeholderDark, 
-                              fontWeight: FontWeight.bold
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
                             ),
                             overflow: TextOverflow.ellipsis,
                           ),
@@ -302,6 +304,7 @@ class _HomePageState extends State<HomePage> {
                         ),
                         overflow: TextOverflow.ellipsis,
                       ),
+                      dropdownColor: AppColors.surfaceDark,
                       decoration: InputDecoration(
                         filled: true,
                         fillColor: AppColors.placeholder,
@@ -332,7 +335,8 @@ class _HomePageState extends State<HomePage> {
                             value,
                             style: TextStyle(
                               color: AppColors.placeholderDark, 
-                              fontWeight: FontWeight.bold
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
                             ),
                             overflow: TextOverflow.ellipsis,
                           ),
@@ -388,6 +392,7 @@ class _HomePageState extends State<HomePage> {
                           ),
                           overflow: TextOverflow.ellipsis,
                         ),
+                        dropdownColor: AppColors.surfaceDark,
                         decoration: InputDecoration(
                           filled: true,
                           fillColor: AppColors.placeholder,
@@ -419,6 +424,7 @@ class _HomePageState extends State<HomePage> {
                               style: TextStyle(
                                 color: AppColors.placeholderDark,
                                 fontWeight: FontWeight.bold,
+                                fontSize: 16,
                               ),
                               overflow: TextOverflow.ellipsis,
                             ),
@@ -457,7 +463,6 @@ class _HomePageState extends State<HomePage> {
                           isVisible: false,
                         ),
                       ),
-
                       decoratorProps: DropDownDecoratorProps(
                         decoration: InputDecoration(
                           filled: true,
@@ -495,15 +500,70 @@ class _HomePageState extends State<HomePage> {
                       popupProps: PopupProps.menu(
                         showSearchBox: true,
 
+                        containerBuilder: (context, popupWidget) {
+                          return Container(
+                            color: AppColors.surfaceDark,
+                            child: popupWidget,
+                          );
+                        },
+
                         searchFieldProps: TextFieldProps(
+                          style: TextStyle(
+                            color: AppColors.white,
+                            fontSize: 16,
+                          ),
                           decoration: InputDecoration(
+                            filled: true,
+                            fillColor: AppColors.surfaceDark,
                             hintText: 'Search Airport',
-                            prefixIcon: const Icon(Icons.search),
+                            hintStyle: TextStyle(
+                              color: AppColors.grey,
+                              fontSize: 16,
+                            ),
+                            prefixIcon: const Icon(Icons.search, color: AppColors.grey),
+                            enabledBorder: OutlineInputBorder(
+                              borderSide: BorderSide(
+                                color: AppColors.grey,
+                                width: 1,
+                              ),
+                              borderRadius: BorderRadius.circular(5),
+                            ),
+
+                            focusedBorder: OutlineInputBorder(
+                              borderSide: BorderSide(
+                                color: AppColors.grey,
+                                width: 1,
+                              ),
+                              borderRadius: BorderRadius.circular(5),
+                            ),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(5),
                             ),
                           ),
                         ),
+
+                        emptyBuilder: (context, searchEntry) {
+                          return Center(
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                  Icons.search_off,
+                                  color: AppColors.white,
+                                  size: 30,
+                                ),
+                                const SizedBox(height: 8),
+                                Text(
+                                  'No Airport Found for "$searchEntry"',
+                                  style: TextStyle(
+                                    color: AppColors.white,
+                                    fontSize: 16,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                        },
 
                         itemBuilder: (context, item, isDisabled, isSelected) {
                           return Padding(
@@ -515,6 +575,7 @@ class _HomePageState extends State<HomePage> {
                               item,
                               style: TextStyle(
                                 color: AppColors.placeholderDark,
+                                fontSize: 16,
                               ),
                             ),
                           );
@@ -527,6 +588,7 @@ class _HomePageState extends State<HomePage> {
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                             color: AppColors.placeholderDark,
+                            fontSize: 16,
                           ),
                           overflow: TextOverflow.ellipsis,
                         );
@@ -537,7 +599,7 @@ class _HomePageState extends State<HomePage> {
                           selectedAirportType = newValue;
                         });
                       },
-                    ),                                
+                    ),                                                 
                   ],
                 ),
               ),

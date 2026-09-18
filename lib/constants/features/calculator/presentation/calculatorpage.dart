@@ -15,7 +15,6 @@ import 'package:flutter_application_5/constants/features/calculator/fuctions/cal
 import 'package:flutter_application_5/constants/features/calculator/fuctions/customDigitFormatter.dart';
 import 'package:flutter_application_5/constants/features/calculator/fuctions/loadautobrakes.dart';
 import 'package:flutter_application_5/constants/features/calculator/fuctions/loadcomments.dart';
-import 'package:flutter_application_5/constants/features/calculator/fuctions/loadnonreversers.dart';
 import 'package:flutter_application_5/constants/features/calculator/fuctions/loadreversers.dart';
 import 'package:flutter_application_5/constants/features/calculator/fuctions/loadvrefcondition.dart';
 import 'package:flutter_application_5/constants/features/calculator/fuctions/loadvreftext.dart';
@@ -196,9 +195,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
       selectedAutoBrake = defaultAircraft?[2];
       autoBrakeOptions = Loadautobrakes(aircraftRef: selectedAircraft, landingRef: selectedLanding, configurationRef: selectedConfiguration, flapRef: selectedFlaps, conditionRef: selectedCondition)();
       vrefAdjust = 'YES';
-      reversersList = Loadreversers(valuesRef: defaultAircraft!)();
-      selectedReversers = reversersList![0];
-    
+
     } else {
       selectedFlaps = widget.nonflaps;
       nonFlap = widget.nonflaps;
@@ -206,8 +203,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
       autoBrakeOptions = Loadautobrakes(aircraftRef: selectedAircraft, landingRef: selectedLanding, configurationRef: selectedConfiguration, flapRef: selectedFlaps, conditionRef: selectedCondition)();
       vrefNonPlus = Loadvreftext(aircraftRef: selectedAircraft, landingRef: selectedLanding, configurationRef: selectedConfiguration)();
       vrefAdjust = Loadvrefcondition(aircraftRef: selectedAircraft, landingRef: selectedLanding, configurationRef: selectedConfiguration)();
-      reversersList = Loadnonreversers(aircraftRef: selectedAircraft, landingRef: selectedLanding, configurationRef: selectedConfiguration, conditionRef: selectedCondition)();
-      selectedReversers = reversersList![0];
+
     }
     listaComments = Loadcomments(aircraftRef: selectedAircraft, landingRef: selectedLanding,configurationRef: selectedConfiguration, flapRef: selectedFlaps)();
     if(selectedAirport != 'XXX') {
@@ -256,6 +252,11 @@ class _CalculatorPageState extends State<CalculatorPage> {
     vRef =  vrefAdjust == 'YES' ? defaultAircraft![0] : '0';
     vMin = defaultAircraft?[7];
     vMax = defaultAircraft?[8];
+    reversersList = Loadreversers(aircraftRef: selectedAircraft, landingRef: selectedLanding, configurationRef: selectedConfiguration, flapRef: selectedFlaps, conditionRef: selectedCondition)();
+    selectedReversers = defaultAircraft![16];
+    if (!reversersList!.contains(selectedReversers)) {
+      selectedReversers = reversersList![0];
+    }
 
     updateOpld();
   }
@@ -387,6 +388,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                       ),
                                       overflow: TextOverflow.ellipsis,
                                     ),
+                                    dropdownColor: AppColors.surfaceDark,
                                       selectedItemBuilder: (BuildContext context) {
                                         return (selectedAirportRunway?.keys ?? <String>{}).map((value) {
                                           return Align(
@@ -623,6 +625,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                     ),
                                     overflow: TextOverflow.ellipsis,
                                   ),
+                                  dropdownColor: AppColors.surfaceDark,
                                     selectedItemBuilder: (BuildContext context) {
                                       return rwyConditions.map((String value) {
                                         return Align(
@@ -676,25 +679,17 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                   }).toList(),
                                   onChanged: (newValue) {
                                     if (newValue == null) return;
-//VER EL PONER QUE CARGUE LAS REVERSAS TAMBIEN PARA NORMAL LANDING
                                     setState(() {
                                       selectedCondition = newValue;
                                       updateRwyCondition(newValue);
-                                      if(selectedLanding == 'Non-Normal') {
-                                        autoBrakeOptions = Loadautobrakes(aircraftRef: selectedAircraft, landingRef: selectedLanding, configurationRef: selectedConfiguration, flapRef: selectedFlaps, conditionRef: selectedCondition)();
+                                      autoBrakeOptions = Loadautobrakes(aircraftRef: selectedAircraft, landingRef: selectedLanding, configurationRef: selectedConfiguration, flapRef: selectedFlaps, conditionRef: selectedCondition)();
                                         if (!autoBrakeOptions!.contains(selectedAutoBrake)) {
                                           selectedAutoBrake = autoBrakeOptions![0];
                                         }
-                                        reversersList = Loadnonreversers(aircraftRef: selectedAircraft, landingRef: selectedLanding, configurationRef: selectedConfiguration, conditionRef: selectedCondition)();
+                                      reversersList = Loadreversers(aircraftRef: selectedAircraft, landingRef: selectedLanding, configurationRef: selectedConfiguration, flapRef: selectedFlaps, conditionRef: selectedCondition)();
                                         if (!reversersList!.contains(selectedReversers)) {
                                           selectedReversers = reversersList![0];
                                         }
-                                      } else {
-                                        autoBrakeOptions = Loadautobrakes(aircraftRef: selectedAircraft, landingRef: selectedLanding, configurationRef: selectedConfiguration, flapRef: selectedFlaps, conditionRef: selectedCondition)();
-                                        if (!autoBrakeOptions!.contains(selectedAutoBrake)) {
-                                          selectedAutoBrake = autoBrakeOptions![0];
-                                        }
-                                      }
                                       updateOpld();
                                     });
                                   },
@@ -1311,6 +1306,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                       ),
                                       overflow: TextOverflow.ellipsis,
                                     ),
+                                    dropdownColor: AppColors.surfaceDark,
                                       selectedItemBuilder: (BuildContext context) {
                                         return normalFlaps.map((String value) {
                                           return Align(
@@ -1385,6 +1381,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                         ),
                                         overflow: TextOverflow.ellipsis,
                                       ),
+                                      dropdownColor: AppColors.surfaceDark,
                                         selectedItemBuilder: (BuildContext context) {
                                           return [nonFlap]
                                               .where((value) => value != null)
@@ -1487,6 +1484,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                     ),
                                     overflow: TextOverflow.ellipsis,
                                   ),
+                                  dropdownColor: AppColors.surfaceDark,
                                     selectedItemBuilder: (BuildContext context) {
                                       return autoBrakeOptions!.map((String value) {
                                         return Align(
@@ -1585,6 +1583,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                     ),
                                     overflow: TextOverflow.ellipsis,
                                   ),
+                                  dropdownColor: AppColors.surfaceDark,
                                     selectedItemBuilder: (BuildContext context) {
                                       return reversersList!.map((String value) {
                                         return Align(
@@ -1689,6 +1688,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                       ),
                                       overflow: TextOverflow.ellipsis,
                                     ),
+                                    dropdownColor: AppColors.surfaceDark,
                                       selectedItemBuilder: (BuildContext context) {
                                         return speedBrakesTypes.map((String value) {
                                           return Align(
@@ -2874,7 +2874,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                         ),
                       ),
 
-                      //Colocar Divider(color: AppColors.cancelPriButBrDark,) en este punto, para ser el Divisor de la union del contenido de ambas Card().
+                      //Colocar Divider(color: AppColors.white,) en este punto, para ser el Divisor de la union del contenido de ambas Card().
 
                       //OpLD Results Notes, no se muestra el Remaining si el aeropuerto es XXX
                       Card(
