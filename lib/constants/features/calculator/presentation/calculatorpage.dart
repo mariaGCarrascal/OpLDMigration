@@ -43,8 +43,8 @@ class CalculatorPage extends StatefulWidget {
     this.airport, this.airportEl, this.airportQNH, this.airportTemp, this.airportRunway, this.nonflaps
   });
 //Pendientes:
-//Cambiar la visual del card results juntandolo y usar Divider.
-//Slider en XXX Elevation y LandingWeight (en cualquier aeropuerto), no da el valor correcto de OpLD, si hay mejor opcion para el controlador del slider. (Revisar)
+//TEMA DEL SPLIT VIEW EN TABLET.
+//Slider en XXX Elevation y LandingWeight (en cualquier aeropuerto), no da el valor correcto de OpLD en la UI (pero si en el backend), si hay mejor opcion para el controlador del slider. (Revisar)
 //LongPress en QNH y Elevation (XXX).
 
   @override
@@ -951,6 +951,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                   child: Slider(
                                     activeColor: AppColors.iconDark,
                                     thumbColor: AppColors.iconDark,
+                                    inactiveColor: AppColors.grey,
                                     value: _currentElevation.clamp(
                                       sliderMinAltitud,
                                       sliderMaxAltitud,
@@ -974,7 +975,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                       );
                                     },
                                   ),
-                                ),
+                                ),                           
                             ],
                           ),
                         ),
@@ -2034,6 +2035,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                     child: Slider(
                                       activeColor: AppColors.iconDark,
                                       thumbColor: AppColors.iconDark,
+                                      inactiveColor: AppColors.grey,
                                       value: _currentLadWeight.clamp(
                                         sliderMinWeight,
                                         sliderMaxWeight,
@@ -2737,320 +2739,413 @@ class _CalculatorPageState extends State<CalculatorPage> {
                           side: BorderSide(color: AppColors.white),
                           borderRadius: BorderRadius.circular(4),
                         ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(10.0),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [ 
-                              if(selectedLanding != 'Non-Normal') ...[
-                                Center( child:
-                                Text(
-                                  AppStrings.landingTittle,
-                                  style: TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold,
-                                    color: AppColors.white),
-                                ),
-                                ),
-                               ] else ...[
-                                Center( child:
-                                  Text(
-                                    selectedConfiguration!.toUpperCase(),
-                                    style: TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold,
-                                      color: AppColors.white),
-                                  ),
-                                ),
-                               ],
+                        child: Column(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(10.0),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
 
-                              const SizedBox(height: 12),
-
-                                  //NET LDA results, no se muestra si el aeropuerto es XXX
-                                    if(selectedAirport != 'XXX')
-                                      Container(
-                                        width: double.infinity,
-                                        padding: const EdgeInsets.symmetric(
-                                          vertical: 12,
-                                          horizontal: 16,
-                                        ),
-                                        decoration: BoxDecoration(
-                                          color: AppColors.black,
-                                          borderRadius: BorderRadius.circular(4),
-                                          border: Border.all(
-                                            color: AppColors.white.withValues(alpha: 0.3),
-                                          ),
-                                        ),
-                                        child: Row(
-                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Text(
-                                              AppStrings.netLda,
-                                              style: TextStyle(
-                                                fontSize: 18,
-                                                fontWeight: FontWeight.bold,
-                                                color: AppColors.white,
-                                              ),
-                                            ),
-                                            const SizedBox(width: 5),
-                                            Text(
-                                              '$netLDA ${AppStrings.ft}',
-                                              style: TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                color: AppColors.textColor3Dark,
-                                                fontSize: 18,
-                                              ),
-                                            ),
-                                            
-                                            Text(
-                                              '(${(double.tryParse(netLDA ?? '0')! * 0.3048).round()}${AppStrings.m})',
-                                              style: TextStyle(
-                                                color: AppColors.textColor3Dark,
-                                                fontSize: 16,
-                                              ),
-                                            ),
-                                            const SizedBox(width: 10),
-                                          ],
+                                  if (selectedLanding != 'Non-Normal') ...[
+                                    Center(
+                                      child: Text(
+                                        AppStrings.landingTittle,
+                                        style: TextStyle(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold,
+                                          color: AppColors.white,
                                         ),
                                       ),
-
-                                    const SizedBox(height: 12), 
-
-                                    //OpLD results
-                                    Container(
-                                        width: double.infinity,
-                                        padding: const EdgeInsets.symmetric(
-                                          vertical: 12,
-                                          horizontal: 16,
-                                        ),
-                                        decoration: BoxDecoration(
-                                          color: AppColors.black,
-                                          borderRadius: BorderRadius.circular(4),
-                                          border: Border.all(
-                                            color: AppColors.white.withValues(alpha: 0.3),
-                                          ),
-                                        ),
-                                        child: Row(
-                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Text(
-                                              AppStrings.opld,
-                                              style: TextStyle(
-                                                fontSize: 18,
-                                                fontWeight: FontWeight.bold,
-                                                color: AppColors.white,
-                                              ),
-                                            ),
-                                            const SizedBox(width: 15),
-
-                                            Text(
-                                              '$opldResult ${AppStrings.ft}',
-                                              style: TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                color: selectedAirport != 'XXX'
-                                                  ? colorResult
-                                                  : AppColors.white,
-                                                fontSize: 18,
-                                              ),
-                                            ),
-
-                                            Text(
-                                              '(${(double.tryParse(opldResult ?? '0')! * 0.3048).round()}${AppStrings.m})',
-                                              style: TextStyle(
-                                                color: selectedAirport != 'XXX'
-                                                  ? colorResult
-                                                  : AppColors.white,
-                                                fontSize: 16,
-                                              ),
-                                            ),
-
-                                            const SizedBox(width: 4),
-                                          ],
-                                        ),
                                     ),
-                            ],
-                          ),
-                        ),
-                      ),
+                                  ] else ...[
+                                    Center(
+                                      child: Text(
+                                        selectedConfiguration!.toUpperCase(),
+                                        style: TextStyle(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold,
+                                          color: AppColors.white,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
 
-                      //Colocar Divider(color: AppColors.white,) en este punto, para ser el Divisor de la union del contenido de ambas Card().
+                                  const SizedBox(height: 12),
 
-                      //OpLD Results Notes, no se muestra el Remaining si el aeropuerto es XXX
-                      Card(
-                        color: AppColors.black,
-                        shape: RoundedRectangleBorder(
-                          side: BorderSide(color: AppColors.white),
-                          borderRadius: BorderRadius.circular(4),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(24.0), 
-                          child: SizedBox(
-                            height: 380,
-                            width: 1500, 
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [       
-                                SizedBox(
-                                  width: double.infinity, 
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      if (selectedAirport != 'XXX') ...[
-                                        const SizedBox(height: 12),
-                                        Row(
-                                          children: [  
-                                            Text(
-                                              AppStrings.remaining, 
-                                              textAlign: TextAlign.left, 
-                                              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppColors.white),
-                                            ),
-                                            SizedBox(width: screenSize.width * 0.12),
-                                            Text(
-                                              '$remainingResult ${AppStrings.ft}', 
-                                              textAlign: TextAlign.right, 
-                                              style: TextStyle(color: colorResult, fontSize: 16,fontWeight: FontWeight.bold),
-                                            ),
-                                            const SizedBox(width: 5),
-                                            Text(
-                                              '(${(double.tryParse(remainingResult ?? '0')! * 0.3048).round()}${AppStrings.m})', 
-                                              textAlign: TextAlign.right, 
-                                              style: TextStyle(color: colorResult, fontSize: 18),
-                                            ),
-                                          ],
-                                        )
-
-                                      ],
-                                      const SizedBox(height: 12),
-                                      Text('$selectedFlaps', textAlign: TextAlign.left, style: TextStyle(color: AppColors.resultNotes, fontWeight: FontWeight.bold)),
-                                      const SizedBox(height: 12),
-                                      Text('$selectedAutoBrake', textAlign: TextAlign.left, style: TextStyle(color: AppColors.resultNotes, fontWeight: FontWeight.bold)),
-                                      const SizedBox(height: 50),
-                                     
-                                      Row(
+                                  if (selectedAirport != 'XXX')
+                                    //NET LDA results, no se muestra si el aeropuerto es XXX
+                                    Container(
+                                      width: double.infinity,
+                                      padding: const EdgeInsets.symmetric(
+                                        vertical: 12,
+                                        horizontal: 16,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color: AppColors.black,
+                                        borderRadius: BorderRadius.circular(4),
+                                        border: Border.all(
+                                          color: AppColors.white.withValues(alpha: 0.3),
+                                        ),
+                                      ),
+                                      child: Row(
                                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                         children: [
-                                          Expanded(child: 
-                                          Text('$selectedCondition rwy Condition:', textAlign: TextAlign.left, style: TextStyle(color: AppColors.resultNotes, fontWeight: FontWeight.bold)),
+                                          Text(
+                                            AppStrings.netLda,
+                                            style: TextStyle(
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.bold,
+                                              color: AppColors.white,
+                                            ),
                                           ),
-                                          SizedBox(width: screenSize.width * 0.10),
-                                          Text('(''$rwyRcc'')', textAlign: TextAlign.right, style: TextStyle(color: AppColors.resultNotes, fontWeight: FontWeight.bold)),
-                                        ]
-                                      ),
-                                      const SizedBox(height: 20),
-                                      ...rwyNote!.map((nota) => Padding(
-                                                padding: const EdgeInsets.symmetric(vertical: 5.0),
-                                                child: Text(
-                                                  nota,
-                                                  style: const TextStyle(color: AppColors.resultNotes),
-                                                  textAlign: TextAlign.start,
-                                                ),
-                                              )),
-                                    ],
-                                  ),
-                                ),
 
-                                //Importent notes boton de dialogo message
-                               ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: AppColors.black,
-                                  foregroundColor: AppColors.placeholderDark,
-                                  side: const BorderSide(
-                                    color: AppColors.placeholderDark,
-                                    width: 1,
-                                  ),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(5),
-                                  ),
-                                  fixedSize: const Size(170, 20)
-                                ),
-                                onPressed: () {
-                                  showDialog(
-                                    context: context,
-                                    builder: (BuildContext context) {
-                                      return AlertDialog(
-                                        backgroundColor: AppColors.black,
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(12.0),
-                                          side: const BorderSide(
-                                            color: AppColors.placeholderDark,
-                                            width: 1.5,
+                                          const SizedBox(width: 5),
+
+                                          Text(
+                                            '$netLDA ${AppStrings.ft}',
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              color: AppColors.textColor3Dark,
+                                              fontSize: 18,
+                                            ),
+                                          ),
+
+                                          Text(
+                                            '(${(double.tryParse(netLDA ?? '0')! * 0.3048).round()}${AppStrings.m})',
+                                            style: TextStyle(
+                                              color: AppColors.textColor3Dark,
+                                              fontSize: 16,
+                                            ),
+                                          ),
+
+                                          const SizedBox(width: 10),
+                                        ],
+                                      ),
+                                    ),
+
+                                  const SizedBox(height: 12),
+
+                                  //OpLD results
+                                  Container(
+                                    width: double.infinity,
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: 12,
+                                      horizontal: 16,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: AppColors.black,
+                                      borderRadius: BorderRadius.circular(4),
+                                      border: Border.all(
+                                        color: AppColors.white.withValues(alpha: 0.3),
+                                      ),
+                                    ),
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text(
+                                          AppStrings.opld,
+                                          style: TextStyle(
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.bold,
+                                            color: AppColors.white,
                                           ),
                                         ),
-                                        content: SizedBox(
-                                          width: 650.0,
-                                          height: 700.0,
-                                          child: Column(
-                                            mainAxisAlignment: MainAxisAlignment.start,
-                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                            children: [
-                                              Center(
-                                              child: const Text(
-                                                  AppStrings.notesTitle,
+
+                                        const SizedBox(width: 15),
+
+                                        Text(
+                                          '$opldResult ${AppStrings.ft}',
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            color: selectedAirport != 'XXX'
+                                                ? colorResult
+                                                : AppColors.white,
+                                            fontSize: 18,
+                                          ),
+                                        ),
+
+                                        Text(
+                                          '(${(double.tryParse(opldResult ?? '0')! * 0.3048).round()}${AppStrings.m})',
+                                          style: TextStyle(
+                                            color: selectedAirport != 'XXX'
+                                                ? colorResult
+                                                : AppColors.white,
+                                            fontSize: 16,
+                                          ),
+                                        ),
+
+                                        const SizedBox(width: 4),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+
+                            Divider(
+                              color: AppColors.white,
+                              thickness: 1,
+                              height: 1,
+                            ),
+
+                            //Performance Results header, si es XXX, solo se muestra el resultado del OpLD 
+                            Padding(
+                              padding: const EdgeInsets.all(24.0),
+                              child: SizedBox(
+                                height: 380,
+                                width: 1500,
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+
+                                    SizedBox(
+                                      width: double.infinity,
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+
+                                          if (selectedAirport != 'XXX') ...[
+                                            const SizedBox(height: 12),
+                                            Row(
+                                              children: [
+                                                Text(
+                                                  AppStrings.remaining,
+                                                  textAlign: TextAlign.left,
                                                   style: TextStyle(
-                                                    color: AppColors.textColor2Dark,
-                                                    fontSize: 20,
+                                                    fontSize: 18,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: AppColors.white,
+                                                  ),
+                                                ),
+
+                                                SizedBox(
+                                                  width: screenSize.width * 0.12,
+                                                ),
+
+                                                Text(
+                                                  '$remainingResult ${AppStrings.ft}',
+                                                  textAlign: TextAlign.right,
+                                                  style: TextStyle(
+                                                    color: colorResult,
+                                                    fontSize: 16,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+
+                                                const SizedBox(width: 5),
+
+                                                Text(
+                                                  '(${(double.tryParse(remainingResult ?? '0')! * 0.3048).round()}${AppStrings.m})',
+                                                  textAlign: TextAlign.right,
+                                                  style: TextStyle(
+                                                    color: colorResult,
+                                                    fontSize: 18,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ],
+
+                                          const SizedBox(height: 12),
+
+                                          Text(
+                                            '$selectedFlaps',
+                                            textAlign: TextAlign.left,
+                                            style: TextStyle(
+                                              color: AppColors.resultNotes,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+
+                                          const SizedBox(height: 12),
+
+                                          Text(
+                                            '$selectedAutoBrake',
+                                            textAlign: TextAlign.left,
+                                            style: TextStyle(
+                                              color: AppColors.resultNotes,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+
+                                          const SizedBox(height: 50),
+
+                                          Row(
+                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Expanded(
+                                                child: Text(
+                                                  '$selectedCondition rwy Condition:',
+                                                  textAlign: TextAlign.left,
+                                                  style: TextStyle(
+                                                    color: AppColors.resultNotes,
                                                     fontWeight: FontWeight.bold,
                                                   ),
                                                 ),
                                               ),
-                                              const SizedBox(height: 10),
-                                              
-                                              ...listaComments!.expand((comentario) => [
-                                              Divider(color: AppColors.cancelPriButBrDark,),
-                                              Padding(
-                                                padding: const EdgeInsets.symmetric(vertical: 12.0),
-                                                child: Text(
-                                                  comentario,
-                                                  style: const TextStyle(color: AppColors.white),
-                                                  textAlign: TextAlign.start,
-                                                ),  
-                                              ),
-                                              Divider(color: AppColors.cancelPriButBrDark,)
-                                              ]),
 
-                                              const Spacer(),
-                                              //Boton de Return del Importent Notes
-                                              Center(
-                                                child: ElevatedButton(
-                                                  onPressed: () {
-                                                    Navigator.of(context).pop();
-                                                  },
-                                                  style: ElevatedButton.styleFrom(
-                                                    backgroundColor: AppColors.black,
-                                                    foregroundColor: AppColors.iconDark,
-                                                    fixedSize: const Size(120, 120),
-                                                    shape: BeveledRectangleBorder(
-                                                      borderRadius: BorderRadius.circular(200),
-                                                      side: BorderSide(color: AppColors.iconDark, width: 1),
-                                                    ),
-                                                    elevation: 4,
-                                                  ),
-                                                  child: const Text(
-                                                    AppStrings.returnback,
-                                                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
-                                                  ),
+                                              SizedBox(
+                                                width: screenSize.width * 0.10,
+                                              ),
+
+                                              Text(
+                                                '($rwyRcc)',
+                                                textAlign: TextAlign.right,
+                                                style: TextStyle(
+                                                  color: AppColors.resultNotes,
+                                                  fontWeight: FontWeight.bold,
                                                 ),
                                               ),
                                             ],
                                           ),
+
+                                          const SizedBox(height: 20),
+
+                                          ...rwyNote!.map(
+                                            (nota) => Padding(
+                                              padding: const EdgeInsets.symmetric(
+                                                vertical: 5.0,
+                                              ),
+                                              child: Text(
+                                                nota,
+                                                style: const TextStyle(
+                                                  color: AppColors.resultNotes,
+                                                ),
+                                                textAlign: TextAlign.start,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+
+                                    //Important Notes
+                                    ElevatedButton(
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: AppColors.black,
+                                        foregroundColor: AppColors.placeholderDark,
+                                        side: const BorderSide(
+                                          color: AppColors.placeholderDark,
+                                          width: 1,
                                         ),
-                                      );
-                                    },
-                                  );
-                                },
-                                child: const Text(
-                                  AppStrings.importNotes,
-                                  style: TextStyle(color: AppColors.white),
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(5),
+                                        ),
+                                        fixedSize: const Size(170, 20),
+                                      ),
+                                      onPressed: () {
+                                        showDialog(
+                                          context: context,
+                                          builder: (BuildContext context) {
+                                            return AlertDialog(
+                                              backgroundColor: AppColors.black,
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius: BorderRadius.circular(12.0),
+                                                side: const BorderSide(
+                                                  color: AppColors.placeholderDark,
+                                                  width: 1.5,
+                                                ),
+                                              ),
+                                              content: SizedBox(
+                                                width: 650.0,
+                                                height: 700.0,
+                                                child: Column(
+                                                  mainAxisAlignment: MainAxisAlignment.start,
+                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                  children: [
+
+                                                    Center(
+                                                      child: const Text(
+                                                        AppStrings.notesTitle,
+                                                        style: TextStyle(
+                                                          color: AppColors.textColor2Dark,
+                                                          fontSize: 20,
+                                                          fontWeight: FontWeight.bold,
+                                                        ),
+                                                      ),
+                                                    ),
+
+                                                    const SizedBox(height: 10),
+
+                                                    ...listaComments!.expand(
+                                                      (comentario) => [
+                                                        Divider(
+                                                          color: AppColors.cancelPriButBrDark,
+                                                        ),
+
+                                                        Padding(
+                                                          padding: const EdgeInsets.symmetric(
+                                                            vertical: 12.0,
+                                                          ),
+                                                          child: Text(
+                                                            comentario,
+                                                            style: const TextStyle(
+                                                              color: AppColors.white,
+                                                            ),
+                                                            textAlign: TextAlign.start,
+                                                          ),
+                                                        ),
+
+                                                        Divider(
+                                                          color: AppColors.cancelPriButBrDark,
+                                                        ),
+                                                      ],
+                                                    ),
+
+                                                    const Spacer(),
+
+                                                    Center(
+                                                      child: ElevatedButton(
+                                                        onPressed: () {
+                                                          Navigator.of(context).pop();
+                                                        },
+                                                        style: ElevatedButton.styleFrom(
+                                                          backgroundColor: AppColors.black,
+                                                          foregroundColor: AppColors.iconDark,
+                                                          fixedSize: const Size(120, 120),
+                                                          shape: BeveledRectangleBorder(
+                                                            borderRadius:
+                                                                BorderRadius.circular(200),
+                                                            side: BorderSide(
+                                                              color: AppColors.iconDark,
+                                                              width: 1,
+                                                            ),
+                                                          ),
+                                                          elevation: 4,
+                                                        ),
+                                                        child: const Text(
+                                                          AppStrings.returnback,
+                                                          style: TextStyle(
+                                                            fontSize: 15,
+                                                            fontWeight: FontWeight.bold,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            );
+                                          },
+                                        );
+                                      },
+                                      child: const Text(
+                                        AppStrings.importNotes,
+                                        style: TextStyle(
+                                          color: AppColors.white,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
-                              ],
                             ),
-                          ),
+                          ],
                         ),
-                      )
-                                
+                      )                                                   
                     ],
                   ),
                 ),
