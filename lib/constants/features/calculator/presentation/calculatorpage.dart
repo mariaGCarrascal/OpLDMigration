@@ -43,7 +43,7 @@ class CalculatorPage extends StatefulWidget {
     this.airport, this.airportEl, this.airportQNH, this.airportTemp, this.airportRunway, this.nonflaps
   });
 //Pendientes:
-//TEMA DEL SPLIT VIEW EN TABLET.
+//TEMA DEL SPLIT VIEW EN TABLET IOS.
 //Slider en XXX Elevation y LandingWeight (en cualquier aeropuerto), no da el valor correcto de OpLD en la UI (pero si en el backend), si hay mejor opcion para el controlador del slider. (Revisar)
 //LongPress en QNH y Elevation (XXX).
 
@@ -55,6 +55,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
 
   //Variables para las selecciones
   Timer? _opldDebounce;
+  String? checkAutobreak;
   String? _currentReduction;
   String? netLDA;
   String? opldResult;
@@ -684,7 +685,10 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                       updateRwyCondition(newValue);
                                       autoBrakeOptions = Loadautobrakes(aircraftRef: selectedAircraft, landingRef: selectedLanding, configurationRef: selectedConfiguration, flapRef: selectedFlaps, conditionRef: selectedCondition)();
                                         if (!autoBrakeOptions!.contains(selectedAutoBrake)) {
+                                          checkAutobreak = 'YES';
                                           selectedAutoBrake = autoBrakeOptions![0];
+                                        } else {
+                                          checkAutobreak = 'NO';
                                         }
                                       reversersList = Loadreversers(aircraftRef: selectedAircraft, landingRef: selectedLanding, configurationRef: selectedConfiguration, flapRef: selectedFlaps, conditionRef: selectedCondition)();
                                         if (!reversersList!.contains(selectedReversers)) {
@@ -1471,7 +1475,23 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                   fontSize: 15,
                                 ),
                               ),
-                              SizedBox(width: screenSize.width * 0.12),
+
+                              if (checkAutobreak == 'YES') ...[
+                               SizedBox(width: screenSize.width * 0.03),
+                               Text(
+                                    AppStrings.caution,
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      color: Colors.orange,
+                                      //fontWeight: FontWeight.bold,
+                                    ),
+                                    overflow: TextOverflow.ellipsis,
+                                ),
+                                SizedBox(width: screenSize.width * 0.05),
+                              ] else ...[
+                                SizedBox(width: screenSize.width * 0.13),
+                              ],
+                            
                               Expanded(
                                 child: DropdownButtonFormField<String>(
                                   isExpanded: true, 
@@ -1538,6 +1558,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                   onChanged: (newValue) {
                                     setState(() {
                                       selectedAutoBrake = newValue;
+                                      checkAutobreak = 'NO';
                                       updateOpld();
                                     });
                                   },
@@ -1570,7 +1591,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                   fontSize: 15, 
                                 ),
                               ),
-                              SizedBox(width: screenSize.width * 0.11),
+                              SizedBox(width: screenSize.width * 0.13),
                               Expanded(
                                 child: DropdownButtonFormField<String>(
                                   isExpanded: true, 
@@ -2949,6 +2970,18 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                             ),
                                           ],
 
+                                        if (checkAutobreak == 'YES') ...[
+                                          const SizedBox(height: 10),
+                                          Text(
+                                            AppStrings.cautionMessage,
+                                            textAlign: TextAlign.left,
+                                            style: TextStyle(
+                                              color: Colors.orange,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ],
+
                                           const SizedBox(height: 12),
 
                                           Text(
@@ -2971,7 +3004,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                             ),
                                           ),
 
-                                          const SizedBox(height: 50),
+                                          const SizedBox(height: 45),
 
                                           Row(
                                             mainAxisAlignment: MainAxisAlignment.spaceBetween,

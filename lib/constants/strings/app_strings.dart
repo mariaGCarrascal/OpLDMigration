@@ -33,6 +33,8 @@ class AppStrings {
   static const String vrefPlus = "VREF15 +";
   static const String landWeight = "LANDING WEIGHT";
   static const String na = "N/A";
+  static const String caution = "CAUTION";
+  static const String cautionMessage = "CAUTION: VERIFY AUTOBRAKE SETTING";
   
   static const String ft = "ft";
   static const String lb = "Lb";
