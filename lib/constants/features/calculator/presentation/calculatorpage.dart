@@ -68,8 +68,6 @@ class _CalculatorPageState extends State<CalculatorPage> {
   late double sliderMinAltitud;
   late double sliderMaxAltitud;
   int? _divisionsAltitud;
-  late double sliderMinWeight;
-  late double sliderMaxWeight;
   int? _divisionsWeight;
   String? isa;
   String? selectedRunway;
@@ -108,6 +106,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
   String? windMin;
   late double weightMIN;
   late double weightMAX;
+  late int minStep;
   String? altitud;
   String? vrefNonPlus;
   String? vrefAdjust;
@@ -166,6 +165,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
   List<String>? rwyNote = [];
   List<String>? windValues = [];
   List<String> tempValues = [];
+
 
   @override
   void initState() {
@@ -247,9 +247,10 @@ class _CalculatorPageState extends State<CalculatorPage> {
     _currentLadWeight = double.parse(defaultAircraft?[4] ?? '0');
     weightMAX = double.parse(defaultAircraft?[5] ?? '0');
     weightMIN = double.parse(defaultAircraft?[6] ?? '0');
-    sliderMinWeight = (weightMIN / 1000).ceil() * 1000;
-    sliderMaxWeight = (weightMAX / 1000).floor() * 1000;
-    _divisionsWeight = ((sliderMaxWeight - sliderMinWeight) / 1000).round();
+    minStep = (weightMIN / 1000).ceil();
+    final maxStep = (weightMAX / 1000).floor();
+    _divisionsWeight =
+        maxStep - minStep + (weightMAX % 1000 != 0 ? 1 : 0);
     vRef =  vrefAdjust == 'YES' ? defaultAircraft![0] : '0';
     vMin = defaultAircraft?[7];
     vMax = defaultAircraft?[8];
@@ -2057,17 +2058,27 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                       activeColor: AppColors.iconDark,
                                       thumbColor: AppColors.iconDark,
                                       inactiveColor: AppColors.grey,
-                                      value: _currentLadWeight.clamp(
-                                        sliderMinWeight,
-                                        sliderMaxWeight,
-                                      ),
-                                      min: sliderMinWeight,
-                                      max: sliderMaxWeight,
+                                      min: 0,
+                                      max: _divisionsWeight!.toDouble(),
                                       divisions: _divisionsWeight,
+                                      value: _currentLadWeight <= weightMIN
+                                          ? 0
+                                          : _currentLadWeight >= weightMAX
+                                              ? _divisionsWeight!.toDouble()
+                                              : ((_currentLadWeight / 1000).round() - minStep + 1)
+                                                  .toDouble(),
                                       onChanged: (double val) {
                                         setState(() {
-                                          _currentLadWeight = val;
+                                          if (val == 0) {
+                                            _currentLadWeight = weightMIN;
+                                          } else if (val == _divisionsWeight) {
+                                            _currentLadWeight = weightMAX;
+                                          } else {
+                                            _currentLadWeight =
+                                                (minStep + val.toInt() - 1) * 1000;
+                                          }
                                         });
+
                                         _opldDebounce?.cancel();
                                         _opldDebounce = Timer(
                                           const Duration(milliseconds: 300),
