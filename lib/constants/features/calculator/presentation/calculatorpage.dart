@@ -517,7 +517,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                                           windpickerRef: selectedWind,
                                                           operation: '',
                                                         )();
-
+                                                        rwyId = selectedMag;
                                                         windValue = windValues?[0];
                                                         headtail = windValues?[1];
                                                         crosswind = windValues?[2];
@@ -567,10 +567,10 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                     height: 50,
                                     alignment: Alignment.center,
                                     decoration: BoxDecoration(
-                                      color: AppColors.grey,
+                                      color: AppColors.placeholder,
                                       borderRadius: BorderRadius.circular(8.0),
                                       border: Border.all(
-                                        color: AppColors.grey,
+                                        color: AppColors.placeholder,
                                         width: 1.0,
                                       ),
                                     ),
@@ -2636,10 +2636,10 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                               height: 50,
                                               alignment: Alignment.center,
                                               decoration: BoxDecoration(
-                                                color: AppColors.grey,
+                                                color: AppColors.placeholder,
                                                 borderRadius: BorderRadius.circular(8.0),
                                                 border: Border.all(
-                                                  color: AppColors.grey,
+                                                  color: AppColors.placeholder,
                                                   width: 1.0,
                                                 ),
                                               ),
@@ -3015,7 +3015,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                             ),
                                           ),
 
-                                          const SizedBox(height: 45),
+                                          const SizedBox(height: 40),
 
                                           Row(
                                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -3046,7 +3046,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                             ],
                                           ),
 
-                                          const SizedBox(height: 20),
+                                          const SizedBox(height: 15),
 
                                           ...rwyNote!.map(
                                             (nota) => Padding(

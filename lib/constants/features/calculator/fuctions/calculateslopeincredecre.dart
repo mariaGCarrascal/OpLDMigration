@@ -13,7 +13,7 @@ class Calculateslopeincredecre {
 
   String call() {
     if (slopeReference == null) {
-      return "0.0";
+      return "0";
     }
 
     try {
@@ -36,11 +36,15 @@ class Calculateslopeincredecre {
         }
       }
 
+      if(result == 0.0) {
+        result = 0;
+      }
+
       result = double.parse(result.toStringAsFixed(1));
 
       return result.toString();
     } catch (e) {
-      return "0.0";
+      return "0";
     }
   }
 }
