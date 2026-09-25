@@ -13,6 +13,7 @@ import 'package:flutter_application_5/constants/features/calculator/fuctions/cal
 import 'package:flutter_application_5/constants/features/calculator/fuctions/calculateweightincredecre.dart';
 import 'package:flutter_application_5/constants/features/calculator/fuctions/calculatewind.dart';
 import 'package:flutter_application_5/constants/features/calculator/fuctions/customDigitFormatter.dart';
+import 'package:flutter_application_5/constants/features/calculator/fuctions/formatslope.dart';
 import 'package:flutter_application_5/constants/features/calculator/fuctions/loadautobrakes.dart';
 import 'package:flutter_application_5/constants/features/calculator/fuctions/loadcomments.dart';
 import 'package:flutter_application_5/constants/features/calculator/fuctions/loadreversers.dart';
@@ -280,12 +281,6 @@ class _CalculatorPageState extends State<CalculatorPage> {
     colorResult = Opldcolorasignator(opldReference: opldResult, netldaReference: netLDA)();
   }
 
-  String _formatSlope(String? value) {
-    final number = double.tryParse(value ?? '');
-    if (number == null) return value ?? '0';
-    return number == number.toInt() ? number.toInt().toString() : number.toString();
-  }
- 
   @override
   Widget build(BuildContext context) {
 
@@ -390,7 +385,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                       ),
                                       overflow: TextOverflow.ellipsis,
                                     ),
-                                    dropdownColor: AppColors.surfaceDark,
+                                    dropdownColor: AppColors.backgroundDark.withOpacity(0.9),
                                       selectedItemBuilder: (BuildContext context) {
                                         return (selectedAirportRunway?.keys ?? <String>{}).map((value) {
                                           return Align(
@@ -627,7 +622,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                     ),
                                     overflow: TextOverflow.ellipsis,
                                   ),
-                                  dropdownColor: AppColors.surfaceDark,
+                                  dropdownColor: AppColors.backgroundDark.withOpacity(0.9),
                                     selectedItemBuilder: (BuildContext context) {
                                       return rwyConditions.map((String value) {
                                         return Align(
@@ -730,14 +725,14 @@ class _CalculatorPageState extends State<CalculatorPage> {
                               if (selectedAirport != 'XXX')
                                 Expanded(
                                   child: Text(
-                                    '${_formatSlope(rwySlope)} %',
+                                    '${Formatslope(slopeRef: rwySlope)()} %',
                                     style: TextStyle(color: AppColors.textColor3Dark, fontSize: 16, fontWeight: FontWeight.bold),
                                   ),
                                 )
                               else ...[
                                 Expanded(
                                   child: Text(
-                                    '$rwySlope %',
+                                    '${Formatslope(slopeRef: rwySlope)()} %',
                                     style: TextStyle(fontSize: 16, color: AppColors.textColor2Dark, fontWeight: FontWeight.bold),
                                   ),
                                 ),
@@ -933,13 +928,16 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                       ),
                                     ),
                                   ] else ...[
-                                    SizedBox(width: screenSize.width * 0.20),
-                                    Text(
-                                      '$selectedAirportElevation ${AppStrings.ft}',
-                                      style: TextStyle(
-                                        color: AppColors.textColor3Dark,
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold,
+                                    //SizedBox(width: screenSize.width * 0.20),
+                                    const Spacer(),
+                                    Expanded(
+                                      child: Text(
+                                        '$selectedAirportElevation ${AppStrings.ft}',
+                                        style: TextStyle(
+                                          color: AppColors.textColor3Dark,
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                        ),
                                       ),
                                     ),
                                   ],
@@ -1312,7 +1310,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                       ),
                                       overflow: TextOverflow.ellipsis,
                                     ),
-                                    dropdownColor: AppColors.surfaceDark,
+                                    dropdownColor: AppColors.backgroundDark.withOpacity(0.9),
                                       selectedItemBuilder: (BuildContext context) {
                                         return normalFlaps.map((String value) {
                                           return Align(
@@ -1387,7 +1385,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                         ),
                                         overflow: TextOverflow.ellipsis,
                                       ),
-                                      dropdownColor: AppColors.surfaceDark,
+                                      dropdownColor: AppColors.backgroundDark.withOpacity(0.9),
                                         selectedItemBuilder: (BuildContext context) {
                                           return [nonFlap]
                                               .where((value) => value != null)
@@ -1506,7 +1504,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                     ),
                                     overflow: TextOverflow.ellipsis,
                                   ),
-                                  dropdownColor: AppColors.surfaceDark,
+                                  dropdownColor: AppColors.backgroundDark.withOpacity(0.9),
                                     selectedItemBuilder: (BuildContext context) {
                                       return autoBrakeOptions!.map((String value) {
                                         return Align(
@@ -1606,7 +1604,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                     ),
                                     overflow: TextOverflow.ellipsis,
                                   ),
-                                  dropdownColor: AppColors.surfaceDark,
+                                  dropdownColor: AppColors.backgroundDark.withOpacity(0.9),
                                     selectedItemBuilder: (BuildContext context) {
                                       return reversersList!.map((String value) {
                                         return Align(
@@ -1673,7 +1671,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                         ),
                       ),
 
-                      //SpeedBrakes, cambia dependiendo del tipo de aircraft (normal o non-normal) a N/A 
+                      //SpeedBrakes, cambia dependiendo del tipo de landing (normal o non-normal) a N/A 
                       Card(
                         color: AppColors.cardDark,
                         shape: RoundedRectangleBorder(
@@ -1786,7 +1784,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                         ),
                       ),
 
-                      //Vref add, cambia dependiendo del tipo de aircraft (Normal o Non-Normal) a N/A y el texto VREF cambia
+                      //Vref add, cambia dependiendo del tipo de landing (Normal o Non-Normal) a N/A y el texto VREF cambia
                       Card(
                         color: AppColors.cardDark,
                         shape: RoundedRectangleBorder(
@@ -2885,7 +2883,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                           ),
                                         ),
 
-                                        const SizedBox(width: 15),
+                                        const SizedBox(width: 20),
 
                                         Text(
                                           '$opldResult ${AppStrings.ft}',

@@ -216,7 +216,7 @@ class _HomePageState extends State<HomePage> {
                       isExpanded: true,
                       icon: const SizedBox.shrink(),
                       initialValue: selectedAircraftType,
-                      dropdownColor: AppColors.surfaceDark,
+                      dropdownColor: AppColors.backgroundDark.withOpacity(0.9),
                       hint: Text(
                         'Select Aircraft Type',
                         style: TextStyle(
@@ -304,7 +304,7 @@ class _HomePageState extends State<HomePage> {
                         ),
                         overflow: TextOverflow.ellipsis,
                       ),
-                      dropdownColor: AppColors.surfaceDark,
+                      dropdownColor: AppColors.backgroundDark.withOpacity(0.9),
                       decoration: InputDecoration(
                         filled: true,
                         fillColor: AppColors.placeholder,
@@ -363,7 +363,7 @@ class _HomePageState extends State<HomePage> {
                       const Padding(
                         padding: EdgeInsets.only(top: 20.0),
                         child: Text(
-                          AppStrings.aircraftConfig,
+                          AppStrings.configSection,
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                             color: AppColors.white,
@@ -392,7 +392,7 @@ class _HomePageState extends State<HomePage> {
                           ),
                           overflow: TextOverflow.ellipsis,
                         ),
-                        dropdownColor: AppColors.surfaceDark,
+                        dropdownColor: AppColors.backgroundDark.withOpacity(0.9),
                         decoration: InputDecoration(
                           filled: true,
                           fillColor: AppColors.placeholder,
@@ -500,9 +500,14 @@ class _HomePageState extends State<HomePage> {
                       popupProps: PopupProps.menu(
                         showSearchBox: true,
 
+                          menuProps: MenuProps(
+                            backgroundColor: Colors.transparent,
+                            elevation: 0,
+                          ),
+
                         containerBuilder: (context, popupWidget) {
                           return Container(
-                            color: AppColors.surfaceDark,
+                            color: AppColors.black.withOpacity(0.9),
                             child: popupWidget,
                           );
                         },
@@ -514,13 +519,13 @@ class _HomePageState extends State<HomePage> {
                           ),
                           decoration: InputDecoration(
                             filled: true,
-                            fillColor: AppColors.surfaceDark,
+                            fillColor: AppColors.black.withOpacity(0.9),
                             hintText: 'Search Airport',
                             hintStyle: TextStyle(
                               color: AppColors.grey,
                               fontSize: 16,
                             ),
-                            prefixIcon: const Icon(Icons.search, color: AppColors.grey),
+                            prefixIcon: const Icon(Icons.search, color: AppColors.white),
                             enabledBorder: OutlineInputBorder(
                               borderSide: BorderSide(
                                 color: AppColors.grey,
