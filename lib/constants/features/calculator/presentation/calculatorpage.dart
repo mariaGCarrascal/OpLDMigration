@@ -375,7 +375,6 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                 Expanded(
                                   child: DropdownButtonFormField2<String>(
                                     isExpanded: true,
-
                                     value: selectedRunway,
 
                                     hint: Text(
@@ -440,6 +439,9 @@ class _CalculatorPageState extends State<CalculatorPage> {
 
                                     dropdownStyleData: DropdownStyleData(
                                       offset: const Offset(0, -5),
+                                      scrollbarTheme: ScrollbarThemeData(
+                                        thickness: WidgetStateProperty.all(0),
+                                      ),
 
                                       decoration: BoxDecoration(
                                         color: AppColors.backgroundDark.withOpacity(0.9),
@@ -499,123 +501,145 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                   ),
                                 ),
                                 const SizedBox(width: 18.0),
-                                GestureDetector(
-                                  onTap: () {
-                                    if (rwymagOptions.isEmpty) return;
+                                SizedBox(
+                                  width: 150,
+                                  height: 50,
+                                  child: DropdownButtonFormField2<String>(
+                                    isExpanded: true,
+                                    value: rwymagOptions.isNotEmpty
+                                        ? (rwymagOptions.contains(selectedMag)
+                                            ? selectedMag
+                                            : rwymagOptions.first)
+                                        : '000',
 
-                                    int selectedIndex = selectedMag != null
-                                        ? rwymagOptions.indexOf(selectedMag!)
-                                        : 0;
+                                    decoration: InputDecoration(
+                                      filled: true,
+                                      fillColor: AppColors.placeholder,
 
-                                    if (selectedIndex < 0) {
-                                      selectedIndex = 0;
-                                    }
+                                      enabledBorder: OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                          color: AppColors.placeholder,
+                                          width: 1,
+                                        ),
+                                        borderRadius: BorderRadius.circular(8.0),
+                                      ),
 
-                                    showCupertinoModalPopup(
-                                      context: context,
-                                      builder: (context) {
-                                        return Container(
-                                          height: 300,
-                                          color: AppColors.backgroundDark,
-                                          child: Column(
-                                            children: [
-                                              Container(
-                                                width: double.infinity,
-                                                height: 55,
-                                                color: AppColors.black,
-                                                child: Align(
-                                                  alignment: Alignment.centerRight,
-                                                  child: CupertinoButton(
-                                                    padding: const EdgeInsets.symmetric(
-                                                      horizontal: 16,
-                                                      vertical: 8,
-                                                    ),
-                                                    child: const Text(
-                                                      'Done',
-                                                      style: TextStyle(
-                                                        color: AppColors.textColor3Dark,
-                                                        fontWeight: FontWeight.bold,
-                                                      ),
-                                                    ),
-                                                    onPressed: () {
-                                                      String newValue = rwymagOptions[selectedIndex];
+                                      focusedBorder: OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                          color: AppColors.placeholder,
+                                          width: 1,
+                                        ),
+                                        borderRadius: BorderRadius.circular(8.0),
+                                      ),
 
-                                                      setState(() {
-                                                        selectedMag = newValue;
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(8.0),
+                                      ),
 
-                                                        windValues = Calculatewind(
-                                                          rwyidRef: selectedMag,
-                                                          windRef: windValue,
-                                                          windpickerRef: selectedWind,
-                                                          operation: '',
-                                                        )();
-                                                        rwyId = selectedMag;
-                                                        windValue = windValues?[0];
-                                                        headtail = windValues?[1];
-                                                        crosswind = windValues?[2];
+                                      contentPadding: const EdgeInsets.symmetric(
+                                        horizontal: 10,
+                                        vertical: 5,
+                                      ),
+                                    ),
 
-                                                        updateOpld();
-                                                      });
+                                    hint: Center(
+                                      child: Text(
+                                        selectedMag ?? '000',
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                          color: AppColors.iconDark,
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
 
-                                                      Navigator.pop(context);
-                                                    },
-                                                  ),
-                                                ),
-                                              ),
 
-                                              // Picker
-                                              Expanded(
-                                                child: CupertinoPicker(
-                                                  itemExtent: 45,
-                                                  scrollController: FixedExtentScrollController(
-                                                    initialItem: selectedIndex,
-                                                  ),
-                                                  onSelectedItemChanged: (int index) {
-                                                    selectedIndex = index;
-                                                  },
-                                                  children: rwymagOptions.map((String opcion) {
-                                                    return Center(
-                                                      child: Text(
-                                                        opcion,
-                                                        style: TextStyle(
-                                                          fontSize: 22,
-                                                          color: AppColors.white,
-                                                          fontWeight: FontWeight.w500,
-                                                        ),
-                                                      ),
-                                                    );
-                                                  }).toList(),
-                                                ),
-                                              ),
-                                            ],
+                                    iconStyleData: const IconStyleData(
+                                      icon: SizedBox.shrink(),
+                                    ),
+
+                                    dropdownStyleData: DropdownStyleData(
+                                      offset: const Offset(0, -5),
+                                      maxHeight: 340,
+                                      scrollbarTheme: ScrollbarThemeData(
+                                        thickness: WidgetStateProperty.all(0),
+                                      ),
+
+                                      decoration: BoxDecoration(
+                                        color: AppColors.backgroundDark.withOpacity(0.9),
+                                        borderRadius: BorderRadius.circular(5),
+                                        border: Border.all(
+                                          color: AppColors.white.withOpacity(0.8),
+                                          width: 1.5,
+                                        ),
+                                      ),
+                                    ),
+
+                                  buttonStyleData: const ButtonStyleData(
+                                    padding: EdgeInsets.zero,
+                                    height: 50,
+                                  ),
+
+                                  selectedItemBuilder: (BuildContext context) {
+                                    return rwymagOptions.map((String value) {
+                                      return Center(
+                                        child: Text(
+                                          value,
+                                          textAlign: TextAlign.center,
+                                          style: TextStyle(
+                                            color: AppColors.iconDark,
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.bold,
                                           ),
-                                        );
-                                      },
-                                    );
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      );
+                                    }).toList();
                                   },
 
-                                  child: Container(
-                                    width: 150,
-                                    height: 50,
-                                    alignment: Alignment.center,
-                                    decoration: BoxDecoration(
-                                      color: AppColors.placeholder,
-                                      borderRadius: BorderRadius.circular(8.0),
-                                      border: Border.all(
-                                        color: AppColors.placeholder,
-                                        width: 1.0,
+                                  items: rwymagOptions.map((String value) {
+                                    return DropdownMenuItem<String>(
+                                      value: value,
+                                      child: Center(
+                                        child: Text(
+                                          value,
+                                          textAlign: TextAlign.center,
+                                          style: TextStyle(
+                                            color: AppColors.textColor2Dark,
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
                                       ),
-                                    ),
-                                    child: Text(
-                                      selectedMag ?? '000',
-                                      style: TextStyle(
-                                        color: AppColors.iconDark,
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ),
-                                ),                                                          
+                                    );
+                                  }).toList(),
+
+                                  onChanged: (newValue) {
+                                    if (newValue == null) return;
+
+                                    setState(() {
+                                      selectedMag = newValue;
+
+                                      windValues = Calculatewind(
+                                        rwyidRef: selectedMag,
+                                        windRef: windValue,
+                                        windpickerRef: selectedWind,
+                                        operation: '',
+                                      )();
+
+                                      rwyId = selectedMag;
+                                      windValue = windValues?[0];
+                                      headtail = windValues?[1];
+                                      crosswind = windValues?[2];
+
+                                      updateOpld();
+                                    });
+                                  },
+                                ),
+                              ),                                                           
                               ],
                             ],
                           ),
@@ -712,6 +736,9 @@ class _CalculatorPageState extends State<CalculatorPage> {
 
                                   dropdownStyleData: DropdownStyleData(
                                     offset: const Offset(0, -5),
+                                    scrollbarTheme: ScrollbarThemeData(
+                                      thickness: WidgetStateProperty.all(0),
+                                    ),
 
                                     decoration: BoxDecoration(
                                       color: AppColors.backgroundDark.withOpacity(0.9),
@@ -1446,6 +1473,9 @@ class _CalculatorPageState extends State<CalculatorPage> {
 
                                     dropdownStyleData: DropdownStyleData(
                                       offset: const Offset(0, -5),
+                                      scrollbarTheme: ScrollbarThemeData(
+                                        thickness: WidgetStateProperty.all(0),
+                                      ),
 
                                       decoration: BoxDecoration(
                                         color: AppColors.backgroundDark.withOpacity(0.9),
@@ -1566,6 +1596,9 @@ class _CalculatorPageState extends State<CalculatorPage> {
 
                                       dropdownStyleData: DropdownStyleData(
                                         offset: const Offset(0, -5),
+                                        scrollbarTheme: ScrollbarThemeData(
+                                          thickness: WidgetStateProperty.all(0),
+                                        ),
 
                                         decoration: BoxDecoration(
                                           color: AppColors.backgroundDark.withOpacity(0.9),
@@ -1603,7 +1636,6 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                         });
                                       },
                                     ),
-
                                   ),
                               ],
                             ],
@@ -1717,6 +1749,9 @@ class _CalculatorPageState extends State<CalculatorPage> {
 
                                   dropdownStyleData: DropdownStyleData(
                                     offset: const Offset(0, -5),
+                                    scrollbarTheme: ScrollbarThemeData(
+                                      thickness: WidgetStateProperty.all(0),
+                                    ),
 
                                     decoration: BoxDecoration(
                                       color: AppColors.backgroundDark.withOpacity(0.9),
@@ -1847,6 +1882,9 @@ class _CalculatorPageState extends State<CalculatorPage> {
 
                                 dropdownStyleData: DropdownStyleData(
                                   offset: const Offset(0, -5),
+                                  scrollbarTheme: ScrollbarThemeData(
+                                    thickness: WidgetStateProperty.all(0),
+                                  ),
 
                                   decoration: BoxDecoration(
                                     color: AppColors.backgroundDark.withOpacity(0.9),
@@ -1977,6 +2015,9 @@ class _CalculatorPageState extends State<CalculatorPage> {
 
                                     dropdownStyleData: DropdownStyleData(
                                       offset: const Offset(0, -5),
+                                      scrollbarTheme: ScrollbarThemeData(
+                                        thickness: WidgetStateProperty.all(0),
+                                      ),
 
                                       decoration: BoxDecoration(
                                         color: AppColors.backgroundDark.withOpacity(0.9),
@@ -2778,123 +2819,143 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                       children: [
                                       Row(
                                         children: [
-                                          GestureDetector(
-                                            onTap: () {
-                                              if (windDirection.isEmpty) return;
+                                          SizedBox(
+                                            width: 120,
+                                            height: 50,
+                                            child: DropdownButtonFormField2<String>(
+                                              isExpanded: true,
+                                              value: windDirection.isNotEmpty
+                                                  ? (windDirection.contains(selectedWind)
+                                                      ? selectedWind
+                                                      : windDirection.first)
+                                                  : '000',
 
-                                              int selectedIndex = selectedWind != null
-                                                  ? windDirection.indexOf(selectedWind!)
-                                                  : 0;
+                                              decoration: InputDecoration(
+                                                filled: true,
+                                                fillColor: AppColors.placeholder,
 
-                                              if (selectedIndex < 0) {
-                                                selectedIndex = 0;
-                                              }
+                                                enabledBorder: OutlineInputBorder(
+                                                  borderSide: BorderSide(
+                                                    color: AppColors.placeholder,
+                                                    width: 1,
+                                                  ),
+                                                  borderRadius: BorderRadius.circular(8.0),
+                                                ),
 
-                                              showCupertinoModalPopup(
-                                                context: context,
-                                                builder: (context) {
-                                                  return Container(
-                                                    height: 300,
-                                                    color: AppColors.backgroundDark,
-                                                    child: Column(
-                                                      children: [
-                                                        Container(
-                                                          width: double.infinity,
-                                                          height: 55,
-                                                          color: AppColors.black,
-                                                          child: Align(
-                                                            alignment: Alignment.centerRight,
-                                                            child: CupertinoButton(
-                                                              padding: const EdgeInsets.symmetric(
-                                                                horizontal: 16,
-                                                                vertical: 8,
-                                                              ),
-                                                              child: const Text(
-                                                                'Done',
-                                                                style: TextStyle(
-                                                                  color: AppColors.textColor3Dark,
-                                                                  fontWeight: FontWeight.bold,
-                                                                ),
-                                                              ),
-                                                              onPressed: () {
-                                                                final newValue = windDirection[selectedIndex];
+                                                focusedBorder: OutlineInputBorder(
+                                                  borderSide: BorderSide(
+                                                    color: AppColors.placeholder,
+                                                    width: 1,
+                                                  ),
+                                                  borderRadius: BorderRadius.circular(8.0),
+                                                ),
 
-                                                                setState(() {
-                                                                  selectedWind = newValue;
+                                                border: OutlineInputBorder(
+                                                  borderRadius: BorderRadius.circular(8.0),
+                                                ),
 
-                                                                  windValues = Calculatewind(
-                                                                    rwyidRef: rwyId,
-                                                                    windRef: windValue,
-                                                                    windpickerRef: selectedWind,
-                                                                    operation: '',
-                                                                  )();
+                                                contentPadding: const EdgeInsets.symmetric(
+                                                  horizontal: 10,
+                                                  vertical: 5,
+                                                ),
+                                              ),
 
-                                                                  windValue = windValues?[0];
-                                                                  headtail = windValues?[1];
-                                                                  crosswind = windValues?[2];
+                                              hint: Center(
+                                                child: Text(
+                                                  selectedWind ?? '000',
+                                                  textAlign: TextAlign.center,
+                                                  style: TextStyle(
+                                                    color: AppColors.iconDark,
+                                                    fontSize: 14,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                  overflow: TextOverflow.ellipsis,
+                                                ),
+                                              ),
 
-                                                                  updateOpld();
-                                                                });
+                                              iconStyleData: const IconStyleData(
+                                                icon: SizedBox.shrink(),
+                                              ),
 
-                                                                Navigator.pop(context);
-                                                              },
-                                                            ),
-                                                          ),
-                                                        ),
+                                              dropdownStyleData: DropdownStyleData(
+                                                offset: const Offset(0, -5),
+                                                maxHeight: 350,
+                                                scrollbarTheme: ScrollbarThemeData(
+                                                  thickness: WidgetStateProperty.all(0),
+                                                ),
 
-                                                        // Picker
-                                                        Expanded(
-                                                          child: CupertinoPicker(
-                                                            itemExtent: 45,
-                                                            scrollController: FixedExtentScrollController(
-                                                              initialItem: selectedIndex,
-                                                            ),
-                                                            onSelectedItemChanged: (index) {
-                                                              selectedIndex = index;
-                                                            },
-                                                            children: windDirection.map((value) {
-                                                              return Center(
-                                                                child: Text(
-                                                                  value,
-                                                                  style: TextStyle(
-                                                                    fontSize: 22,
-                                                                    color: AppColors.white,
-                                                                    fontWeight: FontWeight.w500,
-                                                                  ),
-                                                                ),
-                                                              );
-                                                            }).toList(),
-                                                          ),
-                                                        ),
-                                                      ],
+                                                decoration: BoxDecoration(
+                                                  color: AppColors.backgroundDark.withOpacity(0.9),
+                                                  borderRadius: BorderRadius.circular(5),
+                                                  border: Border.all(
+                                                    color: AppColors.white.withOpacity(0.8),
+                                                    width: 1.5,
+                                                  ),
+                                                ),
+                                              ),
+
+                                              buttonStyleData: const ButtonStyleData(
+                                                padding: EdgeInsets.zero,
+                                                height: 50,
+                                              ),
+
+                                              selectedItemBuilder: (BuildContext context) {
+                                                return windDirection.map((String value) {
+                                                  return Center(
+                                                    child: Text(
+                                                      value,
+                                                      textAlign: TextAlign.center,
+                                                      style: TextStyle(
+                                                        color: AppColors.iconDark,
+                                                        fontSize: 14,
+                                                        fontWeight: FontWeight.bold,
+                                                      ),
+                                                      overflow: TextOverflow.ellipsis,
                                                     ),
                                                   );
-                                                },
-                                              );
-                                            },
+                                                }).toList();
+                                              },
 
-                                            child: Container(
-                                              width: 120,
-                                              height: 50,
-                                              alignment: Alignment.center,
-                                              decoration: BoxDecoration(
-                                                color: AppColors.placeholder,
-                                                borderRadius: BorderRadius.circular(8.0),
-                                                border: Border.all(
-                                                  color: AppColors.placeholder,
-                                                  width: 1.0,
-                                                ),
-                                              ),
-                                              child: Text(
-                                                selectedWind ?? '000',
-                                                style: TextStyle(
-                                                  color: AppColors.iconDark,
-                                                  fontSize: 14,
-                                                  fontWeight: FontWeight.bold,
-                                                ),
-                                              ),
+                                              items: windDirection.map((String value) {
+                                                return DropdownMenuItem<String>(
+                                                  value: value,
+                                                  child: Center(
+                                                    child: Text(
+                                                      value,
+                                                      textAlign: TextAlign.center,
+                                                      style: TextStyle(
+                                                        color: AppColors.textColor2Dark,
+                                                        fontSize: 16,
+                                                        fontWeight: FontWeight.bold,
+                                                      ),
+                                                      overflow: TextOverflow.ellipsis,
+                                                    ),
+                                                  ),
+                                                );
+                                              }).toList(),
+
+                                              onChanged: (newValue) {
+                                                if (newValue == null) return;
+
+                                                setState(() {
+                                                  selectedWind = newValue;
+
+                                                  windValues = Calculatewind(
+                                                    rwyidRef: rwyId,
+                                                    windRef: windValue,
+                                                    windpickerRef: selectedWind,
+                                                    operation: '',
+                                                  )();
+
+                                                  windValue = windValues?[0];
+                                                  headtail = windValues?[1];
+                                                  crosswind = windValues?[2];
+
+                                                  updateOpld();
+                                                });
+                                              },
                                             ),
-                                          ),                                                                               
+                                          ),                                       
                                         ],
                                       ),
                                         const SizedBox(width: 25.0),

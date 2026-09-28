@@ -258,6 +258,9 @@ class _HomePageState extends State<HomePage> {
 
                       dropdownStyleData: DropdownStyleData(
                         offset: const Offset(0, -5),
+                        scrollbarTheme: ScrollbarThemeData(
+                          thickness: WidgetStateProperty.all(0),
+                        ),
                         decoration: BoxDecoration(
                           color: AppColors.backgroundDark.withOpacity(0.9),
                           borderRadius: BorderRadius.circular(5),
@@ -362,6 +365,9 @@ class _HomePageState extends State<HomePage> {
 
                       dropdownStyleData: DropdownStyleData(
                         offset: const Offset(0, -5),
+                        scrollbarTheme: ScrollbarThemeData(
+                          thickness: WidgetStateProperty.all(0),
+                        ),
                         decoration: BoxDecoration(
                           color: AppColors.backgroundDark.withOpacity(0.9),
                           borderRadius: BorderRadius.circular(5),
@@ -475,6 +481,9 @@ class _HomePageState extends State<HomePage> {
                         dropdownStyleData: DropdownStyleData(
                           offset: const Offset(0, -5),
                           maxHeight: 400,
+                          scrollbarTheme: ScrollbarThemeData(
+                            thickness: WidgetStateProperty.all(0),
+                          ),
                           decoration: BoxDecoration(
                             color: AppColors.backgroundDark.withOpacity(0.9),
                             borderRadius: BorderRadius.circular(5),
