@@ -26,6 +26,7 @@ import 'package:flutter_application_5/constants/features/calculator/opld_perform
 import 'package:flutter_application_5/constants/features/home/data/airportdata.dart';
 import 'package:flutter_application_5/constants/strings/app_strings.dart';
 import 'package:flutter/services.dart';
+import 'package:dropdown_button2/dropdown_button2.dart';
 
 class CalculatorPage extends StatefulWidget {
 
@@ -372,12 +373,13 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                 ),
                                 SizedBox(width: screenSize.width * 0.10),
                                 Expanded(
-                                  child: DropdownButtonFormField<String>(
+                                  child: DropdownButtonFormField2<String>(
                                     isExpanded: true,
-                                    icon: const SizedBox.shrink(),
-                                    initialValue: selectedRunway,
+
+                                    value: selectedRunway,
+
                                     hint: Text(
-                                     '$selectedRunway',
+                                      '$selectedRunway',
                                       textAlign: TextAlign.right,
                                       style: TextStyle(
                                         fontWeight: FontWeight.bold,
@@ -385,73 +387,108 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                       ),
                                       overflow: TextOverflow.ellipsis,
                                     ),
-                                    dropdownColor: AppColors.backgroundDark.withOpacity(0.9),
-                                      selectedItemBuilder: (BuildContext context) {
-                                        return (selectedAirportRunway?.keys ?? <String>{}).map((value) {
-                                          return Align(
-                                            alignment: Alignment.centerRight,
-                                            child: Text(
-                                              value,
-                                              textAlign: TextAlign.right,
-                                              style: TextStyle(
-                                                color: AppColors.placeholderDark,
-                                                fontWeight: FontWeight.bold
-                                              ),
-                                              overflow: TextOverflow.ellipsis,
-                                            ),
-                                          );
-                                        }).toList();
-                                      },
+
                                     decoration: InputDecoration(
-                                        filled: true,
-                                        fillColor: AppColors.placeholder,
-                                        enabledBorder: OutlineInputBorder(
-                                          borderSide: BorderSide(
-                                            color: AppColors.placeholder,
-                                            width: 1,
+                                      filled: true,
+                                      fillColor: AppColors.placeholder,
+
+                                      enabledBorder: OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                          color: AppColors.placeholder,
+                                          width: 1,
+                                        ),
+                                        borderRadius: BorderRadius.circular(5.0),
+                                      ),
+
+                                      focusedBorder: OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                          color: AppColors.placeholder,
+                                        ),
+                                        borderRadius: BorderRadius.circular(5.0),
+                                      ),
+
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(5.0),
+                                      ),
+
+                                      contentPadding: const EdgeInsets.symmetric(
+                                        horizontal: 10,
+                                        vertical: 5,
+                                      ),
+                                    ),
+
+                                    iconStyleData: const IconStyleData(
+                                      icon: SizedBox.shrink(),
+                                    ),
+
+                                    selectedItemBuilder: (BuildContext context) {
+                                      return (selectedAirportRunway?.keys ?? <String>{}).map((value) {
+                                        return Align(
+                                          alignment: Alignment.centerRight,
+                                          child: Text(
+                                            value,
+                                            textAlign: TextAlign.right,
+                                            style: TextStyle(
+                                              color: AppColors.placeholderDark,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                            overflow: TextOverflow.ellipsis,
                                           ),
-                                        ),
-                                        focusedBorder: OutlineInputBorder(
-                                          borderSide: BorderSide(
-                                            color: AppColors.placeholder, 
-                                          ),
-                                          borderRadius: BorderRadius.circular(5.0),
-                                        ),
-                                        border: OutlineInputBorder(
-                                          borderRadius: BorderRadius.circular(5.0),
-                                        ),
-                                        contentPadding: const EdgeInsets.symmetric(
-                                          horizontal: 10,
-                                          vertical: 5,
+                                        );
+                                      }).toList();
+                                    },
+
+                                    dropdownStyleData: DropdownStyleData(
+                                      offset: const Offset(0, -5),
+
+                                      decoration: BoxDecoration(
+                                        color: AppColors.backgroundDark.withOpacity(0.9),
+                                        borderRadius: BorderRadius.circular(5),
+                                        border: Border.all(
+                                          color: AppColors.white.withOpacity(0.8),
+                                          width: 1.5,
                                         ),
                                       ),
+                                    ),
+
                                     items: (selectedAirportRunway?.keys ?? <String>{}).map((value) {
                                       return DropdownMenuItem<String>(
                                         value: value,
                                         child: Text(
                                           value,
                                           style: TextStyle(
-                                            color: AppColors.placeholderDark, 
+                                            color: AppColors.placeholderDark,
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 16,
                                           ),
                                           overflow: TextOverflow.ellipsis,
-                                          ),
-                                        );
+                                        ),
+                                      );
                                     }).toList(),
+
                                     onChanged: (newValue) {
                                       setState(() {
                                         selectedSlopeValues = selectedAirportRunway?[newValue];
-                                        rwyId = selectedSlopeValues?[0]; 
+                                        rwyId = selectedSlopeValues?[0];
                                         rwyLda = selectedSlopeValues?[1];
-                                        netLDA = rwyLda; 
+                                        netLDA = rwyLda;
                                         rwySlope = selectedSlopeValues?[2];
-                                        windValues =  Calculatewind(rwyidRef: rwyId, windRef: windValue, windpickerRef: selectedWind, operation: '')();
+
+                                        windValues = Calculatewind(
+                                          rwyidRef: rwyId,
+                                          windRef: windValue,
+                                          windpickerRef: selectedWind,
+                                          operation: '',
+                                        )();
+
                                         windValue = windValues?[0];
                                         headtail = windValues?[1];
                                         crosswind = windValues?[2];
+
                                         updateOpld();
                                       });
                                     },
-                                  ),                               
+                                  ),
                                 ),
                               ] else ...[
                                 Text(
@@ -609,10 +646,10 @@ class _CalculatorPageState extends State<CalculatorPage> {
                               ),
                               SizedBox(width: screenSize.width * 0.08),
                               Expanded(
-                                child: DropdownButtonFormField<String>(
-                                  isExpanded: true, 
-                                  icon: const SizedBox.shrink(),
-                                  initialValue: selectedCondition,
+                                child: DropdownButtonFormField2<String>(
+                                  isExpanded: true,
+                                  value: selectedCondition,
+
                                   hint: Text(
                                     '$selectedCondition',
                                     textAlign: TextAlign.right,
@@ -622,46 +659,70 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                     ),
                                     overflow: TextOverflow.ellipsis,
                                   ),
-                                  dropdownColor: AppColors.backgroundDark.withOpacity(0.9),
-                                    selectedItemBuilder: (BuildContext context) {
-                                      return rwyConditions.map((String value) {
-                                        return Align(
-                                          alignment: Alignment.centerRight,
-                                          child: Text(
-                                            value,
-                                            textAlign: TextAlign.right,
-                                            style: TextStyle(
-                                              color: AppColors.placeholderDark,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                            overflow: TextOverflow.ellipsis,
-                                          ),
-                                        );
-                                      }).toList();
-                                    },
+
                                   decoration: InputDecoration(
-                                      filled: true,
-                                      fillColor: AppColors.placeholder,
-                                      enabledBorder: OutlineInputBorder(
-                                        borderSide: BorderSide(
-                                          color: AppColors.placeholder,
-                                          width: 1,
+                                    filled: true,
+                                    fillColor: AppColors.placeholder,
+
+                                    enabledBorder: OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                        color: AppColors.placeholder,
+                                        width: 1,
+                                      ),
+                                      borderRadius: BorderRadius.circular(5.0),
+                                    ),
+
+                                    focusedBorder: OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                        color: AppColors.placeholder,
+                                      ),
+                                      borderRadius: BorderRadius.circular(5.0),
+                                    ),
+
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(5.0),
+                                    ),
+
+                                    contentPadding: const EdgeInsets.symmetric(
+                                      horizontal: 10,
+                                      vertical: 5,
+                                    ),
+                                  ),
+
+                                  iconStyleData: const IconStyleData(
+                                    icon: SizedBox.shrink(),
+                                  ),
+
+                                  selectedItemBuilder: (BuildContext context) {
+                                    return rwyConditions.map((String value) {
+                                      return Align(
+                                        alignment: Alignment.centerRight,
+                                        child: Text(
+                                          value,
+                                          textAlign: TextAlign.right,
+                                          style: TextStyle(
+                                            color: AppColors.placeholderDark,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                          overflow: TextOverflow.ellipsis,
                                         ),
-                                      ),
-                                      focusedBorder: OutlineInputBorder(
-                                        borderSide: BorderSide(
-                                          color: AppColors.placeholder, 
-                                        ),
-                                        borderRadius: BorderRadius.circular(5.0),
-                                      ),
-                                      border: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(5.0),
-                                      ),
-                                      contentPadding: const EdgeInsets.symmetric(
-                                        horizontal: 10,
-                                        vertical: 5,
+                                      );
+                                    }).toList();
+                                  },
+
+                                  dropdownStyleData: DropdownStyleData(
+                                    offset: const Offset(0, -5),
+
+                                    decoration: BoxDecoration(
+                                      color: AppColors.backgroundDark.withOpacity(0.9),
+                                      borderRadius: BorderRadius.circular(5),
+                                      border: Border.all(
+                                        color: AppColors.white.withOpacity(0.8),
+                                        width: 1.5,
                                       ),
                                     ),
+                                  ),
+
                                   items: rwyConditions.map((String value) {
                                     return DropdownMenuItem<String>(
                                       value: value,
@@ -669,31 +730,53 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                         value,
                                         style: TextStyle(
                                           color: AppColors.placeholderDark,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16,
                                         ),
                                         overflow: TextOverflow.ellipsis,
                                       ),
                                     );
                                   }).toList(),
+
                                   onChanged: (newValue) {
                                     if (newValue == null) return;
+
                                     setState(() {
                                       selectedCondition = newValue;
+
                                       updateRwyCondition(newValue);
-                                      autoBrakeOptions = Loadautobrakes(aircraftRef: selectedAircraft, landingRef: selectedLanding, configurationRef: selectedConfiguration, flapRef: selectedFlaps, conditionRef: selectedCondition)();
-                                        if (!autoBrakeOptions!.contains(selectedAutoBrake)) {
-                                          checkAutobreak = 'YES';
-                                          selectedAutoBrake = autoBrakeOptions![0];
-                                        } else {
-                                          checkAutobreak = 'NO';
-                                        }
-                                      reversersList = Loadreversers(aircraftRef: selectedAircraft, landingRef: selectedLanding, configurationRef: selectedConfiguration, flapRef: selectedFlaps, conditionRef: selectedCondition)();
-                                        if (!reversersList!.contains(selectedReversers)) {
-                                          selectedReversers = reversersList![0];
-                                        }
+
+                                      autoBrakeOptions = Loadautobrakes(
+                                        aircraftRef: selectedAircraft,
+                                        landingRef: selectedLanding,
+                                        configurationRef: selectedConfiguration,
+                                        flapRef: selectedFlaps,
+                                        conditionRef: selectedCondition,
+                                      )();
+
+                                      if (!autoBrakeOptions!.contains(selectedAutoBrake)) {
+                                        checkAutobreak = 'YES';
+                                        selectedAutoBrake = autoBrakeOptions![0];
+                                      } else {
+                                        checkAutobreak = 'NO';
+                                      }
+
+                                      reversersList = Loadreversers(
+                                        aircraftRef: selectedAircraft,
+                                        landingRef: selectedLanding,
+                                        configurationRef: selectedConfiguration,
+                                        flapRef: selectedFlaps,
+                                        conditionRef: selectedCondition,
+                                      )();
+
+                                      if (!reversersList!.contains(selectedReversers)) {
+                                        selectedReversers = reversersList![0];
+                                      }
+
                                       updateOpld();
                                     });
                                   },
-                                ),                            
+                                ),
                               ),
                             
                             ],
@@ -1297,10 +1380,10 @@ class _CalculatorPageState extends State<CalculatorPage> {
                               SizedBox(width: screenSize.width * 0.10),
                               if(selectedLanding == 'Normal') ...[
                                 Expanded(
-                                  child: DropdownButtonFormField<String>(
-                                    isExpanded: true, 
-                                    icon: const SizedBox.shrink(),
-                                    initialValue: selectedFlaps,
+                                  child: DropdownButtonFormField2<String>(
+                                    isExpanded: true,
+                                    value: selectedFlaps,
+
                                     hint: Text(
                                       '$selectedFlaps',
                                       textAlign: TextAlign.right,
@@ -1310,13 +1393,166 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                       ),
                                       overflow: TextOverflow.ellipsis,
                                     ),
-                                    dropdownColor: AppColors.backgroundDark.withOpacity(0.9),
+
+                                    decoration: InputDecoration(
+                                      filled: true,
+                                      fillColor: AppColors.placeholder,
+
+                                      enabledBorder: OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                          color: AppColors.placeholder,
+                                          width: 1,
+                                        ),
+                                        borderRadius: BorderRadius.circular(5.0),
+                                      ),
+
+                                      focusedBorder: OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                          color: AppColors.placeholder,
+                                        ),
+                                        borderRadius: BorderRadius.circular(5.0),
+                                      ),
+
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(5.0),
+                                      ),
+
+                                      contentPadding: const EdgeInsets.symmetric(
+                                        horizontal: 10,
+                                        vertical: 5,
+                                      ),
+                                    ),
+
+                                    iconStyleData: const IconStyleData(
+                                      icon: SizedBox.shrink(),
+                                    ),
+
+                                    selectedItemBuilder: (BuildContext context) {
+                                      return normalFlaps.map((String value) {
+                                        return Align(
+                                          alignment: Alignment.centerRight,
+                                          child: Text(
+                                            value,
+                                            textAlign: TextAlign.right,
+                                            style: TextStyle(
+                                              color: AppColors.placeholderDark,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        );
+                                      }).toList();
+                                    },
+
+                                    dropdownStyleData: DropdownStyleData(
+                                      offset: const Offset(0, -5),
+
+                                      decoration: BoxDecoration(
+                                        color: AppColors.backgroundDark.withOpacity(0.9),
+                                        borderRadius: BorderRadius.circular(5),
+                                        border: Border.all(
+                                          color: AppColors.white.withOpacity(0.8),
+                                          width: 1.5,
+                                        ),
+                                      ),
+                                    ),
+
+                                    items: normalFlaps.map((String value) {
+                                      return DropdownMenuItem<String>(
+                                        value: value,
+                                        child: Text(
+                                          value,
+                                          style: TextStyle(
+                                            color: AppColors.placeholderDark,
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 16,
+                                          ),
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      );
+                                    }).toList(),
+
+                                    onChanged: (newValue) {
+                                      setState(() {
+                                        selectedFlaps = newValue;
+
+                                        listaComments = Loadcomments(
+                                          aircraftRef: selectedAircraft,
+                                          landingRef: selectedLanding,
+                                          configurationRef: selectedConfiguration,
+                                          flapRef: selectedFlaps,
+                                        )();
+
+                                        autoBrakeOptions = Loadautobrakes(
+                                          aircraftRef: selectedAircraft,
+                                          landingRef: selectedLanding,
+                                          configurationRef: selectedConfiguration,
+                                          flapRef: selectedFlaps,
+                                          conditionRef: selectedCondition,
+                                        )();
+
+                                        updateOpld();
+                                      });
+                                    },
+                                  ),
+                                ),
+                              ] else ... [
+                                  Expanded(
+                                    child: DropdownButtonFormField2<String>(
+                                      isExpanded: true,
+                                      value: selectedFlaps,
+
+                                      hint: Text(
+                                        '$selectedFlaps',
+                                        textAlign: TextAlign.right,
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          color: AppColors.placeholderDark,
+                                        ),
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+
+                                      decoration: InputDecoration(
+                                        filled: true,
+                                        fillColor: AppColors.placeholder,
+
+                                        enabledBorder: OutlineInputBorder(
+                                          borderSide: BorderSide(
+                                            color: AppColors.placeholder,
+                                            width: 1,
+                                          ),
+                                          borderRadius: BorderRadius.circular(5.0),
+                                        ),
+
+                                        focusedBorder: OutlineInputBorder(
+                                          borderSide: BorderSide(
+                                            color: AppColors.placeholder,
+                                          ),
+                                          borderRadius: BorderRadius.circular(5.0),
+                                        ),
+
+                                        border: OutlineInputBorder(
+                                          borderRadius: BorderRadius.circular(5.0),
+                                        ),
+
+                                        contentPadding: const EdgeInsets.symmetric(
+                                          horizontal: 10,
+                                          vertical: 5,
+                                        ),
+                                      ),
+
+                                      iconStyleData: const IconStyleData(
+                                        icon: SizedBox.shrink(),
+                                      ),
+
                                       selectedItemBuilder: (BuildContext context) {
-                                        return normalFlaps.map((String value) {
+                                        return [nonFlap]
+                                            .where((value) => value != null)
+                                            .map((value) {
                                           return Align(
                                             alignment: Alignment.centerRight,
                                             child: Text(
-                                              value,
+                                              value!,
                                               textAlign: TextAlign.right,
                                               style: TextStyle(
                                                 color: AppColors.placeholderDark,
@@ -1327,124 +1563,47 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                           );
                                         }).toList();
                                       },
-                                    decoration: InputDecoration(
-                                        filled: true,
-                                        fillColor: AppColors.placeholder,
-                                        enabledBorder: OutlineInputBorder(
-                                          borderSide: BorderSide(
-                                            color: AppColors.placeholder,
-                                            width: 1,
+
+                                      dropdownStyleData: DropdownStyleData(
+                                        offset: const Offset(0, -5),
+
+                                        decoration: BoxDecoration(
+                                          color: AppColors.backgroundDark.withOpacity(0.9),
+                                          borderRadius: BorderRadius.circular(5),
+                                          border: Border.all(
+                                            color: AppColors.white.withOpacity(0.8),
+                                            width: 1.5,
                                           ),
-                                        ),
-                                        focusedBorder: OutlineInputBorder(
-                                          borderSide: BorderSide(
-                                            color: AppColors.placeholder, 
-                                          ),
-                                          borderRadius: BorderRadius.circular(5.0),
-                                        ),
-                                        border: OutlineInputBorder(
-                                          borderRadius: BorderRadius.circular(5.0),
-                                        ),
-                                        contentPadding: const EdgeInsets.symmetric(
-                                          horizontal: 10,
-                                          vertical: 5,
                                         ),
                                       ),
-                                    items: normalFlaps.map((String value) {
-                                      return DropdownMenuItem<String>(
-                                        value: value,
-                                        child: Text(
-                                          value,
-                                          style: TextStyle(color: AppColors.placeholderDark),
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                      );
-                                    }).toList(),
-                                    onChanged: (newValue) {
-                                      setState(() {
-                                        selectedFlaps = newValue;
-                                        listaComments = Loadcomments(aircraftRef: selectedAircraft, landingRef: selectedLanding,configurationRef: selectedConfiguration, flapRef: selectedFlaps)();
-                                        autoBrakeOptions = Loadautobrakes(aircraftRef: selectedAircraft, landingRef: selectedLanding, configurationRef: selectedConfiguration, flapRef: selectedFlaps, conditionRef: selectedCondition)();
-                                        updateOpld();
-                                      });
-                                    },
-                                  ),                               
-                                ),
-                              ] else ... [
-                                  Expanded(
-                                    child: DropdownButtonFormField<String>(
-                                      isExpanded: true,
-                                      icon: const SizedBox.shrink(),
-                                      initialValue: selectedFlaps,
-                                      hint: Text(
-                                        '$selectedFlaps',
-                                        textAlign: TextAlign.right,
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          color: AppColors.placeholderDark,
-                                        ),
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                      dropdownColor: AppColors.backgroundDark.withOpacity(0.9),
-                                        selectedItemBuilder: (BuildContext context) {
-                                          return [nonFlap]
-                                              .where((value) => value != null)
-                                              .map((value) {
-                                            return Align(
-                                              alignment: Alignment.centerRight,
-                                              child: Text(
-                                                value!,
-                                                textAlign: TextAlign.right,
-                                                style: TextStyle(
-                                                  color: AppColors.placeholderDark,
-                                                  fontWeight: FontWeight.bold,
-                                                ),
-                                                overflow: TextOverflow.ellipsis,
-                                              ),
-                                            );
-                                          }).toList();
-                                        },
-                                      decoration: InputDecoration(
-                                          filled: true,
-                                          fillColor: AppColors.placeholder,
-                                          enabledBorder: OutlineInputBorder(
-                                            borderSide: BorderSide(
-                                              color: AppColors.placeholder,
-                                              width: 1,
-                                            ),
-                                          ),
-                                          focusedBorder: OutlineInputBorder(
-                                            borderSide: BorderSide(
-                                              color: AppColors.placeholder, 
-                                            ),
-                                            borderRadius: BorderRadius.circular(5.0),
-                                          ),
-                                          border: OutlineInputBorder(
-                                            borderRadius: BorderRadius.circular(5.0),
-                                          ),
-                                          contentPadding: const EdgeInsets.symmetric(
-                                            horizontal: 10,
-                                            vertical: 5,
-                                          ),
-                                        ),
-                                      items:[nonFlap].where((val) => val != null).map((value) {
-                                        final String safeValue = value!; 
+
+                                      items: [nonFlap]
+                                          .where((val) => val != null)
+                                          .map((value) {
+                                        final String safeValue = value!;
+
                                         return DropdownMenuItem<String>(
                                           value: safeValue,
                                           child: Text(
                                             safeValue,
-                                            style: TextStyle(color: AppColors.placeholderDark),
+                                            style: TextStyle(
+                                              color: AppColors.placeholderDark,
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 16,
+                                            ),
                                             overflow: TextOverflow.ellipsis,
                                           ),
                                         );
                                       }).toList(),
+
                                       onChanged: (newValue) {
                                         setState(() {
                                           selectedFlaps = newValue;
                                           updateOpld();
                                         });
                                       },
-                                    ),                               
+                                    ),
+
                                   ),
                               ],
                             ],
@@ -1492,68 +1651,98 @@ class _CalculatorPageState extends State<CalculatorPage> {
                               ],
                             
                               Expanded(
-                                child: DropdownButtonFormField<String>(
-                                  isExpanded: true, 
-                                  icon: const SizedBox.shrink(),
-                                  initialValue: selectedAutoBrake,
+                                child: DropdownButtonFormField2<String>(
+                                  isExpanded: true,
+                                  value: selectedAutoBrake,
+
                                   hint: Text(
                                     '$selectedAutoBrake',
                                     textAlign: TextAlign.right,
                                     style: TextStyle(
                                       color: AppColors.placeholderDark,
+                                      fontWeight: FontWeight.bold,
                                     ),
                                     overflow: TextOverflow.ellipsis,
                                   ),
-                                  dropdownColor: AppColors.backgroundDark.withOpacity(0.9),
-                                    selectedItemBuilder: (BuildContext context) {
-                                      return autoBrakeOptions!.map((String value) {
-                                        return Align(
-                                          alignment: Alignment.centerRight,
-                                          child: Text(
-                                            value,
-                                            textAlign: TextAlign.right,
-                                            style: TextStyle(
-                                              color: AppColors.placeholderDark,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                            overflow: TextOverflow.ellipsis,
-                                          ),
-                                        );
-                                      }).toList();
-                                    },
+
                                   decoration: InputDecoration(
-                                      filled: true,
-                                      fillColor: AppColors.placeholder,
-                                      enabledBorder: OutlineInputBorder(
-                                        borderSide: BorderSide(
-                                          color: AppColors.placeholder,
-                                          width: 1,
+                                    filled: true,
+                                    fillColor: AppColors.placeholder,
+
+                                    enabledBorder: OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                        color: AppColors.placeholder,
+                                        width: 1,
+                                      ),
+                                      borderRadius: BorderRadius.circular(5.0),
+                                    ),
+
+                                    focusedBorder: OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                        color: AppColors.placeholder,
+                                      ),
+                                      borderRadius: BorderRadius.circular(5.0),
+                                    ),
+
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(5.0),
+                                    ),
+
+                                    contentPadding: const EdgeInsets.symmetric(
+                                      horizontal: 10,
+                                      vertical: 5,
+                                    ),
+                                  ),
+
+                                  iconStyleData: const IconStyleData(
+                                    icon: SizedBox.shrink(),
+                                  ),
+
+                                  selectedItemBuilder: (BuildContext context) {
+                                    return autoBrakeOptions!.map((String value) {
+                                      return Align(
+                                        alignment: Alignment.centerRight,
+                                        child: Text(
+                                          value,
+                                          textAlign: TextAlign.right,
+                                          style: TextStyle(
+                                            color: AppColors.placeholderDark,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                          overflow: TextOverflow.ellipsis,
                                         ),
-                                      ),
-                                      focusedBorder: OutlineInputBorder(
-                                        borderSide: BorderSide(
-                                          color: AppColors.placeholder, 
-                                        ),
-                                        borderRadius: BorderRadius.circular(5.0),
-                                      ),
-                                      border: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(5.0),
-                                      ),
-                                      contentPadding: const EdgeInsets.symmetric(
-                                        horizontal: 10,
-                                        vertical: 5,
+                                      );
+                                    }).toList();
+                                  },
+
+                                  dropdownStyleData: DropdownStyleData(
+                                    offset: const Offset(0, -5),
+
+                                    decoration: BoxDecoration(
+                                      color: AppColors.backgroundDark.withOpacity(0.9),
+                                      borderRadius: BorderRadius.circular(5),
+                                      border: Border.all(
+                                        color: AppColors.white.withOpacity(0.8),
+                                        width: 1.5,
                                       ),
                                     ),
+                                  ),
+
                                   items: autoBrakeOptions!.map((String value) {
                                     return DropdownMenuItem<String>(
                                       value: value,
                                       child: Text(
                                         value,
-                                        style: TextStyle(color: AppColors.placeholderDark),
+                                        style: TextStyle(
+                                          color: AppColors.placeholderDark,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16,
+                                        ),
                                         overflow: TextOverflow.ellipsis,
                                       ),
                                     );
                                   }).toList(),
+
                                   onChanged: (newValue) {
                                     setState(() {
                                       selectedAutoBrake = newValue;
@@ -1561,7 +1750,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                       updateOpld();
                                     });
                                   },
-                                ),                           
+                                ),
                               ),
                             ],
                           ),
@@ -1592,79 +1781,105 @@ class _CalculatorPageState extends State<CalculatorPage> {
                               ),
                               SizedBox(width: screenSize.width * 0.13),
                               Expanded(
-                                child: DropdownButtonFormField<String>(
-                                  isExpanded: true, 
-                                  icon: const SizedBox.shrink(),
-                                  initialValue: selectedReversers,
-                                  hint: Text(
-                                    '$selectedReversers',
-                                    textAlign: TextAlign.right,
-                                    style: TextStyle(
-                                      color: AppColors.placeholderDark,
-                                    ),
-                                    overflow: TextOverflow.ellipsis,
+                                child: DropdownButtonFormField2<String>(
+                                isExpanded: true,
+                                value: selectedReversers,
+
+                                hint: Text(
+                                  '$selectedReversers',
+                                  textAlign: TextAlign.right,
+                                  style: TextStyle(
+                                    color: AppColors.placeholderDark,
+                                    fontWeight: FontWeight.bold,
                                   ),
-                                  dropdownColor: AppColors.backgroundDark.withOpacity(0.9),
-                                    selectedItemBuilder: (BuildContext context) {
-                                      return reversersList!.map((String value) {
-                                        return Align(
-                                          alignment: Alignment.centerRight,
-                                          child: Text(
-                                            value,
-                                            textAlign: TextAlign.right,
-                                            style: TextStyle(
-                                              color: AppColors.placeholderDark,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                            overflow: TextOverflow.ellipsis,
-                                          ),
-                                        );
-                                      }).toList();
-                                    },
-                                  decoration: InputDecoration(
-                                    filled: true,
-                                    fillColor: AppColors.placeholder,
-                                    enabledBorder: OutlineInputBorder(
-                                      borderSide: BorderSide(
-                                        color: AppColors.placeholder,
-                                        width: 1,
-                                      ),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+
+                                decoration: InputDecoration(
+                                  filled: true,
+                                  fillColor: AppColors.placeholder,
+
+                                  enabledBorder: OutlineInputBorder(
+                                    borderSide: BorderSide(
+                                      color: AppColors.placeholder,
+                                      width: 1,
                                     ),
-                                    focusedBorder: OutlineInputBorder(
-                                      borderSide: BorderSide(
-                                        color: AppColors.placeholder, 
-                                      ),
-                                      borderRadius: BorderRadius.circular(5.0),
-                                    ),
-                                    border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(5.0),
-                                    ),
-                                    contentPadding: const EdgeInsets.symmetric(
-                                      horizontal: 10,
-                                      vertical: 5,
-                                    ),
+                                    borderRadius: BorderRadius.circular(5.0),
                                   ),
-                                  items: reversersList!.map((String value) {
-                                    return DropdownMenuItem<String>(
-                                      value: value,
+
+                                  focusedBorder: OutlineInputBorder(
+                                    borderSide: BorderSide(
+                                      color: AppColors.placeholder,
+                                    ),
+                                    borderRadius: BorderRadius.circular(5.0),
+                                  ),
+
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(5.0),
+                                  ),
+
+                                  contentPadding: const EdgeInsets.symmetric(
+                                    horizontal: 10,
+                                    vertical: 5,
+                                  ),
+                                ),
+
+                                iconStyleData: const IconStyleData(
+                                  icon: SizedBox.shrink(),
+                                ),
+
+                                selectedItemBuilder: (BuildContext context) {
+                                  return reversersList!.map((String value) {
+                                    return Align(
+                                      alignment: Alignment.centerRight,
                                       child: Text(
                                         value,
+                                        textAlign: TextAlign.right,
                                         style: TextStyle(
                                           color: AppColors.placeholderDark,
-                                          fontWeight: FontWeight.bold
+                                          fontWeight: FontWeight.bold,
                                         ),
                                         overflow: TextOverflow.ellipsis,
                                       ),
                                     );
-                                  }).toList(),
-                                  onChanged: (newValue) {
-                                    setState(() {
-                                      selectedReversers = newValue;
-                                      updateOpld();
-                                    });
-                                  },
+                                  }).toList();
+                                },
+
+                                dropdownStyleData: DropdownStyleData(
+                                  offset: const Offset(0, -5),
+
+                                  decoration: BoxDecoration(
+                                    color: AppColors.backgroundDark.withOpacity(0.9),
+                                    borderRadius: BorderRadius.circular(5),
+                                    border: Border.all(
+                                      color: AppColors.white.withOpacity(0.8),
+                                      width: 1.5,
+                                    ),
+                                  ),
                                 ),
-                              
+
+                                items: reversersList!.map((String value) {
+                                  return DropdownMenuItem<String>(
+                                    value: value,
+                                    child: Text(
+                                      value,
+                                      style: TextStyle(
+                                        color: AppColors.placeholderDark,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 16,
+                                      ),
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  );
+                                }).toList(),
+
+                                onChanged: (newValue) {
+                                  setState(() {
+                                    selectedReversers = newValue;
+                                    updateOpld();
+                                  });
+                                },
+                              ),
                               ),
                             ],
                           ),
@@ -1696,10 +1911,10 @@ class _CalculatorPageState extends State<CalculatorPage> {
                               SizedBox(width: screenSize.width * 0.10),
                               if (selectedLanding != 'Non-Normal') ...[
                                 Expanded(
-                                  child: DropdownButtonFormField<String>(
+                                  child: DropdownButtonFormField2<String>(
                                     isExpanded: true,
-                                    icon: const SizedBox.shrink(),
-                                    initialValue: selectedSpeedBrake,
+                                    value: selectedSpeedBrake,
+
                                     hint: Text(
                                       'AUTOMATIC',
                                       textAlign: TextAlign.right,
@@ -1709,63 +1924,92 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                       ),
                                       overflow: TextOverflow.ellipsis,
                                     ),
-                                    dropdownColor: AppColors.surfaceDark,
-                                      selectedItemBuilder: (BuildContext context) {
-                                        return speedBrakesTypes.map((String value) {
-                                          return Align(
-                                            alignment: Alignment.centerRight,
-                                            child: Text(
-                                              value,
-                                              textAlign: TextAlign.right,
-                                              style: TextStyle(
-                                                color: AppColors.placeholderDark,
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                              overflow: TextOverflow.ellipsis,
-                                            ),
-                                          );
-                                        }).toList();
-                                      },
+
                                     decoration: InputDecoration(
                                       filled: true,
                                       fillColor: AppColors.placeholder,
+
                                       enabledBorder: OutlineInputBorder(
                                         borderSide: BorderSide(
                                           color: AppColors.placeholder,
                                           width: 1,
                                         ),
+                                        borderRadius: BorderRadius.circular(5.0),
                                       ),
+
                                       focusedBorder: OutlineInputBorder(
                                         borderSide: BorderSide(
-                                          color: AppColors.placeholder, 
+                                          color: AppColors.placeholder,
                                         ),
                                         borderRadius: BorderRadius.circular(5.0),
                                       ),
+
                                       border: OutlineInputBorder(
                                         borderRadius: BorderRadius.circular(5.0),
                                       ),
+
                                       contentPadding: const EdgeInsets.symmetric(
                                         horizontal: 10,
                                         vertical: 5,
                                       ),
                                     ),
+
+                                    iconStyleData: const IconStyleData(
+                                      icon: SizedBox.shrink(),
+                                    ),
+
+                                    selectedItemBuilder: (BuildContext context) {
+                                      return speedBrakesTypes.map((String value) {
+                                        return Align(
+                                          alignment: Alignment.centerRight,
+                                          child: Text(
+                                            value,
+                                            textAlign: TextAlign.right,
+                                            style: TextStyle(
+                                              color: AppColors.placeholderDark,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        );
+                                      }).toList();
+                                    },
+
+                                    dropdownStyleData: DropdownStyleData(
+                                      offset: const Offset(0, -5),
+
+                                      decoration: BoxDecoration(
+                                        color: AppColors.backgroundDark.withOpacity(0.9),
+                                        borderRadius: BorderRadius.circular(5),
+                                        border: Border.all(
+                                          color: AppColors.white.withOpacity(0.8),
+                                          width: 1.5,
+                                        ),
+                                      ),
+                                    ),
+
                                     items: speedBrakesTypes.map((String value) {
                                       return DropdownMenuItem<String>(
                                         value: value,
                                         child: Text(
                                           value,
-                                          style: TextStyle(color: AppColors.placeholderDark),
+                                          style: TextStyle(
+                                            color: AppColors.placeholderDark,
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 16,
+                                          ),
                                           overflow: TextOverflow.ellipsis,
                                         ),
                                       );
                                     }).toList(),
+
                                     onChanged: (newValue) {
                                       setState(() {
                                         selectedSpeedBrake = newValue;
                                         updateOpld();
-                                      }); 
+                                      });
                                     },
-                                  ),                               
+                                  ),
                                 )
                               ] else ...[
                                 SizedBox(width: screenSize.width * 0.10),

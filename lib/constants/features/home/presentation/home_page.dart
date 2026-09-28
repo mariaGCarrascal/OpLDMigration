@@ -7,6 +7,8 @@ import 'package:flutter_application_5/constants/design/text/app_text.dart';
 import 'package:flutter_application_5/constants/features/calculator/presentation/calculatorpage.dart';
 import 'package:flutter_application_5/service_dataxml/opldservice.dart';
 import 'package:dropdown_search/dropdown_search.dart';
+import 'package:dropdown_button2/dropdown_button2.dart';
+
  
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -212,19 +214,10 @@ class _HomePageState extends State<HomePage> {
                     const SizedBox(height: 8.0),
 
                     // Aircraft Picker
-                    DropdownButtonFormField<String>(
+                    DropdownButtonFormField2<String>(
                       isExpanded: true,
-                      icon: const SizedBox.shrink(),
-                      initialValue: selectedAircraftType,
-                      dropdownColor: AppColors.backgroundDark.withOpacity(0.9),
-                      hint: Text(
-                        'Select Aircraft Type',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: AppColors.placeholderDark,
-                        ),
-                        overflow: TextOverflow.ellipsis,
-                      ),
+                      value: selectedAircraftType,
+
                       decoration: InputDecoration(
                         filled: true,
                         fillColor: AppColors.placeholder,
@@ -233,10 +226,11 @@ class _HomePageState extends State<HomePage> {
                             color: AppColors.placeholder,
                             width: 1,
                           ),
+                          borderRadius: BorderRadius.circular(5.0),
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderSide: BorderSide(
-                            color: AppColors.placeholder, 
+                            color: AppColors.placeholder,
                           ),
                           borderRadius: BorderRadius.circular(5.0),
                         ),
@@ -244,17 +238,43 @@ class _HomePageState extends State<HomePage> {
                           borderRadius: BorderRadius.circular(5.0),
                         ),
                         contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 10,
+                          horizontal: 0,
                           vertical: 5,
                         ),
                       ),
+
+                      hint: Text(
+                        'Select Aircraft Type',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.placeholderDark,
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+
+                      iconStyleData: const IconStyleData(
+                        icon: SizedBox.shrink(),
+                      ),
+
+                      dropdownStyleData: DropdownStyleData(
+                        offset: const Offset(0, -5),
+                        decoration: BoxDecoration(
+                          color: AppColors.backgroundDark.withOpacity(0.9),
+                          borderRadius: BorderRadius.circular(5),
+                          border: Border.all(
+                            color: AppColors.white.withOpacity(0.8),
+                            width: 1.5,
+                          ),
+                        ),
+                      ),
+
                       items: aircraftTypes.map((String value) {
                         return DropdownMenuItem<String>(
                           value: value,
                           child: Text(
                             value,
                             style: TextStyle(
-                              color: AppColors.placeholderDark, 
+                              color: AppColors.placeholderDark,
                               fontWeight: FontWeight.bold,
                               fontSize: 16,
                             ),
@@ -262,6 +282,7 @@ class _HomePageState extends State<HomePage> {
                           ),
                         );
                       }).toList(),
+
                       onChanged: (newValue) {
                         setState(() {
                           selectedAircraftType = newValue;
@@ -270,12 +291,13 @@ class _HomePageState extends State<HomePage> {
                           _flapsNon.clear();
                           loadConfig();
                         });
+
                         if (selectedLandingType == 'Non-Normal') {
                           loadConfig();
                         }
                       },
                     ),
- 
+
                     // Label Landing Selection
                     const Padding(
                       padding: EdgeInsets.only(top: 20.0),
@@ -292,11 +314,40 @@ class _HomePageState extends State<HomePage> {
                     const SizedBox(height: 8.0),
 
                     // Landing picker
-                    DropdownButtonFormField<String>(
+                    DropdownButtonFormField2<String>(
                       isExpanded: true,
-                      icon: const SizedBox.shrink(),
-                      initialValue: selectedLandingType,
-                      hint: const Text(
+                      value: selectedLandingType,
+
+                      decoration: InputDecoration(
+                        filled: true,
+                        fillColor: AppColors.placeholder,
+
+                        enabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: AppColors.placeholder,
+                            width: 1,
+                          ),
+                          borderRadius: BorderRadius.circular(5.0),
+                        ),
+
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: AppColors.placeholder,
+                          ),
+                          borderRadius: BorderRadius.circular(5.0),
+                        ),
+
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(5.0),
+                        ),
+
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 0,
+                          vertical: 5,
+                        ),
+                      ),
+
+                      hint: Text(
                         'Select Type of Landing',
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
@@ -304,37 +355,30 @@ class _HomePageState extends State<HomePage> {
                         ),
                         overflow: TextOverflow.ellipsis,
                       ),
-                      dropdownColor: AppColors.backgroundDark.withOpacity(0.9),
-                      decoration: InputDecoration(
-                        filled: true,
-                        fillColor: AppColors.placeholder,
-                        enabledBorder: OutlineInputBorder(
-                          borderSide: BorderSide(
-                            color: AppColors.placeholder,
-                            width: 1,
+
+                      iconStyleData: const IconStyleData(
+                        icon: SizedBox.shrink(),
+                      ),
+
+                      dropdownStyleData: DropdownStyleData(
+                        offset: const Offset(0, -5),
+                        decoration: BoxDecoration(
+                          color: AppColors.backgroundDark.withOpacity(0.9),
+                          borderRadius: BorderRadius.circular(5),
+                          border: Border.all(
+                            color: AppColors.white.withOpacity(0.8),
+                            width: 1.5,
                           ),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderSide: BorderSide(
-                            color: AppColors.placeholder, 
-                          ),
-                          borderRadius: BorderRadius.circular(5.0),
-                        ),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(5.0),
-                        ),
-                        contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 10,
-                          vertical: 5,
                         ),
                       ),
+
                       items: landingTypes.map((String value) {
                         return DropdownMenuItem<String>(
                           value: value,
                           child: Text(
                             value,
                             style: TextStyle(
-                              color: AppColors.placeholderDark, 
+                              color: AppColors.placeholderDark,
                               fontWeight: FontWeight.bold,
                               fontSize: 16,
                             ),
@@ -342,22 +386,25 @@ class _HomePageState extends State<HomePage> {
                           ),
                         );
                       }).toList(),
+
                       onChanged: (newValue) {
                         setState(() {
                           selectedLandingType = newValue;
                           selectedConfigurationType = null;
                           selectedConfigurationFlap = null;
                           _flapsNon.clear();
+
                           if (newValue != 'Non-Normal') {
                             configurationTypes.clear();
                           }
                         });
+
                         if (newValue == 'Non-Normal') {
                           loadConfig();
                         }
                       },
                     ),
- 
+
                     // Configuration Type
                     if (selectedLandingType == 'Non-Normal') ...[
                       const Padding(
@@ -375,16 +422,44 @@ class _HomePageState extends State<HomePage> {
                       const SizedBox(height: 8.0),
 
                       // Configuration Picker
-                      DropdownButtonFormField<String>(
+                      DropdownButtonFormField2<String>(
                         isExpanded: true,
-                        icon: const SizedBox.shrink(),
-                        initialValue:
-                            configurationTypes.contains(
-                              selectedConfigurationType,
-                            )
+                        value: configurationTypes.contains(
+                          selectedConfigurationType,
+                        )
                             ? selectedConfigurationType
                             : null,
-                        hint: const Text(
+
+                        decoration: InputDecoration(
+                          filled: true,
+                          fillColor: AppColors.placeholder,
+
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(
+                              color: AppColors.placeholder,
+                              width: 1,
+                            ),
+                            borderRadius: BorderRadius.circular(5.0),
+                          ),
+
+                          focusedBorder: OutlineInputBorder(
+                            borderSide: BorderSide(
+                              color: AppColors.placeholder,
+                            ),
+                            borderRadius: BorderRadius.circular(5.0),
+                          ),
+
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(5.0),
+                          ),
+
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 0,
+                            vertical: 5,
+                          ),
+                        ),
+
+                        hint: Text(
                           'Select Configuration Type',
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
@@ -392,30 +467,24 @@ class _HomePageState extends State<HomePage> {
                           ),
                           overflow: TextOverflow.ellipsis,
                         ),
-                        dropdownColor: AppColors.backgroundDark.withOpacity(0.9),
-                        decoration: InputDecoration(
-                          filled: true,
-                          fillColor: AppColors.placeholder,
-                          enabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(
-                              color: AppColors.placeholder,
-                              width: 1,
+
+                        iconStyleData: const IconStyleData(
+                          icon: SizedBox.shrink(),
+                        ),
+
+                        dropdownStyleData: DropdownStyleData(
+                          offset: const Offset(0, -5),
+                          maxHeight: 400,
+                          decoration: BoxDecoration(
+                            color: AppColors.backgroundDark.withOpacity(0.9),
+                            borderRadius: BorderRadius.circular(5),
+                            border: Border.all(
+                              color: AppColors.white.withOpacity(0.8),
+                              width: 1.5,
                             ),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(
-                              color: AppColors.placeholder, 
-                            ),
-                            borderRadius: BorderRadius.circular(5.0),
-                          ),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(5.0),
-                          ),
-                          contentPadding: const EdgeInsets.symmetric(
-                            horizontal: 10,
-                            vertical: 5,
                           ),
                         ),
+
                         items: configurationTypes.map((String value) {
                           return DropdownMenuItem<String>(
                             value: value,
@@ -430,13 +499,14 @@ class _HomePageState extends State<HomePage> {
                             ),
                           );
                         }).toList(),
+
                         onChanged: (newValue) {
                           setState(() {
                             selectedConfigurationType = newValue;
                             searchFlaps();
                           });
                         },
-                      ),
+                      ),                                      
                     ],
  
                     // Label Airport Selection
@@ -503,12 +573,20 @@ class _HomePageState extends State<HomePage> {
                           menuProps: MenuProps(
                             backgroundColor: Colors.transparent,
                             elevation: 0,
+                            margin: const EdgeInsets.only(top: 5),
                           ),
 
                         containerBuilder: (context, popupWidget) {
                           return Container(
-                            color: AppColors.black.withOpacity(0.9),
-                            child: popupWidget,
+                             decoration: BoxDecoration(
+                              color: AppColors.black.withOpacity(0.8),
+                              borderRadius: BorderRadius.circular(5),
+                              border: Border.all(
+                                color: AppColors.white.withOpacity(0.8),
+                                width: 1.5,
+                              ),
+                            ),
+                            child: popupWidget,                           
                           );
                         },
 
@@ -604,7 +682,7 @@ class _HomePageState extends State<HomePage> {
                           selectedAirportType = newValue;
                         });
                       },
-                    ),                                                 
+                    ),                                                                 
                   ],
                 ),
               ),
