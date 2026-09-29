@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_5/constants/colors/app_colors.dart';
 import 'package:flutter_application_5/constants/features/calculator/fuctions/calculateAltitud.dart';
@@ -45,8 +44,7 @@ class CalculatorPage extends StatefulWidget {
     this.airport, this.airportEl, this.airportQNH, this.airportTemp, this.airportRunway, this.nonflaps
   });
 //Pendientes:
-//TEMA DEL SPLIT VIEW EN TABLET IOS.
-//Slider en XXX Elevation y LandingWeight (en cualquier aeropuerto), no da el valor correcto de OpLD en la UI (pero si en el backend), si hay mejor opcion para el controlador del slider. (Revisar)
+//Slider en XXX Elevation y LandingWeight (en cualquier aeropuerto), no da el valor correcto de OpLD en la UI (pero si en el backend), si hay mejor opcion para el controlador del slider en tema de timing. (Revisar)
 //LongPress en QNH y Elevation (XXX).
 
   @override
@@ -454,23 +452,38 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                     ),
 
                                     items: (selectedAirportRunway?.keys ?? <String>{}).map((value) {
+                                      final bool isSelected = value == selectedRunway;
                                       return DropdownMenuItem<String>(
                                         value: value,
-                                        child: Text(
-                                          value,
-                                          style: TextStyle(
-                                            color: AppColors.placeholderDark,
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 16,
+                                        child: Container(
+                                          width: double.infinity,
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 12,
+                                            vertical: 10,
                                           ),
-                                          overflow: TextOverflow.ellipsis,
+                                          decoration: BoxDecoration(
+                                            color: isSelected
+                                                ? AppColors.white.withOpacity(0.15)
+                                                : Colors.transparent,
+                                            borderRadius: BorderRadius.circular(4),
+                                          ),
+                                          child: Text(
+                                            value,
+                                            style: TextStyle(
+                                              color: AppColors.placeholderDark,
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 16,
+                                            ),
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
                                         ),
                                       );
                                     }).toList(),
 
                                     onChanged: (newValue) {
                                       setState(() {
-                                        selectedSlopeValues = selectedAirportRunway?[newValue];
+                                        selectedRunway = newValue;
+                                        selectedSlopeValues = selectedAirportRunway?[selectedRunway];
                                         rwyId = selectedSlopeValues?[0];
                                         rwyLda = selectedSlopeValues?[1];
                                         netLDA = rwyLda;
@@ -490,7 +503,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                         updateOpld();
                                       });
                                     },
-                                  ),
+                                  ),                                
                                 ),
                               ] else ...[
                                 Text(
@@ -583,39 +596,58 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                   ),
 
                                   selectedItemBuilder: (BuildContext context) {
-                                    return rwymagOptions.map((String value) {
-                                      return Center(
-                                        child: Text(
-                                          value,
-                                          textAlign: TextAlign.center,
-                                          style: TextStyle(
-                                            color: AppColors.iconDark,
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                      );
-                                    }).toList();
-                                  },
+                                        return rwymagOptions.map((String value) {
+                                          return Center(
+                                            child: Text(
+                                              value,
+                                              textAlign: TextAlign.center,
+                                              style: TextStyle(
+                                                color: AppColors.iconDark,
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                          );
+                                        }).toList();
+                                      },
 
                                   items: rwymagOptions.map((String value) {
-                                    return DropdownMenuItem<String>(
-                                      value: value,
-                                      child: Center(
-                                        child: Text(
-                                          value,
-                                          textAlign: TextAlign.center,
-                                          style: TextStyle(
-                                            color: AppColors.textColor2Dark,
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.bold,
+                                        final bool isSelected = value ==
+                                            (rwymagOptions.isNotEmpty
+                                                ? (rwymagOptions.contains(selectedMag)
+                                                    ? selectedMag
+                                                    : rwymagOptions.first)
+                                                : '000');
+                                        return DropdownMenuItem<String>(
+                                          value: value,
+                                          child: Container(
+                                            width: double.infinity,
+                                            padding: const EdgeInsets.symmetric(
+                                              horizontal: 12,
+                                              vertical: 10,
+                                            ),
+                                            decoration: BoxDecoration(
+                                              color: isSelected
+                                                  ? AppColors.white.withOpacity(0.15)
+                                                  : Colors.transparent,
+                                              borderRadius: BorderRadius.circular(4),
+                                            ),
+                                            child: Center(
+                                              child: Text(
+                                                value,
+                                                textAlign: TextAlign.center,
+                                                style: TextStyle(
+                                                  color: AppColors.textColor2Dark,
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                                overflow: TextOverflow.ellipsis,
+                                              ),
+                                            ),
                                           ),
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                      ),
-                                    );
-                                  }).toList(),
+                                        );
+                                      }).toList(),
 
                                   onChanged: (newValue) {
                                     if (newValue == null) return;
@@ -638,8 +670,8 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                       updateOpld();
                                     });
                                   },
-                                ),
-                              ),                                                           
+                                ),                             
+                              ),                                                                                        
                               ],
                             ],
                           ),
@@ -751,16 +783,30 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                   ),
 
                                   items: rwyConditions.map((String value) {
+                                    final bool isSelected = value == selectedCondition;
                                     return DropdownMenuItem<String>(
                                       value: value,
-                                      child: Text(
-                                        value,
-                                        style: TextStyle(
-                                          color: AppColors.placeholderDark,
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 16,
+                                      child: Container(
+                                        width: double.infinity,
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 12,
+                                          vertical: 10,
                                         ),
-                                        overflow: TextOverflow.ellipsis,
+                                        decoration: BoxDecoration(
+                                          color: isSelected
+                                              ? AppColors.white.withOpacity(0.15)
+                                              : Colors.transparent,
+                                          borderRadius: BorderRadius.circular(4),
+                                        ),
+                                        child: Text(
+                                          value,
+                                          style: TextStyle(
+                                            color: AppColors.placeholderDark,
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 16,
+                                          ),
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
                                       ),
                                     );
                                   }).toList(),
@@ -803,7 +849,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                       updateOpld();
                                     });
                                   },
-                                ),
+                                ),                             
                               ),
                             
                             ],
@@ -835,14 +881,14 @@ class _CalculatorPageState extends State<CalculatorPage> {
                               if (selectedAirport != 'XXX')
                                 Expanded(
                                   child: Text(
-                                    '${Formatslope(slopeRef: rwySlope)()} %',
+                                    '${Formatslope(slopeRef: rwySlope, airportRef: selectedAirport)()} %',
                                     style: TextStyle(color: AppColors.textColor3Dark, fontSize: 16, fontWeight: FontWeight.bold),
                                   ),
                                 )
                               else ...[
                                 Expanded(
                                   child: Text(
-                                    '${Formatslope(slopeRef: rwySlope)()} %',
+                                    '${Formatslope(slopeRef: rwySlope, airportRef: selectedAirport)()} %',
                                     style: TextStyle(fontSize: 16, color: AppColors.textColor2Dark, fontWeight: FontWeight.bold),
                                   ),
                                 ),
@@ -1038,7 +1084,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                       ),
                                     ),
                                   ] else ...[
-                                    //SizedBox(width: screenSize.width * 0.20),
+                                    //SizedBox(width: screenSize.width * 0.27),
                                     const Spacer(),
                                     Expanded(
                                       child: Text(
@@ -1488,16 +1534,30 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                     ),
 
                                     items: normalFlaps.map((String value) {
+                                      final bool isSelected = value == selectedFlaps;
                                       return DropdownMenuItem<String>(
                                         value: value,
-                                        child: Text(
-                                          value,
-                                          style: TextStyle(
-                                            color: AppColors.placeholderDark,
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 16,
+                                        child: Container(
+                                          width: double.infinity,
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 12,
+                                            vertical: 10,
                                           ),
-                                          overflow: TextOverflow.ellipsis,
+                                          decoration: BoxDecoration(
+                                            color: isSelected
+                                                ? AppColors.white.withOpacity(0.15)
+                                                : Colors.transparent,
+                                            borderRadius: BorderRadius.circular(4),
+                                          ),
+                                          child: Text(
+                                            value,
+                                            style: TextStyle(
+                                              color: AppColors.placeholderDark,
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 16,
+                                            ),
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
                                         ),
                                       );
                                     }).toList(),
@@ -1524,7 +1584,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                         updateOpld();
                                       });
                                     },
-                                  ),
+                                  ),                                
                                 ),
                               ] else ... [
                                   Expanded(
@@ -1764,16 +1824,30 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                   ),
 
                                   items: autoBrakeOptions!.map((String value) {
+                                    final bool isSelected = value == selectedAutoBrake;
                                     return DropdownMenuItem<String>(
                                       value: value,
-                                      child: Text(
-                                        value,
-                                        style: TextStyle(
-                                          color: AppColors.placeholderDark,
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 16,
+                                      child: Container(
+                                        width: double.infinity,
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 12,
+                                          vertical: 10,
                                         ),
-                                        overflow: TextOverflow.ellipsis,
+                                        decoration: BoxDecoration(
+                                          color: isSelected
+                                              ? AppColors.white.withOpacity(0.15)
+                                              : Colors.transparent,
+                                          borderRadius: BorderRadius.circular(4),
+                                        ),
+                                        child: Text(
+                                          value,
+                                          style: TextStyle(
+                                            color: AppColors.placeholderDark,
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 16,
+                                          ),
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
                                       ),
                                     );
                                   }).toList(),
@@ -1785,7 +1859,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                       updateOpld();
                                     });
                                   },
-                                ),
+                                ),                              
                               ),
                             ],
                           ),
@@ -1815,6 +1889,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                 ),
                               ),
                               SizedBox(width: screenSize.width * 0.13),
+                              SizedBox(width:4),
                               Expanded(
                                 child: DropdownButtonFormField2<String>(
                                 isExpanded: true,
@@ -1897,16 +1972,30 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                 ),
 
                                 items: reversersList!.map((String value) {
+                                  final bool isSelected = value == selectedReversers;
                                   return DropdownMenuItem<String>(
                                     value: value,
-                                    child: Text(
-                                      value,
-                                      style: TextStyle(
-                                        color: AppColors.placeholderDark,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 16,
+                                    child: Container(
+                                      width: double.infinity,
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 12,
+                                        vertical: 10,
                                       ),
-                                      overflow: TextOverflow.ellipsis,
+                                      decoration: BoxDecoration(
+                                        color: isSelected
+                                            ? AppColors.white.withOpacity(0.15)
+                                            : Colors.transparent,
+                                        borderRadius: BorderRadius.circular(4),
+                                      ),
+                                      child: Text(
+                                        value,
+                                        style: TextStyle(
+                                          color: AppColors.placeholderDark,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16,
+                                        ),
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
                                     ),
                                   );
                                 }).toList(),
@@ -1917,7 +2006,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                     updateOpld();
                                   });
                                 },
-                              ),
+                              ),                              
                               ),
                             ],
                           ),
@@ -1946,8 +2035,9 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                   fontSize: 15, 
                                 ),
                               ),
-                              SizedBox(width: screenSize.width * 0.10),
+                              SizedBox(width: screenSize.width * 0.12),
                               if (selectedLanding != 'Non-Normal') ...[
+                                SizedBox(width: 4),
                                 Expanded(
                                   child: DropdownButtonFormField2<String>(
                                     isExpanded: true,
@@ -2030,16 +2120,30 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                     ),
 
                                     items: speedBrakesTypes.map((String value) {
+                                      final bool isSelected = value == selectedSpeedBrake;
                                       return DropdownMenuItem<String>(
                                         value: value,
-                                        child: Text(
-                                          value,
-                                          style: TextStyle(
-                                            color: AppColors.placeholderDark,
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 16,
+                                        child: Container(
+                                          width: double.infinity,
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 12,
+                                            vertical: 10,
                                           ),
-                                          overflow: TextOverflow.ellipsis,
+                                          decoration: BoxDecoration(
+                                            color: isSelected
+                                                ? AppColors.white.withOpacity(0.15)
+                                                : Colors.transparent,
+                                            borderRadius: BorderRadius.circular(4),
+                                          ),
+                                          child: Text(
+                                            value,
+                                            style: TextStyle(
+                                              color: AppColors.placeholderDark,
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 16,
+                                            ),
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
                                         ),
                                       );
                                     }).toList(),
@@ -2050,7 +2154,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                         updateOpld();
                                       });
                                     },
-                                  ),
+                                  ),                               
                                 )
                               ] else ...[
                                 SizedBox(width: screenSize.width * 0.10),
@@ -2164,7 +2268,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                           style: TextStyle(color: AppColors.white),
                                         ),
                                       ),
-                                      const SizedBox(width: 100.0),
+                                      const SizedBox(width: 122.0),
                                       Expanded(
                                         child: Text(
                                         AppStrings.na,
@@ -2822,88 +2926,50 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                           SizedBox(
                                             width: 120,
                                             height: 50,
-                                            child: DropdownButtonFormField2<String>(
-                                              isExpanded: true,
-                                              value: windDirection.isNotEmpty
-                                                  ? (windDirection.contains(selectedWind)
-                                                      ? selectedWind
-                                                      : windDirection.first)
-                                                  : '000',
+                                            child: Builder(
+                                              builder: (context) {
+                                                final String selectedWindValue = windDirection.isNotEmpty
+                                                    ? (windDirection.contains(selectedWind)
+                                                        ? selectedWind!
+                                                        : windDirection.first)
+                                                    : '000';
+                                                return DropdownButtonFormField2<String>(
+                                                  isExpanded: true,
+                                                  value: selectedWindValue,
 
-                                              decoration: InputDecoration(
-                                                filled: true,
-                                                fillColor: AppColors.placeholder,
+                                                  decoration: InputDecoration(
+                                                    filled: true,
+                                                    fillColor: AppColors.placeholder,
 
-                                                enabledBorder: OutlineInputBorder(
-                                                  borderSide: BorderSide(
-                                                    color: AppColors.placeholder,
-                                                    width: 1,
+                                                    enabledBorder: OutlineInputBorder(
+                                                      borderSide: BorderSide(
+                                                        color: AppColors.placeholder,
+                                                        width: 1,
+                                                      ),
+                                                      borderRadius: BorderRadius.circular(8.0),
+                                                    ),
+
+                                                    focusedBorder: OutlineInputBorder(
+                                                      borderSide: BorderSide(
+                                                        color: AppColors.placeholder,
+                                                        width: 1,
+                                                      ),
+                                                      borderRadius: BorderRadius.circular(8.0),
+                                                    ),
+
+                                                    border: OutlineInputBorder(
+                                                      borderRadius: BorderRadius.circular(8.0),
+                                                    ),
+
+                                                    contentPadding: const EdgeInsets.symmetric(
+                                                      horizontal: 10,
+                                                      vertical: 5,
+                                                    ),
                                                   ),
-                                                  borderRadius: BorderRadius.circular(8.0),
-                                                ),
 
-                                                focusedBorder: OutlineInputBorder(
-                                                  borderSide: BorderSide(
-                                                    color: AppColors.placeholder,
-                                                    width: 1,
-                                                  ),
-                                                  borderRadius: BorderRadius.circular(8.0),
-                                                ),
-
-                                                border: OutlineInputBorder(
-                                                  borderRadius: BorderRadius.circular(8.0),
-                                                ),
-
-                                                contentPadding: const EdgeInsets.symmetric(
-                                                  horizontal: 10,
-                                                  vertical: 5,
-                                                ),
-                                              ),
-
-                                              hint: Center(
-                                                child: Text(
-                                                  selectedWind ?? '000',
-                                                  textAlign: TextAlign.center,
-                                                  style: TextStyle(
-                                                    color: AppColors.iconDark,
-                                                    fontSize: 14,
-                                                    fontWeight: FontWeight.bold,
-                                                  ),
-                                                  overflow: TextOverflow.ellipsis,
-                                                ),
-                                              ),
-
-                                              iconStyleData: const IconStyleData(
-                                                icon: SizedBox.shrink(),
-                                              ),
-
-                                              dropdownStyleData: DropdownStyleData(
-                                                offset: const Offset(0, -5),
-                                                maxHeight: 350,
-                                                scrollbarTheme: ScrollbarThemeData(
-                                                  thickness: WidgetStateProperty.all(0),
-                                                ),
-
-                                                decoration: BoxDecoration(
-                                                  color: AppColors.backgroundDark.withOpacity(0.9),
-                                                  borderRadius: BorderRadius.circular(5),
-                                                  border: Border.all(
-                                                    color: AppColors.white.withOpacity(0.8),
-                                                    width: 1.5,
-                                                  ),
-                                                ),
-                                              ),
-
-                                              buttonStyleData: const ButtonStyleData(
-                                                padding: EdgeInsets.zero,
-                                                height: 50,
-                                              ),
-
-                                              selectedItemBuilder: (BuildContext context) {
-                                                return windDirection.map((String value) {
-                                                  return Center(
+                                                  hint: Center(
                                                     child: Text(
-                                                      value,
+                                                      selectedWindValue,
                                                       textAlign: TextAlign.center,
                                                       style: TextStyle(
                                                         color: AppColors.iconDark,
@@ -2912,50 +2978,107 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                                       ),
                                                       overflow: TextOverflow.ellipsis,
                                                     ),
-                                                  );
-                                                }).toList();
-                                              },
+                                                  ),
 
-                                              items: windDirection.map((String value) {
-                                                return DropdownMenuItem<String>(
-                                                  value: value,
-                                                  child: Center(
-                                                    child: Text(
-                                                      value,
-                                                      textAlign: TextAlign.center,
-                                                      style: TextStyle(
-                                                        color: AppColors.textColor2Dark,
-                                                        fontSize: 16,
-                                                        fontWeight: FontWeight.bold,
+                                                  iconStyleData: const IconStyleData(
+                                                    icon: SizedBox.shrink(),
+                                                  ),
+
+                                                  dropdownStyleData: DropdownStyleData(
+                                                    offset: const Offset(0, -5),
+                                                    maxHeight: 350,
+                                                    scrollbarTheme: ScrollbarThemeData(
+                                                      thickness: WidgetStateProperty.all(0),
+                                                    ),
+
+                                                    decoration: BoxDecoration(
+                                                      color: AppColors.backgroundDark.withOpacity(0.9),
+                                                      borderRadius: BorderRadius.circular(5),
+                                                      border: Border.all(
+                                                        color: AppColors.white.withOpacity(0.8),
+                                                        width: 1.5,
                                                       ),
-                                                      overflow: TextOverflow.ellipsis,
                                                     ),
                                                   ),
+
+                                                  buttonStyleData: const ButtonStyleData(
+                                                    padding: EdgeInsets.zero,
+                                                    height: 50,
+                                                  ),
+
+                                                  selectedItemBuilder: (BuildContext context) {
+                                                    return windDirection.map((String value) {
+                                                      return Center(
+                                                        child: Text(
+                                                          value,
+                                                          textAlign: TextAlign.center,
+                                                          style: TextStyle(
+                                                            color: AppColors.iconDark,
+                                                            fontSize: 14,
+                                                            fontWeight: FontWeight.bold,
+                                                          ),
+                                                          overflow: TextOverflow.ellipsis,
+                                                        ),
+                                                      );
+                                                    }).toList();
+                                                  },
+
+                                                  items: windDirection.map((String value) {
+                                                    final bool isSelected = value == selectedWindValue;
+                                                    return DropdownMenuItem<String>(
+                                                      value: value,
+                                                      child: Container(
+                                                        width: double.infinity,
+                                                        padding: const EdgeInsets.symmetric(
+                                                          horizontal: 12,
+                                                          vertical: 10,
+                                                        ),
+                                                        decoration: BoxDecoration(
+                                                          color: isSelected
+                                                              ? AppColors.white.withOpacity(0.15)
+                                                              : Colors.transparent,
+                                                          borderRadius: BorderRadius.circular(4),
+                                                        ),
+                                                        child: Center(
+                                                          child: Text(
+                                                            value,
+                                                            textAlign: TextAlign.center,
+                                                            style: TextStyle(
+                                                              color: AppColors.textColor2Dark,
+                                                              fontSize: 16,
+                                                              fontWeight: FontWeight.bold,
+                                                            ),
+                                                            overflow: TextOverflow.ellipsis,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    );
+                                                  }).toList(),
+
+                                                  onChanged: (newValue) {
+                                                    if (newValue == null) return;
+
+                                                    setState(() {
+                                                      selectedWind = newValue;
+
+                                                      windValues = Calculatewind(
+                                                        rwyidRef: rwyId,
+                                                        windRef: windValue,
+                                                        windpickerRef: selectedWind,
+                                                        operation: '',
+                                                      )();
+
+                                                      windValue = windValues?[0];
+                                                      headtail = windValues?[1];
+                                                      crosswind = windValues?[2];
+
+                                                      updateOpld();
+                                                    });
+                                                  },
                                                 );
-                                              }).toList(),
-
-                                              onChanged: (newValue) {
-                                                if (newValue == null) return;
-
-                                                setState(() {
-                                                  selectedWind = newValue;
-
-                                                  windValues = Calculatewind(
-                                                    rwyidRef: rwyId,
-                                                    windRef: windValue,
-                                                    windpickerRef: selectedWind,
-                                                    operation: '',
-                                                  )();
-
-                                                  windValue = windValues?[0];
-                                                  headtail = windValues?[1];
-                                                  crosswind = windValues?[2];
-
-                                                  updateOpld();
-                                                });
                                               },
                                             ),
-                                          ),                                       
+                                          ),                                                                                 
                                         ],
                                       ),
                                         const SizedBox(width: 25.0),
@@ -3243,7 +3366,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                         children: [
 
                                           if (selectedAirport != 'XXX') ...[
-                                            const SizedBox(height: 12),
+                                            //const SizedBox(height: 12),
                                             Row(
                                               children: [
                                                 Text(

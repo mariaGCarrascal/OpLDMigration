@@ -17759,10 +17759,6 @@
 
 	</aircraft>
 
-
-
-
-
 	<aircraft id="737-800W/CFM56-7B26" label="737-800W/CFM56-7B26">
 		<landingCondition id="ADMIN data 800Wglt">
 			<aircraftID>737-800W/CFM56-7B26</aircraftID>
@@ -35524,9 +35520,6 @@
 		</landingCondition>
 	</aircraft>
 
-
-
-
 	<aircraft id="737-800WSFP1/CFM56-7B26" label="737-800WSFP1/CFM56-7B26">
 		<landingCondition id="ADMIN data 800Wsf">
 			<aircraftID>737-800WSFP1/CFM56-7B26</aircraftID>
@@ -53249,9 +53242,6 @@
 
 		</landingCondition>
 	</aircraft>
-
-
-
 
 	<aircraft id="737-9/LEAP-1B28" label="737-9/LEAP-1B28">
 		<landingCondition id="ADMIN data 9max">
@@ -74459,9 +74449,6 @@
 		</landingCondition>
 	</aircraft>
 
-
-
-
 	<aircraft id="737-8/LEAP-1B27" label="737-8/LEAP-1B27">
 		<landingCondition id="ADMIN data 8max">
 			<aircraftID>737-8/LEAP-1B27</aircraftID>
@@ -74537,6 +74524,7 @@
 				<perHowManyAirspeedUnitsAboveVref>5</perHowManyAirspeedUnitsAboveVref> 
 			</airspeed>
         </baselineReferenceDetails>
+
 
 //***********************
 

@@ -15,13 +15,20 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     return MaterialApp(
-      title: 'OpLD Demo',
-      //theme: DarkTheme().theme,
+      title: 'OpLD App',
+      // theme: DarkTheme().theme,
       darkTheme: DarkTheme.theme,
       themeMode: ThemeMode.system,
       debugShowCheckedModeBanner: false,
+      builder: (context, child) {
+        return MediaQuery(
+          data: MediaQuery.of(context).copyWith(
+            textScaler: const TextScaler.linear(1.0),
+          ),
+          child: child!,
+        );
+      },
       home: const HomePage(),
     );
   }

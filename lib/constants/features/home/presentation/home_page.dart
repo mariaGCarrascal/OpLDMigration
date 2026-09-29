@@ -272,20 +272,51 @@ class _HomePageState extends State<HomePage> {
                       ),
 
                       items: aircraftTypes.map((String value) {
-                        return DropdownMenuItem<String>(
-                          value: value,
-                          child: Text(
-                            value,
-                            style: TextStyle(
-                              color: AppColors.placeholderDark,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16,
+                          final bool isSelected = value == selectedAircraftType;
+                          return DropdownMenuItem<String>(
+                            value: value,
+                            child: Container(
+                              width: double.infinity,
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 12,
+                                vertical: 10,
+                              ),
+                              decoration: BoxDecoration(
+                                color: isSelected
+                                    ? AppColors.white.withOpacity(0.15)
+                                    : Colors.transparent,
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                              child: Text(
+                                value,
+                                style: TextStyle(
+                                  color: AppColors.placeholderDark,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16,
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                              ),
                             ),
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        );
-                      }).toList(),
+                          );
+                        }).toList(),
 
+                      selectedItemBuilder: (BuildContext context) {
+                        return aircraftTypes.map((String value) {
+                          return Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              value,
+                              style: TextStyle(
+                                color: AppColors.placeholderDark,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          );
+                        }).toList();
+                      },
+                      
                       onChanged: (newValue) {
                         setState(() {
                           selectedAircraftType = newValue;
@@ -379,19 +410,50 @@ class _HomePageState extends State<HomePage> {
                       ),
 
                       items: landingTypes.map((String value) {
+                        final bool isSelected = value == selectedLandingType;
                         return DropdownMenuItem<String>(
                           value: value,
-                          child: Text(
-                            value,
-                            style: TextStyle(
-                              color: AppColors.placeholderDark,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16,
+                          child: Container(
+                            width: double.infinity,
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 12,
+                              vertical: 10,
                             ),
-                            overflow: TextOverflow.ellipsis,
+                            decoration: BoxDecoration(
+                              color: isSelected
+                                  ? AppColors.white.withOpacity(0.15)
+                                  : Colors.transparent,
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                            child: Text(
+                              value,
+                              style: TextStyle(
+                                color: AppColors.placeholderDark,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
                           ),
                         );
                       }).toList(),
+
+                      selectedItemBuilder: (BuildContext context) {
+                        return landingTypes.map((String value) {
+                          return Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              value,
+                              style: TextStyle(
+                                color: AppColors.placeholderDark,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          );
+                        }).toList();
+                      },
 
                       onChanged: (newValue) {
                         setState(() {
@@ -411,7 +473,7 @@ class _HomePageState extends State<HomePage> {
                       },
                     ),
 
-                    // Configuration Type
+                    // Label Configuration Type Selection
                     if (selectedLandingType == 'Non-Normal') ...[
                       const Padding(
                         padding: EdgeInsets.only(top: 20.0),
@@ -495,19 +557,50 @@ class _HomePageState extends State<HomePage> {
                         ),
 
                         items: configurationTypes.map((String value) {
+                          final bool isSelected = value == selectedConfigurationType;
                           return DropdownMenuItem<String>(
                             value: value,
-                            child: Text(
-                              value,
-                              style: TextStyle(
-                                color: AppColors.placeholderDark,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16,
+                            child: Container(
+                              width: double.infinity,
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 12,
+                                vertical: 10,
                               ),
-                              overflow: TextOverflow.ellipsis,
+                              decoration: BoxDecoration(
+                                color: isSelected
+                                    ? AppColors.white.withOpacity(0.15)
+                                    : Colors.transparent,
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                              child: Text(
+                                value,
+                                style: TextStyle(
+                                  color: AppColors.placeholderDark,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16,
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                              ),
                             ),
                           );
                         }).toList(),
+
+                        selectedItemBuilder: (BuildContext context) {
+                          return configurationTypes.map((String value) {
+                            return Align(
+                              alignment: Alignment.centerLeft,
+                              child: Text(
+                                value,
+                                style: TextStyle(
+                                  color: AppColors.placeholderDark,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16,
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            );
+                          }).toList();
+                        },
 
                         onChanged: (newValue) {
                           setState(() {
@@ -515,7 +608,7 @@ class _HomePageState extends State<HomePage> {
                             searchFlaps();
                           });
                         },
-                      ),                                      
+                      ),                                                         
                     ],
  
                     // Label Airport Selection
@@ -658,16 +751,25 @@ class _HomePageState extends State<HomePage> {
                         },
 
                         itemBuilder: (context, item, isDisabled, isSelected) {
-                          return Padding(
+                          final bool isCurrentItem = item == selectedAirportType;
+                          return Container(
+                            width: double.infinity,
                             padding: const EdgeInsets.symmetric(
                               horizontal: 10,
                               vertical: 12,
+                            ),
+                            decoration: BoxDecoration(
+                              color: isCurrentItem
+                                  ? AppColors.white.withOpacity(0.15)
+                                  : Colors.transparent,
+                              borderRadius: BorderRadius.circular(4),
                             ),
                             child: Text(
                               item,
                               style: TextStyle(
                                 color: AppColors.placeholderDark,
                                 fontSize: 16,
+                                fontWeight: FontWeight.bold,
                               ),
                             ),
                           );
@@ -691,14 +793,14 @@ class _HomePageState extends State<HomePage> {
                           selectedAirportType = newValue;
                         });
                       },
-                    ),                                                                 
+                    ),                                  
                   ],
                 ),
               ),
 
               const SizedBox(height: 50),
 
-              // Boton GO para ir a la pantalla de calculaPage
+              // Boton GO para ir a la pantalla de CalculatorPage
               Center(
                 child: ElevatedButton(
                   onPressed: _isReady ? _onGoPressed : null,

@@ -2562,7 +2562,7 @@ class Airportdata {
     'GOOD TO MEDIUM':["RCC 4", "- (-15°C and colder) OAT: Compacted Snow."],
     'MEDIUM':["RCC 3", "- Sippery when wet (wet runway), “Dry or Wet Snow” (any depth) over Compacted Snow.", "- Greater than 1/8\" (3mm) depth of: “Dry Snow, Wet Snow”", "- Warmer than -15°C OAT: “Compacted snow”."],
     'MEDIUM TO POOR': ["RCC 2", "- Greater than 1/8\" (3mm) depth of: “Water (includes Water Patches and Flooded), Slush”."],
-    'POOR':["RCC 2", "- Ice."],
+    'POOR':["RCC 1", "- Ice."],
   };
 
 }
