@@ -12,11 +12,14 @@ class Formatslope{
       final number = double.tryParse(slopeRef ?? '');
       if (number == null) return slopeRef ?? '0';
 
-      if (airportRef != 'XXX') {
-        return number.toStringAsFixed(2);
+      if (number % 1 == 0) {
+        return number.toInt().toString();
       }
 
-      return number == number.toInt() ? number.toInt().toString() : number.toString();
+      return airportRef != 'XXX'
+          ? number.toStringAsFixed(2)
+          : number.toString();
+
     } catch (e) {
       return '0'; 
     }

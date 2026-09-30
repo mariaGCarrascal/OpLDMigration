@@ -360,7 +360,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                     color: AppColors.white,
                                   ),
                                 ),
-                                const SizedBox(width: 20.0),
+                                const SizedBox(width: 25.0),
                                 Text(
                                   '(${rwyId!.trim()}°)',
                                   style: TextStyle(
@@ -369,7 +369,8 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                     color: AppColors.textColor3Dark,
                                   ),
                                 ),
-                                SizedBox(width: screenSize.width * 0.10),
+                                SizedBox(width: screenSize.width * 0.05),
+                                SizedBox(width: 2),
                                 Expanded(
                                   child: DropdownButtonFormField2<String>(
                                     isExpanded: true,
@@ -700,7 +701,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                   color: AppColors.white, 
                                 ),
                               ),
-                              SizedBox(width: screenSize.width * 0.08),
+                              SizedBox(width: screenSize.width * 0.05),
                               Expanded(
                                 child: DropdownButtonFormField2<String>(
                                   isExpanded: true,
@@ -1245,7 +1246,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                     const SizedBox(width: 15),
 
                                     SizedBox(
-                                      width: 110,
+                                      width: 120,
                                       height: 50,
                                       child: Stack(
                                         children: [
@@ -1450,7 +1451,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                   fontSize: 15, 
                                 ),
                               ),
-                              SizedBox(width: screenSize.width * 0.10),
+                              SizedBox(width: screenSize.width * 0.07),
                               if(selectedLanding == 'Normal') ...[
                                 Expanded(
                                   child: DropdownButtonFormField2<String>(
@@ -1727,7 +1728,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                               ),
 
                               if (checkAutobreak == 'YES') ...[
-                               SizedBox(width: screenSize.width * 0.03),
+                               SizedBox(width: screenSize.width * 0.02),
                                Text(
                                     AppStrings.caution,
                                     textAlign: TextAlign.center,
@@ -1737,9 +1738,9 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                     ),
                                     overflow: TextOverflow.ellipsis,
                                 ),
-                                SizedBox(width: screenSize.width * 0.05),
+                                SizedBox(width: screenSize.width * 0.02),
                               ] else ...[
-                                SizedBox(width: screenSize.width * 0.13),
+                                SizedBox(width: screenSize.width * 0.05),
                               ],
                             
                               Expanded(
@@ -1888,7 +1889,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                   fontSize: 15, 
                                 ),
                               ),
-                              SizedBox(width: screenSize.width * 0.13),
+                              SizedBox(width: screenSize.width * 0.05),
                               SizedBox(width:4),
                               Expanded(
                                 child: DropdownButtonFormField2<String>(
@@ -2035,8 +2036,8 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                   fontSize: 15, 
                                 ),
                               ),
-                              SizedBox(width: screenSize.width * 0.12),
                               if (selectedLanding != 'Non-Normal') ...[
+                                SizedBox(width: screenSize.width * 0.04),
                                 SizedBox(width: 4),
                                 Expanded(
                                   child: DropdownButtonFormField2<String>(
@@ -2157,7 +2158,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                   ),                               
                                 )
                               ] else ...[
-                                SizedBox(width: screenSize.width * 0.10),
+                                SizedBox(width: screenSize.width * 0.22),
                                 Expanded (child: Text(
                                     AppStrings.na,
                                     style: TextStyle(
@@ -2282,7 +2283,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                             style: TextStyle(color: AppColors.white),
                                           ),
                                         ),
-                                        const SizedBox(width: 10.0),
+                                        const SizedBox(width: 20.0),
                                         Expanded(
                                           child: Text(
                                           '$vRef ${AppStrings.kt}',
@@ -3380,7 +3381,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                                 ),
 
                                                 SizedBox(
-                                                  width: screenSize.width * 0.12,
+                                                  width: screenSize.width * 0.10,
                                                 ),
 
                                                 Text(
@@ -3472,7 +3473,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                             ],
                                           ),
 
-                                          const SizedBox(height: 15),
+                                          const SizedBox(height: 5),
 
                                           ...rwyNote!.map(
                                             (nota) => Padding(
