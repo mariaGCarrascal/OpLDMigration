@@ -122,7 +122,7 @@ class _HomePageState extends State<HomePage> {
         .expand((aircraft) => aircraft.findAllElements('landingCondition'))
         .where((lc) => lc.getAttribute('label')?.toUpperCase() == 'NON-NORMAL')
         .expand((lc) => lc.findAllElements('nonNormalConfiguration'))
-        .map((e) => e.getAttribute('longLabel'))
+        .map((e) => e.getAttribute('id'))
         .whereType<String>()
         .toSet()
         .toList();

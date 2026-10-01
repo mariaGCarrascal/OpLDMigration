@@ -20484,7 +20484,7 @@
 
 		<landingCondition id="NON-NORMAL LANDING" label="Non-Normal" >
 
-			<nonNormalConfiguration id= 'Airspeed Unreliable (Flaps 15) ' longLabel= 'Airspeed Unreliable (Flaps 15) ' shortLabel= 'Airspeed Unreliable (Flaps 15) '
+			<nonNormalConfiguration id= 'Airspeed Unreliable (Flaps 15) ' longLabel= 'Airspeed Unreliable (Flaps 15)' shortLabel= 'Airspeed Unreliable (Flaps 15) '
 								flapID= 'Flaps 15' flapValue = '15' flapLabel= 'FLAPS 15'
 								VrefID= 'Vref15'                  VrefLabel= 'VREF15' >
 

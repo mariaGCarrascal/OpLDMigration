@@ -256,8 +256,11 @@ class _CalculatorPageState extends State<CalculatorPage> {
     vMax = defaultAircraft?[8];
     reversersList = Loadreversers(aircraftRef: selectedAircraft, landingRef: selectedLanding, configurationRef: selectedConfiguration, flapRef: selectedFlaps, conditionRef: selectedCondition)();
     selectedReversers = defaultAircraft![16];
+    //Suecede error aqui por el max8 por que los airspeed unriabible son diferentes.
+    //Se intenta conseguir el 1er valor, pero esta vacia la lista, probablemente las demas tambien.
+    //selectedItem = items.isNotEmpty ? items[0] : defaultItem;
     if (!reversersList!.contains(selectedReversers)) {
-      selectedReversers = reversersList![0];
+      selectedReversers = reversersList!.first;
     }
 
     updateOpld();
