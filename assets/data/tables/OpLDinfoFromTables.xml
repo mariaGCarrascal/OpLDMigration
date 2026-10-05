@@ -11346,7 +11346,6 @@
 						<autobrake2 id='AUTOBRAKE 2' label='Autobrake 2'> 390 </autobrake2>
 					</approachSpeedAdjustment>
 					<!--F15-DRY-->
-
 					<!--F15-DRY-->
 					<ReverserInoperativeAdjustment id='ONE REV INOP ADJ' AmountOfRevInop = '1' >
 						<maxManual id='MAX MANUAL' label='A/B Max Manual'> 0 </maxManual>
@@ -11444,7 +11443,6 @@
 						<autobrake2 id='AUTOBRAKE 2' label='Autobrake 2'> 390 </autobrake2>
 					</approachSpeedAdjustment>
 					<!--F15-GOOD-->
-
 					<!--F15-GOOD-->
 					<ReverserInoperativeAdjustment id='ONE REV INOP ADJ' AmountOfRevInop = '1' >
 						<maxManual id='MAX MANUAL' label='A/B Max Manual'> 0 </maxManual>
@@ -11640,7 +11638,6 @@
 						<autobrake3 id='AUTOBRAKE 3' label='Autobrake 3'> 280 </autobrake3>
 					</approachSpeedAdjustment>
 					<!--F15-MEDIUM-->
-
 					<!--F15-MEDIUM-->
 					<ReverserInoperativeAdjustment id='ONE REV INOP ADJ' AmountOfRevInop = '1' >
 						<maxManual id='MAX MANUAL' label='A/B Max Manual'> 0 </maxManual>
@@ -11738,7 +11735,6 @@
 						<autobrake3 id='AUTOBRAKE 3' label='Autobrake 3'> 300 </autobrake3>
 					</approachSpeedAdjustment>
 					<!--F15-MEDIUM-to-POOR-->
-
 					<!--F15-MEDIUM-to-POOR-->
 					<ReverserInoperativeAdjustment id='ONE REV INOP ADJ' AmountOfRevInop = '1' >
 						<maxManual id='MAX MANUAL' label='A/B Max Manual'> 0 </maxManual>
@@ -11836,7 +11832,6 @@
 						<autobrake3 id='AUTOBRAKE 3' label='Autobrake 3'> 310 </autobrake3>
 					</approachSpeedAdjustment>
 					<!--F15-POOR-->
-
 					<!--F15-POOR-->
 					<ReverserInoperativeAdjustment id='ONE REV INOP ADJ' AmountOfRevInop = '1' >
 						<maxManual id='MAX MANUAL' label='A/B Max Manual'> 0 </maxManual>
@@ -12077,7 +12072,6 @@
 						<autobrake2 id='AUTOBRAKE 2' label='Autobrake 2'> 370 </autobrake2>
 					</approachSpeedAdjustment>
 					<!--F30-GOOD-->
-
 					<!--F30-GOOD-->
 					<ReverserInoperativeAdjustment id='ONE REV INOP ADJ' AmountOfRevInop = '1' >
 						<maxManual id='MAX MANUAL' label='A/B Max Manual'> 0 </maxManual>
@@ -12175,7 +12169,6 @@
 						<autobrake2 id='AUTOBRAKE 2' label='Autobrake 2'> 370 </autobrake2>
 					</approachSpeedAdjustment>
 					<!--F30-GOOD-to-MEDIUM-->
-
 					<!--F30-GOOD-to-MEDIUM-->
 					<ReverserInoperativeAdjustment id='ONE REV INOP ADJ' AmountOfRevInop = '1' >
 						<maxManual id='MAX MANUAL' label='A/B Max Manual'> 0 </maxManual>
@@ -12273,7 +12266,6 @@
 						<autobrake3 id='AUTOBRAKE 3' label='Autobrake 3'> 270 </autobrake3>
 					</approachSpeedAdjustment>
 					<!--F30-MEDIUM-->
-
 					<!--F30-MEDIUM-->
 					<ReverserInoperativeAdjustment id='ONE REV INOP ADJ' AmountOfRevInop = '1' >
 						<maxManual id='MAX MANUAL' label='A/B Max Manual'> 0 </maxManual>
@@ -12371,7 +12363,6 @@
 						<autobrake3 id='AUTOBRAKE 3' label='Autobrake 3'> 290 </autobrake3>
 					</approachSpeedAdjustment>
 					<!--F30-MEDIUM-to-POOR-->
-
 					<!--F30-MEDIUM-to-POOR-->
 					<ReverserInoperativeAdjustment id='ONE REV INOP ADJ' AmountOfRevInop = '1' >
 						<maxManual id='MAX MANUAL' label='A/B Max Manual'> 0 </maxManual>
@@ -12469,7 +12460,6 @@
 						<autobrake3 id='AUTOBRAKE 3' label='Autobrake 3'> 300 </autobrake3>
 					</approachSpeedAdjustment>
 					<!--F30-POOR-->
-
 					<!--F30-POOR-->
 					<ReverserInoperativeAdjustment id='ONE REV INOP ADJ' AmountOfRevInop = '1' >
 						<maxManual id='MAX MANUAL' label='A/B Max Manual'> 0 </maxManual>
@@ -29118,7 +29108,6 @@
 						<autobrake2 id='AUTOBRAKE 2' label='Autobrake 2'> 400 </autobrake2>
 					</approachSpeedAdjustment>
 					<!--F15-DRY-->
-
 					<!--F15-DRY-->
 					<ReverserInoperativeAdjustment id='ONE REV INOP ADJ' AmountOfRevInop = '1' >
 						<maxManual id='MAX MANUAL' label='A/B Max Manual'> 0 </maxManual>
@@ -29216,7 +29205,6 @@
 						<autobrake2 id='AUTOBRAKE 2' label='Autobrake 2'> 400 </autobrake2>
 					</approachSpeedAdjustment>
 					<!--F15-GOOD-->
-
 					<!--F15-GOOD-->
 					<ReverserInoperativeAdjustment id='ONE REV INOP ADJ' AmountOfRevInop = '1' >
 						<maxManual id='MAX MANUAL' label='A/B Max Manual'> 0 </maxManual>
@@ -29314,7 +29302,6 @@
 						<autobrake2 id='AUTOBRAKE 2' label='Autobrake 2'> 400 </autobrake2>
 					</approachSpeedAdjustment>
 					<!--F15-GOOD-to-MEDIUM-->
-
 					<!--F15-GOOD-to-MEDIUM-->
 					<ReverserInoperativeAdjustment id='ONE REV INOP ADJ' AmountOfRevInop = '1' >
 						<maxManual id='MAX MANUAL' label='A/B Max Manual'> 0 </maxManual>
@@ -29412,7 +29399,6 @@
 						<autobrake3 id='AUTOBRAKE 3' label='Autobrake 3'> 330 </autobrake3>
 					</approachSpeedAdjustment>
 					<!--F15-MEDIUM-->
-
 					<!--F15-MEDIUM-->
 					<ReverserInoperativeAdjustment id='ONE REV INOP ADJ' AmountOfRevInop = '1' >
 						<maxManual id='MAX MANUAL' label='A/B Max Manual'> 0 </maxManual>
@@ -29510,7 +29496,6 @@
 						<autobrake3 id='AUTOBRAKE 3' label='Autobrake 3'> 330 </autobrake3>
 					</approachSpeedAdjustment>
 					<!--F15-MEDIUM-to-POOR-->
-
 					<!--F15-MEDIUM-to-POOR-->
 					<ReverserInoperativeAdjustment id='ONE REV INOP ADJ' AmountOfRevInop = '1' >
 						<maxManual id='MAX MANUAL' label='A/B Max Manual'> 0 </maxManual>
@@ -29608,7 +29593,6 @@
 						<autobrake3 id='AUTOBRAKE 3' label='Autobrake 3'> 320 </autobrake3>
 					</approachSpeedAdjustment>
 					<!--F15-POOR-->
-
 					<!--F15-POOR-->
 					<ReverserInoperativeAdjustment id='ONE REV INOP ADJ' AmountOfRevInop = '1' >
 						<maxManual id='MAX MANUAL' label='A/B Max Manual'> 0 </maxManual>
@@ -29751,7 +29735,6 @@
 						<autobrake2 id='AUTOBRAKE 2' label='Autobrake 2'> 360 </autobrake2>
 					</approachSpeedAdjustment>
 					<!--F30-DRY-->
-
 					<!--F30-DRY-->
 					<ReverserInoperativeAdjustment id='ONE REV INOP ADJ' AmountOfRevInop = '1' >
 						<maxManual id='MAX MANUAL' label='A/B Max Manual'> 0 </maxManual>
@@ -29849,7 +29832,6 @@
 						<autobrake2 id='AUTOBRAKE 2' label='Autobrake 2'> 360 </autobrake2>
 					</approachSpeedAdjustment>
 					<!--F30-GOOD-->
-
 					<!--F30-GOOD-->
 					<ReverserInoperativeAdjustment id='ONE REV INOP ADJ' AmountOfRevInop = '1' >
 						<maxManual id='MAX MANUAL' label='A/B Max Manual'> 0 </maxManual>
@@ -29947,7 +29929,6 @@
 						<autobrake2 id='AUTOBRAKE 2' label='Autobrake 2'> 360 </autobrake2>
 					</approachSpeedAdjustment>
 					<!--F30-GOOD-to-MEDIUM-->
-
 					<!--F30-GOOD-to-MEDIUM-->
 					<ReverserInoperativeAdjustment id='ONE REV INOP ADJ' AmountOfRevInop = '1' >
 						<maxManual id='MAX MANUAL' label='A/B Max Manual'> 0 </maxManual>
@@ -30045,7 +30026,6 @@
 						<autobrake3 id='AUTOBRAKE 3' label='Autobrake 3'> 300 </autobrake3>
 					</approachSpeedAdjustment>
 					<!--F30-MEDIUM-->
-
 					<!--F30-MEDIUM-->
 					<ReverserInoperativeAdjustment id='ONE REV INOP ADJ' AmountOfRevInop = '1' >
 						<maxManual id='MAX MANUAL' label='A/B Max Manual'> 0 </maxManual>
@@ -30143,7 +30123,6 @@
 						<autobrake3 id='AUTOBRAKE 3' label='Autobrake 3'> 300 </autobrake3>
 					</approachSpeedAdjustment>
 					<!--F30-MEDIUM-to-POOR-->
-
 					<!--F30-MEDIUM-to-POOR-->
 					<ReverserInoperativeAdjustment id='ONE REV INOP ADJ' AmountOfRevInop = '1' >
 						<maxManual id='MAX MANUAL' label='A/B Max Manual'> 0 </maxManual>
@@ -30241,7 +30220,6 @@
 						<autobrake3 id='AUTOBRAKE 3' label='Autobrake 3'> 290 </autobrake3>
 					</approachSpeedAdjustment>
 					<!--F30-POOR-->
-
 					<!--F30-POOR-->
 					<ReverserInoperativeAdjustment id='ONE REV INOP ADJ' AmountOfRevInop = '1' >
 						<maxManual id='MAX MANUAL' label='A/B Max Manual'> 0 </maxManual>
@@ -46844,7 +46822,6 @@
 						<autobrake2 id='AUTOBRAKE 2' label='Autobrake 2'> 370 </autobrake2>
 					</approachSpeedAdjustment>
 					<!--F15-DRY-->
-
 					<!--F15-DRY-->
 					<ReverserInoperativeAdjustment id='ONE REV INOP ADJ' AmountOfRevInop = '1' >
 						<maxManual id='MAX MANUAL' label='A/B Max Manual'> 0 </maxManual>
@@ -46942,7 +46919,6 @@
 						<autobrake2 id='AUTOBRAKE 2' label='Autobrake 2'> 370 </autobrake2>
 					</approachSpeedAdjustment>
 					<!--F15-GOOD-->
-
 					<!--F15-GOOD-->
 					<ReverserInoperativeAdjustment id='ONE REV INOP ADJ' AmountOfRevInop = '1' >
 						<maxManual id='MAX MANUAL' label='A/B Max Manual'> 0 </maxManual>
@@ -47040,7 +47016,6 @@
 						<autobrake2 id='AUTOBRAKE 2' label='Autobrake 2'> 370 </autobrake2>
 					</approachSpeedAdjustment>
 					<!--F15-GOOD-to-MEDIUM-->
-
 					<!--F15-GOOD-to-MEDIUM-->
 					<ReverserInoperativeAdjustment id='ONE REV INOP ADJ' AmountOfRevInop = '1' >
 						<maxManual id='MAX MANUAL' label='A/B Max Manual'> 0 </maxManual>
@@ -47138,7 +47113,6 @@
 						<autobrake3 id='AUTOBRAKE 3' label='Autobrake 3'> 310 </autobrake3>
 					</approachSpeedAdjustment>
 					<!--F15-MEDIUM-->
-
 					<!--F15-MEDIUM-->
 					<ReverserInoperativeAdjustment id='ONE REV INOP ADJ' AmountOfRevInop = '1' >
 						<maxManual id='MAX MANUAL' label='A/B Max Manual'> 0 </maxManual>
@@ -47236,7 +47210,6 @@
 						<autobrake3 id='AUTOBRAKE 3' label='Autobrake 3'> 300 </autobrake3>
 					</approachSpeedAdjustment>
 					<!--F15-MEDIUM-to-POOR-->
-
 					<!--F15-MEDIUM-to-POOR-->
 					<ReverserInoperativeAdjustment id='ONE REV INOP ADJ' AmountOfRevInop = '1' >
 						<maxManual id='MAX MANUAL' label='A/B Max Manual'> 0 </maxManual>
@@ -47334,7 +47307,6 @@
 						<autobrake3 id='AUTOBRAKE 3' label='Autobrake 3'> 290 </autobrake3>
 					</approachSpeedAdjustment>
 					<!--F15-POOR-->
-
 					<!--F15-POOR-->
 					<ReverserInoperativeAdjustment id='ONE REV INOP ADJ' AmountOfRevInop = '1' >
 						<maxManual id='MAX MANUAL' label='A/B Max Manual'> 0 </maxManual>
@@ -47477,7 +47449,6 @@
 						<autobrake2 id='AUTOBRAKE 2' label='Autobrake 2'> 320 </autobrake2>
 					</approachSpeedAdjustment>
 					<!--F30-DRY-->
-
 					<!--F30-DRY-->
 					<ReverserInoperativeAdjustment id='ONE REV INOP ADJ' AmountOfRevInop = '1' >
 						<maxManual id='MAX MANUAL' label='A/B Max Manual'> 0 </maxManual>
@@ -47575,7 +47546,6 @@
 						<autobrake2 id='AUTOBRAKE 2' label='Autobrake 2'> 320 </autobrake2>
 					</approachSpeedAdjustment>
 					<!--F30-GOOD-->
-
 					<!--F30-GOOD-->
 					<ReverserInoperativeAdjustment id='ONE REV INOP ADJ' AmountOfRevInop = '1' >
 						<maxManual id='MAX MANUAL' label='A/B Max Manual'> 0 </maxManual>
@@ -47673,7 +47643,6 @@
 						<autobrake2 id='AUTOBRAKE 2' label='Autobrake 2'> 320 </autobrake2>
 					</approachSpeedAdjustment>
 					<!--F30-GOOD-to-MEDIUM-->
-
 					<!--F30-GOOD-to-MEDIUM-->
 					<ReverserInoperativeAdjustment id='ONE REV INOP ADJ' AmountOfRevInop = '1' >
 						<maxManual id='MAX MANUAL' label='A/B Max Manual'> 0 </maxManual>
@@ -47771,7 +47740,6 @@
 						<autobrake3 id='AUTOBRAKE 3' label='Autobrake 3'> 280 </autobrake3>
 					</approachSpeedAdjustment>
 					<!--F30-MEDIUM-->
-
 					<!--F30-MEDIUM-->
 					<ReverserInoperativeAdjustment id='ONE REV INOP ADJ' AmountOfRevInop = '1' >
 						<maxManual id='MAX MANUAL' label='A/B Max Manual'> 0 </maxManual>
@@ -47869,7 +47837,6 @@
 						<autobrake3 id='AUTOBRAKE 3' label='Autobrake 3'> 270 </autobrake3>
 					</approachSpeedAdjustment>
 					<!--F30-MEDIUM-to-POOR-->
-
 					<!--F30-MEDIUM-to-POOR-->
 					<ReverserInoperativeAdjustment id='ONE REV INOP ADJ' AmountOfRevInop = '1' >
 						<maxManual id='MAX MANUAL' label='A/B Max Manual'> 0 </maxManual>
@@ -47967,7 +47934,6 @@
 						<autobrake3 id='AUTOBRAKE 3' label='Autobrake 3'> 260 </autobrake3>
 					</approachSpeedAdjustment>
 					<!--F30-POOR-->
-
 					<!--F30-POOR-->
 					<ReverserInoperativeAdjustment id='ONE REV INOP ADJ' AmountOfRevInop = '1' >
 						<maxManual id='MAX MANUAL' label='A/B Max Manual'> 0 </maxManual>
@@ -65996,7 +65962,6 @@
 						<autobrake2 id='AUTOBRAKE 2' label='Autobrake 2'> 360 </autobrake2>
 					</approachSpeedAdjustment>
 					<!--F15-DRY-->
-
 					<!--F15-DRY-->
 					<ReverserInoperativeAdjustment id='ONE REV INOP ADJ' AmountOfRevInop = '1' >
 						<maxManual id='MAX MANUAL' label='A/B Max Manual'> 0 </maxManual>
@@ -66094,7 +66059,6 @@
 						<autobrake2 id='AUTOBRAKE 2' label='Autobrake 2'> 370 </autobrake2>
 					</approachSpeedAdjustment>
 					<!--F15-GOOD-->
-
 					<!--F15-GOOD-->
 					<ReverserInoperativeAdjustment id='ONE REV INOP ADJ' AmountOfRevInop = '1' >
 						<maxManual id='MAX MANUAL' label='A/B Max Manual'> 0 </maxManual>
@@ -66192,7 +66156,6 @@
 						<autobrake2 id='AUTOBRAKE 2' label='Autobrake 2'> 370 </autobrake2>
 					</approachSpeedAdjustment>
 					<!--F15-GOOD-to-MEDIUM-->
-
 					<!--F15-GOOD-to-MEDIUM-->
 					<ReverserInoperativeAdjustment id='ONE REV INOP ADJ' AmountOfRevInop = '1' >
 						<maxManual id='MAX MANUAL' label='A/B Max Manual'> 0 </maxManual>
@@ -66290,7 +66253,6 @@
 						<autobrake3 id='AUTOBRAKE 3' label='Autobrake 3'> 320 </autobrake3>
 					</approachSpeedAdjustment>
 					<!--F15-MEDIUM-->
-
 					<!--F15-MEDIUM-->
 					<ReverserInoperativeAdjustment id='ONE REV INOP ADJ' AmountOfRevInop = '1' >
 						<maxManual id='MAX MANUAL' label='A/B Max Manual'> 0 </maxManual>
@@ -66388,7 +66350,6 @@
 						<autobrake3 id='AUTOBRAKE 3' label='Autobrake 3'> 390 </autobrake3>
 					</approachSpeedAdjustment>
 					<!--F15-MEDIUM-to-POOR-->
-
 					<!--F15-MEDIUM-to-POOR-->
 					<ReverserInoperativeAdjustment id='ONE REV INOP ADJ' AmountOfRevInop = '1' >
 						<maxManual id='MAX MANUAL' label='A/B Max Manual'> 0 </maxManual>
@@ -66486,7 +66447,6 @@
 						<autobrake3 id='AUTOBRAKE 3' label='Autobrake 3'> 390 </autobrake3>
 					</approachSpeedAdjustment>
 					<!--F15-POOR-->
-
 					<!--F15-POOR-->
 					<ReverserInoperativeAdjustment id='ONE REV INOP ADJ' AmountOfRevInop = '1' >
 						<maxManual id='MAX MANUAL' label='A/B Max Manual'> 0 </maxManual>
@@ -66636,7 +66596,6 @@
 						<autobrake2 id='AUTOBRAKE 2' label='Autobrake 2'> 350 </autobrake2>
 					</approachSpeedAdjustment>
 					<!--F30-DRY-->
-
 					<!--F30-DRY-->
 					<ReverserInoperativeAdjustment id='ONE REV INOP ADJ' AmountOfRevInop = '1' >
 						<maxManual id='MAX MANUAL' label='A/B Max Manual'> 0 </maxManual>
@@ -66734,7 +66693,6 @@
 						<autobrake2 id='AUTOBRAKE 2' label='Autobrake 2'> 360 </autobrake2>
 					</approachSpeedAdjustment>
 					<!--F30-GOOD-->
-
 					<!--F30-GOOD-->
 					<ReverserInoperativeAdjustment id='ONE REV INOP ADJ' AmountOfRevInop = '1' >
 						<maxManual id='MAX MANUAL' label='A/B Max Manual'> 0 </maxManual>
@@ -66832,7 +66790,6 @@
 						<autobrake2 id='AUTOBRAKE 2' label='Autobrake 2'> 360 </autobrake2>
 					</approachSpeedAdjustment>
 					<!--F30-GOOD-to-MEDIUM-->
-
 					<!--F30-GOOD-to-MEDIUM-->
 					<ReverserInoperativeAdjustment id='ONE REV INOP ADJ' AmountOfRevInop = '1' >
 						<maxManual id='MAX MANUAL' label='A/B Max Manual'> 0 </maxManual>
@@ -66930,7 +66887,6 @@
 						<autobrake3 id='AUTOBRAKE 3' label='Autobrake 3'> 300 </autobrake3>
 					</approachSpeedAdjustment>
 					<!--F30-MEDIUM-->
-
 					<!--F30-MEDIUM-->
 					<ReverserInoperativeAdjustment id='ONE REV INOP ADJ' AmountOfRevInop = '1' >
 						<maxManual id='MAX MANUAL' label='A/B Max Manual'> 0 </maxManual>
@@ -67028,7 +66984,6 @@
 						<autobrake3 id='AUTOBRAKE 3' label='Autobrake 3'> 350 </autobrake3>
 					</approachSpeedAdjustment>
 					<!--F30-MEDIUM-to-POOR-->
-
 					<!--F30-MEDIUM-to-POOR-->
 					<ReverserInoperativeAdjustment id='ONE REV INOP ADJ' AmountOfRevInop = '1' >
 						<maxManual id='MAX MANUAL' label='A/B Max Manual'> 0 </maxManual>
@@ -67126,7 +67081,6 @@
 						<autobrake3 id='AUTOBRAKE 3' label='Autobrake 3'> 350 </autobrake3>
 					</approachSpeedAdjustment>
 					<!--F30-POOR-->
-
 					<!--F30-POOR-->
 					<ReverserInoperativeAdjustment id='ONE REV INOP ADJ' AmountOfRevInop = '1' >
 						<maxManual id='MAX MANUAL' label='A/B Max Manual'> 0 </maxManual>
@@ -87326,12 +87280,6 @@
             <autobrake2 id='AUTOBRAKE 2' label='Autobrake 2'> 370 </autobrake2>
           </approachSpeedAdjustment>
           <!--F15-DRY-->
-          <ReverserInoperativeAdjustment id='NO REV INOP ADJ' AmountOfRevInop = '0' >
-            <maxManual id='MAX MANUAL' label='A/B Max Manual'> 0 </maxManual>
-            <autobrakeMAX id='AUTOBRAKE MAX' label='Autobrake MAX'> 0 </autobrakeMAX>
-            <autobrake2 id='AUTOBRAKE 2' label='Autobrake 2'> 0 </autobrake2>
-          </ReverserInoperativeAdjustment>
-          <!--F15-DRY-->
           <ReverserInoperativeAdjustment id='ONE REV INOP ADJ' AmountOfRevInop = '1' >
             <maxManual id='MAX MANUAL' label='A/B Max Manual'> 0 </maxManual>
             <autobrakeMAX id='AUTOBRAKE MAX' label='Autobrake MAX'> 0 </autobrakeMAX>
@@ -87427,12 +87375,6 @@
             <autobrakeMAX id='AUTOBRAKE MAX' label='Autobrake MAX'> 320 </autobrakeMAX>
             <autobrake2 id='AUTOBRAKE 2' label='Autobrake 2'> 370 </autobrake2>
           </approachSpeedAdjustment>
-          <!--F15-GOOD-->
-          <ReverserInoperativeAdjustment id='NO REV INOP ADJ' AmountOfRevInop = '0' >
-            <maxManual id='MAX MANUAL' label='A/B Max Manual'> 0 </maxManual>
-            <autobrakeMAX id='AUTOBRAKE MAX' label='Autobrake MAX'> 0 </autobrakeMAX>
-            <autobrake2 id='AUTOBRAKE 2' label='Autobrake 2'> 0 </autobrake2>
-          </ReverserInoperativeAdjustment>
           <!--F15-GOOD-->
           <ReverserInoperativeAdjustment id='ONE REV INOP ADJ' AmountOfRevInop = '1' >
             <maxManual id='MAX MANUAL' label='A/B Max Manual'> 0 </maxManual>
@@ -87530,12 +87472,6 @@
             <autobrake2 id='AUTOBRAKE 2' label='Autobrake 2'> 370 </autobrake2>
           </approachSpeedAdjustment>
           <!--F15-GOOD to MEDIUM-->
-          <ReverserInoperativeAdjustment id='NO REV INOP ADJ' AmountOfRevInop = '0' >
-            <maxManual id='MAX MANUAL' label='A/B Max Manual'> 0 </maxManual>
-            <autobrakeMAX id='AUTOBRAKE MAX' label='Autobrake MAX'> 0 </autobrakeMAX>
-            <autobrake2 id='AUTOBRAKE 2' label='Autobrake 2'> 0 </autobrake2>
-          </ReverserInoperativeAdjustment>
-          <!--F15-GOOD to MEDIUM-->
           <ReverserInoperativeAdjustment id='ONE REV INOP ADJ' AmountOfRevInop = '1' >
             <maxManual id='MAX MANUAL' label='A/B Max Manual'> 0 </maxManual>
             <autobrakeMAX id='AUTOBRAKE MAX' label='Autobrake MAX'> 0 </autobrakeMAX>
@@ -87631,12 +87567,6 @@
             <autobrakeMAX id='AUTOBRAKE MAX' label='Autobrake MAX'> 310 </autobrakeMAX>
             <autobrake3 id='AUTOBRAKE 3' label='Autobrake 3'> 310 </autobrake3>
           </approachSpeedAdjustment>
-          <!--F15-MEDIUM-->
-          <ReverserInoperativeAdjustment id='NO REV INOP ADJ' AmountOfRevInop = '0' >
-            <maxManual id='MAX MANUAL' label='A/B Max Manual'> 0 </maxManual>
-            <autobrakeMAX id='AUTOBRAKE MAX' label='Autobrake MAX'> 0 </autobrakeMAX>
-            <autobrake3 id='AUTOBRAKE 3' label='Autobrake 3'> 0 </autobrake3>
-          </ReverserInoperativeAdjustment>
           <!--F15-MEDIUM-->
           <ReverserInoperativeAdjustment id='ONE REV INOP ADJ' AmountOfRevInop = '1' >
             <maxManual id='MAX MANUAL' label='A/B Max Manual'> 0 </maxManual>
@@ -87734,12 +87664,6 @@
             <autobrake3 id='AUTOBRAKE 3' label='Autobrake 3'> 380 </autobrake3>
           </approachSpeedAdjustment>
           <!--F15-MEDIUM to POOR-->
-          <ReverserInoperativeAdjustment id='NO REV INOP ADJ' AmountOfRevInop = '0' >
-            <maxManual id='MAX MANUAL' label='A/B Max Manual'> 0 </maxManual>
-            <autobrakeMAX id='AUTOBRAKE MAX' label='Autobrake MAX'> 0 </autobrakeMAX>
-            <autobrake3 id='AUTOBRAKE 3' label='Autobrake 3'> 0 </autobrake3>
-          </ReverserInoperativeAdjustment>
-          <!--F15-MEDIUM to POOR-->
           <ReverserInoperativeAdjustment id='ONE REV INOP ADJ' AmountOfRevInop = '1' >
             <maxManual id='MAX MANUAL' label='A/B Max Manual'> 0 </maxManual>
             <autobrakeMAX id='AUTOBRAKE MAX' label='Autobrake MAX'> 0 </autobrakeMAX>
@@ -87835,12 +87759,6 @@
             <autobrakeMAX id='AUTOBRAKE MAX' label='Autobrake MAX'> 380 </autobrakeMAX>
             <autobrake3 id='AUTOBRAKE 3' label='Autobrake 3'> 380 </autobrake3>
           </approachSpeedAdjustment>
-          <!--F15-POOR-->
-          <ReverserInoperativeAdjustment id='NO REV INOP ADJ' AmountOfRevInop = '0' >
-            <maxManual id='MAX MANUAL' label='A/B Max Manual'> 0 </maxManual>
-            <autobrakeMAX id='AUTOBRAKE MAX' label='Autobrake MAX'> 0 </autobrakeMAX>
-            <autobrake3 id='AUTOBRAKE 3' label='Autobrake 3'> 0 </autobrake3>
-          </ReverserInoperativeAdjustment>
           <!--F15-POOR-->
           <ReverserInoperativeAdjustment id='ONE REV INOP ADJ' AmountOfRevInop = '1' >
             <maxManual id='MAX MANUAL' label='A/B Max Manual'> 0 </maxManual>
@@ -87991,12 +87909,6 @@
             <autobrake2 id='AUTOBRAKE 2' label='Autobrake 2'> 350 </autobrake2>
           </approachSpeedAdjustment>
           <!--F30-DRY-->
-          <ReverserInoperativeAdjustment id='NO REV INOP ADJ' AmountOfRevInop = '0' >
-            <maxManual id='MAX MANUAL' label='A/B Max Manual'> 0 </maxManual>
-            <autobrakeMAX id='AUTOBRAKE MAX' label='Autobrake MAX'> 0 </autobrakeMAX>
-            <autobrake2 id='AUTOBRAKE 2' label='Autobrake 2'> 0 </autobrake2>
-          </ReverserInoperativeAdjustment>
-          <!--F30-DRY-->
           <ReverserInoperativeAdjustment id='ONE REV INOP ADJ' AmountOfRevInop = '1' >
             <maxManual id='MAX MANUAL' label='A/B Max Manual'> 0 </maxManual>
             <autobrakeMAX id='AUTOBRAKE MAX' label='Autobrake MAX'> 0 </autobrakeMAX>
@@ -88092,12 +88004,6 @@
             <autobrakeMAX id='AUTOBRAKE MAX' label='Autobrake MAX'> 290 </autobrakeMAX>
             <autobrake2 id='AUTOBRAKE 2' label='Autobrake 2'> 360 </autobrake2>
           </approachSpeedAdjustment>
-          <!--F30-GOOD-->
-          <ReverserInoperativeAdjustment id='NO REV INOP ADJ' AmountOfRevInop = '0' >
-            <maxManual id='MAX MANUAL' label='A/B Max Manual'> 0 </maxManual>
-            <autobrakeMAX id='AUTOBRAKE MAX' label='Autobrake MAX'> 0 </autobrakeMAX>
-            <autobrake2 id='AUTOBRAKE 2' label='Autobrake 2'> 0 </autobrake2>
-          </ReverserInoperativeAdjustment>
           <!--F30-GOOD-->
           <ReverserInoperativeAdjustment id='ONE REV INOP ADJ' AmountOfRevInop = '1' >
             <maxManual id='MAX MANUAL' label='A/B Max Manual'> 0 </maxManual>
@@ -88195,12 +88101,6 @@
             <autobrake2 id='AUTOBRAKE 2' label='Autobrake 2'> 360 </autobrake2>
           </approachSpeedAdjustment>
           <!--F30-GOOD to MEDIUM-->
-          <ReverserInoperativeAdjustment id='NO REV INOP ADJ' AmountOfRevInop = '0' >
-            <maxManual id='MAX MANUAL' label='A/B Max Manual'> 0 </maxManual>
-            <autobrakeMAX id='AUTOBRAKE MAX' label='Autobrake MAX'> 0 </autobrakeMAX>
-            <autobrake2 id='AUTOBRAKE 2' label='Autobrake 2'> 0 </autobrake2>
-          </ReverserInoperativeAdjustment>
-          <!--F30-GOOD to MEDIUM-->
           <ReverserInoperativeAdjustment id='ONE REV INOP ADJ' AmountOfRevInop = '1' >
             <maxManual id='MAX MANUAL' label='A/B Max Manual'> 0 </maxManual>
             <autobrakeMAX id='AUTOBRAKE MAX' label='Autobrake MAX'> 0 </autobrakeMAX>
@@ -88296,12 +88196,6 @@
             <autobrakeMAX id='AUTOBRAKE MAX' label='Autobrake MAX'> 290 </autobrakeMAX>
             <autobrake3 id='AUTOBRAKE 3' label='Autobrake 3'> 290 </autobrake3>
           </approachSpeedAdjustment>
-          <!--F30-MEDIUM-->
-          <ReverserInoperativeAdjustment id='NO REV INOP ADJ' AmountOfRevInop = '0' >
-            <maxManual id='MAX MANUAL' label='A/B Max Manual'> 0 </maxManual>
-            <autobrakeMAX id='AUTOBRAKE MAX' label='Autobrake MAX'> 0 </autobrakeMAX>
-            <autobrake3 id='AUTOBRAKE 3' label='Autobrake 3'> 0 </autobrake3>
-          </ReverserInoperativeAdjustment>
           <!--F30-MEDIUM-->
           <ReverserInoperativeAdjustment id='ONE REV INOP ADJ' AmountOfRevInop = '1' >
             <maxManual id='MAX MANUAL' label='A/B Max Manual'> 0 </maxManual>
@@ -88399,12 +88293,6 @@
             <autobrake3 id='AUTOBRAKE 3' label='Autobrake 3'> 350 </autobrake3>
           </approachSpeedAdjustment>
           <!--F30-MEDIUM to POOR-->
-          <ReverserInoperativeAdjustment id='NO REV INOP ADJ' AmountOfRevInop = '0' >
-            <maxManual id='MAX MANUAL' label='A/B Max Manual'> 0 </maxManual>
-            <autobrakeMAX id='AUTOBRAKE MAX' label='Autobrake MAX'> 0 </autobrakeMAX>
-            <autobrake3 id='AUTOBRAKE 3' label='Autobrake 3'> 0 </autobrake3>
-          </ReverserInoperativeAdjustment>
-          <!--F30-MEDIUM to POOR-->
           <ReverserInoperativeAdjustment id='ONE REV INOP ADJ' AmountOfRevInop = '1' >
             <maxManual id='MAX MANUAL' label='A/B Max Manual'> 0 </maxManual>
             <autobrakeMAX id='AUTOBRAKE MAX' label='Autobrake MAX'> 0 </autobrakeMAX>
@@ -88500,12 +88388,6 @@
             <autobrakeMAX id='AUTOBRAKE MAX' label='Autobrake MAX'> 350 </autobrakeMAX>
             <autobrake3 id='AUTOBRAKE 3' label='Autobrake 3'> 350 </autobrake3>
           </approachSpeedAdjustment>
-          <!--F30-POOR-->
-          <ReverserInoperativeAdjustment id='NO REV INOP ADJ' AmountOfRevInop = '0' >
-            <maxManual id='MAX MANUAL' label='A/B Max Manual'> 0 </maxManual>
-            <autobrakeMAX id='AUTOBRAKE MAX' label='Autobrake MAX'> 0 </autobrakeMAX>
-            <autobrake3 id='AUTOBRAKE 3' label='Autobrake 3'> 0 </autobrake3>
-          </ReverserInoperativeAdjustment>
           <!--F30-POOR-->
           <ReverserInoperativeAdjustment id='ONE REV INOP ADJ' AmountOfRevInop = '1' >
             <maxManual id='MAX MANUAL' label='A/B Max Manual'> 0 </maxManual>

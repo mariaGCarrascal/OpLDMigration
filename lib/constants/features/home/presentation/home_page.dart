@@ -171,12 +171,13 @@ class _HomePageState extends State<HomePage> {
  
   @override
   Widget build(BuildContext context) {
+    final orientation = MediaQuery.of(context).orientation == Orientation.portrait;
     return Scaffold(
       backgroundColor: AppColors.backgroundDark,
       appBar: AppBar(
         title: const Text(
           AppStrings.appHeaderHome,
-          style: TextStyle(color: AppColors.white),
+          style: TextStyle(color: AppColors.white, fontSize: 30),
         ),
         centerTitle: true,
         backgroundColor: Colors.black,
@@ -202,12 +203,12 @@ class _HomePageState extends State<HomePage> {
                   children: [
 
                     // Label Aircraft Selection
-                    const Text(
+                    Text(
                       AppStrings.aircraftSection,
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         color: AppColors.white,
-                        fontSize: 25,
+                        fontSize: orientation ? 30 : 26,
                       ),
                     ),
 
@@ -237,10 +238,7 @@ class _HomePageState extends State<HomePage> {
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(5.0),
                         ),
-                        contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 0,
-                          vertical: 5,
-                        ),
+                        contentPadding: EdgeInsets.zero,
                       ),
 
                       hint: Text(
@@ -248,12 +246,17 @@ class _HomePageState extends State<HomePage> {
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           color: AppColors.placeholderDark,
+                          fontSize: orientation ? 20 : 26,
                         ),
                         overflow: TextOverflow.ellipsis,
                       ),
 
                       iconStyleData: const IconStyleData(
                         icon: SizedBox.shrink(),
+                      ),
+
+                      buttonStyleData: ButtonStyleData(
+                      height: orientation ? 40 : 29,
                       ),
 
                       dropdownStyleData: DropdownStyleData(
@@ -292,7 +295,7 @@ class _HomePageState extends State<HomePage> {
                                 style: TextStyle(
                                   color: AppColors.placeholderDark,
                                   fontWeight: FontWeight.bold,
-                                  fontSize: 16,
+                                  fontSize: 20,
                                 ),
                                 overflow: TextOverflow.ellipsis,
                               ),
@@ -309,7 +312,7 @@ class _HomePageState extends State<HomePage> {
                               style: TextStyle(
                                 color: AppColors.placeholderDark,
                                 fontWeight: FontWeight.bold,
-                                fontSize: 16,
+                                fontSize:  orientation ? 22 : 20,
                               ),
                               overflow: TextOverflow.ellipsis,
                             ),
@@ -333,14 +336,14 @@ class _HomePageState extends State<HomePage> {
                     ),
 
                     // Label Landing Selection
-                    const Padding(
+                   Padding(
                       padding: EdgeInsets.only(top: 20.0),
                       child: Text(
                         AppStrings.normalNonnormalSection,
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           color: AppColors.white,
-                          fontSize: 25,
+                          fontSize: orientation ? 30 : 26,
                         ),
                       ),
                     ),
@@ -375,10 +378,7 @@ class _HomePageState extends State<HomePage> {
                           borderRadius: BorderRadius.circular(5.0),
                         ),
 
-                        contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 0,
-                          vertical: 5,
-                        ),
+                        contentPadding: EdgeInsets.zero,
                       ),
 
                       hint: Text(
@@ -392,6 +392,10 @@ class _HomePageState extends State<HomePage> {
 
                       iconStyleData: const IconStyleData(
                         icon: SizedBox.shrink(),
+                      ),
+
+                      buttonStyleData: ButtonStyleData(
+                      height: orientation ? 40 : 29,
                       ),
 
                       dropdownStyleData: DropdownStyleData(
@@ -430,7 +434,7 @@ class _HomePageState extends State<HomePage> {
                               style: TextStyle(
                                 color: AppColors.placeholderDark,
                                 fontWeight: FontWeight.bold,
-                                fontSize: 16,
+                                fontSize: 20,
                               ),
                               overflow: TextOverflow.ellipsis,
                             ),
@@ -447,7 +451,7 @@ class _HomePageState extends State<HomePage> {
                               style: TextStyle(
                                 color: AppColors.placeholderDark,
                                 fontWeight: FontWeight.bold,
-                                fontSize: 16,
+                                fontSize: orientation ? 22 : 20,
                               ),
                               overflow: TextOverflow.ellipsis,
                             ),
@@ -475,14 +479,14 @@ class _HomePageState extends State<HomePage> {
 
                     // Label Configuration Type Selection
                     if (selectedLandingType == 'Non-Normal') ...[
-                      const Padding(
+                       Padding(
                         padding: EdgeInsets.only(top: 20.0),
                         child: Text(
                           AppStrings.configSection,
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                             color: AppColors.white,
-                            fontSize: 25,
+                            fontSize: orientation ? 30 : 26,
                           ),
                         ),
                       ),
@@ -521,10 +525,7 @@ class _HomePageState extends State<HomePage> {
                             borderRadius: BorderRadius.circular(5.0),
                           ),
 
-                          contentPadding: const EdgeInsets.symmetric(
-                            horizontal: 0,
-                            vertical: 5,
-                          ),
+                          contentPadding:  EdgeInsets.zero,
                         ),
 
                         hint: Text(
@@ -539,6 +540,10 @@ class _HomePageState extends State<HomePage> {
                         iconStyleData: const IconStyleData(
                           icon: SizedBox.shrink(),
                         ),
+
+                         buttonStyleData: ButtonStyleData(
+                      height: orientation ? 40 : 29,
+                      ),
 
                         dropdownStyleData: DropdownStyleData(
                           offset: const Offset(0, -5),
@@ -577,7 +582,7 @@ class _HomePageState extends State<HomePage> {
                                 style: TextStyle(
                                   color: AppColors.placeholderDark,
                                   fontWeight: FontWeight.bold,
-                                  fontSize: 16,
+                                  fontSize: 20,
                                 ),
                                 overflow: TextOverflow.ellipsis,
                               ),
@@ -594,7 +599,7 @@ class _HomePageState extends State<HomePage> {
                                 style: TextStyle(
                                   color: AppColors.placeholderDark,
                                   fontWeight: FontWeight.bold,
-                                  fontSize: 16,
+                                  fontSize: orientation ? 22 : 20,
                                 ),
                                 overflow: TextOverflow.ellipsis,
                               ),
@@ -612,14 +617,14 @@ class _HomePageState extends State<HomePage> {
                     ],
  
                     // Label Airport Selection
-                    const Padding(
+                     Padding(
                       padding: EdgeInsets.only(top: 20.0),
                       child: Text(
                         AppStrings.airportSection,
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           color: AppColors.white,
-                          fontSize: 25,
+                          fontSize: orientation ? 30 : 26,
                         ),
                       ),
                     ),
@@ -695,7 +700,7 @@ class _HomePageState extends State<HomePage> {
                         searchFieldProps: TextFieldProps(
                           style: TextStyle(
                             color: AppColors.white,
-                            fontSize: 16,
+                            fontSize: 20,
                           ),
                           decoration: InputDecoration(
                             filled: true,
@@ -703,7 +708,7 @@ class _HomePageState extends State<HomePage> {
                             hintText: 'Search Airport',
                             hintStyle: TextStyle(
                               color: AppColors.grey,
-                              fontSize: 16,
+                              fontSize: 20,
                             ),
                             prefixIcon: const Icon(Icons.search, color: AppColors.white),
                             enabledBorder: OutlineInputBorder(
@@ -742,7 +747,7 @@ class _HomePageState extends State<HomePage> {
                                   'No Airport Found for "$searchEntry"',
                                   style: TextStyle(
                                     color: AppColors.white,
-                                    fontSize: 16,
+                                    fontSize: 20,
                                   ),
                                 ),
                               ],
@@ -782,7 +787,7 @@ class _HomePageState extends State<HomePage> {
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                             color: AppColors.placeholderDark,
-                            fontSize: 16,
+                            fontSize: 20,
                           ),
                           overflow: TextOverflow.ellipsis,
                         );
@@ -798,7 +803,7 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
 
-              const SizedBox(height: 50),
+               SizedBox(height: orientation ? MediaQuery.of(context).size.height * 0.15 : 30),
 
               // Boton GO para ir a la pantalla de CalculatorPage
               Center(
