@@ -341,7 +341,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
         title: Center(
           child: Text(
             '$selectedAircraft',
-            style: TextStyle(fontSize: 22, color: AppColors.white),
+            style: TextStyle(fontSize: 24, color: AppColors.white),
           ),
         ),
         iconTheme: const IconThemeData(color: AppColors.white),
@@ -1638,7 +1638,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                 AppStrings.flap,
                                 style: TextStyle(
                                   color: AppColors.white,
-                                  fontSize: 15,
+                                  fontSize: 16.5,
                                 ),
                               ),
                               SizedBox(width: screenSize.width * 0.07),
@@ -1952,7 +1952,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                 AppStrings.autobrake,
                                 style: TextStyle(
                                   color: AppColors.white,
-                                  fontSize: 15,
+                                  fontSize: 16.5,
                                 ),
                               ),
 
@@ -1963,6 +1963,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
                                     color: Colors.orange,
+                                    fontSize: 15,
                                     //fontWeight: FontWeight.bold,
                                   ),
                                   overflow: TextOverflow.ellipsis,
@@ -2123,7 +2124,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                 AppStrings.reversers,
                                 style: TextStyle(
                                   color: AppColors.white,
-                                  fontSize: 15,
+                                  fontSize: 16.5,
                                 ),
                               ),
                               SizedBox(width: screenSize.width * 0.05),
@@ -2276,7 +2277,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                 AppStrings.speedbrakes,
                                 style: TextStyle(
                                   color: AppColors.white,
-                                  fontSize: 15,
+                                  fontSize: 16.5,
                                 ),
                               ),
                               if (selectedLanding != 'Non-Normal') ...[
@@ -2453,27 +2454,23 @@ class _CalculatorPageState extends State<CalculatorPage> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               if (selectedLanding != 'Non-Normal') ...[
-                                Expanded(
-                                  child: Text(
+                                Text(
                                     AppStrings.vrefAdd,
                                     style: TextStyle(
                                       color: AppColors.white,
-                                      fontSize: 15,
+                                      fontSize: 16.5,
                                     ),
                                   ),
-                                ),
-                                const SizedBox(width: 10.0),
-                                Expanded(
-                                  child: Text(
+                                const Spacer(),
+                                Text(
                                     '$vRef ${AppStrings.kt}',
                                     style: TextStyle(
                                       fontSize: 18,
                                       color: AppColors.placeholderDark,
                                       fontWeight: FontWeight.bold,
                                     ),
-                                  ),
                                 ),
-                                const SizedBox(width: 10.0),
+                                const Spacer(),
 
                                 Row(
                                   mainAxisSize: MainAxisSize.min,
@@ -2551,42 +2548,36 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                 ),
                               ] else ...[
                                 if (vrefAdjust == 'NO') ...[
-                                  Expanded(
-                                    child: Text(
+                                  Text(
                                       '$vrefNonPlus +',
-                                      style: TextStyle(color: AppColors.white),
-                                    ),
+                                      style: TextStyle(color: AppColors.white, fontSize: 16.5),
                                   ),
-                                  const SizedBox(width: 122.0),
-                                  Expanded(
-                                    child: Text(
+                                  const Spacer(),
+                                  Text(
                                       AppStrings.na,
                                       style: TextStyle(
                                         fontSize: 18,
                                         color: AppColors.textColor3Dark,
                                         fontWeight: FontWeight.bold,
                                       ),
-                                    ),
                                   ),
                                 ] else ...[
                                   Expanded(
                                     child: Text(
                                       '$vrefNonPlus +',
-                                      style: TextStyle(color: AppColors.white),
+                                      style: TextStyle(color: AppColors.white, fontSize: 16.5),
                                     ),
                                   ),
-                                  const SizedBox(width: 20.0),
-                                  Expanded(
-                                    child: Text(
+                                  const Spacer(),
+                                  Text(
                                       '$vRef ${AppStrings.kt}',
                                       style: TextStyle(
                                         fontSize: 18,
                                         color: AppColors.placeholderDark,
                                         fontWeight: FontWeight.bold,
                                       ),
-                                    ),
                                   ),
-                                  const SizedBox(width: 10.0),
+                                  const Spacer(),
 
                                   Row(
                                     mainAxisSize: MainAxisSize.min,
@@ -2692,7 +2683,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                         AppStrings.landWeight,
                                         style: const TextStyle(
                                           color: AppColors.white,
-                                          fontSize: 15,
+                                          fontSize: 16.5,
                                         ),
                                       ),
                                       const SizedBox(height: 5.0),
@@ -4026,7 +4017,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                                   AppStrings.remaining,
                                                   textAlign: TextAlign.left,
                                                   style: TextStyle(
-                                                    fontSize: 18,
+                                                    fontSize: 19,
                                                     fontWeight: FontWeight.bold,
                                                     color: AppColors.white,
                                                   ),
@@ -4041,7 +4032,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                                   textAlign: TextAlign.right,
                                                   style: TextStyle(
                                                     color: colorResult,
-                                                    fontSize: 16,
+                                                    fontSize: 20,
                                                     fontWeight: FontWeight.bold,
                                                   ),
                                                 ),
@@ -4069,11 +4060,12 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                               style: TextStyle(
                                                 color: Colors.orange,
                                                 fontWeight: FontWeight.bold,
+                                                fontSize: 16.5,
                                               ),
                                             ),
                                           ],
 
-                                          const SizedBox(height: 12),
+                                          const SizedBox(height: 10),
 
                                           Text(
                                             '$selectedFlaps',
@@ -4081,10 +4073,11 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                             style: TextStyle(
                                               color: AppColors.resultNotes,
                                               fontWeight: FontWeight.bold,
+                                              fontSize: 18,
                                             ),
                                           ),
 
-                                          const SizedBox(height: 12),
+                                          const SizedBox(height: 10),
 
                                           Text(
                                             '$selectedAutoBrake',
@@ -4092,10 +4085,11 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                             style: TextStyle(
                                               color: AppColors.resultNotes,
                                               fontWeight: FontWeight.bold,
+                                              fontSize: 18,
                                             ),
                                           ),
 
-                                          const SizedBox(height: 40),
+                                          const SizedBox(height: 20),
 
                                           Row(
                                             mainAxisAlignment:
@@ -4109,6 +4103,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                                     color:
                                                         AppColors.resultNotes,
                                                     fontWeight: FontWeight.bold,
+                                                    fontSize: 16.5,
                                                   ),
                                                 ),
                                               ),
@@ -4123,6 +4118,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                                 style: TextStyle(
                                                   color: AppColors.resultNotes,
                                                   fontWeight: FontWeight.bold,
+                                                  fontSize: 16.5,
                                                 ),
                                               ),
                                             ],
@@ -4140,6 +4136,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                                 nota,
                                                 style: const TextStyle(
                                                   color: AppColors.resultNotes,
+                                                  fontSize: 15,
                                                 ),
                                                 textAlign: TextAlign.start,
                                               ),
@@ -4164,7 +4161,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                             5,
                                           ),
                                         ),
-                                        fixedSize: const Size(170, 20),
+                                        fixedSize: const Size(180, 30),
                                       ),
                                       onPressed: () {
                                         showDialog(
@@ -4182,7 +4179,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                                 ),
                                               ),
                                               content: SizedBox(
-                                                width: 650.0,
+                                                width: 750.0,
                                                 height: 700.0,
                                                 child: Column(
                                                   mainAxisAlignment:
@@ -4208,8 +4205,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                                     ...listaComments!.expand(
                                                       (comentario) => [
                                                         Divider(
-                                                          color: AppColors
-                                                              .cancelPriButBrDark,
+                                                          color: AppColors.cancelPriButBrDark,
                                                         ),
 
                                                         Padding(
@@ -4222,11 +4218,10 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                                             style:
                                                                 const TextStyle(
                                                                   color:
-                                                                      AppColors
-                                                                          .white,
+                                                                      AppColors.white,
+                                                                  fontSize: 18,
                                                                 ),
-                                                            textAlign:
-                                                                TextAlign.start,
+                                                            textAlign: TextAlign.justify,
                                                           ),
                                                         ),
 
@@ -4272,7 +4267,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                                         child: const Text(
                                                           AppStrings.returnback,
                                                           style: TextStyle(
-                                                            fontSize: 15,
+                                                            fontSize: 16.5,
                                                             fontWeight:
                                                                 FontWeight.bold,
                                                           ),
@@ -4290,6 +4285,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                         AppStrings.importNotes,
                                         style: TextStyle(
                                           color: AppColors.white,
+                                          fontSize: 15,
                                         ),
                                       ),
                                     ),
