@@ -2421,17 +2421,16 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                   ),
                                 ),
                               ] else ...[
-                                SizedBox(width: screenSize.width * 0.22),
-                                Expanded(
-                                  child: Text(
+                                Spacer(),
+                                Text(
                                     AppStrings.na,
                                     style: TextStyle(
                                       fontSize: 18,
                                       color: AppColors.textColor3Dark,
                                       fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
+                                    ),                                 
                                 ),
+                                SizedBox(width: 32),
                               ],
                             ],
                           ),
@@ -2561,12 +2560,11 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                         fontWeight: FontWeight.bold,
                                       ),
                                   ),
+                                  SizedBox(width: 25),
                                 ] else ...[
-                                  Expanded(
-                                    child: Text(
+                                  Text(
                                       '$vrefNonPlus +',
                                       style: TextStyle(color: AppColors.white, fontSize: 16.5),
-                                    ),
                                   ),
                                   const Spacer(),
                                   Text(
@@ -4010,7 +4008,6 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                             CrossAxisAlignment.start,
                                         children: [
                                           if (selectedAirport != 'XXX') ...[
-                                            //const SizedBox(height: 12),
                                             Row(
                                               children: [
                                                 Text(
@@ -4024,7 +4021,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                                 ),
 
                                                 SizedBox(
-                                                  width: screenSize.width * 0.10,
+                                                  width: screenSize.width * 0.15,
                                                 ),
 
                                                 Text(
@@ -4037,7 +4034,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                                   ),
                                                 ),
 
-                                                const SizedBox(width: 5),
+                                                const SizedBox(width: 10),
 
                                                 Text(
                                                   '(${(double.tryParse(remainingResult ?? '0')! * 0.3048).round()}${AppStrings.m})',
@@ -4048,6 +4045,9 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                                     fontStyle: FontStyle.italic,
                                                   ),
                                                 ),
+
+                                                const SizedBox(width: 15),
+                                                
                                               ],
                                             ),
                                           ],
@@ -4150,16 +4150,13 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                     ElevatedButton(
                                       style: ElevatedButton.styleFrom(
                                         backgroundColor: AppColors.black,
-                                        foregroundColor:
-                                            AppColors.placeholderDark,
+                                        foregroundColor: AppColors.placeholderDark,
                                         side: const BorderSide(
                                           color: AppColors.placeholderDark,
                                           width: 1,
                                         ),
                                         shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(
-                                            5,
-                                          ),
+                                          borderRadius: BorderRadius.circular(5),
                                         ),
                                         fixedSize: const Size(180, 30),
                                       ),
@@ -4170,11 +4167,9 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                             return AlertDialog(
                                               backgroundColor: AppColors.black,
                                               shape: RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(12.0),
+                                                borderRadius: BorderRadius.circular(12.0),
                                                 side: const BorderSide(
-                                                  color:
-                                                      AppColors.placeholderDark,
+                                                  color: AppColors.placeholderDark,
                                                   width: 1.5,
                                                 ),
                                               ),
@@ -4182,83 +4177,84 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                                 width: 750.0,
                                                 height: 700.0,
                                                 child: Column(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.start,
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
+                                                  mainAxisAlignment: MainAxisAlignment.start,
+                                                  crossAxisAlignment: CrossAxisAlignment.start,
                                                   children: [
+                                                    // Título
                                                     Center(
                                                       child: const Text(
                                                         AppStrings.notesTitle,
                                                         style: TextStyle(
-                                                          color: AppColors
-                                                              .textColor2Dark,
+                                                          color: AppColors.textColor2Dark,
                                                           fontSize: 20,
-                                                          fontWeight:
-                                                              FontWeight.bold,
+                                                          fontWeight: FontWeight.bold,
                                                         ),
                                                       ),
                                                     ),
 
                                                     const SizedBox(height: 10),
 
-                                                    ...listaComments!.expand(
-                                                      (comentario) => [
-                                                        Divider(
-                                                          color: AppColors.cancelPriButBrDark,
+                                                    // Listado de comentarios
+                                                    Expanded(
+                                                      child: ScrollConfiguration(
+                                                        behavior: ScrollConfiguration.of(context).copyWith(
+                                                          scrollbars: false,
                                                         ),
+                                                        child: ListView.builder(
+                                                          itemCount: listaComments!.length,
+                                                          itemBuilder: (context, index) {
+                                                            final comentario = listaComments![index];
 
-                                                        Padding(
-                                                          padding:
-                                                              const EdgeInsets.symmetric(
-                                                                vertical: 12.0,
-                                                              ),
-                                                          child: Text(
-                                                            comentario,
-                                                            style:
-                                                                const TextStyle(
-                                                                  color:
-                                                                      AppColors.white,
-                                                                  fontSize: 18,
+                                                            return Column(
+                                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                                              children: [
+                                                                Divider(
+                                                                  color: AppColors.cancelPriButBrDark,
                                                                 ),
-                                                            textAlign: TextAlign.justify,
-                                                          ),
-                                                        ),
 
-                                                        Divider(
-                                                          color: AppColors
-                                                              .cancelPriButBrDark,
+                                                                Padding(
+                                                                  padding: const EdgeInsets.symmetric(
+                                                                    vertical: 12.0,
+                                                                  ),
+                                                                  child: Text(
+                                                                    comentario.trim(),
+                                                                    style: const TextStyle(
+                                                                      color: AppColors.white,
+                                                                      fontSize: 15,
+                                                                    ),
+                                                                    textAlign: TextAlign.justify,
+                                                                  ),
+                                                                ),
+
+                                                                Divider(
+                                                                  color: AppColors.cancelPriButBrDark,
+                                                                ),
+                                                              ],
+                                                            );
+                                                          },
                                                         ),
-                                                      ],
+                                                      ),
                                                     ),
 
-                                                    const Spacer(),
+                                                    const SizedBox(height: 20),
 
+                                                    // Boton Return
                                                     Center(
                                                       child: ElevatedButton(
                                                         onPressed: () {
-                                                          Navigator.of(
-                                                            context,
-                                                          ).pop();
+                                                          Navigator.of(context).pop();
                                                         },
                                                         style: ElevatedButton.styleFrom(
-                                                          backgroundColor:
-                                                              AppColors.black,
-                                                          foregroundColor:
-                                                              AppColors
-                                                                  .iconDark,
+                                                          backgroundColor: AppColors.black,
+                                                          foregroundColor: AppColors.iconDark,
                                                           fixedSize: const Size(
-                                                            120,
-                                                            120,
+                                                            130,
+                                                            130,
                                                           ),
                                                           shape: BeveledRectangleBorder(
-                                                            borderRadius:
-                                                                BorderRadius.circular(
-                                                                  200,
-                                                                ),
+                                                            borderRadius: BorderRadius.circular(200),
                                                             side: BorderSide(
-                                                              color: AppColors
-                                                                  .iconDark,
+                                                              color: AppColors.iconDark,
                                                               width: 1,
                                                             ),
                                                           ),
@@ -4268,8 +4264,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                                           AppStrings.returnback,
                                                           style: TextStyle(
                                                             fontSize: 16.5,
-                                                            fontWeight:
-                                                                FontWeight.bold,
+                                                            fontWeight: FontWeight.bold,
                                                           ),
                                                         ),
                                                       ),
@@ -4288,7 +4283,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                           fontSize: 15,
                                         ),
                                       ),
-                                    ),
+                                    ),                                                                   
                                   ],
                                 ),
                               ),
