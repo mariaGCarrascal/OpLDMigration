@@ -28,7 +28,6 @@ import 'package:flutter/services.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 
 class CalculatorPage extends StatefulWidget {
-
   final String? aircraft;
   final String? normalNon;
   final String? configuration;
@@ -39,20 +38,26 @@ class CalculatorPage extends StatefulWidget {
   final Map<String, List<String>>? airportRunway;
   final String? nonflaps;
   const CalculatorPage({
-    super.key, 
-    this.aircraft, this.normalNon, this.configuration, 
-    this.airport, this.airportEl, this.airportQNH, this.airportTemp, this.airportRunway, this.nonflaps
+    super.key,
+    this.aircraft,
+    this.normalNon,
+    this.configuration,
+    this.airport,
+    this.airportEl,
+    this.airportQNH,
+    this.airportTemp,
+    this.airportRunway,
+    this.nonflaps,
   });
-//Pendientes:
-//Slider en XXX Elevation y LandingWeight (en cualquier aeropuerto), no da el valor correcto de OpLD en la UI (pero si en el backend), si hay mejor opcion para el controlador del slider en tema de timing. (Revisar)
-//LongPress en QNH y Elevation (XXX).
+  //Pendientes:
+  //Slider en XXX Elevation y LandingWeight (en cualquier aeropuerto), no da el valor correcto de OpLD en la UI (pero si en el backend), si hay mejor opcion para el controlador del slider en tema de timing. (Revisar)
+  //LongPress en QNH y Elevation (XXX).
 
   @override
   State<CalculatorPage> createState() => _CalculatorPageState();
 }
 
 class _CalculatorPageState extends State<CalculatorPage> {
-
   //Variables para las selecciones
   Timer? _opldDebounce;
   String? checkAutobreak;
@@ -122,50 +127,420 @@ class _CalculatorPageState extends State<CalculatorPage> {
   List<String>? reversersList = [];
   List<String>? autoBrakeOptions;
   final List<String> speedBrakesTypes = ['AUTOMATIC', 'MANUAL'];
-  final List<String> rwyConditions = ['DRY', 'GOOD', 'GOOD TO MEDIUM', 'MEDIUM', 'MEDIUM TO POOR', 'POOR'];
-  final List<String> rwymagOptions = ['000', '001', '002', '003', '004', '005', '006', '007', '008', '009', '010',
-                                      '011', '012', '013', '014', '015', '016', '017', '018', '019', '020', '021',
-                                      '022', '023', '024', '025', '026', '027', '028', '029', '030', '031', '032',
-                                      '033', '034', '035', '036', '037', '038', '039', '040', '041', '042', '043',
-                                      '044', '045', '046', '047', '048', '049', '050', '051', '052', '053', '054',
-                                      '055', '056', '057', '058', '059', '060', '061', '062', '063', '064', '065',
-                                      '066', '067', '068', '069', '070', '071', '072', '073', '074', '075', '076',
-                                      '077', '078', '079', '080', '081', '082', '083', '084', '085', '086', '087',
-                                      '088', '089', '090', '091', '092', '093', '094', '095', '096', '097', '098',
-                                      '099', '100', '101', '102', '103', '104', '105', '106', '107', '108', '109',
-                                      '110', '111', '112', '113', '114', '115', '116', '117', '118', '119', '120',
-                                      '121', '122', '123', '124', '125', '126', '127', '128', '129', '130', '131',
-                                      '132', '133', '134', '135', '136', '137', '138', '139', '140', '141', '142',
-                                      '143', '144', '145', '146', '147', '148', '149', '150', '151', '152', '153',
-                                      '154', '155', '156', '157', '158', '159', '160', '161', '162', '163', '164',
-                                      '165', '166', '167', '168', '169', '170', '171', '172', '173', '174', '175',
-                                      '176', '177', '178', '179', '180', '181', '182', '183', '184', '185', '186',
-                                      '187', '188', '189', '190', '191', '192', '193', '194', '195', '196', '197',
-                                      '198', '199', '200', '201', '202', '203', '204', '205', '206', '207', '208',
-                                      '209', '210', '211', '212', '213', '214', '215', '216', '217', '218', '219',
-                                      '220', '221', '222', '223', '224', '225', '226', '227', '228', '229', '230',
-                                      '231', '232', '233', '234', '235', '236', '237', '238', '239', '240', '241',
-                                      '242', '243', '244', '245', '246', '247', '248', '249', '250', '251', '252',
-                                      '253', '254', '255', '256', '257', '258', '259', '260', '261', '262', '263',
-                                      '264', '265', '266', '267', '268', '269', '270', '271', '272', '273', '274',
-                                      '275', '276', '277', '278', '279', '280', '281', '282', '283', '284', '285',
-                                      '286', '287', '288', '289', '290', '291', '292', '293', '294', '295', '296',
-                                      '297', '298', '299', '300', '301', '302', '303', '304', '305', '306', '307',
-                                      '308', '309', '310', '311', '312', '313', '314', '315', '316', '317', '318',
-                                      '319', '320', '321', '322', '323', '324', '325', '326', '327', '328', '329',
-                                      '330', '331', '332', '333', '334', '335', '336', '337', '338', '339', '340',
-                                      '341', '342', '343', '344', '345', '346', '347', '348', '349', '350', '351',
-                                      '352', '353', '354', '355', '356', '357', '358', '359', '360'
+  final List<String> rwyConditions = [
+    'DRY',
+    'GOOD',
+    'GOOD TO MEDIUM',
+    'MEDIUM',
+    'MEDIUM TO POOR',
+    'POOR',
   ];
-  final List<String> windDirection = ['000', '010', '020', '030', '040', '050', '060', '070', '080', '090', '100',
-                                      '110', '120', '130', '140', '150', '160', '170', '180', '190', '200', '210',
-                                      '220', '230', '240', '250', '260', '270', '280', '290', '300', '310', '320',
-                                      '330', '340', '350', '360'];
+  final List<String> rwymagOptions = [
+    '000',
+    '001',
+    '002',
+    '003',
+    '004',
+    '005',
+    '006',
+    '007',
+    '008',
+    '009',
+    '010',
+    '011',
+    '012',
+    '013',
+    '014',
+    '015',
+    '016',
+    '017',
+    '018',
+    '019',
+    '020',
+    '021',
+    '022',
+    '023',
+    '024',
+    '025',
+    '026',
+    '027',
+    '028',
+    '029',
+    '030',
+    '031',
+    '032',
+    '033',
+    '034',
+    '035',
+    '036',
+    '037',
+    '038',
+    '039',
+    '040',
+    '041',
+    '042',
+    '043',
+    '044',
+    '045',
+    '046',
+    '047',
+    '048',
+    '049',
+    '050',
+    '051',
+    '052',
+    '053',
+    '054',
+    '055',
+    '056',
+    '057',
+    '058',
+    '059',
+    '060',
+    '061',
+    '062',
+    '063',
+    '064',
+    '065',
+    '066',
+    '067',
+    '068',
+    '069',
+    '070',
+    '071',
+    '072',
+    '073',
+    '074',
+    '075',
+    '076',
+    '077',
+    '078',
+    '079',
+    '080',
+    '081',
+    '082',
+    '083',
+    '084',
+    '085',
+    '086',
+    '087',
+    '088',
+    '089',
+    '090',
+    '091',
+    '092',
+    '093',
+    '094',
+    '095',
+    '096',
+    '097',
+    '098',
+    '099',
+    '100',
+    '101',
+    '102',
+    '103',
+    '104',
+    '105',
+    '106',
+    '107',
+    '108',
+    '109',
+    '110',
+    '111',
+    '112',
+    '113',
+    '114',
+    '115',
+    '116',
+    '117',
+    '118',
+    '119',
+    '120',
+    '121',
+    '122',
+    '123',
+    '124',
+    '125',
+    '126',
+    '127',
+    '128',
+    '129',
+    '130',
+    '131',
+    '132',
+    '133',
+    '134',
+    '135',
+    '136',
+    '137',
+    '138',
+    '139',
+    '140',
+    '141',
+    '142',
+    '143',
+    '144',
+    '145',
+    '146',
+    '147',
+    '148',
+    '149',
+    '150',
+    '151',
+    '152',
+    '153',
+    '154',
+    '155',
+    '156',
+    '157',
+    '158',
+    '159',
+    '160',
+    '161',
+    '162',
+    '163',
+    '164',
+    '165',
+    '166',
+    '167',
+    '168',
+    '169',
+    '170',
+    '171',
+    '172',
+    '173',
+    '174',
+    '175',
+    '176',
+    '177',
+    '178',
+    '179',
+    '180',
+    '181',
+    '182',
+    '183',
+    '184',
+    '185',
+    '186',
+    '187',
+    '188',
+    '189',
+    '190',
+    '191',
+    '192',
+    '193',
+    '194',
+    '195',
+    '196',
+    '197',
+    '198',
+    '199',
+    '200',
+    '201',
+    '202',
+    '203',
+    '204',
+    '205',
+    '206',
+    '207',
+    '208',
+    '209',
+    '210',
+    '211',
+    '212',
+    '213',
+    '214',
+    '215',
+    '216',
+    '217',
+    '218',
+    '219',
+    '220',
+    '221',
+    '222',
+    '223',
+    '224',
+    '225',
+    '226',
+    '227',
+    '228',
+    '229',
+    '230',
+    '231',
+    '232',
+    '233',
+    '234',
+    '235',
+    '236',
+    '237',
+    '238',
+    '239',
+    '240',
+    '241',
+    '242',
+    '243',
+    '244',
+    '245',
+    '246',
+    '247',
+    '248',
+    '249',
+    '250',
+    '251',
+    '252',
+    '253',
+    '254',
+    '255',
+    '256',
+    '257',
+    '258',
+    '259',
+    '260',
+    '261',
+    '262',
+    '263',
+    '264',
+    '265',
+    '266',
+    '267',
+    '268',
+    '269',
+    '270',
+    '271',
+    '272',
+    '273',
+    '274',
+    '275',
+    '276',
+    '277',
+    '278',
+    '279',
+    '280',
+    '281',
+    '282',
+    '283',
+    '284',
+    '285',
+    '286',
+    '287',
+    '288',
+    '289',
+    '290',
+    '291',
+    '292',
+    '293',
+    '294',
+    '295',
+    '296',
+    '297',
+    '298',
+    '299',
+    '300',
+    '301',
+    '302',
+    '303',
+    '304',
+    '305',
+    '306',
+    '307',
+    '308',
+    '309',
+    '310',
+    '311',
+    '312',
+    '313',
+    '314',
+    '315',
+    '316',
+    '317',
+    '318',
+    '319',
+    '320',
+    '321',
+    '322',
+    '323',
+    '324',
+    '325',
+    '326',
+    '327',
+    '328',
+    '329',
+    '330',
+    '331',
+    '332',
+    '333',
+    '334',
+    '335',
+    '336',
+    '337',
+    '338',
+    '339',
+    '340',
+    '341',
+    '342',
+    '343',
+    '344',
+    '345',
+    '346',
+    '347',
+    '348',
+    '349',
+    '350',
+    '351',
+    '352',
+    '353',
+    '354',
+    '355',
+    '356',
+    '357',
+    '358',
+    '359',
+    '360',
+  ];
+  final List<String> windDirection = [
+    '000',
+    '010',
+    '020',
+    '030',
+    '040',
+    '050',
+    '060',
+    '070',
+    '080',
+    '090',
+    '100',
+    '110',
+    '120',
+    '130',
+    '140',
+    '150',
+    '160',
+    '170',
+    '180',
+    '190',
+    '200',
+    '210',
+    '220',
+    '230',
+    '240',
+    '250',
+    '260',
+    '270',
+    '280',
+    '290',
+    '300',
+    '310',
+    '320',
+    '330',
+    '340',
+    '350',
+    '360',
+  ];
   Map<String, List<String>> conditionNotes = Airportdata.rcaTable;
   List<String>? rwyNote = [];
   List<String>? windValues = [];
   List<String> tempValues = [];
-
 
   @override
   void initState() {
@@ -190,71 +565,128 @@ class _CalculatorPageState extends State<CalculatorPage> {
     selectedConfiguration = widget.configuration;
     selectedAirport = widget.airport;
     selectedAirportQNH = widget.airportQNH;
-    
-    if(selectedLanding == 'Normal') {
+
+    if (selectedLanding == 'Normal') {
       selectedFlaps = defaultAircraft?[1];
       selectedAutoBrake = defaultAircraft?[2];
-      autoBrakeOptions = Loadautobrakes(aircraftRef: selectedAircraft, landingRef: selectedLanding, configurationRef: selectedConfiguration, flapRef: selectedFlaps, conditionRef: selectedCondition)();
+      autoBrakeOptions = Loadautobrakes(
+        aircraftRef: selectedAircraft,
+        landingRef: selectedLanding,
+        configurationRef: selectedConfiguration,
+        flapRef: selectedFlaps,
+        conditionRef: selectedCondition,
+      )();
       vrefAdjust = 'YES';
-
     } else {
       selectedFlaps = widget.nonflaps;
       nonFlap = widget.nonflaps;
-      selectedAutoBrake = Searchautobrakedefault(aircraftRef: selectedAircraft, landingRef: selectedLanding, configurationRef: selectedConfiguration, conditionRef: selectedCondition)();
-      autoBrakeOptions = Loadautobrakes(aircraftRef: selectedAircraft, landingRef: selectedLanding, configurationRef: selectedConfiguration, flapRef: selectedFlaps, conditionRef: selectedCondition)();
-      vrefNonPlus = Loadvreftext(aircraftRef: selectedAircraft, landingRef: selectedLanding, configurationRef: selectedConfiguration)();
-      vrefAdjust = Loadvrefcondition(aircraftRef: selectedAircraft, landingRef: selectedLanding, configurationRef: selectedConfiguration)();
-
+      selectedAutoBrake = Searchautobrakedefault(
+        aircraftRef: selectedAircraft,
+        landingRef: selectedLanding,
+        configurationRef: selectedConfiguration,
+        conditionRef: selectedCondition,
+      )();
+      autoBrakeOptions = Loadautobrakes(
+        aircraftRef: selectedAircraft,
+        landingRef: selectedLanding,
+        configurationRef: selectedConfiguration,
+        flapRef: selectedFlaps,
+        conditionRef: selectedCondition,
+      )();
+      vrefNonPlus = Loadvreftext(
+        aircraftRef: selectedAircraft,
+        landingRef: selectedLanding,
+        configurationRef: selectedConfiguration,
+      )();
+      vrefAdjust = Loadvrefcondition(
+        aircraftRef: selectedAircraft,
+        landingRef: selectedLanding,
+        configurationRef: selectedConfiguration,
+      )();
     }
-    listaComments = Loadcomments(aircraftRef: selectedAircraft, landingRef: selectedLanding,configurationRef: selectedConfiguration, flapRef: selectedFlaps)();
-    if(selectedAirport != 'XXX') {
+    listaComments = Loadcomments(
+      aircraftRef: selectedAircraft,
+      landingRef: selectedLanding,
+      configurationRef: selectedConfiguration,
+      flapRef: selectedFlaps,
+    )();
+    if (selectedAirport != 'XXX') {
       selectedAirportElevation = widget.airportEl;
       selectedAirportTemperature = widget.airportTemp;
       selectedAirportRunway = widget.airportRunway;
       selectedRunway = selectedAirportRunway?.keys.first;
       selectedSlopeValues = selectedAirportRunway?[selectedRunway];
-      rwyId = selectedSlopeValues?[0]; 
+      rwyId = selectedSlopeValues?[0];
       rwyLda = selectedSlopeValues?[1];
       rwySlope = selectedSlopeValues?[2];
-      rwyFactor = selectedSlopeValues?[3]; 
+      rwyFactor = selectedSlopeValues?[3];
       rwyAdditive = selectedSlopeValues?[4];
       netLDA = rwyLda;
-      altitud = Calculatealtitud(elevationRef: selectedAirportElevation, qnhRef: selectedAirportQNH)();
-      isa = ((double.parse(selectedAirportTemperature!.trim()).round() - 15) + (0.0019812 * double.parse(altitud  ?? '0').round())).round().toString();
+      altitud = Calculatealtitud(
+        elevationRef: selectedAirportElevation,
+        qnhRef: selectedAirportQNH,
+      )();
+      isa =
+          ((double.parse(selectedAirportTemperature!.trim()).round() - 15) +
+                  (0.0019812 * double.parse(altitud ?? '0').round()))
+              .round()
+              .toString();
     } else {
       altitudMin = double.parse(defaultAircraft?[9] ?? '0');
       altitudMax = double.parse(defaultAircraft?[10] ?? '0');
       sliderMinAltitud = (altitudMin! / 1000).ceil() * 1000;
       sliderMaxAltitud = (altitudMax! / 1000).floor() * 1000;
-      _divisionsAltitud = ((sliderMaxAltitud - sliderMinAltitud) / 1000).round();
+      _divisionsAltitud = ((sliderMaxAltitud - sliderMinAltitud) / 1000)
+          .round();
       _currentElevation = double.parse(defaultAircraft?[18] ?? '0');
-      altitud = Calculatealtitud(elevationRef: _currentElevation.toString(), qnhRef: selectedAirportQNH)();
+      altitud = Calculatealtitud(
+        elevationRef: _currentElevation.toString(),
+        qnhRef: selectedAirportQNH,
+      )();
       isa = defaultAircraft?[23];
-      tempValues = Calculatetempisa(altitudRef: altitud, temperatureRef: '0', isaRef: defaultAircraft?[23], minRef: isaMin, maxRef: isaMax, operation: '')();
+      tempValues = Calculatetempisa(
+        altitudRef: altitud,
+        temperatureRef: '0',
+        isaRef: defaultAircraft?[23],
+        minRef: isaMin,
+        maxRef: isaMax,
+        operation: '',
+      )();
       selectedAirportTemperature = tempValues[1];
       selectedAirportRunway = widget.airportRunway;
       selectedRunway = selectedAirportRunway?.keys.first;
       selectedSlopeValues = selectedAirportRunway?[selectedRunway];
-      rwyId = selectedSlopeValues?[0] != 'XXX' ? selectedSlopeValues![0] : '000'; 
-      rwyLda = selectedSlopeValues?[1] != 'XXXX' ? selectedSlopeValues![1] : '0'; 
-      rwySlope = selectedSlopeValues?[2] != 'XXX' ? selectedSlopeValues![2] : '0';
-      rwyFactor = selectedSlopeValues?[3]; 
+      rwyId = selectedSlopeValues?[0] != 'XXX'
+          ? selectedSlopeValues![0]
+          : '000';
+      rwyLda = selectedSlopeValues?[1] != 'XXXX'
+          ? selectedSlopeValues![1]
+          : '0';
+      rwySlope = selectedSlopeValues?[2] != 'XXX'
+          ? selectedSlopeValues![2]
+          : '0';
+      rwyFactor = selectedSlopeValues?[3];
       rwyAdditive = selectedSlopeValues?[4];
       netLDA = rwyLda;
       rwySlopeMin = defaultAircraft?[11];
       rwySlopeMax = defaultAircraft?[12];
-    } 
+    }
     _currentLadWeight = double.parse(defaultAircraft?[4] ?? '0');
     weightMAX = double.parse(defaultAircraft?[5] ?? '0');
     weightMIN = double.parse(defaultAircraft?[6] ?? '0');
     minStep = (weightMIN / 1000).ceil();
     final maxStep = (weightMAX / 1000).floor();
-    _divisionsWeight =
-        maxStep - minStep + (weightMAX % 1000 != 0 ? 1 : 0);
-    vRef =  vrefAdjust == 'YES' ? defaultAircraft![0] : '0';
+    _divisionsWeight = maxStep - minStep + (weightMAX % 1000 != 0 ? 1 : 0);
+    vRef = vrefAdjust == 'YES' ? defaultAircraft![0] : '0';
     vMin = defaultAircraft?[7];
     vMax = defaultAircraft?[8];
-    reversersList = Loadreversers(aircraftRef: selectedAircraft, landingRef: selectedLanding, configurationRef: selectedConfiguration, flapRef: selectedFlaps, conditionRef: selectedCondition)();
+    reversersList = Loadreversers(
+      aircraftRef: selectedAircraft,
+      landingRef: selectedLanding,
+      configurationRef: selectedConfiguration,
+      flapRef: selectedFlaps,
+      conditionRef: selectedCondition,
+    )();
     selectedReversers = defaultAircraft![16];
     //Suecede error aqui por el max8 por que los airspeed unriabible son diferentes.
     //Se intenta conseguir el 1er valor, pero esta vacia la lista, probablemente las demas tambien.
@@ -274,20 +706,46 @@ class _CalculatorPageState extends State<CalculatorPage> {
 
   void updateOpld() {
     opldResult = Oplddistancecalculator(
-      aircraftPicker: selectedAircraft, landingPicker: selectedLanding, configurationPicker: selectedConfiguration,
-      factorRef: rwyFactor, rwyPicker: selectedRunway, additiveRef: rwyAdditive, flapPicker: selectedFlaps, rwyConditionPicker: selectedCondition, 
-      autobrakePicker: selectedAutoBrake, revsrinopPicker: selectedReversers, speedbrakesPicker: selectedSpeedBrake, 
-      weightRef: _currentLadWeight.toString(), altitudeRef: altitud, isaRef: isa, slopeRef: rwySlope, windRef: headtail, vrefRef: vRef
+      aircraftPicker: selectedAircraft,
+      landingPicker: selectedLanding,
+      configurationPicker: selectedConfiguration,
+      factorRef: rwyFactor,
+      rwyPicker: selectedRunway,
+      additiveRef: rwyAdditive,
+      flapPicker: selectedFlaps,
+      rwyConditionPicker: selectedCondition,
+      autobrakePicker: selectedAutoBrake,
+      revsrinopPicker: selectedReversers,
+      speedbrakesPicker: selectedSpeedBrake,
+      weightRef: _currentLadWeight.toString(),
+      altitudeRef: altitud,
+      isaRef: isa,
+      slopeRef: rwySlope,
+      windRef: headtail,
+      vrefRef: vRef,
     )();
-    remainingResult = ((double.tryParse(netLDA ?? '0') ?? 0) - (double.tryParse(opldResult ?? '0') ?? 0)).round().toString();
-    colorResult = Opldcolorasignator(opldReference: opldResult, netldaReference: netLDA)();
+    remainingResult =
+        ((double.tryParse(netLDA ?? '0') ?? 0) -
+                (double.tryParse(opldResult ?? '0') ?? 0))
+            .round()
+            .toString();
+    colorResult = Opldcolorasignator(
+      opldReference: opldResult,
+      netldaReference: netLDA,
+    )();
   }
 
   @override
   Widget build(BuildContext context) {
-
     final Size screenSize = MediaQuery.of(context).size;
-    final headtailValue = (num.tryParse((headtail ?? '0').replaceAll('−', '-').replaceAll('–', '-')) ?? 0).round();
+    final headtailValue =
+        (num.tryParse(
+                  (headtail ?? '0').replaceAll('−', '-').replaceAll('–', '-'),
+                ) ??
+                0)
+            .round();
+    final orientation =
+        MediaQuery.of(context).orientation == Orientation.landscape;
 
     return Scaffold(
       backgroundColor: AppColors.backgroundDark,
@@ -320,20 +778,28 @@ class _CalculatorPageState extends State<CalculatorPage> {
                           borderRadius: BorderRadius.circular(4),
                         ),
                         child: Padding(
-                          padding: const EdgeInsets.all(8.0),
+                          padding: const EdgeInsets.symmetric(
+                            vertical: 2,
+                            horizontal: 8,
+                          ),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text(
                                 AppStrings.airportInfo,
                                 style: TextStyle(
-                                  fontSize: 18,
+                                  fontSize: 21,
                                   fontWeight: FontWeight.bold,
-                                  color: AppColors.white),
+                                  color: AppColors.white,
+                                ),
                               ),
                               Text(
                                 '$selectedAirport', // TextForSelectedAirport
-                                style: TextStyle(color: AppColors.iconDark, fontSize: 18, fontWeight: FontWeight.bold),
+                                style: TextStyle(
+                                  color: AppColors.iconDark,
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
                             ],
                           ),
@@ -344,22 +810,22 @@ class _CalculatorPageState extends State<CalculatorPage> {
                       Card(
                         color: AppColors.cardDark,
                         shape: RoundedRectangleBorder(
-                        side: BorderSide(
-                          color: AppColors.placeholder, 
-                          width: 2.0,         
-                        ),
-                        borderRadius: BorderRadius.circular(12.0), 
+                          side: BorderSide(
+                            color: AppColors.placeholder,
+                            width: 2.0,
+                          ),
+                          borderRadius: BorderRadius.circular(12.0),
                         ),
                         child: Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [     
+                            children: [
                               if (selectedAirport != 'XXX') ...[
                                 Text(
                                   AppStrings.rwyId,
                                   style: TextStyle(
-                                    fontSize: 15,
+                                    fontSize: 16.5,
                                     color: AppColors.white,
                                   ),
                                 ),
@@ -367,14 +833,14 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                 Text(
                                   '(${rwyId!.trim()}°)',
                                   style: TextStyle(
-                                    fontSize: 15,
+                                    fontSize: 16.5,
                                     fontWeight: FontWeight.bold,
                                     color: AppColors.textColor3Dark,
                                   ),
                                 ),
-                                SizedBox(width: screenSize.width * 0.05),
-                                SizedBox(width: 2),
-                                Expanded(
+                                Spacer(),
+                                SizedBox(
+                                  width: orientation ? 360 : 210,
                                   child: DropdownButtonFormField2<String>(
                                     isExpanded: true,
                                     value: selectedRunway,
@@ -398,46 +864,58 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                           color: AppColors.placeholder,
                                           width: 1,
                                         ),
-                                        borderRadius: BorderRadius.circular(5.0),
+                                        borderRadius: BorderRadius.circular(
+                                          5.0,
+                                        ),
                                       ),
 
                                       focusedBorder: OutlineInputBorder(
                                         borderSide: BorderSide(
                                           color: AppColors.placeholder,
                                         ),
-                                        borderRadius: BorderRadius.circular(5.0),
+                                        borderRadius: BorderRadius.circular(
+                                          5.0,
+                                        ),
                                       ),
 
                                       border: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(5.0),
+                                        borderRadius: BorderRadius.circular(
+                                          5.0,
+                                        ),
                                       ),
 
-                                      contentPadding: const EdgeInsets.symmetric(
-                                        horizontal: 10,
-                                        vertical: 5,
-                                      ),
+                                      contentPadding: EdgeInsets.zero,
                                     ),
 
                                     iconStyleData: const IconStyleData(
                                       icon: SizedBox.shrink(),
                                     ),
 
-                                    selectedItemBuilder: (BuildContext context) {
-                                      return (selectedAirportRunway?.keys ?? <String>{}).map((value) {
-                                        return Align(
-                                          alignment: Alignment.centerRight,
-                                          child: Text(
-                                            value,
-                                            textAlign: TextAlign.right,
-                                            style: TextStyle(
-                                              color: AppColors.placeholderDark,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                            overflow: TextOverflow.ellipsis,
-                                          ),
-                                        );
-                                      }).toList();
-                                    },
+                                    selectedItemBuilder:
+                                        (BuildContext context) {
+                                          return (selectedAirportRunway?.keys ??
+                                                  <String>{})
+                                              .map((value) {
+                                                return Align(
+                                                  alignment:
+                                                      Alignment.centerRight,
+                                                  child: Text(
+                                                    value,
+                                                    textAlign: TextAlign.right,
+                                                    style: TextStyle(
+                                                       fontSize: 18,
+                                                      color: AppColors
+                                                          .placeholderDark,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                    ),
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                  ),
+                                                );
+                                              })
+                                              .toList();
+                                        },
 
                                     dropdownStyleData: DropdownStyleData(
                                       offset: const Offset(0, -5),
@@ -446,48 +924,65 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                       ),
 
                                       decoration: BoxDecoration(
-                                        color: AppColors.backgroundDark.withOpacity(0.9),
+                                        color: AppColors.backgroundDark
+                                            .withOpacity(0.9),
                                         borderRadius: BorderRadius.circular(5),
                                         border: Border.all(
-                                          color: AppColors.white.withOpacity(0.8),
+                                          color: AppColors.white.withOpacity(
+                                            0.8,
+                                          ),
                                           width: 1.5,
                                         ),
                                       ),
                                     ),
 
-                                    items: (selectedAirportRunway?.keys ?? <String>{}).map((value) {
-                                      final bool isSelected = value == selectedRunway;
-                                      return DropdownMenuItem<String>(
-                                        value: value,
-                                        child: Container(
-                                          width: double.infinity,
-                                          padding: const EdgeInsets.symmetric(
-                                            horizontal: 12,
-                                            vertical: 10,
-                                          ),
-                                          decoration: BoxDecoration(
-                                            color: isSelected
-                                                ? AppColors.white.withOpacity(0.15)
-                                                : Colors.transparent,
-                                            borderRadius: BorderRadius.circular(4),
-                                          ),
-                                          child: Text(
-                                            value,
-                                            style: TextStyle(
-                                              color: AppColors.placeholderDark,
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 16,
-                                            ),
-                                            overflow: TextOverflow.ellipsis,
-                                          ),
-                                        ),
-                                      );
-                                    }).toList(),
+                                    items:
+                                        (selectedAirportRunway?.keys ??
+                                                <String>{})
+                                            .map((value) {
+                                              final bool isSelected =
+                                                  value == selectedRunway;
+                                              return DropdownMenuItem<String>(
+                                                value: value,
+                                                child: Container(
+                                                  width: double.infinity,
+                                                  padding:
+                                                      const EdgeInsets.symmetric(
+                                                        horizontal: 12,
+                                                        vertical: 10,
+                                                      ),
+                                                  decoration: BoxDecoration(
+                                                    color: isSelected
+                                                        ? AppColors.white
+                                                              .withOpacity(0.15)
+                                                        : Colors.transparent,
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                          4,
+                                                        ),
+                                                  ),
+                                                  child: Text(
+                                                    value,
+                                                    style: TextStyle(
+                                                      color: AppColors
+                                                          .placeholderDark,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      fontSize: 16,
+                                                    ),
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                  ),
+                                                ),
+                                              );
+                                            })
+                                            .toList(),
 
                                     onChanged: (newValue) {
                                       setState(() {
                                         selectedRunway = newValue;
-                                        selectedSlopeValues = selectedAirportRunway?[selectedRunway];
+                                        selectedSlopeValues =
+                                            selectedAirportRunway?[selectedRunway];
                                         rwyId = selectedSlopeValues?[0];
                                         rwyLda = selectedSlopeValues?[1];
                                         netLDA = rwyLda;
@@ -507,26 +1002,26 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                         updateOpld();
                                       });
                                     },
-                                  ),                                
+                                  ),
                                 ),
                               ] else ...[
                                 Text(
-                                  AppStrings.rwyMag, 
+                                  AppStrings.rwyMag,
                                   style: TextStyle(
-                                    fontSize: 15,
+                                    fontSize: 16.5,
                                     color: AppColors.white,
                                   ),
                                 ),
                                 const SizedBox(width: 18.0),
                                 SizedBox(
-                                  width: 150,
+                                  width: orientation ? 360 : 210,
                                   height: 50,
                                   child: DropdownButtonFormField2<String>(
                                     isExpanded: true,
                                     value: rwymagOptions.isNotEmpty
                                         ? (rwymagOptions.contains(selectedMag)
-                                            ? selectedMag
-                                            : rwymagOptions.first)
+                                              ? selectedMag
+                                              : rwymagOptions.first)
                                         : '000',
 
                                     decoration: InputDecoration(
@@ -538,7 +1033,9 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                           color: AppColors.placeholder,
                                           width: 1,
                                         ),
-                                        borderRadius: BorderRadius.circular(8.0),
+                                        borderRadius: BorderRadius.circular(
+                                          5.0,
+                                        ),
                                       ),
 
                                       focusedBorder: OutlineInputBorder(
@@ -546,17 +1043,18 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                           color: AppColors.placeholder,
                                           width: 1,
                                         ),
-                                        borderRadius: BorderRadius.circular(8.0),
+                                        borderRadius: BorderRadius.circular(
+                                          8.0,
+                                        ),
                                       ),
 
                                       border: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(8.0),
+                                        borderRadius: BorderRadius.circular(
+                                          8.0,
+                                        ),
                                       ),
 
-                                      contentPadding: const EdgeInsets.symmetric(
-                                        horizontal: 10,
-                                        vertical: 5,
-                                      ),
+                                      contentPadding: EdgeInsets.zero,
                                     ),
 
                                     hint: Center(
@@ -572,7 +1070,6 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                       ),
                                     ),
 
-
                                     iconStyleData: const IconStyleData(
                                       icon: SizedBox.shrink(),
                                     ),
@@ -585,97 +1082,111 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                       ),
 
                                       decoration: BoxDecoration(
-                                        color: AppColors.backgroundDark.withOpacity(0.9),
+                                        color: AppColors.backgroundDark
+                                            .withOpacity(0.9),
                                         borderRadius: BorderRadius.circular(5),
                                         border: Border.all(
-                                          color: AppColors.white.withOpacity(0.8),
+                                          color: AppColors.white.withOpacity(
+                                            0.8,
+                                          ),
                                           width: 1.5,
                                         ),
                                       ),
                                     ),
 
-                                  buttonStyleData: const ButtonStyleData(
-                                    padding: EdgeInsets.zero,
-                                    height: 50,
-                                  ),
+                                    buttonStyleData: const ButtonStyleData(
+                                      padding: EdgeInsets.zero,
+                                      height: 50,
+                                    ),
 
-                                  selectedItemBuilder: (BuildContext context) {
-                                        return rwymagOptions.map((String value) {
-                                          return Center(
-                                            child: Text(
-                                              value,
-                                              textAlign: TextAlign.center,
-                                              style: TextStyle(
-                                                color: AppColors.iconDark,
-                                                fontSize: 14,
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                              overflow: TextOverflow.ellipsis,
-                                            ),
-                                          );
-                                        }).toList();
-                                      },
-
-                                  items: rwymagOptions.map((String value) {
-                                        final bool isSelected = value ==
-                                            (rwymagOptions.isNotEmpty
-                                                ? (rwymagOptions.contains(selectedMag)
-                                                    ? selectedMag
-                                                    : rwymagOptions.first)
-                                                : '000');
-                                        return DropdownMenuItem<String>(
-                                          value: value,
-                                          child: Container(
-                                            width: double.infinity,
-                                            padding: const EdgeInsets.symmetric(
-                                              horizontal: 12,
-                                              vertical: 10,
-                                            ),
-                                            decoration: BoxDecoration(
-                                              color: isSelected
-                                                  ? AppColors.white.withOpacity(0.15)
-                                                  : Colors.transparent,
-                                              borderRadius: BorderRadius.circular(4),
-                                            ),
-                                            child: Center(
+                                    selectedItemBuilder:
+                                        (BuildContext context) {
+                                          return rwymagOptions.map((
+                                            String value,
+                                          ) {
+                                            return Align(
+                                              alignment: Alignment.centerRight,
                                               child: Text(
                                                 value,
-                                                textAlign: TextAlign.center,
+                                                textAlign: TextAlign.right,
                                                 style: TextStyle(
-                                                  color: AppColors.textColor2Dark,
-                                                  fontSize: 16,
+                                                  color: AppColors.iconDark,
+                                                  fontSize: 18,
                                                   fontWeight: FontWeight.bold,
                                                 ),
                                                 overflow: TextOverflow.ellipsis,
                                               ),
+                                            );
+                                          }).toList();
+                                        },
+
+                                    items: rwymagOptions.map((String value) {
+                                      final bool isSelected =
+                                          value ==
+                                          (rwymagOptions.isNotEmpty
+                                              ? (rwymagOptions.contains(
+                                                      selectedMag,
+                                                    )
+                                                    ? selectedMag
+                                                    : rwymagOptions.first)
+                                              : '000');
+                                      return DropdownMenuItem<String>(
+                                        value: value,
+                                        child: Container(
+                                          width: double.infinity,
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 12,
+                                            vertical: 10,
+                                          ),
+                                          decoration: BoxDecoration(
+                                            color: isSelected
+                                                ? AppColors.white.withOpacity(
+                                                    0.15,
+                                                  )
+                                                : Colors.transparent,
+                                            borderRadius: BorderRadius.circular(
+                                              4,
                                             ),
                                           ),
-                                        );
-                                      }).toList(),
+                                          child: Center(
+                                            child: Text(
+                                              value,
+                                              textAlign: TextAlign.center,
+                                              style: TextStyle(
+                                                color: AppColors.textColor2Dark,
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                          ),
+                                        ),
+                                      );
+                                    }).toList(),
 
-                                  onChanged: (newValue) {
-                                    if (newValue == null) return;
+                                    onChanged: (newValue) {
+                                      if (newValue == null) return;
 
-                                    setState(() {
-                                      selectedMag = newValue;
+                                      setState(() {
+                                        selectedMag = newValue;
 
-                                      windValues = Calculatewind(
-                                        rwyidRef: selectedMag,
-                                        windRef: windValue,
-                                        windpickerRef: selectedWind,
-                                        operation: '',
-                                      )();
+                                        windValues = Calculatewind(
+                                          rwyidRef: selectedMag,
+                                          windRef: windValue,
+                                          windpickerRef: selectedWind,
+                                          operation: '',
+                                        )();
 
-                                      rwyId = selectedMag;
-                                      windValue = windValues?[0];
-                                      headtail = windValues?[1];
-                                      crosswind = windValues?[2];
+                                        rwyId = selectedMag;
+                                        windValue = windValues?[0];
+                                        headtail = windValues?[1];
+                                        crosswind = windValues?[2];
 
-                                      updateOpld();
-                                    });
-                                  },
-                                ),                             
-                              ),                                                                                        
+                                        updateOpld();
+                                      });
+                                    },
+                                  ),
+                                ),
                               ],
                             ],
                           ),
@@ -686,26 +1197,27 @@ class _CalculatorPageState extends State<CalculatorPage> {
                       Card(
                         color: AppColors.cardDark,
                         shape: RoundedRectangleBorder(
-                        side: BorderSide(
-                          color: AppColors.placeholder, 
-                          width: 2.0,         
+                          side: BorderSide(
+                            color: AppColors.placeholder,
+                            width: 2.0,
+                          ),
+                          borderRadius: BorderRadius.circular(12.0),
                         ),
-                        borderRadius: BorderRadius.circular(12.0), 
-                      ),
                         child: Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [       
+                            children: [
                               Text(
                                 AppStrings.rwyCond,
                                 style: TextStyle(
-                                  fontSize: 15,
-                                  color: AppColors.white, 
+                                  fontSize: 16.5,
+                                  color: AppColors.white,
                                 ),
                               ),
-                              SizedBox(width: screenSize.width * 0.05),
-                              Expanded(
+                              Spacer(),
+                              SizedBox(
+                                width: orientation ? 360 : 210,
                                 child: DropdownButtonFormField2<String>(
                                   isExpanded: true,
                                   value: selectedCondition,
@@ -743,14 +1255,14 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                       borderRadius: BorderRadius.circular(5.0),
                                     ),
 
-                                    contentPadding: const EdgeInsets.symmetric(
-                                      horizontal: 10,
-                                      vertical: 5,
-                                    ),
+                                    contentPadding: EdgeInsets.zero,
                                   ),
 
                                   iconStyleData: const IconStyleData(
                                     icon: SizedBox.shrink(),
+                                  ),
+                                  buttonStyleData: ButtonStyleData(
+                                    height: orientation ? 40 : 29,
                                   ),
 
                                   selectedItemBuilder: (BuildContext context) {
@@ -763,6 +1275,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                           style: TextStyle(
                                             color: AppColors.placeholderDark,
                                             fontWeight: FontWeight.bold,
+                                            fontSize: 18,
                                           ),
                                           overflow: TextOverflow.ellipsis,
                                         ),
@@ -777,7 +1290,8 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                     ),
 
                                     decoration: BoxDecoration(
-                                      color: AppColors.backgroundDark.withOpacity(0.9),
+                                      color: AppColors.backgroundDark
+                                          .withOpacity(0.9),
                                       borderRadius: BorderRadius.circular(5),
                                       border: Border.all(
                                         color: AppColors.white.withOpacity(0.8),
@@ -787,7 +1301,8 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                   ),
 
                                   items: rwyConditions.map((String value) {
-                                    final bool isSelected = value == selectedCondition;
+                                    final bool isSelected =
+                                        value == selectedCondition;
                                     return DropdownMenuItem<String>(
                                       value: value,
                                       child: Container(
@@ -798,9 +1313,13 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                         ),
                                         decoration: BoxDecoration(
                                           color: isSelected
-                                              ? AppColors.white.withOpacity(0.15)
+                                              ? AppColors.white.withOpacity(
+                                                  0.15,
+                                                )
                                               : Colors.transparent,
-                                          borderRadius: BorderRadius.circular(4),
+                                          borderRadius: BorderRadius.circular(
+                                            4,
+                                          ),
                                         ),
                                         child: Text(
                                           value,
@@ -831,9 +1350,12 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                         conditionRef: selectedCondition,
                                       )();
 
-                                      if (!autoBrakeOptions!.contains(selectedAutoBrake)) {
+                                      if (!autoBrakeOptions!.contains(
+                                        selectedAutoBrake,
+                                      )) {
                                         checkAutobreak = 'YES';
-                                        selectedAutoBrake = autoBrakeOptions![0];
+                                        selectedAutoBrake =
+                                            autoBrakeOptions![0];
                                       } else {
                                         checkAutobreak = 'NO';
                                       }
@@ -846,16 +1368,17 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                         conditionRef: selectedCondition,
                                       )();
 
-                                      if (!reversersList!.contains(selectedReversers)) {
+                                      if (!reversersList!.contains(
+                                        selectedReversers,
+                                      )) {
                                         selectedReversers = reversersList![0];
                                       }
 
                                       updateOpld();
                                     });
                                   },
-                                ),                             
+                                ),
                               ),
-                            
                             ],
                           ),
                         ),
@@ -865,44 +1388,58 @@ class _CalculatorPageState extends State<CalculatorPage> {
                       Card(
                         color: AppColors.cardDark,
                         shape: RoundedRectangleBorder(
-                        side: BorderSide(
-                          color: AppColors.placeholder, 
-                          width: 2.0,         
+                          side: BorderSide(
+                            color: AppColors.placeholder,
+                            width: 2.0,
+                          ),
+                          borderRadius: BorderRadius.circular(12.0),
                         ),
-                        borderRadius: BorderRadius.circular(12.0), 
-                      ),
                         child: Padding(
                           padding: const EdgeInsets.all(15.0),
                           child: Row(
-                            children: [                             
-                              Expanded(
-                                child: Text(
+                            children: [
+                               Text(
                                   AppStrings.rwySlop,
-                                  style: TextStyle(color: AppColors.white, fontSize: 15),
+                                  style: TextStyle(
+                                    color: AppColors.white,
+                                    fontSize: 16.5,
+                                  ),
                                 ),
-                              ),
+                              
                               const Spacer(),
-                              if (selectedAirport != 'XXX')
-                                Expanded(
-                                  child: Text(
+                              if (selectedAirport != 'XXX') ...[
+                                Text(
                                     '${Formatslope(slopeRef: rwySlope, airportRef: selectedAirport)()} %',
-                                    style: TextStyle(color: AppColors.textColor3Dark, fontSize: 16, fontWeight: FontWeight.bold),
-                                  ),
-                                )
-                              else ...[
-                                Expanded(
-                                  child: Text(
-                                    '${Formatslope(slopeRef: rwySlope, airportRef: selectedAirport)()} %',
-                                    style: TextStyle(fontSize: 16, color: AppColors.textColor2Dark, fontWeight: FontWeight.bold),
-                                  ),
+                                    style: TextStyle(
+                                      color: AppColors.textColor3Dark,
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                    ),
                                 ),
+                                SizedBox(width: 13),
+                              ]
+                              else ...[
+                                Text(
+                                    '${Formatslope(slopeRef: rwySlope, airportRef: selectedAirport)()} %',
+                                    style: TextStyle(
+                                      fontSize: orientation ? 18 : 19,
+                                      color: AppColors.textColor2Dark,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                const Spacer(),
                                 ElevatedButton(
                                   onPressed: () {
-                                      setState(() {
-                                          rwySlope = Calculateslopeincredecre(slopeReference: rwySlope, minReference: rwySlopeMin, maxReference: rwySlopeMax, operation: 'decrement')();
-                                          updateOpld();
-                                        });
-                                      },
+                                    setState(() {
+                                      rwySlope = Calculateslopeincredecre(
+                                        slopeReference: rwySlope,
+                                        minReference: rwySlopeMin,
+                                        maxReference: rwySlopeMax,
+                                        operation: 'decrement',
+                                      )();
+                                      updateOpld();
+                                    });
+                                  },
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: AppColors.grey,
                                     foregroundColor: AppColors.iconDark,
@@ -910,7 +1447,10 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                     padding: EdgeInsets.zero,
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(8.0),
-                                      side: const BorderSide(color: AppColors.white, width: 1.0),
+                                      side: const BorderSide(
+                                        color: AppColors.white,
+                                        width: 1.0,
+                                      ),
                                     ),
                                   ),
                                   child: Icon(
@@ -924,10 +1464,15 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                 ElevatedButton(
                                   onPressed: () {
                                     setState(() {
-                                        rwySlope = Calculateslopeincredecre(slopeReference: rwySlope, minReference: rwySlopeMin, maxReference: rwySlopeMax, operation: 'increment')();
-                                        updateOpld();
-                                      });
-                                    },
+                                      rwySlope = Calculateslopeincredecre(
+                                        slopeReference: rwySlope,
+                                        minReference: rwySlopeMin,
+                                        maxReference: rwySlopeMax,
+                                        operation: 'increment',
+                                      )();
+                                      updateOpld();
+                                    });
+                                  },
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: AppColors.grey,
                                     foregroundColor: AppColors.iconDark,
@@ -935,7 +1480,10 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                     padding: EdgeInsets.zero,
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(8.0),
-                                      side: const BorderSide(color: AppColors.white, width: 1.0),
+                                      side: const BorderSide(
+                                        color: AppColors.white,
+                                        width: 1.0,
+                                      ),
                                     ),
                                   ),
                                   child: Icon(
@@ -962,7 +1510,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                           borderRadius: BorderRadius.circular(12.0),
                         ),
                         child: Padding(
-                          padding: const EdgeInsets.all(20.0),
+                          padding: const EdgeInsets.all(15.0),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -972,27 +1520,24 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                     AppStrings.elevation,
                                     style: const TextStyle(
                                       color: AppColors.white,
-                                      fontSize: 15,
+                                      fontSize: 16.5,
                                     ),
                                   ),
                                   if (selectedAirport == 'XXX') ...[
-                                    SizedBox(width: 12),
-                                    Expanded(
-                                      child: Text(
+                                    const Spacer(),
+                                    Text(
                                         '${_currentElevation.round()} ${AppStrings.ft}',
                                         textAlign: TextAlign.center,
                                         maxLines: 1,
                                         softWrap: false,
                                         overflow: TextOverflow.ellipsis,
-                                        style: const TextStyle(
-                                          color: AppColors.textColor3Dark,
-                                          fontSize: 15,
+                                        style: TextStyle(
+                                          color: AppColors.textColor2Dark,
+                                          fontSize: orientation ? 18 : 19,
                                           fontWeight: FontWeight.bold,
                                         ),
-                                      ),
                                     ),
-                                    SizedBox(width: 0.8),
-                                    //const SizedBox(width: 12.0),
+                                     const Spacer(),
                                     ElevatedButton(
                                       onPressed: () {
                                         setState(() {
@@ -1039,7 +1584,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                         fontWeight: FontWeight.bold,
                                       ),
                                     ),
- 
+
                                     const SizedBox(width: 8.0),
                                     ElevatedButton(
                                       onPressed: () {
@@ -1090,16 +1635,15 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                   ] else ...[
                                     //SizedBox(width: screenSize.width * 0.27),
                                     const Spacer(),
-                                    Expanded(
-                                      child: Text(
+                                    Text(
                                         '$selectedAirportElevation ${AppStrings.ft}',
                                         style: TextStyle(
                                           color: AppColors.textColor3Dark,
-                                          fontSize: 16,
+                                          fontSize: 18,
                                           fontWeight: FontWeight.bold,
                                         ),
                                       ),
-                                    ),
+                                    SizedBox(width: 13),
                                   ],
                                 ],
                               ),
@@ -1125,8 +1669,16 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                     onChanged: (double val) {
                                       setState(() {
                                         _currentElevation = val;
-                                        altitud = Calculatealtitud(elevationRef: _currentElevation.toString(), qnhRef: selectedAirportQNH)();
-                                        isa = Calculateisa(elevationRef: altitud, temperatureRef: selectedAirportTemperature)();
+                                        altitud = Calculatealtitud(
+                                          elevationRef: _currentElevation
+                                              .toString(),
+                                          qnhRef: selectedAirportQNH,
+                                        )();
+                                        isa = Calculateisa(
+                                          elevationRef: altitud,
+                                          temperatureRef:
+                                              selectedAirportTemperature,
+                                        )();
                                       });
 
                                       _opldDebounce?.cancel();
@@ -1138,14 +1690,348 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                       );
                                     },
                                   ),
-                                ),                           
+                                ),
                             ],
                           ),
                         ),
                       ),
 
                       //LDA y boton de ajustes de reduccion, no se muestra si el aeropuerto es XXX
-                      if (selectedAirport != 'XXX') 
+                      if (selectedAirport != 'XXX')
+                        Card(
+                          color: AppColors.cardDark,
+                          shape: RoundedRectangleBorder(
+                            side: BorderSide(
+                              color: AppColors.placeholder,
+                              width: 2.0,
+                            ),
+                            borderRadius: BorderRadius.circular(12.0),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(20.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Row(
+                                  children: [
+                                    Text.rich(
+                                      TextSpan(
+                                        style: const TextStyle(fontSize: 16.5),
+                                        children: [
+                                          TextSpan(
+                                            text: AppStrings.lda,
+                                            style: TextStyle(
+                                              color: AppColors.white,
+                                            ),
+                                          ),
+                                          TextSpan(
+                                            text: '*',
+                                            style: TextStyle(
+                                              fontSize: 16.5,
+                                              color: AppColors.activeColor,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+
+                                    const Spacer(),
+
+                                    Text(
+                                      '$rwyLda ${AppStrings.ft}',
+                                      style: TextStyle(
+                                        fontSize: orientation ? 18 : 16,
+                                        color: AppColors.textColor3Dark,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    const Spacer(),
+
+                                    Text(
+                                      '(${(double.tryParse(rwyLda ?? '0')! * 0.3048).round()}${AppStrings.m})',
+                                      style: TextStyle(
+                                        fontSize: orientation ? 18 : 16,
+                                        color: AppColors.textColor3Dark,
+                                        fontStyle: FontStyle.italic,
+                                      ),
+                                    ),
+                                    const Spacer(),
+
+                                    ElevatedButton(
+                                      onPressed: () {
+                                        setState(() {
+                                          _isExpanded = !_isExpanded;
+                                          _currentReduction = '';
+                                          netLDA = rwyLda;
+                                          updateOpld();
+                                        });
+                                      },
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: AppColors.black,
+                                        side: BorderSide(
+                                          color: AppColors.placeholderDark,
+                                        ),
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(
+                                            15,
+                                          ),
+                                        ),
+                                      ),
+                                      child: Text(
+                                        AppStrings.ldaAdjust,
+                                        style: TextStyle(
+                                          color: AppColors.white, 
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+
+                                if (_isExpanded) ...[
+                                  const SizedBox(height: 10),
+
+                                  Row(
+                                    children: [
+                                      Text(
+                                        AppStrings.reduction,
+                                        style: const TextStyle(
+                                          color: AppColors.white,
+                                          fontSize: 16.5,
+                                        ),
+                                      ),
+                                      const SizedBox(width: 15),
+
+                                      SizedBox(
+                                        width: 120,
+                                        height: 50,
+                                        child: Stack(
+                                          children: [
+                                            TextField(
+                                              controller:
+                                                  TextEditingController(
+                                                      text: _currentReduction,
+                                                    )
+                                                    ..selection =
+                                                        TextSelection.fromPosition(
+                                                          TextPosition(
+                                                            offset:
+                                                                (_currentReduction ??
+                                                                        '')
+                                                                    .length,
+                                                          ),
+                                                        ),
+                                              keyboardType:
+                                                  TextInputType.number,
+                                              inputFormatters:
+                                                  <TextInputFormatter>[
+                                                    FilteringTextInputFormatter
+                                                        .digitsOnly,
+                                                    Customdigitformatter(),
+                                                  ],
+                                              onChanged: (String newValue) {
+                                                setState(() {
+                                                  _currentReduction = newValue;
+
+                                                  netLDA = Calculatereduction(
+                                                    ldaRef: rwyLda,
+                                                    reductionRef:
+                                                        _currentReduction,
+                                                  )();
+
+                                                  updateOpld();
+                                                });
+                                              },
+                                              textAlign: TextAlign.center,
+                                              style: const TextStyle(
+                                                color: AppColors.iconDark,
+                                                fontSize: 15,
+                                                fontWeight: FontWeight.w500,
+                                              ),
+                                              decoration: InputDecoration(
+                                                hintText:
+                                                    AppStrings.reductionLow,
+                                                hintStyle: const TextStyle(
+                                                  fontSize: 14.5,
+                                                  color:
+                                                      AppColors.reductionPlace,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                                filled: true,
+                                                fillColor:
+                                                    AppColors.placeholder,
+
+                                                // Para el espacio del boton X
+                                                contentPadding:
+                                                    const EdgeInsets.only(
+                                                      left: 8,
+                                                      right: 28,
+                                                      top: 12,
+                                                      bottom: 12,
+                                                    ),
+
+                                                border: OutlineInputBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                        8.0,
+                                                      ),
+                                                  borderSide: const BorderSide(
+                                                    color:
+                                                        AppColors.placeholder,
+                                                    width: 1.0,
+                                                  ),
+                                                ),
+                                                enabledBorder:
+                                                    OutlineInputBorder(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                            8.0,
+                                                          ),
+                                                      borderSide:
+                                                          const BorderSide(
+                                                            color: AppColors
+                                                                .placeholder,
+                                                            width: 1.0,
+                                                          ),
+                                                    ),
+                                                focusedBorder:
+                                                    OutlineInputBorder(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                            8.0,
+                                                          ),
+                                                      borderSide:
+                                                          const BorderSide(
+                                                            color: AppColors
+                                                                .placeholder,
+                                                            width: 1.0,
+                                                          ),
+                                                    ),
+                                              ),
+                                            ),
+
+                                            // Botón para eliminar input de reduction
+                                            if (_currentReduction?.isNotEmpty ??
+                                                false)
+                                              Positioned(
+                                                right: 0,
+                                                top: 5,
+                                                child: SizedBox(
+                                                  width: 40,
+                                                  height: 40,
+                                                  child: IconButton(
+                                                    padding: EdgeInsets.zero,
+                                                    onPressed: () {
+                                                      setState(() {
+                                                        _currentReduction = '';
+                                                        netLDA = rwyLda;
+                                                        updateOpld();
+                                                      });
+                                                    },
+                                                    icon: Container(
+                                                      width: 20,
+                                                      height: 20,
+                                                      decoration: BoxDecoration(
+                                                        color: AppColors
+                                                            .iconDark
+                                                            .withValues(
+                                                              alpha: 0.5,
+                                                            ),
+                                                        shape: BoxShape.circle,
+                                                      ),
+                                                      child: Center(
+                                                        child: Icon(
+                                                          Icons.close,
+                                                          color: AppColors
+                                                              .placeholder
+                                                              .withValues(
+                                                                alpha: 0.7,
+                                                              ),
+                                                          size: 13,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                          ],
+                                        ),
+                                      ),
+
+                                      const SizedBox(width: 10),
+
+                                      Text(
+                                        AppStrings.m,
+                                        style: const TextStyle(
+                                          color: AppColors.placeholderDark,
+                                          fontSize: 16.5,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+
+                                      if (_currentReduction?.isNotEmpty ??
+                                          false) ...[
+                                        const SizedBox(width: 10),
+
+                                        Flexible(
+                                          child: Text(
+                                            '(${(double.tryParse(_currentReduction ?? '0')! * 3.28084).toStringAsFixed(1)}${AppStrings.ft})',
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                            style: const TextStyle(
+                                              color: AppColors.textColor3Dark,
+                                              fontSize: 15,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ],
+                                  ),
+                                ],
+                                const SizedBox(height: 8),
+
+                                Text(
+                                  AppStrings.refOnly,
+                                  style: TextStyle(
+                                    fontSize: 11,
+                                    fontStyle: FontStyle.italic,
+                                    color: AppColors.activeColor,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+
+                      //Aircraft Configuration header
+                      Card(
+                        color: AppColors.black,
+                        shape: RoundedRectangleBorder(
+                          side: BorderSide(color: AppColors.white),
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                            vertical: 2,
+                            horizontal: 8,
+                          ),
+                          child: Align(
+                            alignment: Alignment.center,
+                            child: Text(
+                              AppStrings.aircraftConfig,
+                              style: TextStyle(
+                                fontSize: 21,
+                                fontWeight: FontWeight.bold,
+                                color: AppColors.white,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+
+                      //Flaps
                       Card(
                         color: AppColors.cardDark,
                         shape: RoundedRectangleBorder(
@@ -1156,306 +2042,19 @@ class _CalculatorPageState extends State<CalculatorPage> {
                           borderRadius: BorderRadius.circular(12.0),
                         ),
                         child: Padding(
-                          padding: const EdgeInsets.all(20.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Row(
-                                children: [
-                                  Text.rich(
-                                    TextSpan(
-                                      style: const TextStyle(
-                                        fontSize: 15,
-                                      ),
-                                      children: [
-                                        TextSpan(
-                                          text: AppStrings.lda,
-                                          style: TextStyle(
-                                            color: AppColors.white,
-                                          ),
-                                        ),
-                                        TextSpan(
-                                          text: '*',
-                                          style: TextStyle(
-                                            color: AppColors.activeColor,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-
-                                  const Spacer(),
-
-                                  Text(
-                                    '$rwyLda ${AppStrings.ft}',
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      color: AppColors.textColor3Dark,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                  const Spacer(),
-
-                                  Text(
-                                    '(${(double.tryParse(rwyLda ?? '0')! * 0.3048).round()}${AppStrings.m})',
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      color: AppColors.textColor3Dark,
-                                    ),
-                                  ),
-                                  const Spacer(),
-
-                                  ElevatedButton(
-                                    onPressed: () {
-                                      setState(() {
-                                        _isExpanded = !_isExpanded;
-                                        _currentReduction = '';
-                                        netLDA = rwyLda;
-                                        updateOpld();
-                                      });
-                                    },
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: AppColors.black,
-                                      side: BorderSide(
-                                        color: AppColors.placeholderDark,
-                                      ),
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(15),
-                                      ),
-                                    ),
-                                    child: Text(
-                                      AppStrings.ldaAdjust,
-                                      style: TextStyle(
-                                        color: AppColors.white,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-
-                              if (_isExpanded) ...[
-                                const SizedBox(height: 10),
-
-                                Row(
-                                  children: [
-                                    Text(
-                                      AppStrings.reduction,
-                                      style: const TextStyle(
-                                        color: AppColors.white,
-                                        fontSize: 15,
-                                      ),
-                                    ),
-                                    const SizedBox(width: 15),
-
-                                    SizedBox(
-                                      width: 120,
-                                      height: 50,
-                                      child: Stack(
-                                        children: [
-                                          TextField(
-                                            controller: TextEditingController(
-                                              text: _currentReduction,
-                                            )..selection = TextSelection.fromPosition(
-                                                TextPosition(
-                                                  offset: (_currentReduction ?? '').length,
-                                                ),
-                                              ),
-                                            keyboardType: TextInputType.number,
-                                            inputFormatters: <TextInputFormatter>[
-                                              FilteringTextInputFormatter.digitsOnly,
-                                              Customdigitformatter(),
-                                            ],
-                                            onChanged: (String newValue) {
-                                              setState(() {
-                                                _currentReduction = newValue;
-
-                                                netLDA = Calculatereduction(
-                                                  ldaRef: rwyLda,
-                                                  reductionRef: _currentReduction,
-                                                )();
-
-                                                updateOpld();
-                                              });
-                                            },
-                                            textAlign: TextAlign.center,
-                                            style: const TextStyle(
-                                              color: AppColors.iconDark,
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.w500,
-                                            ),
-                                            decoration: InputDecoration(
-                                              hintText: AppStrings.reductionLow,
-                                              hintStyle: const TextStyle(
-                                                color: AppColors.reductionPlace,
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                              filled: true,
-                                              fillColor: AppColors.placeholder,
-
-                                              // Para el espacio del boton X
-                                              contentPadding: const EdgeInsets.only(
-                                                left: 8,
-                                                right: 28,
-                                                top: 12,
-                                                bottom: 12,
-                                              ),
-
-                                              border: OutlineInputBorder(
-                                                borderRadius: BorderRadius.circular(8.0),
-                                                borderSide: const BorderSide(
-                                                  color: AppColors.placeholder,
-                                                  width: 1.0,
-                                                ),
-                                              ),
-                                              enabledBorder: OutlineInputBorder(
-                                                borderRadius: BorderRadius.circular(8.0),
-                                                borderSide: const BorderSide(
-                                                  color: AppColors.placeholder,
-                                                  width: 1.0,
-                                                ),
-                                              ),
-                                              focusedBorder: OutlineInputBorder(
-                                                borderRadius: BorderRadius.circular(8.0),
-                                                borderSide: const BorderSide(
-                                                  color: AppColors.placeholder,
-                                                  width: 1.0,
-                                                ),
-                                              ),
-                                            ),                                         
-                                          ),
-
-                                          // Botón para eliminar input de reduction
-                                          if (_currentReduction?.isNotEmpty ?? false)
-                                            Positioned(
-                                              right: 0,
-                                              top: 5,
-                                              child: SizedBox(
-                                                width: 40,
-                                                height: 40,
-                                                child: IconButton(
-                                                  padding: EdgeInsets.zero,
-                                                  onPressed: () {
-                                                    setState(() {
-                                                      _currentReduction = '';
-                                                      netLDA = rwyLda;
-                                                      updateOpld();
-                                                    });
-                                                  },
-                                                icon: Container(
-                                                  width: 20,
-                                                  height: 20,
-                                                  decoration: BoxDecoration(
-                                                    color: AppColors.iconDark.withValues(alpha: 0.5),
-                                                    shape: BoxShape.circle,
-                                                  ),
-                                                  child: Center(
-                                                    child: Icon(
-                                                      Icons.close,
-                                                      color: AppColors.placeholder.withValues(alpha: 0.7),
-                                                      size: 13,
-                                                      fontWeight: FontWeight.bold,
-                                                    ),
-                                                  ),
-                                                ),
-
-                                                ),
-                                              ),
-                                            ),
-                                        ],
-                                      ),
-                                    ),
-                                   
-                                    const SizedBox(width: 10),
-
-                                    Text(
-                                      AppStrings.m,
-                                      style: const TextStyle(
-                                        color: AppColors.placeholderDark,
-                                        fontSize: 15,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-
-                                    if (_currentReduction?.isNotEmpty ?? false) ...[
-                                      const SizedBox(width: 10),
-
-                                      Flexible(
-                                        child: Text(
-                                          '(${(double.tryParse(_currentReduction ?? '0')! * 3.28084).toStringAsFixed(1)}${AppStrings.ft})',
-                                          maxLines: 1,
-                                          overflow: TextOverflow.ellipsis,
-                                          style: const TextStyle(
-                                            color: AppColors.textColor3Dark,
-                                            fontSize: 15,
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ],
-                                ),
-                              ],
-                              const SizedBox(height: 8),
-
-                              Text(
-                                AppStrings.refOnly,
-                                style: TextStyle(
-                                  fontSize: 10,
-                                  fontStyle: FontStyle.italic,
-                                  color: AppColors.activeColor,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      
-                      //Aircraft Configuration header
-                      Card(
-                        color: AppColors.black,
-                        shape: RoundedRectangleBorder(
-                          side: BorderSide(color: AppColors.white),
-                          borderRadius: BorderRadius.circular(4),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Align(
-                            alignment: Alignment.center,
-                            child: Text(
-                              AppStrings.aircraftConfig,
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                                color: AppColors.white),
-                            ),
-                          ),
-                        ),
-                      ),
-
-                      //Flaps
-                      Card(
-                        color: AppColors.cardDark,
-                        shape: RoundedRectangleBorder(
-                        side: BorderSide(
-                          color: AppColors.placeholder, 
-                          width: 2.0,         
-                        ),
-                        borderRadius: BorderRadius.circular(12.0), 
-                        ),
-                        child: Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [       
+                            children: [
                               Text(
                                 AppStrings.flap,
                                 style: TextStyle(
                                   color: AppColors.white,
-                                  fontSize: 15, 
+                                  fontSize: 15,
                                 ),
                               ),
                               SizedBox(width: screenSize.width * 0.07),
-                              if(selectedLanding == 'Normal') ...[
+                              if (selectedLanding == 'Normal') ...[
                                 Expanded(
                                   child: DropdownButtonFormField2<String>(
                                     isExpanded: true,
@@ -1480,46 +2079,57 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                           color: AppColors.placeholder,
                                           width: 1,
                                         ),
-                                        borderRadius: BorderRadius.circular(5.0),
+                                        borderRadius: BorderRadius.circular(
+                                          5.0,
+                                        ),
                                       ),
 
                                       focusedBorder: OutlineInputBorder(
                                         borderSide: BorderSide(
                                           color: AppColors.placeholder,
                                         ),
-                                        borderRadius: BorderRadius.circular(5.0),
+                                        borderRadius: BorderRadius.circular(
+                                          5.0,
+                                        ),
                                       ),
 
                                       border: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(5.0),
+                                        borderRadius: BorderRadius.circular(
+                                          5.0,
+                                        ),
                                       ),
 
-                                      contentPadding: const EdgeInsets.symmetric(
-                                        horizontal: 10,
-                                        vertical: 5,
-                                      ),
+                                      contentPadding:
+                                          const EdgeInsets.symmetric(
+                                            horizontal: 10,
+                                            vertical: 5,
+                                          ),
                                     ),
 
                                     iconStyleData: const IconStyleData(
                                       icon: SizedBox.shrink(),
                                     ),
 
-                                    selectedItemBuilder: (BuildContext context) {
-                                      return normalFlaps.map((String value) {
-                                        return Align(
-                                          alignment: Alignment.centerRight,
-                                          child: Text(
-                                            value,
-                                            textAlign: TextAlign.right,
-                                            style: TextStyle(
-                                              color: AppColors.placeholderDark,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                            overflow: TextOverflow.ellipsis,
-                                          ),
-                                        );
-                                      }).toList();
-                                    },
+                                    selectedItemBuilder:
+                                        (BuildContext context) {
+                                          return normalFlaps.map((
+                                            String value,
+                                          ) {
+                                            return Align(
+                                              alignment: Alignment.centerRight,
+                                              child: Text(
+                                                value,
+                                                textAlign: TextAlign.right,
+                                                style: TextStyle(
+                                                  color:
+                                                      AppColors.placeholderDark,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                                overflow: TextOverflow.ellipsis,
+                                              ),
+                                            );
+                                          }).toList();
+                                        },
 
                                     dropdownStyleData: DropdownStyleData(
                                       offset: const Offset(0, -5),
@@ -1528,17 +2138,21 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                       ),
 
                                       decoration: BoxDecoration(
-                                        color: AppColors.backgroundDark.withOpacity(0.9),
+                                        color: AppColors.backgroundDark
+                                            .withOpacity(0.9),
                                         borderRadius: BorderRadius.circular(5),
                                         border: Border.all(
-                                          color: AppColors.white.withOpacity(0.8),
+                                          color: AppColors.white.withOpacity(
+                                            0.8,
+                                          ),
                                           width: 1.5,
                                         ),
                                       ),
                                     ),
 
                                     items: normalFlaps.map((String value) {
-                                      final bool isSelected = value == selectedFlaps;
+                                      final bool isSelected =
+                                          value == selectedFlaps;
                                       return DropdownMenuItem<String>(
                                         value: value,
                                         child: Container(
@@ -1549,9 +2163,13 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                           ),
                                           decoration: BoxDecoration(
                                             color: isSelected
-                                                ? AppColors.white.withOpacity(0.15)
+                                                ? AppColors.white.withOpacity(
+                                                    0.15,
+                                                  )
                                                 : Colors.transparent,
-                                            borderRadius: BorderRadius.circular(4),
+                                            borderRadius: BorderRadius.circular(
+                                              4,
+                                            ),
                                           ),
                                           child: Text(
                                             value,
@@ -1573,14 +2191,16 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                         listaComments = Loadcomments(
                                           aircraftRef: selectedAircraft,
                                           landingRef: selectedLanding,
-                                          configurationRef: selectedConfiguration,
+                                          configurationRef:
+                                              selectedConfiguration,
                                           flapRef: selectedFlaps,
                                         )();
 
                                         autoBrakeOptions = Loadautobrakes(
                                           aircraftRef: selectedAircraft,
                                           landingRef: selectedLanding,
-                                          configurationRef: selectedConfiguration,
+                                          configurationRef:
+                                              selectedConfiguration,
                                           flapRef: selectedFlaps,
                                           conditionRef: selectedCondition,
                                         )();
@@ -1588,119 +2208,137 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                         updateOpld();
                                       });
                                     },
-                                  ),                                
+                                  ),
                                 ),
-                              ] else ... [
-                                  Expanded(
-                                    child: DropdownButtonFormField2<String>(
-                                      isExpanded: true,
-                                      value: selectedFlaps,
+                              ] else ...[
+                                Expanded(
+                                  child: DropdownButtonFormField2<String>(
+                                    isExpanded: true,
+                                    value: selectedFlaps,
 
-                                      hint: Text(
-                                        '$selectedFlaps',
-                                        textAlign: TextAlign.right,
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          color: AppColors.placeholderDark,
+                                    hint: Text(
+                                      '$selectedFlaps',
+                                      textAlign: TextAlign.right,
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: AppColors.placeholderDark,
+                                      ),
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+
+                                    decoration: InputDecoration(
+                                      filled: true,
+                                      fillColor: AppColors.placeholder,
+
+                                      enabledBorder: OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                          color: AppColors.placeholder,
+                                          width: 1,
                                         ),
-                                        overflow: TextOverflow.ellipsis,
+                                        borderRadius: BorderRadius.circular(
+                                          5.0,
+                                        ),
                                       ),
 
-                                      decoration: InputDecoration(
-                                        filled: true,
-                                        fillColor: AppColors.placeholder,
+                                      focusedBorder: OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                          color: AppColors.placeholder,
+                                        ),
+                                        borderRadius: BorderRadius.circular(
+                                          5.0,
+                                        ),
+                                      ),
 
-                                        enabledBorder: OutlineInputBorder(
-                                          borderSide: BorderSide(
-                                            color: AppColors.placeholder,
-                                            width: 1,
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(
+                                          5.0,
+                                        ),
+                                      ),
+
+                                      contentPadding:
+                                          const EdgeInsets.symmetric(
+                                            horizontal: 10,
+                                            vertical: 5,
                                           ),
-                                          borderRadius: BorderRadius.circular(5.0),
-                                        ),
+                                    ),
 
-                                        focusedBorder: OutlineInputBorder(
-                                          borderSide: BorderSide(
-                                            color: AppColors.placeholder,
+                                    iconStyleData: const IconStyleData(
+                                      icon: SizedBox.shrink(),
+                                    ),
+
+                                    selectedItemBuilder:
+                                        (BuildContext context) {
+                                          return [
+                                            nonFlap,
+                                          ].where((value) => value != null).map(
+                                            (value) {
+                                              return Align(
+                                                alignment:
+                                                    Alignment.centerRight,
+                                                child: Text(
+                                                  value!,
+                                                  textAlign: TextAlign.right,
+                                                  style: TextStyle(
+                                                    color: AppColors
+                                                        .placeholderDark,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                ),
+                                              );
+                                            },
+                                          ).toList();
+                                        },
+
+                                    dropdownStyleData: DropdownStyleData(
+                                      offset: const Offset(0, -5),
+                                      scrollbarTheme: ScrollbarThemeData(
+                                        thickness: WidgetStateProperty.all(0),
+                                      ),
+
+                                      decoration: BoxDecoration(
+                                        color: AppColors.backgroundDark
+                                            .withOpacity(0.9),
+                                        borderRadius: BorderRadius.circular(5),
+                                        border: Border.all(
+                                          color: AppColors.white.withOpacity(
+                                            0.8,
                                           ),
-                                          borderRadius: BorderRadius.circular(5.0),
-                                        ),
-
-                                        border: OutlineInputBorder(
-                                          borderRadius: BorderRadius.circular(5.0),
-                                        ),
-
-                                        contentPadding: const EdgeInsets.symmetric(
-                                          horizontal: 10,
-                                          vertical: 5,
+                                          width: 1.5,
                                         ),
                                       ),
+                                    ),
 
-                                      iconStyleData: const IconStyleData(
-                                        icon: SizedBox.shrink(),
-                                      ),
+                                    items: [nonFlap]
+                                        .where((val) => val != null)
+                                        .map((value) {
+                                          final String safeValue = value!;
 
-                                      selectedItemBuilder: (BuildContext context) {
-                                        return [nonFlap]
-                                            .where((value) => value != null)
-                                            .map((value) {
-                                          return Align(
-                                            alignment: Alignment.centerRight,
+                                          return DropdownMenuItem<String>(
+                                            value: safeValue,
                                             child: Text(
-                                              value!,
-                                              textAlign: TextAlign.right,
+                                              safeValue,
                                               style: TextStyle(
-                                                color: AppColors.placeholderDark,
+                                                color:
+                                                    AppColors.placeholderDark,
                                                 fontWeight: FontWeight.bold,
+                                                fontSize: 16,
                                               ),
                                               overflow: TextOverflow.ellipsis,
                                             ),
                                           );
-                                        }).toList();
-                                      },
+                                        })
+                                        .toList(),
 
-                                      dropdownStyleData: DropdownStyleData(
-                                        offset: const Offset(0, -5),
-                                        scrollbarTheme: ScrollbarThemeData(
-                                          thickness: WidgetStateProperty.all(0),
-                                        ),
-
-                                        decoration: BoxDecoration(
-                                          color: AppColors.backgroundDark.withOpacity(0.9),
-                                          borderRadius: BorderRadius.circular(5),
-                                          border: Border.all(
-                                            color: AppColors.white.withOpacity(0.8),
-                                            width: 1.5,
-                                          ),
-                                        ),
-                                      ),
-
-                                      items: [nonFlap]
-                                          .where((val) => val != null)
-                                          .map((value) {
-                                        final String safeValue = value!;
-
-                                        return DropdownMenuItem<String>(
-                                          value: safeValue,
-                                          child: Text(
-                                            safeValue,
-                                            style: TextStyle(
-                                              color: AppColors.placeholderDark,
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 16,
-                                            ),
-                                            overflow: TextOverflow.ellipsis,
-                                          ),
-                                        );
-                                      }).toList(),
-
-                                      onChanged: (newValue) {
-                                        setState(() {
-                                          selectedFlaps = newValue;
-                                          updateOpld();
-                                        });
-                                      },
-                                    ),
+                                    onChanged: (newValue) {
+                                      setState(() {
+                                        selectedFlaps = newValue;
+                                        updateOpld();
+                                      });
+                                    },
                                   ),
+                                ),
                               ],
                             ],
                           ),
@@ -1711,41 +2349,41 @@ class _CalculatorPageState extends State<CalculatorPage> {
                       Card(
                         color: AppColors.cardDark,
                         shape: RoundedRectangleBorder(
-                        side: BorderSide(
-                          color: AppColors.placeholder, 
-                          width: 2.0,         
-                        ),
-                        borderRadius: BorderRadius.circular(12.0), 
+                          side: BorderSide(
+                            color: AppColors.placeholder,
+                            width: 2.0,
+                          ),
+                          borderRadius: BorderRadius.circular(12.0),
                         ),
                         child: Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [       
+                            children: [
                               Text(
                                 AppStrings.autobrake,
                                 style: TextStyle(
-                                  color: AppColors.white, 
+                                  color: AppColors.white,
                                   fontSize: 15,
                                 ),
                               ),
 
                               if (checkAutobreak == 'YES') ...[
-                               SizedBox(width: screenSize.width * 0.02),
-                               Text(
-                                    AppStrings.caution,
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                      color: Colors.orange,
-                                      //fontWeight: FontWeight.bold,
-                                    ),
-                                    overflow: TextOverflow.ellipsis,
+                                SizedBox(width: screenSize.width * 0.02),
+                                Text(
+                                  AppStrings.caution,
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    color: Colors.orange,
+                                    //fontWeight: FontWeight.bold,
+                                  ),
+                                  overflow: TextOverflow.ellipsis,
                                 ),
                                 SizedBox(width: screenSize.width * 0.02),
                               ] else ...[
                                 SizedBox(width: screenSize.width * 0.05),
                               ],
-                            
+
                               Expanded(
                                 child: DropdownButtonFormField2<String>(
                                   isExpanded: true,
@@ -1795,7 +2433,9 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                   ),
 
                                   selectedItemBuilder: (BuildContext context) {
-                                    return autoBrakeOptions!.map((String value) {
+                                    return autoBrakeOptions!.map((
+                                      String value,
+                                    ) {
                                       return Align(
                                         alignment: Alignment.centerRight,
                                         child: Text(
@@ -1818,7 +2458,8 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                     ),
 
                                     decoration: BoxDecoration(
-                                      color: AppColors.backgroundDark.withOpacity(0.9),
+                                      color: AppColors.backgroundDark
+                                          .withOpacity(0.9),
                                       borderRadius: BorderRadius.circular(5),
                                       border: Border.all(
                                         color: AppColors.white.withOpacity(0.8),
@@ -1828,7 +2469,8 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                   ),
 
                                   items: autoBrakeOptions!.map((String value) {
-                                    final bool isSelected = value == selectedAutoBrake;
+                                    final bool isSelected =
+                                        value == selectedAutoBrake;
                                     return DropdownMenuItem<String>(
                                       value: value,
                                       child: Container(
@@ -1839,9 +2481,13 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                         ),
                                         decoration: BoxDecoration(
                                           color: isSelected
-                                              ? AppColors.white.withOpacity(0.15)
+                                              ? AppColors.white.withOpacity(
+                                                  0.15,
+                                                )
                                               : Colors.transparent,
-                                          borderRadius: BorderRadius.circular(4),
+                                          borderRadius: BorderRadius.circular(
+                                            4,
+                                          ),
                                         ),
                                         child: Text(
                                           value,
@@ -1863,7 +2509,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                       updateOpld();
                                     });
                                   },
-                                ),                              
+                                ),
                               ),
                             ],
                           ),
@@ -1874,169 +2520,175 @@ class _CalculatorPageState extends State<CalculatorPage> {
                       Card(
                         color: AppColors.cardDark,
                         shape: RoundedRectangleBorder(
-                        side: BorderSide(
-                          color: AppColors.placeholder, 
-                          width: 2.0,         
-                        ),
-                        borderRadius: BorderRadius.circular(12.0), 
+                          side: BorderSide(
+                            color: AppColors.placeholder,
+                            width: 2.0,
+                          ),
+                          borderRadius: BorderRadius.circular(12.0),
                         ),
                         child: Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [       
+                            children: [
                               Text(
                                 AppStrings.reversers,
                                 style: TextStyle(
                                   color: AppColors.white,
-                                  fontSize: 15, 
+                                  fontSize: 15,
                                 ),
                               ),
                               SizedBox(width: screenSize.width * 0.05),
-                              SizedBox(width:4),
+                              SizedBox(width: 4),
                               Expanded(
                                 child: DropdownButtonFormField2<String>(
-                                isExpanded: true,
-                                value: selectedReversers,
+                                  isExpanded: true,
+                                  value: selectedReversers,
 
-                                hint: Text(
-                                  '$selectedReversers',
-                                  textAlign: TextAlign.right,
-                                  style: TextStyle(
-                                    color: AppColors.placeholderDark,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-
-                                decoration: InputDecoration(
-                                  filled: true,
-                                  fillColor: AppColors.placeholder,
-
-                                  enabledBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(
-                                      color: AppColors.placeholder,
-                                      width: 1,
+                                  hint: Text(
+                                    '$selectedReversers',
+                                    textAlign: TextAlign.right,
+                                    style: TextStyle(
+                                      color: AppColors.placeholderDark,
+                                      fontWeight: FontWeight.bold,
                                     ),
-                                    borderRadius: BorderRadius.circular(5.0),
+                                    overflow: TextOverflow.ellipsis,
                                   ),
 
-                                  focusedBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(
-                                      color: AppColors.placeholder,
+                                  decoration: InputDecoration(
+                                    filled: true,
+                                    fillColor: AppColors.placeholder,
+
+                                    enabledBorder: OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                        color: AppColors.placeholder,
+                                        width: 1,
+                                      ),
+                                      borderRadius: BorderRadius.circular(5.0),
                                     ),
-                                    borderRadius: BorderRadius.circular(5.0),
+
+                                    focusedBorder: OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                        color: AppColors.placeholder,
+                                      ),
+                                      borderRadius: BorderRadius.circular(5.0),
+                                    ),
+
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(5.0),
+                                    ),
+
+                                    contentPadding: const EdgeInsets.symmetric(
+                                      horizontal: 10,
+                                      vertical: 5,
+                                    ),
                                   ),
 
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(5.0),
+                                  iconStyleData: const IconStyleData(
+                                    icon: SizedBox.shrink(),
                                   ),
 
-                                  contentPadding: const EdgeInsets.symmetric(
-                                    horizontal: 10,
-                                    vertical: 5,
-                                  ),
-                                ),
-
-                                iconStyleData: const IconStyleData(
-                                  icon: SizedBox.shrink(),
-                                ),
-
-                                selectedItemBuilder: (BuildContext context) {
-                                  return reversersList!.map((String value) {
-                                    return Align(
-                                      alignment: Alignment.centerRight,
-                                      child: Text(
-                                        value,
-                                        textAlign: TextAlign.right,
-                                        style: TextStyle(
-                                          color: AppColors.placeholderDark,
-                                          fontWeight: FontWeight.bold,
+                                  selectedItemBuilder: (BuildContext context) {
+                                    return reversersList!.map((String value) {
+                                      return Align(
+                                        alignment: Alignment.centerRight,
+                                        child: Text(
+                                          value,
+                                          textAlign: TextAlign.right,
+                                          style: TextStyle(
+                                            color: AppColors.placeholderDark,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                          overflow: TextOverflow.ellipsis,
                                         ),
-                                        overflow: TextOverflow.ellipsis,
+                                      );
+                                    }).toList();
+                                  },
+
+                                  dropdownStyleData: DropdownStyleData(
+                                    offset: const Offset(0, -5),
+                                    scrollbarTheme: ScrollbarThemeData(
+                                      thickness: WidgetStateProperty.all(0),
+                                    ),
+
+                                    decoration: BoxDecoration(
+                                      color: AppColors.backgroundDark
+                                          .withOpacity(0.9),
+                                      borderRadius: BorderRadius.circular(5),
+                                      border: Border.all(
+                                        color: AppColors.white.withOpacity(0.8),
+                                        width: 1.5,
+                                      ),
+                                    ),
+                                  ),
+
+                                  items: reversersList!.map((String value) {
+                                    final bool isSelected =
+                                        value == selectedReversers;
+                                    return DropdownMenuItem<String>(
+                                      value: value,
+                                      child: Container(
+                                        width: double.infinity,
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 12,
+                                          vertical: 10,
+                                        ),
+                                        decoration: BoxDecoration(
+                                          color: isSelected
+                                              ? AppColors.white.withOpacity(
+                                                  0.15,
+                                                )
+                                              : Colors.transparent,
+                                          borderRadius: BorderRadius.circular(
+                                            4,
+                                          ),
+                                        ),
+                                        child: Text(
+                                          value,
+                                          style: TextStyle(
+                                            color: AppColors.placeholderDark,
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 16,
+                                          ),
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
                                       ),
                                     );
-                                  }).toList();
-                                },
+                                  }).toList(),
 
-                                dropdownStyleData: DropdownStyleData(
-                                  offset: const Offset(0, -5),
-                                  scrollbarTheme: ScrollbarThemeData(
-                                    thickness: WidgetStateProperty.all(0),
-                                  ),
-
-                                  decoration: BoxDecoration(
-                                    color: AppColors.backgroundDark.withOpacity(0.9),
-                                    borderRadius: BorderRadius.circular(5),
-                                    border: Border.all(
-                                      color: AppColors.white.withOpacity(0.8),
-                                      width: 1.5,
-                                    ),
-                                  ),
+                                  onChanged: (newValue) {
+                                    setState(() {
+                                      selectedReversers = newValue;
+                                      updateOpld();
+                                    });
+                                  },
                                 ),
-
-                                items: reversersList!.map((String value) {
-                                  final bool isSelected = value == selectedReversers;
-                                  return DropdownMenuItem<String>(
-                                    value: value,
-                                    child: Container(
-                                      width: double.infinity,
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 12,
-                                        vertical: 10,
-                                      ),
-                                      decoration: BoxDecoration(
-                                        color: isSelected
-                                            ? AppColors.white.withOpacity(0.15)
-                                            : Colors.transparent,
-                                        borderRadius: BorderRadius.circular(4),
-                                      ),
-                                      child: Text(
-                                        value,
-                                        style: TextStyle(
-                                          color: AppColors.placeholderDark,
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 16,
-                                        ),
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                    ),
-                                  );
-                                }).toList(),
-
-                                onChanged: (newValue) {
-                                  setState(() {
-                                    selectedReversers = newValue;
-                                    updateOpld();
-                                  });
-                                },
-                              ),                              
                               ),
                             ],
                           ),
                         ),
                       ),
 
-                      //SpeedBrakes, cambia dependiendo del tipo de landing (normal o non-normal) a N/A 
+                      //SpeedBrakes, cambia dependiendo del tipo de landing (normal o non-normal) a N/A
                       Card(
                         color: AppColors.cardDark,
                         shape: RoundedRectangleBorder(
-                        side: BorderSide(
-                          color: AppColors.placeholder, 
-                          width: 2.0,         
-                        ),
-                        borderRadius: BorderRadius.circular(12.0), 
+                          side: BorderSide(
+                            color: AppColors.placeholder,
+                            width: 2.0,
+                          ),
+                          borderRadius: BorderRadius.circular(12.0),
                         ),
                         child: Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [       
+                            children: [
                               Text(
                                 AppStrings.speedbrakes,
                                 style: TextStyle(
                                   color: AppColors.white,
-                                  fontSize: 15, 
+                                  fontSize: 15,
                                 ),
                               ),
                               if (selectedLanding != 'Non-Normal') ...[
@@ -2066,46 +2718,57 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                           color: AppColors.placeholder,
                                           width: 1,
                                         ),
-                                        borderRadius: BorderRadius.circular(5.0),
+                                        borderRadius: BorderRadius.circular(
+                                          5.0,
+                                        ),
                                       ),
 
                                       focusedBorder: OutlineInputBorder(
                                         borderSide: BorderSide(
                                           color: AppColors.placeholder,
                                         ),
-                                        borderRadius: BorderRadius.circular(5.0),
+                                        borderRadius: BorderRadius.circular(
+                                          5.0,
+                                        ),
                                       ),
 
                                       border: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(5.0),
+                                        borderRadius: BorderRadius.circular(
+                                          5.0,
+                                        ),
                                       ),
 
-                                      contentPadding: const EdgeInsets.symmetric(
-                                        horizontal: 10,
-                                        vertical: 5,
-                                      ),
+                                      contentPadding:
+                                          const EdgeInsets.symmetric(
+                                            horizontal: 10,
+                                            vertical: 5,
+                                          ),
                                     ),
 
                                     iconStyleData: const IconStyleData(
                                       icon: SizedBox.shrink(),
                                     ),
 
-                                    selectedItemBuilder: (BuildContext context) {
-                                      return speedBrakesTypes.map((String value) {
-                                        return Align(
-                                          alignment: Alignment.centerRight,
-                                          child: Text(
-                                            value,
-                                            textAlign: TextAlign.right,
-                                            style: TextStyle(
-                                              color: AppColors.placeholderDark,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                            overflow: TextOverflow.ellipsis,
-                                          ),
-                                        );
-                                      }).toList();
-                                    },
+                                    selectedItemBuilder:
+                                        (BuildContext context) {
+                                          return speedBrakesTypes.map((
+                                            String value,
+                                          ) {
+                                            return Align(
+                                              alignment: Alignment.centerRight,
+                                              child: Text(
+                                                value,
+                                                textAlign: TextAlign.right,
+                                                style: TextStyle(
+                                                  color:
+                                                      AppColors.placeholderDark,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                                overflow: TextOverflow.ellipsis,
+                                              ),
+                                            );
+                                          }).toList();
+                                        },
 
                                     dropdownStyleData: DropdownStyleData(
                                       offset: const Offset(0, -5),
@@ -2114,17 +2777,21 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                       ),
 
                                       decoration: BoxDecoration(
-                                        color: AppColors.backgroundDark.withOpacity(0.9),
+                                        color: AppColors.backgroundDark
+                                            .withOpacity(0.9),
                                         borderRadius: BorderRadius.circular(5),
                                         border: Border.all(
-                                          color: AppColors.white.withOpacity(0.8),
+                                          color: AppColors.white.withOpacity(
+                                            0.8,
+                                          ),
                                           width: 1.5,
                                         ),
                                       ),
                                     ),
 
                                     items: speedBrakesTypes.map((String value) {
-                                      final bool isSelected = value == selectedSpeedBrake;
+                                      final bool isSelected =
+                                          value == selectedSpeedBrake;
                                       return DropdownMenuItem<String>(
                                         value: value,
                                         child: Container(
@@ -2135,9 +2802,13 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                           ),
                                           decoration: BoxDecoration(
                                             color: isSelected
-                                                ? AppColors.white.withOpacity(0.15)
+                                                ? AppColors.white.withOpacity(
+                                                    0.15,
+                                                  )
                                                 : Colors.transparent,
-                                            borderRadius: BorderRadius.circular(4),
+                                            borderRadius: BorderRadius.circular(
+                                              4,
+                                            ),
                                           ),
                                           child: Text(
                                             value,
@@ -2158,11 +2829,12 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                         updateOpld();
                                       });
                                     },
-                                  ),                               
-                                )
+                                  ),
+                                ),
                               ] else ...[
                                 SizedBox(width: screenSize.width * 0.22),
-                                Expanded (child: Text(
+                                Expanded(
+                                  child: Text(
                                     AppStrings.na,
                                     style: TextStyle(
                                       fontSize: 18,
@@ -2181,30 +2853,36 @@ class _CalculatorPageState extends State<CalculatorPage> {
                       Card(
                         color: AppColors.cardDark,
                         shape: RoundedRectangleBorder(
-                        side: BorderSide(
-                          color: AppColors.placeholder, 
-                          width: 2.0,         
-                        ),
-                        borderRadius: BorderRadius.circular(12.0), 
+                          side: BorderSide(
+                            color: AppColors.placeholder,
+                            width: 2.0,
+                          ),
+                          borderRadius: BorderRadius.circular(12.0),
                         ),
                         child: Padding(
                           padding: const EdgeInsets.all(15.0),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              
                               if (selectedLanding != 'Non-Normal') ...[
                                 Expanded(
                                   child: Text(
                                     AppStrings.vrefAdd,
-                                    style: TextStyle(color: AppColors.white, fontSize: 15),
+                                    style: TextStyle(
+                                      color: AppColors.white,
+                                      fontSize: 15,
+                                    ),
                                   ),
                                 ),
                                 const SizedBox(width: 10.0),
                                 Expanded(
                                   child: Text(
-                                  '$vRef ${AppStrings.kt}',
-                                    style: TextStyle(fontSize: 18, color: AppColors.placeholderDark, fontWeight: FontWeight.bold),
+                                    '$vRef ${AppStrings.kt}',
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                      color: AppColors.placeholderDark,
+                                      fontWeight: FontWeight.bold,
+                                    ),
                                   ),
                                 ),
                                 const SizedBox(width: 10.0),
@@ -2212,146 +2890,192 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                 Row(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
-                                  
                                     ElevatedButton(
                                       onPressed: () {
                                         setState(() {
-                                          vRef = Calculatevrefincredecre(vReference: vRef, minReference: vMin, maxReference: vMax, operation: 'decrement')();
+                                          vRef = Calculatevrefincredecre(
+                                            vReference: vRef,
+                                            minReference: vMin,
+                                            maxReference: vMax,
+                                            operation: 'decrement',
+                                          )();
                                           updateOpld();
                                         });
                                       },
                                       style: ElevatedButton.styleFrom(
-                                        backgroundColor: AppColors.grey, 
-                                        foregroundColor: AppColors.iconDark, 
+                                        backgroundColor: AppColors.grey,
+                                        foregroundColor: AppColors.iconDark,
                                         minimumSize: const Size(70, 70),
                                         padding: EdgeInsets.zero,
                                         shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(8.0),
-                                          side: const BorderSide(color: AppColors.white, width: 1.0), 
+                                          borderRadius: BorderRadius.circular(
+                                            8.0,
+                                          ),
+                                          side: const BorderSide(
+                                            color: AppColors.white,
+                                            width: 1.0,
+                                          ),
                                         ),
                                       ),
                                       child: Icon(
                                         Icons.remove,
-                                        color: AppColors.iconDark, 
+                                        color: AppColors.iconDark,
                                         size: 30,
                                         fontWeight: FontWeight.bold,
                                       ),
                                     ),
-                                    const SizedBox(width: 8.0),                                 
+                                    const SizedBox(width: 8.0),
                                     ElevatedButton(
                                       onPressed: () {
                                         setState(() {
-                                          vRef = Calculatevrefincredecre(vReference: vRef, minReference: vMin, maxReference: vMax, operation: 'increment')();
+                                          vRef = Calculatevrefincredecre(
+                                            vReference: vRef,
+                                            minReference: vMin,
+                                            maxReference: vMax,
+                                            operation: 'increment',
+                                          )();
                                           updateOpld();
                                         });
                                       },
                                       style: ElevatedButton.styleFrom(
-                                        backgroundColor: AppColors.grey, 
-                                        foregroundColor: AppColors.iconDark, 
+                                        backgroundColor: AppColors.grey,
+                                        foregroundColor: AppColors.iconDark,
                                         minimumSize: const Size(70, 70),
                                         padding: EdgeInsets.zero,
                                         shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(8.0),
-                                          side: const BorderSide(color: AppColors.white, width: 1.0), 
+                                          borderRadius: BorderRadius.circular(
+                                            8.0,
+                                          ),
+                                          side: const BorderSide(
+                                            color: AppColors.white,
+                                            width: 1.0,
+                                          ),
                                         ),
                                       ),
                                       child: Icon(
                                         Icons.add,
-                                        color: AppColors.iconDark, 
+                                        color: AppColors.iconDark,
                                         size: 30,
                                         fontWeight: FontWeight.bold,
                                       ),
                                     ),
                                   ],
                                 ),
-                              ]  else ...[
-                                    if(vrefAdjust == 'NO') ...[
-                                      Expanded(
-                                        child: Text(
-                                          '$vrefNonPlus +',
-                                          style: TextStyle(color: AppColors.white),
+                              ] else ...[
+                                if (vrefAdjust == 'NO') ...[
+                                  Expanded(
+                                    child: Text(
+                                      '$vrefNonPlus +',
+                                      style: TextStyle(color: AppColors.white),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 122.0),
+                                  Expanded(
+                                    child: Text(
+                                      AppStrings.na,
+                                      style: TextStyle(
+                                        fontSize: 18,
+                                        color: AppColors.textColor3Dark,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+                                ] else ...[
+                                  Expanded(
+                                    child: Text(
+                                      '$vrefNonPlus +',
+                                      style: TextStyle(color: AppColors.white),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 20.0),
+                                  Expanded(
+                                    child: Text(
+                                      '$vRef ${AppStrings.kt}',
+                                      style: TextStyle(
+                                        fontSize: 18,
+                                        color: AppColors.placeholderDark,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 10.0),
+
+                                  Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      ElevatedButton(
+                                        onPressed: () {
+                                          setState(() {
+                                            vRef = Calculatevrefincredecre(
+                                              vReference: vRef,
+                                              minReference: vMin,
+                                              maxReference: vMax,
+                                              operation: 'decrement',
+                                            )();
+                                            updateOpld();
+                                          });
+                                        },
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: AppColors.grey,
+                                          foregroundColor: AppColors.iconDark,
+                                          minimumSize: const Size(70, 70),
+                                          padding: EdgeInsets.zero,
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(
+                                              8.0,
+                                            ),
+                                            side: const BorderSide(
+                                              color: AppColors.white,
+                                              width: 1.0,
+                                            ),
+                                          ),
+                                        ),
+                                        child: Icon(
+                                          Icons.remove,
+                                          color: AppColors.iconDark,
+                                          size: 30,
+                                          fontWeight: FontWeight.bold,
                                         ),
                                       ),
-                                      const SizedBox(width: 122.0),
-                                      Expanded(
-                                        child: Text(
-                                        AppStrings.na,
-                                          style: TextStyle(fontSize: 18, color: AppColors.textColor3Dark, fontWeight: FontWeight.bold),
-                                        ),
-                                      ),  
-                                    ] else ...[
-                                        Expanded(
-                                          child: Text(
-                                            '$vrefNonPlus +',
-                                            style: TextStyle(color: AppColors.white),
+                                      const SizedBox(width: 8.0),
+                                      ElevatedButton(
+                                        onPressed: () {
+                                          setState(() {
+                                            vRef = Calculatevrefincredecre(
+                                              vReference: vRef,
+                                              minReference: vMin,
+                                              maxReference: vMax,
+                                              operation: 'increment',
+                                            )();
+                                            updateOpld();
+                                          });
+                                        },
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: AppColors.grey,
+                                          foregroundColor: AppColors.iconDark,
+                                          minimumSize: const Size(70, 70),
+                                          padding: EdgeInsets.zero,
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(
+                                              8.0,
+                                            ),
+                                            side: const BorderSide(
+                                              color: AppColors.white,
+                                              width: 1.0,
+                                            ),
                                           ),
                                         ),
-                                        const SizedBox(width: 20.0),
-                                        Expanded(
-                                          child: Text(
-                                          '$vRef ${AppStrings.kt}',
-                                            style: TextStyle(fontSize: 18, color: AppColors.placeholderDark, fontWeight: FontWeight.bold),
-                                          ),
+                                        child: Icon(
+                                          Icons.add,
+                                          color: AppColors.iconDark,
+                                          size: 30,
+                                          fontWeight: FontWeight.bold,
                                         ),
-                                        const SizedBox(width: 10.0),
-
-                                        Row(
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: [
-                                          
-                                            ElevatedButton(
-                                              onPressed: () {
-                                                setState(() {
-                                                  vRef = Calculatevrefincredecre(vReference: vRef, minReference: vMin, maxReference: vMax, operation: 'decrement')();
-                                                  updateOpld();
-                                                });
-                                              },
-                                              style: ElevatedButton.styleFrom(
-                                                backgroundColor: AppColors.grey, 
-                                                foregroundColor: AppColors.iconDark, 
-                                                minimumSize: const Size(70, 70),
-                                                padding: EdgeInsets.zero,
-                                                shape: RoundedRectangleBorder(
-                                                  borderRadius: BorderRadius.circular(8.0),
-                                                  side: const BorderSide(color: AppColors.white, width: 1.0), 
-                                                ),
-                                              ),
-                                              child: Icon(
-                                                Icons.remove,
-                                                color: AppColors.iconDark, 
-                                                size: 30,
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                            ),
-                                            const SizedBox(width: 8.0),                                 
-                                            ElevatedButton(
-                                              onPressed: () {
-                                                setState(() {
-                                                  vRef = Calculatevrefincredecre(vReference: vRef, minReference: vMin, maxReference: vMax, operation: 'increment')();
-                                                  updateOpld();
-                                                });
-                                              },
-                                              style: ElevatedButton.styleFrom(
-                                                backgroundColor: AppColors.grey, 
-                                                foregroundColor: AppColors.iconDark, 
-                                                minimumSize: const Size(70, 70),
-                                                padding: EdgeInsets.zero,
-                                                shape: RoundedRectangleBorder(
-                                                  borderRadius: BorderRadius.circular(8.0),
-                                                  side: const BorderSide(color: AppColors.white, width: 1.0), 
-                                                ),
-                                              ),
-                                              child: Icon(
-                                                Icons.add,
-                                                color: AppColors.iconDark, 
-                                                size: 30,
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                            ),
-                                          ], 
-                                        ),
+                                      ),
                                     ],
+                                  ),
                                 ],
+                              ],
                             ],
                           ),
                         ),
@@ -2359,131 +3083,165 @@ class _CalculatorPageState extends State<CalculatorPage> {
 
                       //Landing Weight
                       Card(
-                            color: AppColors.cardDark,
-                            shape: RoundedRectangleBorder(
-                            side: BorderSide(
-                              color: AppColors.placeholder, 
-                              width: 2.0,         
-                            ),
-                            borderRadius: BorderRadius.circular(12.0), 
-                            ),
-                            child: Padding(
-                              padding: const EdgeInsets.all(20.0),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
+                        color: AppColors.cardDark,
+                        shape: RoundedRectangleBorder(
+                          side: BorderSide(
+                            color: AppColors.placeholder,
+                            width: 2.0,
+                          ),
+                          borderRadius: BorderRadius.circular(12.0),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(20.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
                                 children: [
-                                  Row(
+                                  Column(
                                     children: [
-                                      Column(
-                                        children: [
-                                          Text(AppStrings.landWeight, style: const TextStyle(color: AppColors.white, fontSize: 15)),
-                                          const SizedBox(height: 5.0),
-                                          Text(
-                                            '${(_currentLadWeight as num).toInt().toString()} ${AppStrings.lb}',
-                                            style: const TextStyle(fontSize: 18, color: AppColors.textColor2Dark, fontWeight: FontWeight.bold),
-                                          ),
-                                        ],
-                                      ),
-                                      const Spacer(),
-                                      ElevatedButton(
-                                        onPressed: () {
-                                          setState(() {
-                                            _currentLadWeight = Calculateweightincredecre(weightReference: _currentLadWeight, minReference: weightMIN, maxReference: weightMAX, operation: 'decrement')();
-                                            updateOpld();
-                                          });
-                                        },
-                                        style: ElevatedButton.styleFrom(
-                                          backgroundColor: AppColors.grey, 
-                                          foregroundColor: AppColors.iconDark, 
-                                          minimumSize: const Size(70, 70),
-                                          padding: EdgeInsets.zero,
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(8.0),
-                                            side: const BorderSide(color: AppColors.white, width: 1.0), 
-                                          ),
+                                      Text(
+                                        AppStrings.landWeight,
+                                        style: const TextStyle(
+                                          color: AppColors.white,
+                                          fontSize: 15,
                                         ),
-                                        child: Icon(
-                                          Icons.remove,
-                                          color: AppColors.iconDark, 
-                                          size: 30,
+                                      ),
+                                      const SizedBox(height: 5.0),
+                                      Text(
+                                        '${(_currentLadWeight as num).toInt().toString()} ${AppStrings.lb}',
+                                        style: const TextStyle(
+                                          fontSize: 18,
+                                          color: AppColors.textColor2Dark,
                                           fontWeight: FontWeight.bold,
                                         ),
                                       ),
-                                      const SizedBox(width: 8.0),                                 
-                                      ElevatedButton(
-                                        onPressed:  () {
-                                          setState(() {
-                                            _currentLadWeight = Calculateweightincredecre(weightReference: _currentLadWeight, minReference: weightMIN, maxReference: weightMAX, operation: 'increment')();
-                                            updateOpld();
-                                          });
-                                        },
-                                        style: ElevatedButton.styleFrom(
-                                          backgroundColor: AppColors.grey, 
-                                          foregroundColor: AppColors.iconDark, 
-                                          minimumSize: const Size(70, 70),
-                                          padding: EdgeInsets.zero,
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(8.0),
-                                            side: const BorderSide(color: AppColors.white, width: 1.0), 
-                                          ),
-                                        ),
-                                        child: Icon(
-                                          Icons.add,
-                                          color: AppColors.iconDark, 
-                                          size: 30,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-
                                     ],
                                   ),
-                                  
-                                  SliderTheme(
-                                    data: SliderTheme.of(context).copyWith(
-                                      tickMarkShape:
-                                          const RoundSliderTickMarkShape(
-                                            tickMarkRadius: 0,
-                                          ),
+                                  const Spacer(),
+                                  ElevatedButton(
+                                    onPressed: () {
+                                      setState(() {
+                                        _currentLadWeight =
+                                            Calculateweightincredecre(
+                                              weightReference:
+                                                  _currentLadWeight,
+                                              minReference: weightMIN,
+                                              maxReference: weightMAX,
+                                              operation: 'decrement',
+                                            )();
+                                        updateOpld();
+                                      });
+                                    },
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: AppColors.grey,
+                                      foregroundColor: AppColors.iconDark,
+                                      minimumSize: const Size(70, 70),
+                                      padding: EdgeInsets.zero,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(
+                                          8.0,
+                                        ),
+                                        side: const BorderSide(
+                                          color: AppColors.white,
+                                          width: 1.0,
+                                        ),
+                                      ),
                                     ),
-                                    child: Slider(
-                                      activeColor: AppColors.iconDark,
-                                      thumbColor: AppColors.iconDark,
-                                      inactiveColor: AppColors.grey,
-                                      min: 0,
-                                      max: _divisionsWeight!.toDouble(),
-                                      divisions: _divisionsWeight,
-                                      value: _currentLadWeight <= weightMIN
-                                          ? 0
-                                          : _currentLadWeight >= weightMAX
-                                              ? _divisionsWeight!.toDouble()
-                                              : ((_currentLadWeight / 1000).round() - minStep + 1)
-                                                  .toDouble(),
-                                      onChanged: (double val) {
-                                        setState(() {
-                                          if (val == 0) {
-                                            _currentLadWeight = weightMIN;
-                                          } else if (val == _divisionsWeight) {
-                                            _currentLadWeight = weightMAX;
-                                          } else {
-                                            _currentLadWeight =
-                                                (minStep + val.toInt() - 1) * 1000;
-                                          }
-                                        });
-
-                                        _opldDebounce?.cancel();
-                                        _opldDebounce = Timer(
-                                          const Duration(milliseconds: 300),
-                                          () {
-                                            updateOpld();
-                                          },
-                                        );
-                                      },
+                                    child: Icon(
+                                      Icons.remove,
+                                      color: AppColors.iconDark,
+                                      size: 30,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 8.0),
+                                  ElevatedButton(
+                                    onPressed: () {
+                                      setState(() {
+                                        _currentLadWeight =
+                                            Calculateweightincredecre(
+                                              weightReference:
+                                                  _currentLadWeight,
+                                              minReference: weightMIN,
+                                              maxReference: weightMAX,
+                                              operation: 'increment',
+                                            )();
+                                        updateOpld();
+                                      });
+                                    },
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: AppColors.grey,
+                                      foregroundColor: AppColors.iconDark,
+                                      minimumSize: const Size(70, 70),
+                                      padding: EdgeInsets.zero,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(
+                                          8.0,
+                                        ),
+                                        side: const BorderSide(
+                                          color: AppColors.white,
+                                          width: 1.0,
+                                        ),
+                                      ),
+                                    ),
+                                    child: Icon(
+                                      Icons.add,
+                                      color: AppColors.iconDark,
+                                      size: 30,
+                                      fontWeight: FontWeight.bold,
                                     ),
                                   ),
                                 ],
                               ),
-                            ),
+
+                              SliderTheme(
+                                data: SliderTheme.of(context).copyWith(
+                                  tickMarkShape: const RoundSliderTickMarkShape(
+                                    tickMarkRadius: 0,
+                                  ),
+                                ),
+                                child: Slider(
+                                  activeColor: AppColors.iconDark,
+                                  thumbColor: AppColors.iconDark,
+                                  inactiveColor: AppColors.grey,
+                                  min: 0,
+                                  max: _divisionsWeight!.toDouble(),
+                                  divisions: _divisionsWeight,
+                                  value: _currentLadWeight <= weightMIN
+                                      ? 0
+                                      : _currentLadWeight >= weightMAX
+                                      ? _divisionsWeight!.toDouble()
+                                      : ((_currentLadWeight / 1000).round() -
+                                                minStep +
+                                                1)
+                                            .toDouble(),
+                                  onChanged: (double val) {
+                                    setState(() {
+                                      if (val == 0) {
+                                        _currentLadWeight = weightMIN;
+                                      } else if (val == _divisionsWeight) {
+                                        _currentLadWeight = weightMAX;
+                                      } else {
+                                        _currentLadWeight =
+                                            (minStep + val.toInt() - 1) * 1000;
+                                      }
+                                    });
+
+                                    _opldDebounce?.cancel();
+                                    _opldDebounce = Timer(
+                                      const Duration(milliseconds: 300),
+                                      () {
+                                        updateOpld();
+                                      },
+                                    );
+                                  },
+                                ),
+                              ),
+                            ],
                           ),
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -2502,15 +3260,19 @@ class _CalculatorPageState extends State<CalculatorPage> {
                           borderRadius: BorderRadius.circular(4),
                         ),
                         child: Padding(
-                          padding: const EdgeInsets.all(8.0),
+                          padding: const EdgeInsets.symmetric(
+                            vertical: 2,
+                            horizontal: 8,
+                          ),
                           child: Align(
                             alignment: Alignment.center,
                             child: Text(
                               AppStrings.weatherCond,
                               style: TextStyle(
-                                fontSize: 18,
+                                fontSize: 21,
                                 fontWeight: FontWeight.bold,
-                                color: AppColors.white),
+                                color: AppColors.white,
+                              ),
                             ),
                           ),
                         ),
@@ -2520,115 +3282,165 @@ class _CalculatorPageState extends State<CalculatorPage> {
                       Card(
                         color: AppColors.cardDark,
                         shape: RoundedRectangleBorder(
-                        side: BorderSide(
-                          color: AppColors.placeholder, 
-                          width: 2.0,         
-                        ),
-                        borderRadius: BorderRadius.circular(12.0), 
+                          side: BorderSide(
+                            color: AppColors.placeholder,
+                            width: 2.0,
+                          ),
+                          borderRadius: BorderRadius.circular(12.0),
                         ),
                         child: Padding(
                           padding: const EdgeInsets.all(15.0),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Expanded(
-                                child: Text(
+                              Text(
                                   AppStrings.qnh,
-                                  style: TextStyle(color: AppColors.white, fontSize: 15),
+                                  style: TextStyle(
+                                    color: AppColors.white,
+                                    fontSize: 16.5,
+                                  ),
                                 ),
-                              ),
+                              
                               const SizedBox(width: 5.0),
 
-                              Expanded(
-                                child: Column (
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  mainAxisSize: MainAxisSize.min, 
-                                  children: [ 
+                              Flexible(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
                                     Text(
                                       '$selectedAirportQNH',
-                                      style: TextStyle(color: AppColors.placeholderDark, fontSize: 15, fontWeight: FontWeight.bold),
+                                      style: TextStyle(
+                                        color: AppColors.placeholderDark,
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold,
+                                      ),
                                     ),
                                     const SizedBox(height: 4),
                                     Padding(
                                       padding: const EdgeInsets.only(left: 10),
-                                      child:Text(
-                                        (0.02953 * (double.tryParse(selectedAirportQNH ?? '') ?? 0)).toStringAsFixed(2),
-                                        style: TextStyle(color: AppColors.placeholderDark, fontSize: 15, fontWeight: FontWeight.bold),
+                                      child: Text(
+                                        (0.02953 *
+                                                (double.tryParse(
+                                                      selectedAirportQNH ?? '',
+                                                    ) ??
+                                                    0))
+                                            .toStringAsFixed(2),
+                                        style: TextStyle(
+                                          color: AppColors.placeholderDark,
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold,
+                                        ),
                                       ),
                                     ),
-                                ]
+                                  ],
                                 ),
                               ),
-
-                              const SizedBox(width: 5.0),
-                              Expanded(
-                                child: Column (
+                              SizedBox(
+                                child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
-                                  mainAxisSize: MainAxisSize.min, 
-                                  children: [ 
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
                                     Text(
                                       AppStrings.hpa,
-                                      style: TextStyle(color: AppColors.placeholderDark, fontSize: 15, fontWeight: FontWeight.bold),
+                                      style: TextStyle(
+                                        color: AppColors.placeholderDark,
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold,
+                                      ),
                                     ),
                                     const SizedBox(height: 4),
                                     Text(
                                       AppStrings.inhg,
-                                      style: TextStyle(color: AppColors.placeholderDark, fontSize: 15, fontWeight: FontWeight.bold),
+                                      style: TextStyle(
+                                        color: AppColors.placeholderDark,
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold,
+                                      ),
                                     ),
-                                ]
+                                  ],
                                 ),
                               ),
-                              
-                              if(selectedAirport != 'XXX') ...[
+
+                              const SizedBox(width: 5.0),
+
+                              if (selectedAirport != 'XXX') ...[
                                 Row(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
-                                  
                                     ElevatedButton(
-                                      onPressed:  () {
-                                          setState(() {
-                                            selectedAirportQNH = Calculateqnhincredecre(qnhRef: selectedAirportQNH, operation: 'decrement')();
-                                            altitud = Calculatealtitud(elevationRef: selectedAirportElevation, qnhRef: selectedAirportQNH)();
-                                            updateOpld();
-                                          });},
+                                      onPressed: () {
+                                        setState(() {
+                                          selectedAirportQNH =
+                                              Calculateqnhincredecre(
+                                                qnhRef: selectedAirportQNH,
+                                                operation: 'decrement',
+                                              )();
+                                          altitud = Calculatealtitud(
+                                            elevationRef:
+                                                selectedAirportElevation,
+                                            qnhRef: selectedAirportQNH,
+                                          )();
+                                          updateOpld();
+                                        });
+                                      },
                                       style: ElevatedButton.styleFrom(
-                                        backgroundColor: AppColors.grey, 
-                                        foregroundColor: AppColors.iconDark, 
+                                        backgroundColor: AppColors.grey,
+                                        foregroundColor: AppColors.iconDark,
                                         minimumSize: const Size(70, 70),
                                         padding: EdgeInsets.zero,
                                         shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(8.0),
-                                          side: const BorderSide(color: AppColors.white, width: 1.0), 
+                                          borderRadius: BorderRadius.circular(
+                                            8.0,
+                                          ),
+                                          side: const BorderSide(
+                                            color: AppColors.white,
+                                            width: 1.0,
+                                          ),
                                         ),
                                       ),
                                       child: Icon(
                                         Icons.remove,
-                                        color: AppColors.iconDark, 
+                                        color: AppColors.iconDark,
                                         size: 30,
                                         fontWeight: FontWeight.bold,
                                       ),
                                     ),
-                                    const SizedBox(width: 8.0),                                 
+                                    const SizedBox(width: 8.0),
                                     ElevatedButton(
                                       onPressed: () {
-                                          setState(() {
-                                            selectedAirportQNH = Calculateqnhincredecre(qnhRef: selectedAirportQNH, operation: 'increment')();
-                                            altitud = Calculatealtitud(elevationRef: selectedAirportElevation, qnhRef: selectedAirportQNH)();
-                                            updateOpld();
-                                          });},
+                                        setState(() {
+                                          selectedAirportQNH =
+                                              Calculateqnhincredecre(
+                                                qnhRef: selectedAirportQNH,
+                                                operation: 'increment',
+                                              )();
+                                          altitud = Calculatealtitud(
+                                            elevationRef:
+                                                selectedAirportElevation,
+                                            qnhRef: selectedAirportQNH,
+                                          )();
+                                          updateOpld();
+                                        });
+                                      },
                                       style: ElevatedButton.styleFrom(
-                                        backgroundColor: AppColors.grey, 
-                                        foregroundColor: AppColors.iconDark, 
+                                        backgroundColor: AppColors.grey,
+                                        foregroundColor: AppColors.iconDark,
                                         minimumSize: const Size(70, 70),
                                         padding: EdgeInsets.zero,
                                         shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(8.0),
-                                          side: const BorderSide(color: AppColors.white, width: 1.0), 
+                                          borderRadius: BorderRadius.circular(
+                                            8.0,
+                                          ),
+                                          side: const BorderSide(
+                                            color: AppColors.white,
+                                            width: 1.0,
+                                          ),
                                         ),
                                       ),
                                       child: Icon(
                                         Icons.add,
-                                        color: AppColors.iconDark, 
+                                        color: AppColors.iconDark,
                                         size: 30,
                                         fontWeight: FontWeight.bold,
                                       ),
@@ -2636,63 +3448,89 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                   ],
                                 ),
                               ] else ...[
-                                  Row(
+                                Row(
                                   mainAxisSize: MainAxisSize.min,
-                                  children: [      
+                                  children: [
                                     ElevatedButton(
-                                      onPressed:  () {
-                                          setState(() {
-                                            selectedAirportQNH = Calculateqnhincredecre(qnhRef: selectedAirportQNH, operation: 'decrement')();
-                                            altitud = Calculatealtitud(elevationRef: _currentElevation.toString(), qnhRef: selectedAirportQNH)();
-                                            updateOpld();
-                                          });},
+                                      onPressed: () {
+                                        setState(() {
+                                          selectedAirportQNH =
+                                              Calculateqnhincredecre(
+                                                qnhRef: selectedAirportQNH,
+                                                operation: 'decrement',
+                                              )();
+                                          altitud = Calculatealtitud(
+                                            elevationRef: _currentElevation
+                                                .toString(),
+                                            qnhRef: selectedAirportQNH,
+                                          )();
+                                          updateOpld();
+                                        });
+                                      },
                                       style: ElevatedButton.styleFrom(
-                                        backgroundColor: AppColors.grey, 
-                                        foregroundColor: AppColors.iconDark, 
+                                        backgroundColor: AppColors.grey,
+                                        foregroundColor: AppColors.iconDark,
                                         minimumSize: const Size(70, 70),
                                         padding: EdgeInsets.zero,
                                         shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(8.0),
-                                          side: const BorderSide(color: AppColors.white, width: 1.0), 
+                                          borderRadius: BorderRadius.circular(
+                                            8.0,
+                                          ),
+                                          side: const BorderSide(
+                                            color: AppColors.white,
+                                            width: 1.0,
+                                          ),
                                         ),
                                       ),
                                       child: Icon(
                                         Icons.remove,
-                                        color: AppColors.iconDark, 
+                                        color: AppColors.iconDark,
                                         size: 30,
                                         fontWeight: FontWeight.bold,
                                       ),
                                     ),
-                                    const SizedBox(width: 8.0),                                 
+                                    const SizedBox(width: 8.0),
                                     ElevatedButton(
                                       onPressed: () {
-                                          setState(() {
-                                            selectedAirportQNH = Calculateqnhincredecre(qnhRef: selectedAirportQNH, operation: 'increment')();
-                                            altitud = Calculatealtitud(elevationRef: _currentElevation.toString(), qnhRef: selectedAirportQNH)();
-                                            updateOpld();
-                                          });},
+                                        setState(() {
+                                          selectedAirportQNH =
+                                              Calculateqnhincredecre(
+                                                qnhRef: selectedAirportQNH,
+                                                operation: 'increment',
+                                              )();
+                                          altitud = Calculatealtitud(
+                                            elevationRef: _currentElevation
+                                                .toString(),
+                                            qnhRef: selectedAirportQNH,
+                                          )();
+                                          updateOpld();
+                                        });
+                                      },
                                       style: ElevatedButton.styleFrom(
-                                        backgroundColor: AppColors.grey, 
-                                        foregroundColor: AppColors.iconDark, 
+                                        backgroundColor: AppColors.grey,
+                                        foregroundColor: AppColors.iconDark,
                                         minimumSize: const Size(70, 70),
                                         padding: EdgeInsets.zero,
                                         shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(8.0),
-                                          side: const BorderSide(color: AppColors.white, width: 1.0), 
+                                          borderRadius: BorderRadius.circular(
+                                            8.0,
+                                          ),
+                                          side: const BorderSide(
+                                            color: AppColors.white,
+                                            width: 1.0,
+                                          ),
                                         ),
                                       ),
                                       child: Icon(
                                         Icons.add,
-                                        color: AppColors.iconDark, 
+                                        color: AppColors.iconDark,
                                         size: 30,
                                         fontWeight: FontWeight.bold,
                                       ),
                                     ),
                                   ],
                                 ),
-
-                              ]
-
+                              ],
                             ],
                           ),
                         ),
@@ -2700,48 +3538,50 @@ class _CalculatorPageState extends State<CalculatorPage> {
 
                       // Altitude
                       Card(
-                          color: AppColors.cardDark,
-                          shape: RoundedRectangleBorder(
+                        color: AppColors.cardDark,
+                        shape: RoundedRectangleBorder(
                           side: BorderSide(
-                            color: AppColors.placeholder, 
-                            width: 2.0,         
+                            color: AppColors.placeholder,
+                            width: 2.0,
                           ),
-                          borderRadius: BorderRadius.circular(12.0), 
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.all(10.0),
-                            child: Row(
-                              children: [
-                                Expanded(
-                                  flex: 3, 
-                                  child: Text(
-                                    AppStrings.altitude, 
-                                    style: TextStyle(color: AppColors.white, fontSize: 15)
+                          borderRadius: BorderRadius.circular(12.0),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(10.0),
+                          child: Row(
+                            children: [
+                               Text(
+                                  AppStrings.altitude,
+                                  style: TextStyle(
+                                    color: AppColors.white,
+                                    fontSize: 16.5,
                                   ),
                                 ),
-                                const SizedBox(width: 120.0),
-                                Expanded(
-                                  flex: 7,
-                                  child: Text(
-                                    '$altitud ${AppStrings.palt}',
-                                    style: TextStyle(color: AppColors.textColor3Dark, fontSize: 15, fontWeight: FontWeight.bold),
+                              SizedBox(width: screenSize.width * 0.1),
+                               Text(
+                                  '$altitud ${AppStrings.palt}',
+                                  style: TextStyle(
+                                    color: AppColors.textColor3Dark,
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
                                   ),
-                                ),
-
-                              ],
-                            ),
+                                
+                              ),
+                              const Spacer(),
+                            ],
                           ),
                         ),
+                      ),
 
                       // QAT
                       Card(
                         color: AppColors.cardDark,
                         shape: RoundedRectangleBorder(
-                        side: BorderSide(
-                          color: AppColors.placeholder, 
-                          width: 2.0,         
-                        ),
-                        borderRadius: BorderRadius.circular(12.0), 
+                          side: BorderSide(
+                            color: AppColors.placeholder,
+                            width: 2.0,
+                          ),
+                          borderRadius: BorderRadius.circular(12.0),
                         ),
                         child: Padding(
                           padding: const EdgeInsets.all(10.0),
@@ -2751,83 +3591,123 @@ class _CalculatorPageState extends State<CalculatorPage> {
                               Expanded(
                                 child: Text(
                                   AppStrings.oat,
-                                  style: TextStyle(color: AppColors.white, fontSize: 15),
+                                  style: TextStyle(
+                                    color: AppColors.white,
+                                    fontSize: 16.5,
+                                  ),
                                 ),
                               ),
-                              const SizedBox(width: 10.0),
-                              Expanded(
-                                child: Column (
+                              const Spacer(),
+                              SizedBox(
+                                child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
-                                  mainAxisSize: MainAxisSize.min, 
-                                  children: [ 
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
                                     Padding(
                                       padding: const EdgeInsets.only(left: 10),
                                       child: Text(
                                         '${double.tryParse(selectedAirportTemperature ?? '')?.round() ?? 0} ${AppStrings.celcius}',
-                                        style: TextStyle(color: AppColors.textColor3Dark, fontSize: 15, fontWeight: FontWeight.bold),
+                                        style: TextStyle(
+                                          color: AppColors.textColor3Dark,
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold,
+                                        ),
                                       ),
-                                    ),                                    
+                                    ),
                                     const SizedBox(height: 4),
                                     Text(
                                       '${AppStrings.isa} $isa',
-                                      style: TextStyle(color: AppColors.placeholderDark, fontSize: 15, fontWeight: FontWeight.bold),
+                                      style: TextStyle(
+                                        color: AppColors.placeholderDark,
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold,
+                                      ),
                                     ),
-                                ]
+                                  ],
                                 ),
                               ),
-                              const SizedBox(width: 10.0),
-                              if(selectedAirport != 'XXX') ...[
+                              const Spacer(),
+                              if (selectedAirport != 'XXX') ...[
                                 Row(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
-                                  
                                     ElevatedButton(
                                       onPressed: () {
-                                          setState(() {
-                                            tempValues = Calculatetempisa(altitudRef: altitud, temperatureRef: selectedAirportTemperature, isaRef: isa, minRef: isaMin, maxRef: isaMax, operation: 'decrement')();
-                                            selectedAirportTemperature = tempValues[1];
-                                            isa = tempValues[0];
-                                            updateOpld();
-                                          });},
+                                        setState(() {
+                                          tempValues = Calculatetempisa(
+                                            altitudRef: altitud,
+                                            temperatureRef:
+                                                selectedAirportTemperature,
+                                            isaRef: isa,
+                                            minRef: isaMin,
+                                            maxRef: isaMax,
+                                            operation: 'decrement',
+                                          )();
+                                          selectedAirportTemperature =
+                                              tempValues[1];
+                                          isa = tempValues[0];
+                                          updateOpld();
+                                        });
+                                      },
                                       style: ElevatedButton.styleFrom(
-                                        backgroundColor: AppColors.grey, 
-                                        foregroundColor: AppColors.iconDark, 
+                                        backgroundColor: AppColors.grey,
+                                        foregroundColor: AppColors.iconDark,
                                         minimumSize: const Size(70, 70),
                                         padding: EdgeInsets.zero,
                                         shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(8.0),
-                                          side: const BorderSide(color: AppColors.white, width: 1.0), 
+                                          borderRadius: BorderRadius.circular(
+                                            8.0,
+                                          ),
+                                          side: const BorderSide(
+                                            color: AppColors.white,
+                                            width: 1.0,
+                                          ),
                                         ),
                                       ),
                                       child: Icon(
                                         Icons.remove,
-                                        color: AppColors.iconDark, 
+                                        color: AppColors.iconDark,
                                         size: 30,
                                         fontWeight: FontWeight.bold,
                                       ),
                                     ),
-                                    const SizedBox(width: 8.0),                                 
+                                    const SizedBox(width: 8.0),
                                     ElevatedButton(
-                                      onPressed:  () {
-                                          setState(() {
-                                            tempValues = Calculatetempisa(altitudRef: altitud, temperatureRef: selectedAirportTemperature, isaRef: isa, minRef: isaMin, maxRef: isaMax, operation: 'increment')();
-                                            selectedAirportTemperature = tempValues[1];
-                                            isa = tempValues[0];
-                                            updateOpld();
-                                          });},
+                                      onPressed: () {
+                                        setState(() {
+                                          tempValues = Calculatetempisa(
+                                            altitudRef: altitud,
+                                            temperatureRef:
+                                                selectedAirportTemperature,
+                                            isaRef: isa,
+                                            minRef: isaMin,
+                                            maxRef: isaMax,
+                                            operation: 'increment',
+                                          )();
+                                          selectedAirportTemperature =
+                                              tempValues[1];
+                                          isa = tempValues[0];
+                                          updateOpld();
+                                        });
+                                      },
                                       style: ElevatedButton.styleFrom(
-                                        backgroundColor: AppColors.grey, 
-                                        foregroundColor: AppColors.iconDark, 
+                                        backgroundColor: AppColors.grey,
+                                        foregroundColor: AppColors.iconDark,
                                         minimumSize: const Size(70, 70),
                                         padding: EdgeInsets.zero,
                                         shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(8.0),
-                                          side: const BorderSide(color: AppColors.white, width: 1.0), 
+                                          borderRadius: BorderRadius.circular(
+                                            8.0,
+                                          ),
+                                          side: const BorderSide(
+                                            color: AppColors.white,
+                                            width: 1.0,
+                                          ),
                                         ),
                                       ),
                                       child: Icon(
                                         Icons.add,
-                                        color: AppColors.iconDark, 
+                                        color: AppColors.iconDark,
                                         size: 30,
                                         fontWeight: FontWeight.bold,
                                       ),
@@ -2835,64 +3715,93 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                   ],
                                 ),
                               ] else ...[
-                                  Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                    
-                                      ElevatedButton(
-                                        onPressed: () {
-                                            setState(() {
-                                              tempValues = Calculatetempisa(altitudRef: altitud, temperatureRef: selectedAirportTemperature, isaRef: isa, minRef: isaMin, maxRef: isaMax, operation: 'decrement')();
-                                              selectedAirportTemperature = tempValues[1];
-                                              isa = tempValues[0];
-                                              updateOpld();
-                                            });},
-                                        style: ElevatedButton.styleFrom(
-                                          backgroundColor: AppColors.grey, 
-                                          foregroundColor: AppColors.iconDark, 
-                                          minimumSize: const Size(70, 70),
-                                          padding: EdgeInsets.zero,
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(8.0),
-                                            side: const BorderSide(color: AppColors.white, width: 1.0), 
+                                Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    ElevatedButton(
+                                      onPressed: () {
+                                        setState(() {
+                                          tempValues = Calculatetempisa(
+                                            altitudRef: altitud,
+                                            temperatureRef:
+                                                selectedAirportTemperature,
+                                            isaRef: isa,
+                                            minRef: isaMin,
+                                            maxRef: isaMax,
+                                            operation: 'decrement',
+                                          )();
+                                          selectedAirportTemperature =
+                                              tempValues[1];
+                                          isa = tempValues[0];
+                                          updateOpld();
+                                        });
+                                      },
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: AppColors.grey,
+                                        foregroundColor: AppColors.iconDark,
+                                        minimumSize: const Size(70, 70),
+                                        padding: EdgeInsets.zero,
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(
+                                            8.0,
+                                          ),
+                                          side: const BorderSide(
+                                            color: AppColors.white,
+                                            width: 1.0,
                                           ),
                                         ),
-                                        child: Icon(
-                                          Icons.remove,
-                                          color: AppColors.iconDark, 
-                                          size: 30,
-                                          fontWeight: FontWeight.bold,
-                                        ),
                                       ),
-                                      const SizedBox(width: 8.0),                                 
-                                      ElevatedButton(
-                                        onPressed:  () {
-                                            setState(() {
-                                              tempValues = Calculatetempisa(altitudRef: altitud, temperatureRef: selectedAirportTemperature, isaRef: isa, minRef: isaMin, maxRef: isaMax, operation: 'increment')();
-                                              selectedAirportTemperature = tempValues[1];
-                                              isa = tempValues[0];
-                                              updateOpld();
-                                            });},
-                                        style: ElevatedButton.styleFrom(
-                                          backgroundColor: AppColors.grey, 
-                                          foregroundColor: AppColors.iconDark, 
-                                          minimumSize: const Size(70, 70),
-                                          padding: EdgeInsets.zero,
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(8.0),
-                                            side: const BorderSide(color: AppColors.white, width: 1.0), 
+                                      child: Icon(
+                                        Icons.remove,
+                                        color: AppColors.iconDark,
+                                        size: 30,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 8.0),
+                                    ElevatedButton(
+                                      onPressed: () {
+                                        setState(() {
+                                          tempValues = Calculatetempisa(
+                                            altitudRef: altitud,
+                                            temperatureRef:
+                                                selectedAirportTemperature,
+                                            isaRef: isa,
+                                            minRef: isaMin,
+                                            maxRef: isaMax,
+                                            operation: 'increment',
+                                          )();
+                                          selectedAirportTemperature =
+                                              tempValues[1];
+                                          isa = tempValues[0];
+                                          updateOpld();
+                                        });
+                                      },
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: AppColors.grey,
+                                        foregroundColor: AppColors.iconDark,
+                                        minimumSize: const Size(70, 70),
+                                        padding: EdgeInsets.zero,
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(
+                                            8.0,
+                                          ),
+                                          side: const BorderSide(
+                                            color: AppColors.white,
+                                            width: 1.0,
                                           ),
                                         ),
-                                        child: Icon(
-                                          Icons.add,
-                                          color: AppColors.iconDark, 
-                                          size: 30,
-                                          fontWeight: FontWeight.bold,
-                                        ),
                                       ),
-                                    ],
-                                  ),
-                              ]
+                                      child: Icon(
+                                        Icons.add,
+                                        color: AppColors.iconDark,
+                                        size: 30,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
                             ],
                           ),
                         ),
@@ -2903,14 +3812,15 @@ class _CalculatorPageState extends State<CalculatorPage> {
                         color: AppColors.cardDark,
                         shape: RoundedRectangleBorder(
                           side: BorderSide(
-                            color: AppColors.placeholder, 
-                            width: 2.0,         
+                            color: AppColors.placeholder,
+                            width: 2.0,
                           ),
-                          borderRadius: BorderRadius.circular(12.0), 
+                          borderRadius: BorderRadius.circular(12.0),
                         ),
                         child: Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Expanded(
@@ -2920,222 +3830,348 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                   children: [
                                     Text(
                                       AppStrings.wind,
-                                      style: TextStyle(color: AppColors.white, fontSize: 15),
+                                      style: TextStyle(
+                                        color: AppColors.white,
+                                        fontSize: 16.5,
+                                      ),
                                     ),
                                     const SizedBox(height: 8.0),
                                     Row(
                                       children: [
-                                      Row(
-                                        children: [
-                                          SizedBox(
-                                            width: 120,
-                                            height: 50,
-                                            child: Builder(
-                                              builder: (context) {
-                                                final String selectedWindValue = windDirection.isNotEmpty
-                                                    ? (windDirection.contains(selectedWind)
-                                                        ? selectedWind!
-                                                        : windDirection.first)
-                                                    : '000';
-                                                return DropdownButtonFormField2<String>(
-                                                  isExpanded: true,
-                                                  value: selectedWindValue,
+                                        Row(
+                                          children: [
+                                            SizedBox(
+                                              width: orientation ? 135 : 110,
+                                              height: 40,
+                                              child: Builder(
+                                                builder: (context) {
+                                                  final String
+                                                  selectedWindValue =
+                                                      windDirection.isNotEmpty
+                                                      ? (windDirection.contains(
+                                                              selectedWind,
+                                                            )
+                                                            ? selectedWind!
+                                                            : windDirection
+                                                                  .first)
+                                                      : '000';
+                                                  return DropdownButtonFormField2<
+                                                    String
+                                                  >(
+                                                    isExpanded: true,
+                                                    value: selectedWindValue,
 
-                                                  decoration: InputDecoration(
-                                                    filled: true,
-                                                    fillColor: AppColors.placeholder,
+                                                    decoration: InputDecoration(
+                                                      filled: true,
+                                                      fillColor:
+                                                          AppColors.placeholder,
 
-                                                    enabledBorder: OutlineInputBorder(
-                                                      borderSide: BorderSide(
-                                                        color: AppColors.placeholder,
-                                                        width: 1,
-                                                      ),
-                                                      borderRadius: BorderRadius.circular(8.0),
-                                                    ),
-
-                                                    focusedBorder: OutlineInputBorder(
-                                                      borderSide: BorderSide(
-                                                        color: AppColors.placeholder,
-                                                        width: 1,
-                                                      ),
-                                                      borderRadius: BorderRadius.circular(8.0),
-                                                    ),
-
-                                                    border: OutlineInputBorder(
-                                                      borderRadius: BorderRadius.circular(8.0),
-                                                    ),
-
-                                                    contentPadding: const EdgeInsets.symmetric(
-                                                      horizontal: 10,
-                                                      vertical: 5,
-                                                    ),
-                                                  ),
-
-                                                  hint: Center(
-                                                    child: Text(
-                                                      selectedWindValue,
-                                                      textAlign: TextAlign.center,
-                                                      style: TextStyle(
-                                                        color: AppColors.iconDark,
-                                                        fontSize: 14,
-                                                        fontWeight: FontWeight.bold,
-                                                      ),
-                                                      overflow: TextOverflow.ellipsis,
-                                                    ),
-                                                  ),
-
-                                                  iconStyleData: const IconStyleData(
-                                                    icon: SizedBox.shrink(),
-                                                  ),
-
-                                                  dropdownStyleData: DropdownStyleData(
-                                                    offset: const Offset(0, -5),
-                                                    maxHeight: 350,
-                                                    scrollbarTheme: ScrollbarThemeData(
-                                                      thickness: WidgetStateProperty.all(0),
-                                                    ),
-
-                                                    decoration: BoxDecoration(
-                                                      color: AppColors.backgroundDark.withOpacity(0.9),
-                                                      borderRadius: BorderRadius.circular(5),
-                                                      border: Border.all(
-                                                        color: AppColors.white.withOpacity(0.8),
-                                                        width: 1.5,
-                                                      ),
-                                                    ),
-                                                  ),
-
-                                                  buttonStyleData: const ButtonStyleData(
-                                                    padding: EdgeInsets.zero,
-                                                    height: 50,
-                                                  ),
-
-                                                  selectedItemBuilder: (BuildContext context) {
-                                                    return windDirection.map((String value) {
-                                                      return Center(
-                                                        child: Text(
-                                                          value,
-                                                          textAlign: TextAlign.center,
-                                                          style: TextStyle(
-                                                            color: AppColors.iconDark,
-                                                            fontSize: 14,
-                                                            fontWeight: FontWeight.bold,
+                                                      enabledBorder:
+                                                          OutlineInputBorder(
+                                                            borderSide: BorderSide(
+                                                              color: AppColors
+                                                                  .placeholder,
+                                                              width: 1,
+                                                            ),
+                                                            borderRadius:
+                                                                BorderRadius.circular(
+                                                                  8.0,
+                                                                ),
                                                           ),
-                                                          overflow: TextOverflow.ellipsis,
+
+                                                      focusedBorder:
+                                                          OutlineInputBorder(
+                                                            borderSide: BorderSide(
+                                                              color: AppColors
+                                                                  .placeholder,
+                                                              width: 1,
+                                                            ),
+                                                            borderRadius:
+                                                                BorderRadius.circular(
+                                                                  8.0,
+                                                                ),
+                                                          ),
+
+                                                      border: OutlineInputBorder(
+                                                        borderRadius:
+                                                            BorderRadius.circular(
+                                                              8.0,
+                                                            ),
+                                                      ),
+
+                                                      contentPadding:
+                                                           EdgeInsets.zero,
+                                                    ),
+
+                                                    hint: Center(
+                                                      child: Text(
+                                                        selectedWindValue,
+                                                        textAlign:
+                                                            TextAlign.center,
+                                                        style: TextStyle(
+                                                          color: AppColors
+                                                              .iconDark,
+                                                          fontSize: 16.5,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                        ),
+                                                        overflow: TextOverflow
+                                                            .ellipsis,
+                                                      ),
+                                                    ),
+
+                                                    iconStyleData:
+                                                        const IconStyleData(
+                                                          icon:
+                                                              SizedBox.shrink(),
+                                                        ),
+
+                                                    dropdownStyleData: DropdownStyleData(
+                                                      offset:  Offset(
+                                                        0,
+                                                        -5,
+                                                      ),
+                                                      maxHeight: 350,
+                                                      scrollbarTheme:
+                                                          ScrollbarThemeData(
+                                                            thickness:
+                                                                WidgetStateProperty.all(
+                                                                  0,
+                                                                ),
+                                                          ),
+
+                                                      decoration: BoxDecoration(
+                                                        color: AppColors
+                                                            .backgroundDark
+                                                            .withOpacity(0.9),
+                                                        borderRadius:
+                                                            BorderRadius.circular(
+                                                              5,
+                                                            ),
+                                                        border: Border.all(
+                                                          color: AppColors.white
+                                                              .withOpacity(0.8),
+                                                          width: 1.5,
+                                                        ),
+                                                      ),
+                                                    ),
+
+                                                    buttonStyleData:
+                                                        const ButtonStyleData(
+                                                          padding:
+                                                              EdgeInsets.zero,
+                                                          
+                                                        ),
+
+                                                    selectedItemBuilder:
+                                                        (BuildContext context) {
+                                                          return windDirection.map((
+                                                            String value,
+                                                          ) {
+                                                            return Center(
+                                                              child: Text(
+                                                                value,
+                                                                textAlign:
+                                                                    TextAlign
+                                                                        .center,
+                                                                style: TextStyle(
+                                                                  color: AppColors
+                                                                      .iconDark,
+                                                                  fontSize: 16.5,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold,
+                                                                ),
+                                                                overflow:
+                                                                    TextOverflow
+                                                                        .ellipsis,
+                                                              ),
+                                                            );
+                                                          }).toList();
+                                                        },
+
+                                                    items: windDirection.map((
+                                                      String value,
+                                                    ) {
+                                                      final bool isSelected =
+                                                          value ==
+                                                          selectedWindValue;
+                                                      return DropdownMenuItem<
+                                                        String
+                                                      >(
+                                                        value: value,
+                                                        child: Container(
+                                                          width:
+                                                              double.infinity,
+                                                          padding:
+                                                              const EdgeInsets.symmetric(
+                                                                horizontal: 12,
+                                                                vertical: 10,
+                                                              ),
+                                                          decoration: BoxDecoration(
+                                                            color: isSelected
+                                                                ? AppColors
+                                                                      .white
+                                                                      .withOpacity(
+                                                                        0.15,
+                                                                      )
+                                                                : Colors
+                                                                      .transparent,
+                                                            borderRadius:
+                                                                BorderRadius.circular(
+                                                                  4,
+                                                                ),
+                                                          ),
+                                                          child: Center(
+                                                            child: Text(
+                                                              value,
+                                                              textAlign:
+                                                                  TextAlign
+                                                                      .center,
+                                                              style: TextStyle(
+                                                                color: AppColors
+                                                                    .textColor2Dark,
+                                                                fontSize: 16.5,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold,
+                                                              ),
+                                                              overflow:
+                                                                  TextOverflow
+                                                                      .ellipsis,
+                                                            ),
+                                                          ),
                                                         ),
                                                       );
-                                                    }).toList();
-                                                  },
+                                                    }).toList(),
 
-                                                  items: windDirection.map((String value) {
-                                                    final bool isSelected = value == selectedWindValue;
-                                                    return DropdownMenuItem<String>(
-                                                      value: value,
-                                                      child: Container(
-                                                        width: double.infinity,
-                                                        padding: const EdgeInsets.symmetric(
-                                                          horizontal: 12,
-                                                          vertical: 10,
-                                                        ),
-                                                        decoration: BoxDecoration(
-                                                          color: isSelected
-                                                              ? AppColors.white.withOpacity(0.15)
-                                                              : Colors.transparent,
-                                                          borderRadius: BorderRadius.circular(4),
-                                                        ),
-                                                        child: Center(
-                                                          child: Text(
-                                                            value,
-                                                            textAlign: TextAlign.center,
-                                                            style: TextStyle(
-                                                              color: AppColors.textColor2Dark,
-                                                              fontSize: 16,
-                                                              fontWeight: FontWeight.bold,
-                                                            ),
-                                                            overflow: TextOverflow.ellipsis,
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    );
-                                                  }).toList(),
+                                                    onChanged: (newValue) {
+                                                      if (newValue == null)
+                                                        return;
 
-                                                  onChanged: (newValue) {
-                                                    if (newValue == null) return;
+                                                      setState(() {
+                                                        selectedWind = newValue;
 
-                                                    setState(() {
-                                                      selectedWind = newValue;
+                                                        windValues =
+                                                            Calculatewind(
+                                                              rwyidRef: rwyId,
+                                                              windRef:
+                                                                  windValue,
+                                                              windpickerRef:
+                                                                  selectedWind,
+                                                              operation: '',
+                                                            )();
 
-                                                      windValues = Calculatewind(
-                                                        rwyidRef: rwyId,
-                                                        windRef: windValue,
-                                                        windpickerRef: selectedWind,
-                                                        operation: '',
-                                                      )();
+                                                        windValue =
+                                                            windValues?[0];
+                                                        headtail =
+                                                            windValues?[1];
+                                                        crosswind =
+                                                            windValues?[2];
 
-                                                      windValue = windValues?[0];
-                                                      headtail = windValues?[1];
-                                                      crosswind = windValues?[2];
-
-                                                      updateOpld();
-                                                    });
-                                                  },
-                                                );
-                                              },
+                                                        updateOpld();
+                                                      });
+                                                    },
+                                                  );
+                                                },
+                                              ),
                                             ),
-                                          ),                                                                                 
-                                        ],
-                                      ),
-                                        const SizedBox(width: 25.0),
-                                        Text(
-                                          '/', 
-                                          style: TextStyle(color: AppColors.white, fontWeight: FontWeight.bold,),
+                                          ],
                                         ),
-                                        const SizedBox(width: 25.0),
+                                        const SizedBox(width: 10.0),
+                                        Text(
+                                          '/',
+                                          style: TextStyle(
+                                            color: AppColors.white,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                        const SizedBox(width: 10.0),
+                                        
                                         Text(
                                           '$windValue ${AppStrings.kt}',
-                                          style: TextStyle(color: AppColors.placeholderDark, fontWeight: FontWeight.bold),
+                                          style: TextStyle(
+                                            color: AppColors.placeholderDark,
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 16.5,
+                                          ),
                                         ),
                                       ],
                                     ),
                                     const SizedBox(height: 8.0),
-
                                     Row(
                                       children: [
-                                        const SizedBox(width: 20.0),
                                         Text(
                                           headtailValue >= 0
-                                                  ? '$headtailValue  ${AppStrings.kthwc}'
-                                                  : '$headtailValue  ${AppStrings.kttwc}',
-                                          style: TextStyle(color: (num.tryParse((headtail ?? '0').replaceAll('−', '-').replaceAll('–', '-')) ?? 0) 
-                                            < (num.tryParse((windMin ?? '-15').replaceAll('−', '-').replaceAll('–', '-')) ?? -15)
+                                              ? '$headtailValue  ${AppStrings.kthwc}'
+                                              : '$headtailValue  ${AppStrings.kttwc}',
+                                          style: TextStyle(
+                                            fontSize: 16.5,
+                                            color:
+                                                (num.tryParse(
+                                                          (headtail ?? '0')
+                                                              .replaceAll(
+                                                                '−',
+                                                                '-',
+                                                              )
+                                                              .replaceAll(
+                                                                '–',
+                                                                '-',
+                                                              ),
+                                                        ) ??
+                                                        0) <
+                                                    (num.tryParse(
+                                                          (windMin ?? '-15')
+                                                              .replaceAll(
+                                                                '−',
+                                                                '-',
+                                                              )
+                                                              .replaceAll(
+                                                                '–',
+                                                                '-',
+                                                              ),
+                                                        ) ??
+                                                        -15)
                                                 ? AppColors.errorColor
                                                 : AppColors.textColor3Dark,
-                                          fontWeight: FontWeight.bold),
-                                        ),                                     
-                                        const SizedBox(width: 25.0),
-                                        Text(
-                                          '/', 
-                                          style: TextStyle(color: AppColors.white, fontWeight: FontWeight.bold,),
+                                            fontWeight: FontWeight.bold,
+                                          ),
                                         ),
-                                        const SizedBox(width: 25.0),
+                                        const SizedBox(width: 10.0),
+                                        Text(
+                                          '/',
+                                          style: TextStyle(
+                                            color: AppColors.white,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                        const SizedBox(width: 10.0),
                                         Text(
                                           '${(double.tryParse(crosswind ?? '0') ?? 0).round()} ${AppStrings.ktCwc}',
-                                          style: TextStyle(color: AppColors.textColor3Dark, fontWeight: FontWeight.bold),
+                                          style: TextStyle(
+                                            fontSize: 16.5,
+                                            color: AppColors.textColor3Dark,
+                                            fontWeight: FontWeight.bold,
+                                          ),
                                         ),
                                       ],
-                                    ),                               
+                                    ),
                                   ],
                                 ),
                               ),
-                              
-                              const SizedBox(width: 10.0),
+                              const SizedBox(width: 0.0),
                               Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
                                   ElevatedButton(
                                     onPressed: () {
                                       setState(() {
-                                        windValues =  Calculatewind(rwyidRef: rwyId, windRef: windValue, windpickerRef: selectedWind, operation: 'decrement')();
+                                        windValues = Calculatewind(
+                                          rwyidRef: rwyId,
+                                          windRef: windValue,
+                                          windpickerRef: selectedWind,
+                                          operation: 'decrement',
+                                        )();
                                         windValue = windValues?[0];
                                         headtail = windValues?[1];
                                         crosswind = windValues?[2];
@@ -3143,27 +4179,37 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                       });
                                     },
                                     style: ElevatedButton.styleFrom(
-                                      backgroundColor: AppColors.grey, 
-                                      foregroundColor: AppColors.iconDark, 
+                                      backgroundColor: AppColors.grey,
+                                      foregroundColor: AppColors.iconDark,
                                       minimumSize: const Size(70, 70),
                                       padding: EdgeInsets.zero,
                                       shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(8.0),
-                                        side: const BorderSide(color: AppColors.white, width: 1.0), 
+                                        borderRadius: BorderRadius.circular(
+                                          8.0,
+                                        ),
+                                        side: const BorderSide(
+                                          color: AppColors.white,
+                                          width: 1.0,
+                                        ),
                                       ),
                                     ),
                                     child: Icon(
                                       Icons.remove,
-                                      color: AppColors.iconDark, 
+                                      color: AppColors.iconDark,
                                       size: 30,
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
-                                  const SizedBox(width: 8.0),                        
+                                  const SizedBox(width: 8.0),
                                   ElevatedButton(
                                     onPressed: () {
                                       setState(() {
-                                        windValues =  Calculatewind(rwyidRef: rwyId, windRef: windValue, windpickerRef: selectedWind, operation: 'increment')();
+                                        windValues = Calculatewind(
+                                          rwyidRef: rwyId,
+                                          windRef: windValue,
+                                          windpickerRef: selectedWind,
+                                          operation: 'increment',
+                                        )();
                                         windValue = windValues?[0];
                                         headtail = windValues?[1];
                                         crosswind = windValues?[2];
@@ -3171,18 +4217,23 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                       });
                                     },
                                     style: ElevatedButton.styleFrom(
-                                      backgroundColor: AppColors.grey, 
-                                      foregroundColor: AppColors.iconDark, 
+                                      backgroundColor: AppColors.grey,
+                                      foregroundColor: AppColors.iconDark,
                                       minimumSize: const Size(70, 70),
                                       padding: EdgeInsets.zero,
                                       shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(8.0),
-                                        side: const BorderSide(color: AppColors.white, width: 1.0), 
+                                        borderRadius: BorderRadius.circular(
+                                          8.0,
+                                        ),
+                                        side: const BorderSide(
+                                          color: AppColors.white,
+                                          width: 1.0,
+                                        ),
                                       ),
                                     ),
                                     child: Icon(
                                       Icons.add,
-                                      color: AppColors.iconDark, 
+                                      color: AppColors.iconDark,
                                       size: 30,
                                       fontWeight: FontWeight.bold,
                                     ),
@@ -3193,8 +4244,8 @@ class _CalculatorPageState extends State<CalculatorPage> {
                           ),
                         ),
                       ),
-                        
-                      //Performance Results header, si es XXX, solo se muestra el resultado del OpLD 
+
+                      //Performance Results header, si es XXX, solo se muestra el resultado del OpLD
                       Card(
                         color: AppColors.black,
                         shape: RoundedRectangleBorder(
@@ -3206,16 +4257,17 @@ class _CalculatorPageState extends State<CalculatorPage> {
                             Padding(
                               padding: const EdgeInsets.all(10.0),
                               child: Column(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
-
                                   if (selectedLanding != 'Non-Normal') ...[
                                     Center(
                                       child: Text(
                                         AppStrings.landingTittle,
+                                        textAlign: TextAlign.center,
                                         style: TextStyle(
-                                          fontSize: 18,
+                                          fontSize: 21,
                                           fontWeight: FontWeight.bold,
                                           color: AppColors.white,
                                         ),
@@ -3225,8 +4277,10 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                     Center(
                                       child: Text(
                                         selectedConfiguration!.toUpperCase(),
+                                        textAlign: TextAlign.center,
+
                                         style: TextStyle(
-                                          fontSize: 18,
+                                          fontSize: 21,
                                           fontWeight: FontWeight.bold,
                                           color: AppColors.white,
                                         ),
@@ -3241,23 +4295,26 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                     Container(
                                       width: double.infinity,
                                       padding: const EdgeInsets.symmetric(
-                                        vertical: 12,
+                                        vertical: 5,
                                         horizontal: 16,
                                       ),
                                       decoration: BoxDecoration(
                                         color: AppColors.black,
                                         borderRadius: BorderRadius.circular(4),
                                         border: Border.all(
-                                          color: AppColors.white.withValues(alpha: 0.3),
+                                          color: AppColors.white.withValues(
+                                            alpha: 0.3,
+                                          ),
                                         ),
                                       ),
                                       child: Row(
-                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
                                         children: [
                                           Text(
                                             AppStrings.netLda,
                                             style: TextStyle(
-                                              fontSize: 18,
+                                              fontSize: 26,
                                               fontWeight: FontWeight.bold,
                                               color: AppColors.white,
                                             ),
@@ -3270,7 +4327,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                             style: TextStyle(
                                               fontWeight: FontWeight.bold,
                                               color: AppColors.textColor3Dark,
-                                              fontSize: 18,
+                                              fontSize: 24,
                                             ),
                                           ),
 
@@ -3278,7 +4335,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                             '(${(double.tryParse(netLDA ?? '0')! * 0.3048).round()}${AppStrings.m})',
                                             style: TextStyle(
                                               color: AppColors.textColor3Dark,
-                                              fontSize: 16,
+                                              fontSize: 20,
                                             ),
                                           ),
 
@@ -3287,29 +4344,32 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                       ),
                                     ),
 
-                                  const SizedBox(height: 12),
+                                  const SizedBox(height: 8),
 
                                   //OpLD results
                                   Container(
                                     width: double.infinity,
                                     padding: const EdgeInsets.symmetric(
-                                      vertical: 12,
+                                      vertical: 5,
                                       horizontal: 16,
                                     ),
                                     decoration: BoxDecoration(
                                       color: AppColors.black,
                                       borderRadius: BorderRadius.circular(4),
                                       border: Border.all(
-                                        color: AppColors.white.withValues(alpha: 0.3),
+                                        color: AppColors.white.withValues(
+                                          alpha: 0.3,
+                                        ),
                                       ),
                                     ),
                                     child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
                                       children: [
                                         Text(
                                           AppStrings.opld,
                                           style: TextStyle(
-                                            fontSize: 18,
+                                            fontSize: 26,
                                             fontWeight: FontWeight.bold,
                                             color: AppColors.white,
                                           ),
@@ -3324,7 +4384,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                             color: selectedAirport != 'XXX'
                                                 ? colorResult
                                                 : AppColors.white,
-                                            fontSize: 18,
+                                            fontSize: 24,
                                           ),
                                         ),
 
@@ -3334,7 +4394,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                             color: selectedAirport != 'XXX'
                                                 ? colorResult
                                                 : AppColors.white,
-                                            fontSize: 16,
+                                            fontSize: 20,
                                           ),
                                         ),
 
@@ -3352,23 +4412,23 @@ class _CalculatorPageState extends State<CalculatorPage> {
                               height: 1,
                             ),
 
-                            //Performance Results header, si es XXX, solo se muestra el resultado del OpLD 
+                            //Performance Results header, si es XXX, solo se muestra el resultado del OpLD
                             Padding(
                               padding: const EdgeInsets.all(24.0),
                               child: SizedBox(
                                 height: 380,
                                 width: 1500,
                                 child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
                                   crossAxisAlignment: CrossAxisAlignment.center,
                                   children: [
-
                                     SizedBox(
                                       width: double.infinity,
                                       child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
                                         children: [
-
                                           if (selectedAirport != 'XXX') ...[
                                             //const SizedBox(height: 12),
                                             Row(
@@ -3384,7 +4444,8 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                                 ),
 
                                                 SizedBox(
-                                                  width: screenSize.width * 0.10,
+                                                  width:
+                                                      screenSize.width * 0.10,
                                                 ),
 
                                                 Text(
@@ -3411,17 +4472,17 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                             ),
                                           ],
 
-                                        if (checkAutobreak == 'YES') ...[
-                                          const SizedBox(height: 10),
-                                          Text(
-                                            AppStrings.cautionMessage,
-                                            textAlign: TextAlign.left,
-                                            style: TextStyle(
-                                              color: Colors.orange,
-                                              fontWeight: FontWeight.bold,
+                                          if (checkAutobreak == 'YES') ...[
+                                            const SizedBox(height: 10),
+                                            Text(
+                                              AppStrings.cautionMessage,
+                                              textAlign: TextAlign.left,
+                                              style: TextStyle(
+                                                color: Colors.orange,
+                                                fontWeight: FontWeight.bold,
+                                              ),
                                             ),
-                                          ),
-                                        ],
+                                          ],
 
                                           const SizedBox(height: 12),
 
@@ -3448,14 +4509,16 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                           const SizedBox(height: 40),
 
                                           Row(
-                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
                                             children: [
                                               Expanded(
                                                 child: Text(
                                                   '$selectedCondition rwy Condition:',
                                                   textAlign: TextAlign.left,
                                                   style: TextStyle(
-                                                    color: AppColors.resultNotes,
+                                                    color:
+                                                        AppColors.resultNotes,
                                                     fontWeight: FontWeight.bold,
                                                   ),
                                                 ),
@@ -3480,9 +4543,10 @@ class _CalculatorPageState extends State<CalculatorPage> {
 
                                           ...rwyNote!.map(
                                             (nota) => Padding(
-                                              padding: const EdgeInsets.symmetric(
-                                                vertical: 5.0,
-                                              ),
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                    vertical: 5.0,
+                                                  ),
                                               child: Text(
                                                 nota,
                                                 style: const TextStyle(
@@ -3500,13 +4564,16 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                     ElevatedButton(
                                       style: ElevatedButton.styleFrom(
                                         backgroundColor: AppColors.black,
-                                        foregroundColor: AppColors.placeholderDark,
+                                        foregroundColor:
+                                            AppColors.placeholderDark,
                                         side: const BorderSide(
                                           color: AppColors.placeholderDark,
                                           width: 1,
                                         ),
                                         shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(5),
+                                          borderRadius: BorderRadius.circular(
+                                            5,
+                                          ),
                                         ),
                                         fixedSize: const Size(170, 20),
                                       ),
@@ -3517,9 +4584,11 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                             return AlertDialog(
                                               backgroundColor: AppColors.black,
                                               shape: RoundedRectangleBorder(
-                                                borderRadius: BorderRadius.circular(12.0),
+                                                borderRadius:
+                                                    BorderRadius.circular(12.0),
                                                 side: const BorderSide(
-                                                  color: AppColors.placeholderDark,
+                                                  color:
+                                                      AppColors.placeholderDark,
                                                   width: 1.5,
                                                 ),
                                               ),
@@ -3527,17 +4596,20 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                                 width: 650.0,
                                                 height: 700.0,
                                                 child: Column(
-                                                  mainAxisAlignment: MainAxisAlignment.start,
-                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.start,
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
                                                   children: [
-
                                                     Center(
                                                       child: const Text(
                                                         AppStrings.notesTitle,
                                                         style: TextStyle(
-                                                          color: AppColors.textColor2Dark,
+                                                          color: AppColors
+                                                              .textColor2Dark,
                                                           fontSize: 20,
-                                                          fontWeight: FontWeight.bold,
+                                                          fontWeight:
+                                                              FontWeight.bold,
                                                         ),
                                                       ),
                                                     ),
@@ -3547,24 +4619,31 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                                     ...listaComments!.expand(
                                                       (comentario) => [
                                                         Divider(
-                                                          color: AppColors.cancelPriButBrDark,
+                                                          color: AppColors
+                                                              .cancelPriButBrDark,
                                                         ),
 
                                                         Padding(
-                                                          padding: const EdgeInsets.symmetric(
-                                                            vertical: 12.0,
-                                                          ),
+                                                          padding:
+                                                              const EdgeInsets.symmetric(
+                                                                vertical: 12.0,
+                                                              ),
                                                           child: Text(
                                                             comentario,
-                                                            style: const TextStyle(
-                                                              color: AppColors.white,
-                                                            ),
-                                                            textAlign: TextAlign.start,
+                                                            style:
+                                                                const TextStyle(
+                                                                  color:
+                                                                      AppColors
+                                                                          .white,
+                                                                ),
+                                                            textAlign:
+                                                                TextAlign.start,
                                                           ),
                                                         ),
 
                                                         Divider(
-                                                          color: AppColors.cancelPriButBrDark,
+                                                          color: AppColors
+                                                              .cancelPriButBrDark,
                                                         ),
                                                       ],
                                                     ),
@@ -3574,17 +4653,28 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                                     Center(
                                                       child: ElevatedButton(
                                                         onPressed: () {
-                                                          Navigator.of(context).pop();
+                                                          Navigator.of(
+                                                            context,
+                                                          ).pop();
                                                         },
                                                         style: ElevatedButton.styleFrom(
-                                                          backgroundColor: AppColors.black,
-                                                          foregroundColor: AppColors.iconDark,
-                                                          fixedSize: const Size(120, 120),
+                                                          backgroundColor:
+                                                              AppColors.black,
+                                                          foregroundColor:
+                                                              AppColors
+                                                                  .iconDark,
+                                                          fixedSize: const Size(
+                                                            120,
+                                                            120,
+                                                          ),
                                                           shape: BeveledRectangleBorder(
                                                             borderRadius:
-                                                                BorderRadius.circular(200),
+                                                                BorderRadius.circular(
+                                                                  200,
+                                                                ),
                                                             side: BorderSide(
-                                                              color: AppColors.iconDark,
+                                                              color: AppColors
+                                                                  .iconDark,
                                                               width: 1,
                                                             ),
                                                           ),
@@ -3594,7 +4684,8 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                                           AppStrings.returnback,
                                                           style: TextStyle(
                                                             fontSize: 15,
-                                                            fontWeight: FontWeight.bold,
+                                                            fontWeight:
+                                                                FontWeight.bold,
                                                           ),
                                                         ),
                                                       ),
@@ -3619,7 +4710,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                             ),
                           ],
                         ),
-                      )                                                   
+                      ),
                     ],
                   ),
                 ),
