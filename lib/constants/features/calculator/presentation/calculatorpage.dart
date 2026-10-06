@@ -419,7 +419,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                 ),
                                 const SizedBox(width: 25.0),
                                 Text(
-                                  '(${rwyId!.trim()}°)',
+                                  '(${int.tryParse(rwyId!.trim()) ?? 0}°)',
                                   style: TextStyle(
                                     fontSize: 16.5,
                                     fontWeight: FontWeight.bold,
@@ -3839,7 +3839,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                         selectedConfiguration!.toUpperCase(),
                                         textAlign: TextAlign.center,
                                         style: TextStyle(
-                                          fontSize: 21,
+                                          fontSize: 20,
                                           fontWeight: FontWeight.bold,
                                           color: AppColors.white,
                                         ),
@@ -4004,7 +4004,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                                 ),
 
                                                 SizedBox(
-                                                  width: orientation ? 140 : 54,
+                                                  width: orientation ? 130 : 54,
                                                 ),
 
                                                 Text(
