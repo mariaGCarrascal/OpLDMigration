@@ -1441,13 +1441,11 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                                     AppStrings.reductionLow,
                                                 hintStyle: const TextStyle(
                                                   fontSize: 14.5,
-                                                  color:
-                                                      AppColors.reductionPlace,
+                                                  color: AppColors.reductionPlace,
                                                   fontWeight: FontWeight.bold,
                                                 ),
                                                 filled: true,
-                                                fillColor:
-                                                    AppColors.placeholder,
+                                                fillColor: AppColors.placeholder,
 
                                                 // Para el espacio del boton X
                                                 contentPadding:
@@ -1495,7 +1493,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                                             width: 1.0,
                                                           ),
                                                     ),
-                                              ),
+                                              ),                                           
                                             ),
 
                                             // Botón para eliminar input de reduction
@@ -2270,8 +2268,8 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                 ),
                               ),
                               if (selectedLanding != 'Non-Normal') ...[
-                                SizedBox(width: screenSize.width * 0.04),
-                                SizedBox(width: 2),
+                                SizedBox(width: screenSize.width * 0.03),
+                                SizedBox(width: orientation ? 4 : 0),
                                 Expanded(
                                   child: DropdownButtonFormField2<String>(
                                     isExpanded: true,
@@ -3827,7 +3825,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                     Center(
                                       child: Text(
                                         AppStrings.landingTittle,
-                                        textAlign: TextAlign.justify,
+                                        textAlign: TextAlign.center,
                                         style: TextStyle(
                                           fontSize: 21,
                                           fontWeight: FontWeight.bold,
@@ -4006,7 +4004,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                                 ),
 
                                                 SizedBox(
-                                                  width: orientation ? 330 : 130,
+                                                  width: orientation ? 140 : 54,
                                                 ),
 
                                                 Text(
@@ -4019,7 +4017,9 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                                   ),
                                                 ),
 
-                                                const SizedBox(width: 10),
+                                                SizedBox(
+                                                  width: orientation ? 60 : 15,
+                                                ),
 
                                                 Text(
                                                   '(${(double.tryParse(remainingResult ?? '0')! * 0.3048).round()}${AppStrings.m})',
@@ -4080,7 +4080,8 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                             mainAxisAlignment:
                                                 MainAxisAlignment.spaceBetween,
                                             children: [
-                                              Text(
+                                              Expanded (
+                                                child: Text(
                                                   '$selectedCondition rwy Condition:',
                                                   textAlign: TextAlign.left,
                                                   style: TextStyle(
@@ -4089,6 +4090,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                                     fontWeight: FontWeight.bold,
                                                     fontSize: 16.5,
                                                   ),
+                                                ),
                                               ),
 
                                               const Spacer(),
