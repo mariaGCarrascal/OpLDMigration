@@ -2570,7 +2570,7 @@ class Airportdata {
     'DRY': ["RCC 6", "- Dry."],
     'GOOD': ["RCC 5", "- Frost, Wet (includes Damp).", "- 1/8\" (3mm) depth or less of: “Water, Slush, Dry Snow, Wet Snow”."],
     'GOOD TO MEDIUM':["RCC 4", "- (-15°C and colder) OAT: Compacted Snow."],
-    'MEDIUM':["RCC 3", "- Sippery when wet (wet runway), “Dry or Wet Snow” (any depth) over Compacted Snow.", "- Greater than 1/8\" (3mm) depth of: “Dry Snow, Wet Snow”", "- Warmer than -15°C OAT: “Compacted snow”."],
+    'MEDIUM':["RCC 3", "- Slippery when wet (wet runway), “Dry or Wet Snow” (any depth) over Compacted Snow.", "- Greater than 1/8\" (3mm) depth of: “Dry Snow, Wet Snow”", "- Warmer than -15°C OAT: “Compacted snow”."],
     'MEDIUM TO POOR': ["RCC 2", "- Greater than 1/8\" (3mm) depth of: “Water (includes Water Patches and Flooded), Slush”."],
     'POOR':["RCC 1", "- Ice."],
   };

@@ -1687,11 +1687,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                         ),
                                       ),
 
-                                      contentPadding:
-                                          const EdgeInsets.symmetric(
-                                            horizontal: 10,
-                                            vertical: 5,
-                                          ),
+                                      contentPadding: EdgeInsets.zero
                                     ),
 
                                     iconStyleData: const IconStyleData(
@@ -1709,9 +1705,9 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                                 value,
                                                 textAlign: TextAlign.right,
                                                 style: TextStyle(
-                                                  color:
-                                                      AppColors.placeholderDark,
+                                                  color: AppColors.placeholderDark,
                                                   fontWeight: FontWeight.bold,
+                                                  fontSize: 18,
                                                 ),
                                                 overflow: TextOverflow.ellipsis,
                                               ),
@@ -1843,11 +1839,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                         ),
                                       ),
 
-                                      contentPadding:
-                                          const EdgeInsets.symmetric(
-                                            horizontal: 10,
-                                            vertical: 5,
-                                          ),
+                                      contentPadding: EdgeInsets.zero
                                     ),
 
                                     iconStyleData: const IconStyleData(
@@ -1867,9 +1859,9 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                                   value!,
                                                   textAlign: TextAlign.right,
                                                   style: TextStyle(
-                                                    color: AppColors
-                                                        .placeholderDark,
+                                                    color: AppColors.placeholderDark,
                                                     fontWeight: FontWeight.bold,
+                                                    fontSize: 18,
                                                   ),
                                                   overflow:
                                                       TextOverflow.ellipsis,
@@ -2011,10 +2003,8 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                       borderRadius: BorderRadius.circular(5.0),
                                     ),
 
-                                    contentPadding: const EdgeInsets.symmetric(
-                                      horizontal: 10,
-                                      vertical: 5,
-                                    ),
+                                    contentPadding: EdgeInsets.zero
+                                    
                                   ),
 
                                   iconStyleData: const IconStyleData(
@@ -2033,6 +2023,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                           style: TextStyle(
                                             color: AppColors.placeholderDark,
                                             fontWeight: FontWeight.bold,
+                                            fontSize: 18,
                                           ),
                                           overflow: TextOverflow.ellipsis,
                                         ),
@@ -2167,10 +2158,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                       borderRadius: BorderRadius.circular(5.0),
                                     ),
 
-                                    contentPadding: const EdgeInsets.symmetric(
-                                      horizontal: 10,
-                                      vertical: 5,
-                                    ),
+                                    contentPadding: EdgeInsets.zero
                                   ),
 
                                   iconStyleData: const IconStyleData(
@@ -2187,6 +2175,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                           style: TextStyle(
                                             color: AppColors.placeholderDark,
                                             fontWeight: FontWeight.bold,
+                                            fontSize: 18,
                                           ),
                                           overflow: TextOverflow.ellipsis,
                                         ),
@@ -2282,7 +2271,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                               ),
                               if (selectedLanding != 'Non-Normal') ...[
                                 SizedBox(width: screenSize.width * 0.04),
-                                SizedBox(width: 4),
+                                SizedBox(width: 2),
                                 Expanded(
                                   child: DropdownButtonFormField2<String>(
                                     isExpanded: true,
@@ -2327,11 +2316,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                         ),
                                       ),
 
-                                      contentPadding:
-                                          const EdgeInsets.symmetric(
-                                            horizontal: 10,
-                                            vertical: 5,
-                                          ),
+                                      contentPadding: EdgeInsets.zero
                                     ),
 
                                     iconStyleData: const IconStyleData(
@@ -2349,9 +2334,9 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                                 value,
                                                 textAlign: TextAlign.right,
                                                 style: TextStyle(
-                                                  color:
-                                                      AppColors.placeholderDark,
+                                                  color:AppColors.placeholderDark,
                                                   fontWeight: FontWeight.bold,
+                                                  fontSize: 18,
                                                 ),
                                                 overflow: TextOverflow.ellipsis,
                                               ),
@@ -2430,7 +2415,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                       fontWeight: FontWeight.bold,
                                     ),                                 
                                 ),
-                                SizedBox(width: 32),
+                                SizedBox(width: 21),
                               ],
                             ],
                           ),
@@ -2560,7 +2545,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                         fontWeight: FontWeight.bold,
                                       ),
                                   ),
-                                  SizedBox(width: 25),
+                                  SizedBox(width: 15),
                                 ] else ...[
                                   Text(
                                       '$vrefNonPlus +',
@@ -3842,7 +3827,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                     Center(
                                       child: Text(
                                         AppStrings.landingTittle,
-                                        textAlign: TextAlign.center,
+                                        textAlign: TextAlign.justify,
                                         style: TextStyle(
                                           fontSize: 21,
                                           fontWeight: FontWeight.bold,
@@ -3952,7 +3937,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                           ),
                                         ),
 
-                                        const SizedBox(width: 20),
+                                        const SizedBox(width: 40),
 
                                         Text(
                                           '$opldResult ${AppStrings.ft}',
@@ -4021,7 +4006,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                                 ),
 
                                                 SizedBox(
-                                                  width: screenSize.width * 0.15,
+                                                  width: orientation ? 330 : 130,
                                                 ),
 
                                                 Text(
@@ -4053,7 +4038,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                           ],
 
                                           if (checkAutobreak == 'YES') ...[
-                                            const SizedBox(height: 10),
+                                            const SizedBox(height: 5),
                                             Text(
                                               AppStrings.cautionMessage,
                                               textAlign: TextAlign.left,
@@ -4065,7 +4050,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                             ),
                                           ],
 
-                                          const SizedBox(height: 10),
+                                          const SizedBox(height: 5),
 
                                           Text(
                                             '$selectedFlaps',
@@ -4077,7 +4062,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                             ),
                                           ),
 
-                                          const SizedBox(height: 10),
+                                          const SizedBox(height: 5),
 
                                           Text(
                                             '$selectedAutoBrake',
@@ -4089,14 +4074,13 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                             ),
                                           ),
 
-                                          const SizedBox(height: 20),
+                                          const SizedBox(height: 10),
 
                                           Row(
                                             mainAxisAlignment:
                                                 MainAxisAlignment.spaceBetween,
                                             children: [
-                                              Expanded(
-                                                child: Text(
+                                              Text(
                                                   '$selectedCondition rwy Condition:',
                                                   textAlign: TextAlign.left,
                                                   style: TextStyle(
@@ -4105,12 +4089,9 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                                     fontWeight: FontWeight.bold,
                                                     fontSize: 16.5,
                                                   ),
-                                                ),
                                               ),
 
-                                              SizedBox(
-                                                width: screenSize.width * 0.10,
-                                              ),
+                                              const Spacer(),
 
                                               Text(
                                                 '($rwyRcc)',
