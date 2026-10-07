@@ -4004,7 +4004,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                                 ),
 
                                                 SizedBox(
-                                                  width: orientation ? 130 : 54,
+                                                  width: orientation ? 100 : 40,
                                                 ),
 
                                                 Text(
