@@ -3826,7 +3826,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                         AppStrings.landingTittle,
                                         textAlign: TextAlign.center,
                                         style: TextStyle(
-                                          fontSize: 21,
+                                          fontSize: orientation ? 21 : 18,
                                           fontWeight: FontWeight.bold,
                                           color: AppColors.white,
                                         ),
