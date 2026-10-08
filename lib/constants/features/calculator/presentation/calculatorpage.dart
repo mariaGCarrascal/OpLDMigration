@@ -1341,7 +1341,6 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                       style: TextStyle(
                                         fontSize: orientation ? 18 : 16,
                                         color: AppColors.textColor3Dark,
-                                        fontStyle: FontStyle.italic,
                                       ),
                                     ),
                                     const Spacer(),
@@ -3895,7 +3894,6 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                             style: TextStyle(
                                               color: AppColors.textColor3Dark,
                                               fontSize: 20,
-                                              fontStyle: FontStyle.italic,
                                             ),
                                           ),
 
@@ -3955,7 +3953,6 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                                 ? colorResult
                                                 : AppColors.white,
                                             fontSize: 20,
-                                            fontStyle: FontStyle.italic,
                                           ),
                                         ),
 
@@ -4004,7 +4001,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                                 ),
 
                                                 SizedBox(
-                                                  width: orientation ? 100 : 30,
+                                                  width: orientation ? 140 : 30,
                                                 ),
 
                                                 Text(
@@ -4027,7 +4024,6 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                                   style: TextStyle(
                                                     color: colorResult,
                                                     fontSize: 18,
-                                                    fontStyle: FontStyle.italic,
                                                   ),
                                                 ),
 
@@ -4080,16 +4076,14 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                             mainAxisAlignment:
                                                 MainAxisAlignment.spaceBetween,
                                             children: [
-                                              Expanded (
-                                                child: Text(
-                                                  '$selectedCondition rwy Condition:',
-                                                  textAlign: TextAlign.left,
-                                                  style: TextStyle(
-                                                    color:
-                                                        AppColors.resultNotes,
-                                                    fontWeight: FontWeight.bold,
-                                                    fontSize: 16.5,
-                                                  ),
+ 
+                                              Text(
+                                                '$selectedCondition rwy condition:',
+                                                textAlign: TextAlign.left,
+                                                style: TextStyle(
+                                                  color: AppColors.resultNotes,
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 16.5,
                                                 ),
                                               ),
 
