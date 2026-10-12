@@ -62,6 +62,7 @@ class Searchdefault{
           ...c.findAllElements('windMINvalue'),
           ...c.findAllElements('windMAXvalue'),
           ...c.findAllElements('deltaISA_DefaultValue'),
+          ...c.findAllElements('crosswindComments'),
           ])
             .map((e) => e.innerText)
             .toList();

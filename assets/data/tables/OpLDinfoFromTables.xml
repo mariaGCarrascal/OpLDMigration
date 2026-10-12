@@ -46,6 +46,7 @@
 			<reportedBrakingAction_label_ofDefault>DRY</reportedBrakingAction_label_ofDefault>
 			<autobrakeSetting_id_ofDefault>AUTOBRAKE 3</autobrakeSetting_id_ofDefault>
 			<nonNormalDataHasAutobrakeOptions>true</nonNormalDataHasAutobrakeOptions>
+			<crosswindComments>Sideslip only (zero crab) landing are not recommended with crosswind components in excess of 15 knots at flaps 15, 18 knots at flaps 30, or 21 knots at flaps 40. This recommendation ensures adequate ground clearence and is based on maintaining adequate control margin.</crosswindComments>
 		</landingCondition>
 
 		<landingCondition id="NORMAL LANDING" label="NORMAL">
@@ -17798,6 +17799,7 @@
 			<reportedBrakingAction_label_ofDefault>DRY</reportedBrakingAction_label_ofDefault>
 			<autobrakeSetting_id_ofDefault>AUTOBRAKE 3</autobrakeSetting_id_ofDefault>
 			<nonNormalDataHasAutobrakeOptions>true</nonNormalDataHasAutobrakeOptions>
+			<crosswindComments>Sideslip only (zero crab) landing are not recommended with crosswind components in excess of 15 knots. This recommendation ensures adequate ground clearence and is based on maintaining adequate control margin.</crosswindComments>
 		</landingCondition>
 
 		<landingCondition id="NORMAL LANDING" label="NORMAL">
@@ -35553,6 +35555,7 @@
 			<reportedBrakingAction_label_ofDefault>DRY</reportedBrakingAction_label_ofDefault>
 			<autobrakeSetting_id_ofDefault>AUTOBRAKE 3</autobrakeSetting_id_ofDefault>
 			<nonNormalDataHasAutobrakeOptions>true</nonNormalDataHasAutobrakeOptions>
+			<crosswindComments>Sideslip only (zero crab) landing are not recommended with crosswind components in excess of 15 knots. This recommendation ensures adequate ground clearence and is based on maintaining adequate control margin.</crosswindComments>
 		</landingCondition>
 
 
@@ -53270,6 +53273,7 @@
 			<reportedBrakingAction_label_ofDefault>DRY</reportedBrakingAction_label_ofDefault>
 			<autobrakeSetting_id_ofDefault>AUTOBRAKE 3</autobrakeSetting_id_ofDefault>
 			<nonNormalDataHasAutobrakeOptions>true</nonNormalDataHasAutobrakeOptions>
+			<crosswindComments>Sideslip only (zero crab) landing are not recommended with crosswind components in excess of 15 knots at flaps 15, 18 knots at flaps 30, or 21 knots at flaps 40. This recommendation ensures adequate ground clearence and is based on maintaining adequate control margin.</crosswindComments>
 		</landingCondition>
 
 		<landingCondition id="NORMAL LANDING" label="NORMAL">
@@ -74470,6 +74474,7 @@
 			<reportedBrakingAction_label_ofDefault>DRY</reportedBrakingAction_label_ofDefault>
 			<autobrakeSetting_id_ofDefault>AUTOBRAKE 3</autobrakeSetting_id_ofDefault>
 			<nonNormalDataHasAutobrakeOptions>true</nonNormalDataHasAutobrakeOptions>
+			<crosswindComments>Sideslip only (zero crab) landing are not recommended with crosswind components in excess of 15 knots at flaps 15, 18 knots at flaps 30, or 21 knots at flaps 40. This recommendation ensures adequate ground clearence and is based on maintaining adequate control margin.</crosswindComments>
 		</landingCondition>
 
 		<landingCondition id="NORMAL LANDING" label="NORMAL">

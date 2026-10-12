@@ -47,6 +47,7 @@ class CalculatorPage extends StatefulWidget {
   //Pendientes:
   //Slider en XXX Elevation y LandingWeight (en cualquier aeropuerto), no da el valor correcto de OpLD en la UI (pero si en el backend), si hay mejor opcion para el controlador del slider en tema de timing. (Revisar)
   //LongPress en QNH y Elevation (XXX).
+  //Hacer propuestas para el OpLD Chart del Runway en figma para la reunion del miercoles a las 8am.
 
   @override
   State<CalculatorPage> createState() => _CalculatorPageState();
@@ -110,6 +111,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
   String? altitud;
   String? vrefNonPlus;
   String? vrefAdjust;
+  String? crosswindsComment;
   bool _isExpanded = false;
   //Variables de listas y Maps de los DropDownlists
   List<String>? listaComments = [];
@@ -163,8 +165,6 @@ class _CalculatorPageState extends State<CalculatorPage> {
   Map<String, List<String>> conditionNotes = Airportdata.rcaTable;
   List<String>? rwyNote = [];
   List<String>? windValues = [];
-  List<String>? crosswindsComments = 
-  ['Sideslip only (zero crab) landing are not recommended with crosswind components in excess of 15 knots, 18 knots at flaps 30, or 21 knots at flaps 40. This recommendation ensures adequate ground clearence and is based on maintaining adequate control margin.'];
   Map<String, String> crosswindsLimits = {};
   List<String> tempValues = [];
 
@@ -177,6 +177,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
     selectedCondition = defaultAircraft?[19];
     updateRwyCondition('$selectedCondition');
     crosswindsLimits = Loadcrosswinds(aircraftRef: selectedAircraft)();
+    crosswindsComment = defaultAircraft?[24];
     _currentLadWeight = double.parse(defaultAircraft?[4] ?? '0');
     weightMAX = double.parse(defaultAircraft?[5] ?? '0');
     weightMIN = double.parse(defaultAircraft?[6] ?? '0');
@@ -3407,7 +3408,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                         const SizedBox(width: 6),
 
                                         // Notas de Warning de Crosswinds
-                                        if (crosswindValue > (num.tryParse((crosswindsLimits[selectedCondition] ?? '33').replaceAll('−','-',).replaceAll('–','-',),) ?? 33)) ... [
+                                       if (crosswindValue > (num.tryParse((crosswindsLimits[selectedCondition] ?? '33').replaceAll('−','-',).replaceAll('–','-',),) ?? 33)) ... [
                                           InkWell(
                                             onTap: () {
                                               showDialog(
@@ -3418,7 +3419,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                                     shape: RoundedRectangleBorder(
                                                       borderRadius: BorderRadius.circular(12.0),
                                                       side: const BorderSide(
-                                                        color: AppColors.placeholderDark,
+                                                        color: AppColors.orange,
                                                         width: 1.5,
                                                       ),
                                                     ),
@@ -3432,10 +3433,10 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                                           // Título
                                                           const Center(
                                                             child: Text(
-                                                              'Warning Landing Crosswind Limitations',
+                                                              'Warning Landing Crosswind Limitations ',
                                                               textAlign: TextAlign.center,
                                                               style: TextStyle(
-                                                                color: AppColors.textColor2Dark,
+                                                                color: AppColors.orange,
                                                                 fontSize: 20,
                                                                 fontWeight: FontWeight.bold,
                                                               ),
@@ -3444,46 +3445,44 @@ class _CalculatorPageState extends State<CalculatorPage> {
 
                                                           const SizedBox(height: 10),
 
-                                                          // Lista de notas de Crosswinds
+                                                          // Nota de Crosswinds Limits
                                                           Expanded(
                                                             child: ScrollConfiguration(
                                                               behavior: ScrollConfiguration.of(context).copyWith(
                                                                 scrollbars: false,
                                                               ),
-                                                              child: ListView.builder(
-                                                                itemCount: crosswindsComments?.length ?? 0,
-                                                                itemBuilder: (context, index) {
-                                                                  final nota = crosswindsComments![index];
-
-                                                                  return Column(
-                                                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                                                    children: [
-                                                                      const Divider(
-                                                                        color: AppColors.cancelPriButBrDark,
-                                                                      ),
-                                                                      Padding(
-                                                                        padding: const EdgeInsets.symmetric(
-                                                                          vertical: 12.0,
-                                                                        ),
-                                                                        child: Text(
-                                                                          nota.trim(),
-                                                                          textAlign: TextAlign.justify,
-                                                                          style: const TextStyle(
-                                                                            color: AppColors.resultNotes,
-                                                                            fontSize: 16.5,
+                                                              child: SingleChildScrollView(
+                                                                child: crosswindsComment != null &&
+                                                                        crosswindsComment!.trim().isNotEmpty
+                                                                    ? Column(
+                                                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                                                        children: [
+                                                                          const Divider(
+                                                                            color: AppColors.cancelPriButBrDark,
                                                                           ),
-                                                                        ),
-                                                                      ),
-                                                                      const Divider(
-                                                                        color: AppColors.cancelPriButBrDark,
-                                                                      ),
-                                                                    ],
-                                                                  );
-                                                                },
+                                                                          Padding(
+                                                                            padding: const EdgeInsets.symmetric(
+                                                                              vertical: 12.0,
+                                                                            ),
+                                                                            child: Text(
+                                                                              crosswindsComment!.trim(),
+                                                                              textAlign: TextAlign.justify,
+                                                                              style: const TextStyle(
+                                                                                color: AppColors.white,
+                                                                                fontSize: 16.5,
+                                                                              ),
+                                                                            ),
+                                                                          ),
+                                                                          const Divider(
+                                                                            color: AppColors.cancelPriButBrDark,
+                                                                          ),
+                                                                        ],
+                                                                      )
+                                                                    : const SizedBox.shrink(),
                                                               ),
                                                             ),
                                                           ),
-
+                                                          
                                                           const SizedBox(height: 20),
 
                                                           // Boton para regresar
@@ -3497,7 +3496,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                                                 shape: RoundedRectangleBorder(
                                                                   borderRadius: BorderRadius.circular(10),
                                                                   side: const BorderSide(
-                                                                    color: AppColors.iconDark,
+                                                                    color: AppColors.orange,
                                                                     width: 1,
                                                                   ),
                                                                 ),
@@ -3526,7 +3525,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                               child: Icon(
                                                 Icons.info_outline,
                                                 color: AppColors.orange,
-                                                size: 18,
+                                                size: 20,
                                               ),
                                             ),
                                           )
