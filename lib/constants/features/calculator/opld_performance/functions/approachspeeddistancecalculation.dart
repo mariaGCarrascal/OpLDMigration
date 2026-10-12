@@ -117,7 +117,7 @@ class Approachspeeddistancecalculation{
 
           }
         }
-      print('Resultado de busqueda en airspeed aprroach (VREF): $airspeedData');
+
       //Operation for adjustement result
       double selectedVref = double.tryParse(airspeedRef ?? '') ?? 0;
       double approachSpeedAdjustment = double.tryParse(airspeedData[airspeedData.keys.first] ?? '') ?? 0;

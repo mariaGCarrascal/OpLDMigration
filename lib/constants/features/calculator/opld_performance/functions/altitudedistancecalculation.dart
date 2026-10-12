@@ -124,7 +124,7 @@ class Altitudedistancecalculation{
 
           }
         }
-      print('Resultado de busqueda en altitud: $altitudeData');
+
       //Operation for adjustement result
       double selectedAltitude = double.tryParse(altitudeRef ?? '') ?? 0;
       double aboveSwitchAlt = double.tryParse(altitudeData['aboveSwitchAlt'] ?? '') ?? 0;

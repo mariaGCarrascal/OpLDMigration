@@ -5,6 +5,9 @@ class AppColors {
 static const Color white = Colors.white;
 static const Color black = Colors.black;
 static const Color grey = Colors.grey;
+static const Color green = Color(0xFF04FB04);
+static const Color orange = Colors.orange;
+static const Color red = Color.fromARGB(255, 255, 30, 0);
  
 //Dark colors
 static const Color backgroundDark = Color(0xFF2A2A2A);
@@ -28,6 +31,7 @@ static const Color cancelPriButBrDark = Color(0xFF5F6183);
  
 static const Color cardDark = Color(0xFF2A2A2A);
 static const Color activeColor = Color(0xFFFFCC00);
+static const Color warning = Color(0xFFFFCC00);
 static const Color errorColor = Color.fromARGB(255, 255, 30, 0);
 static const Color dropdownsColor = Color(0xFF878787);
 static const Color borderDropdowns = Color(0xFF878787);

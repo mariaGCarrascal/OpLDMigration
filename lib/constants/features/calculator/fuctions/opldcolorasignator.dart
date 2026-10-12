@@ -25,13 +25,13 @@ class Opldcolorasignator{
       final int opldCalculatedDistance = int.parse(opldReference!.trim());
 
       if ((landingDistanceResult - opldCalculatedDistance) < 0) {
-        colorDistanceResult = AppColors.errorColor;
+        colorDistanceResult = AppColors.red;
       
       } else if ((opldCalculatedDistance <= landingDistanceResult) && (opldCalculatedDistance >= (landingDistanceResult - (landingDistanceResult * 0.05)))) {
-        colorDistanceResult =  AppColors.activeColor;
+        colorDistanceResult =  AppColors.warning;
       
       } else {
-        colorDistanceResult = AppColors.placeholderDark;
+        colorDistanceResult = AppColors.green;
       }
     
       return colorDistanceResult; 

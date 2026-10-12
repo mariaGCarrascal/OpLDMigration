@@ -134,7 +134,7 @@ class Tempdistancecalculation{
 
           }
         }
-      print('Resultado de busqueda en temperatura en caso $nodeIsaRef: $tempData');
+     
       //Operation for adjustement result
       double selectedISA = double.tryParse(isaRef ?? '') ?? 0;
       double tempAdjustment = double.tryParse(tempData[tempData.keys.first] ?? '') ?? 0;     

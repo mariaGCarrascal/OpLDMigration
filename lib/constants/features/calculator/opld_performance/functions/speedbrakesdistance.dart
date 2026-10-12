@@ -72,7 +72,7 @@ class Speedbrakesdistance{
 
 
       }
-      print('Resultado de busqueda en speedbrakes en $speedbrakeRef: $brakesData');
+      
       //Adjustement result
       if (selectedLanding == 'Non-Normal') {
         result = 0;

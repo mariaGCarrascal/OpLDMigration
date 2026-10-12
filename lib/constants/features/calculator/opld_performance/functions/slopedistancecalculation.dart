@@ -134,7 +134,7 @@ class Slopedistancecalculation{
 
           }
         }
-      print('Resultado de busqueda en slopes en caso $nodeSlopeRef: $hillsData');
+
       //Adjustement result value
       double selectedSlope = double.tryParse(slopeRef ?? '') ?? 0; 
       double slopeAdjustment = double.tryParse(hillsData[hillsData.keys.first] ?? '') ?? 0;     

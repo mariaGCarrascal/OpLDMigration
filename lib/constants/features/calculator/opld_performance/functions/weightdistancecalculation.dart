@@ -125,7 +125,7 @@ class Weightdistancecalculation{
 
           }
         }
-      print('Resultado de busqueda en weight: $weightData');
+     
       //Operation for adjustement result
       double selectedWeight = double.tryParse(weightRef ?? '') ?? 0;
       double aboveRefWgtValue = double.tryParse(weightData['aboveRefWgt'] ?? '') ?? 0;

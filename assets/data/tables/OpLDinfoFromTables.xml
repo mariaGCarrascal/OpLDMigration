@@ -21,6 +21,12 @@
 			<altitudeMAXvalue>14219</altitudeMAXvalue>
 			<windMINvalue>-15</windMINvalue>
 			<windMAXvalue>40</windMAXvalue>
+			<crosswindMAXvalue id="DRY">33</crosswindMAXvalue>
+			<crosswindMAXvalue id="GOOD">33</crosswindMAXvalue>
+			<crosswindMAXvalue id="GOOD TO MEDIUM">33</crosswindMAXvalue>
+			<crosswindMAXvalue id="MEDIUM">25</crosswindMAXvalue>
+			<crosswindMAXvalue id="MEDIUM TO POOR">17</crosswindMAXvalue>
+			<crosswindMAXvalue id="POOR">15</crosswindMAXvalue>
 			<slopeMINvalue>-3.0</slopeMINvalue>
 			<slopeMAXvalue>3.0</slopeMAXvalue>
 			<deltaISA_MINvalue>-20</deltaISA_MINvalue>
@@ -17767,6 +17773,12 @@
 			<altitudeMAXvalue>14219</altitudeMAXvalue>
 			<windMINvalue>-15</windMINvalue>
 			<windMAXvalue>40</windMAXvalue>
+			<crosswindMAXvalue id="DRY">33</crosswindMAXvalue>
+			<crosswindMAXvalue id="GOOD">33</crosswindMAXvalue>
+			<crosswindMAXvalue id="GOOD TO MEDIUM">33</crosswindMAXvalue>
+			<crosswindMAXvalue id="MEDIUM">25</crosswindMAXvalue>
+			<crosswindMAXvalue id="MEDIUM TO POOR">17</crosswindMAXvalue>
+			<crosswindMAXvalue id="POOR">15</crosswindMAXvalue>
 			<slopeMINvalue>-3.0</slopeMINvalue>
 			<slopeMAXvalue>3.0</slopeMAXvalue>
 			<deltaISA_MINvalue>-20</deltaISA_MINvalue>
@@ -35516,6 +35528,12 @@
 			<altitudeMAXvalue>14219</altitudeMAXvalue>
 			<windMINvalue>-15</windMINvalue>
 			<windMAXvalue>40</windMAXvalue>
+			<crosswindMAXvalue id="DRY">33</crosswindMAXvalue>
+			<crosswindMAXvalue id="GOOD">33</crosswindMAXvalue>
+			<crosswindMAXvalue id="GOOD TO MEDIUM">33</crosswindMAXvalue>
+			<crosswindMAXvalue id="MEDIUM">25</crosswindMAXvalue>
+			<crosswindMAXvalue id="MEDIUM TO POOR">17</crosswindMAXvalue>
+			<crosswindMAXvalue id="POOR">15</crosswindMAXvalue>
 			<slopeMINvalue>-3.0</slopeMINvalue>
 			<slopeMAXvalue>3.0</slopeMAXvalue>
 			<deltaISA_MINvalue>-20</deltaISA_MINvalue>
@@ -53227,6 +53245,12 @@
 			<altitudeMAXvalue>14219</altitudeMAXvalue>
 			<windMINvalue>-15</windMINvalue>
 			<windMAXvalue>40</windMAXvalue>
+			<crosswindMAXvalue id="DRY">33</crosswindMAXvalue>
+			<crosswindMAXvalue id="GOOD">33</crosswindMAXvalue>
+			<crosswindMAXvalue id="GOOD TO MEDIUM">33</crosswindMAXvalue>
+			<crosswindMAXvalue id="MEDIUM">25</crosswindMAXvalue>
+			<crosswindMAXvalue id="MEDIUM TO POOR">17</crosswindMAXvalue>
+			<crosswindMAXvalue id="POOR">15</crosswindMAXvalue>
 			<slopeMINvalue>-3.0</slopeMINvalue>
 			<slopeMAXvalue>3.0</slopeMAXvalue>
 			<deltaISA_MINvalue>-20</deltaISA_MINvalue>
@@ -74421,6 +74445,12 @@
 			<altitudeMAXvalue>14219</altitudeMAXvalue>
 			<windMINvalue>-15</windMINvalue>
 			<windMAXvalue>40</windMAXvalue>
+			<crosswindMAXvalue id="DRY">33</crosswindMAXvalue>
+			<crosswindMAXvalue id="GOOD">33</crosswindMAXvalue>
+			<crosswindMAXvalue id="GOOD TO MEDIUM">33</crosswindMAXvalue>
+			<crosswindMAXvalue id="MEDIUM">25</crosswindMAXvalue>
+			<crosswindMAXvalue id="MEDIUM TO POOR">17</crosswindMAXvalue>
+			<crosswindMAXvalue id="POOR">15</crosswindMAXvalue>
 			<slopeMINvalue>-3.0</slopeMINvalue>
 			<slopeMAXvalue>3.0</slopeMAXvalue>
 			<deltaISA_MINvalue>-20</deltaISA_MINvalue>

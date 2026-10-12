@@ -116,7 +116,7 @@ class Refdistancereference{
 
           }
         }
-      print('Resultado de busqueda en ref distance: $distanceData');
+
       //Adjustement result value 
       result = double.tryParse(distanceData[distanceData.keys.first] ?? '') ?? 0;
 
