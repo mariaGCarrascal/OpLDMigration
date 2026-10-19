@@ -28,6 +28,7 @@ import 'package:flutter_application_5/constants/features/home/data/airportdata.d
 import 'package:flutter_application_5/constants/strings/app_strings.dart';
 import 'package:flutter/services.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class CalculatorPage extends StatefulWidget {
   final String? aircraft;
@@ -46,7 +47,7 @@ class CalculatorPage extends StatefulWidget {
   });
   //Pendientes:
   //LongPress en QNH y Elevation (XXX).
-  //Inlcuion de Metar
+  //Inclusion de Metar.
   //Calculatetempisa es para generico y Calculateisa para existente, la temp viene por default, en generico no.
 
   @override
@@ -54,7 +55,7 @@ class CalculatorPage extends StatefulWidget {
 }
 
 class _CalculatorPageState extends State<CalculatorPage> {
-  //Variables para las selecciones
+  //Variables claves
   String? checkAutobreak;
   String? _currentReduction;
   String? netLDA;
@@ -359,15 +360,18 @@ class _CalculatorPageState extends State<CalculatorPage> {
         actions: [
           if (selectedAirport != 'XXX')
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
               child: ElevatedButton.icon(
                 onPressed: () {},
                 iconAlignment: IconAlignment.end, 
-                icon: const Icon(
-                  Icons.cloudy_snowing,
-                  color: AppColors.white,
-                  size: 20,
-                  weight: 700,
+                icon: SvgPicture.asset(
+                  'icons/cloudy_sunny.svg',
+                  width: 25,
+                  height: 25,
+                  colorFilter: const ColorFilter.mode(
+                    AppColors.white,
+                    BlendMode.srcIn,
+                  ),
                 ),
                 label: Text(
                   AppStrings.metar,
@@ -388,7 +392,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
               ),
             ),
         ],
-      ),
+      ),     
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(4.0),
         child: Column(
@@ -3695,7 +3699,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                                                 style: TextStyle(
                                                                   color: AppColors
                                                                       .iconDark,
-                                                                  fontSize: 16.5,
+                                                                  fontSize: 18,
                                                                   fontWeight:
                                                                       FontWeight
                                                                           .bold,
@@ -3975,13 +3979,13 @@ class _CalculatorPageState extends State<CalculatorPage> {
 
                             //Grafica de pista del OpLD
                             Padding(
-                              padding: const EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 0),
+                              padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
                               child: selectedAirport != 'XXX'
                                   ? Center(
                                       child: Landingdistancebar(
                                         lda: netLDA,
                                         opLd: opldResult,
-                                        width: 300,
+                                        width: orientation ? 510 : 400,
                                       ),
                                     )
                                   : Container(

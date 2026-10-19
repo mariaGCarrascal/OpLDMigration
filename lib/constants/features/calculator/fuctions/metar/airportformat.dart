@@ -4,7 +4,7 @@ class AirportFormat {
   final AirportcodeconverterClient _client;
 
   // Permite pasar la API key al instanciar o usar una por defecto
-  AirportFormat({String apiKey = 'YOUR_API_KEY'})
+  AirportFormat({String apiKey = 'https://api.apiverve.com/v1/airportcodeconverter'})
       : _client = AirportcodeconverterClient(apiKey);
 
   Future<String?> getIataCode(String airportQuery) async {

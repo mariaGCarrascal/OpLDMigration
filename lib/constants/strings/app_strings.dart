@@ -60,7 +60,6 @@ class AppStrings {
   static const String opld = "OpLD:";
   static const String remaining = "REMAINING:";
 
-
   static const String importNotes = "Important Notes";
   static const String notesTitle = "IMPORTANT NOTES";
   static const List<String> notes = [

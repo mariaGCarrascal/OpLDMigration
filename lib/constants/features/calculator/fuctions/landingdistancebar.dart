@@ -65,16 +65,16 @@ class Landingdistancebar extends StatelessWidget {
                             'OpLD:',
                             style: TextStyle(
                               color: AppColors.white,
-                              fontSize: orientation ? 18 : 16,
-                              fontWeight: FontWeight.bold,
+                              fontSize: orientation ? 21 : 18,
+                              fontWeight: FontWeight.w900,
                             ),
                           ),
                           Text(
                             '${opLdValue.round()} ft',
                             style: TextStyle(
                               color: barColor,
-                              fontSize: orientation ? 18 : 16,
-                              fontWeight: FontWeight.bold,
+                              fontSize: orientation ? 21 : 18,
+                              fontWeight: FontWeight.w900,
                             ),
                           ),
                           Text(
@@ -102,6 +102,9 @@ class Landingdistancebar extends StatelessWidget {
                               fontWeight: FontWeight.bold,
                             ),
                           ),
+
+                          SizedBox(height: orientation ? 3 : 3),
+                          
                           Text(
                             '${remainingValue.round()} ft',
                             style: TextStyle(
@@ -110,6 +113,9 @@ class Landingdistancebar extends StatelessWidget {
                               fontWeight: FontWeight.bold,
                             ),
                           ),
+
+                          SizedBox(height: orientation ? 3 : 3),
+                          
                           Text(
                             '${(remainingValue * 0.3048).round()}m | $remainingPercent%',
                             style: TextStyle(
