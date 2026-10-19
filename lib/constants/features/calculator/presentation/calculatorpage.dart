@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_5/constants/colors/app_colors.dart';
 import 'package:flutter_application_5/constants/features/calculator/fuctions/calculateAltitud.dart';
@@ -23,6 +22,7 @@ import 'package:flutter_application_5/constants/features/calculator/fuctions/loa
 import 'package:flutter_application_5/constants/features/calculator/fuctions/opldcolorasignator.dart';
 import 'package:flutter_application_5/constants/features/calculator/fuctions/searchautobrakedefault.dart';
 import 'package:flutter_application_5/constants/features/calculator/fuctions/searchdefault.dart';
+import 'package:flutter_application_5/constants/features/calculator/opld_performance/functions/searchbaselinereference.dart';
 import 'package:flutter_application_5/constants/features/calculator/opld_performance/oplddistancecalculator.dart';
 import 'package:flutter_application_5/constants/features/home/data/airportdata.dart';
 import 'package:flutter_application_5/constants/strings/app_strings.dart';
@@ -45,9 +45,9 @@ class CalculatorPage extends StatefulWidget {
     this.airportEl, this.airportQNH, this.airportTemp, this.airportRunway, this.nonflaps,
   });
   //Pendientes:
-  //Slider en XXX Elevation y LandingWeight (en cualquier aeropuerto), no da el valor correcto de OpLD en la UI (pero si en el backend), si hay mejor opcion para el controlador del slider en tema de timing. (Revisar)
   //LongPress en QNH y Elevation (XXX).
-  //Hacer propuestas para el OpLD Chart del Runway en figma para la reunion del miercoles a las 8am.
+  //Inlcuion de Metar
+  //Calculatetempisa es para generico y Calculateisa para existente, la temp viene por default, en generico no.
 
   @override
   State<CalculatorPage> createState() => _CalculatorPageState();
@@ -55,7 +55,6 @@ class CalculatorPage extends StatefulWidget {
 
 class _CalculatorPageState extends State<CalculatorPage> {
   //Variables para las selecciones
-  Timer? _opldDebounce;
   String? checkAutobreak;
   String? _currentReduction;
   String? netLDA;
@@ -114,6 +113,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
   String? crosswindsComment;
   bool _isExpanded = false;
   //Variables de listas y Maps de los DropDownlists
+  Map<String, String> baseDetails = {};
   List<String>? listaComments = [];
   List<String>? weightsAircraft = [];
   List<String>? defaultAircraft = [];
@@ -124,7 +124,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
   List<String>? reversersList = [];
   List<String>? autoBrakeOptions;
   final List<String> speedBrakesTypes = ['AUTOMATIC', 'MANUAL'];
- final List<String> rwyConditions = ['DRY', 'GOOD', 'GOOD TO MEDIUM', 'MEDIUM', 'MEDIUM TO POOR', 'POOR'];
+  final List<String> rwyConditions = ['DRY', 'GOOD', 'GOOD TO MEDIUM', 'MEDIUM', 'MEDIUM TO POOR', 'POOR'];
   final List<String> rwymagOptions = ['000', '001', '002', '003', '004', '005', '006', '007', '008', '009', '010',
                                       '011', '012', '013', '014', '015', '016', '017', '018', '019', '020', '021',
                                       '022', '023', '024', '025', '026', '027', '028', '029', '030', '031', '032',
@@ -316,6 +316,9 @@ class _CalculatorPageState extends State<CalculatorPage> {
       selectedReversers = reversersList!.first;
     }
 
+    baseDetails = Searchbaselinereference( aircraftRef: selectedAircraft, landingRef: selectedLanding, 
+      configurationRef: selectedConfiguration, flapRef: selectedFlaps)();
+
     updateOpld();
   }
 
@@ -326,7 +329,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
   }
 
   void updateOpld() {
-    opldResult = Oplddistancecalculator(
+    opldResult = Oplddistancecalculator(aircraftBaseDetails: baseDetails,
       aircraftPicker: selectedAircraft, landingPicker: selectedLanding, configurationPicker: selectedConfiguration,
       factorRef: rwyFactor, rwyPicker: selectedRunway, additiveRef: rwyAdditive,
       flapPicker: selectedFlaps, rwyConditionPicker: selectedCondition, autobrakePicker: selectedAutoBrake,
@@ -346,14 +349,45 @@ class _CalculatorPageState extends State<CalculatorPage> {
     return Scaffold(
       backgroundColor: AppColors.backgroundDark,
       appBar: AppBar(
-        title: Center(
-          child: Text(
-            '$selectedAircraft',
-            style: TextStyle(fontSize: 24, color: AppColors.white),
-          ),
+        centerTitle: true,
+        title: Text(
+          '$selectedAircraft',
+          style: const TextStyle(fontSize: 24, color: AppColors.white),
         ),
         iconTheme: const IconThemeData(color: AppColors.white),
         backgroundColor: Colors.black,
+        actions: [
+          if (selectedAirport != 'XXX')
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
+              child: ElevatedButton.icon(
+                onPressed: () {},
+                iconAlignment: IconAlignment.end, 
+                icon: const Icon(
+                  Icons.cloudy_snowing,
+                  color: AppColors.white,
+                  size: 20,
+                  weight: 700,
+                ),
+                label: Text(
+                  AppStrings.metar,
+                  style: const TextStyle(
+                    color: AppColors.white,
+                  ),
+                ),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.black,
+                  side: const BorderSide(
+                    color: AppColors.placeholderDark,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                  padding: const EdgeInsets.symmetric(horizontal: 14.0),
+                ),
+              ),
+            ),
+        ],
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(4.0),
@@ -366,7 +400,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                 Expanded(
                   child: Column(
                     children: [
-                      //Airport Information Header
+                      //Header de Airport Information 
                       Card(
                         color: AppColors.black,
                         shape: RoundedRectangleBorder(
@@ -402,7 +436,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                         ),
                       ),
 
-                      //Rwy ID, si es XXX, se muestra el texto RWY MAG HDG y los valores pasan a ser numericos como Wind. En aumento de +1 hasta 360
+                      //Campo de Rwy ID, si es XXX, se muestra el texto RWY MAG HDG y los valores pasan a ser numericos como Wind. En aumento de +1 hasta 360
                       Card(
                         color: AppColors.cardDark,
                         shape: RoundedRectangleBorder(
@@ -789,7 +823,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                         ),
                       ),
 
-                      //Rwy condition
+                      //Campo de Rwy condition
                       Card(
                         color: AppColors.cardDark,
                         shape: RoundedRectangleBorder(
@@ -980,7 +1014,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                         ),
                       ),
 
-                      //Rwy slope, en vista XXX se muestra un valor en porcentaje (color verde), y botones de suma y resta
+                      //Campo de Rwy slope, en vista XXX se muestra un valor en porcentaje (color verde), y botones de suma y resta
                       Card(
                         color: AppColors.cardDark,
                         shape: RoundedRectangleBorder(
@@ -1095,7 +1129,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                         ),
                       ),
 
-                      //Elevation, la vista cambia si es el aeropuerto es XXX
+                      //Campo de Elevation, la vista cambia si es el aeropuerto es XXX
                       Card(
                         color: AppColors.cardDark,
                         shape: RoundedRectangleBorder(
@@ -1277,13 +1311,8 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                         )();
                                       });
 
-                                      _opldDebounce?.cancel();
-                                      _opldDebounce = Timer(
-                                        const Duration(milliseconds: 300),
-                                        () {
-                                          updateOpld();
-                                        },
-                                      );
+                                      updateOpld();
+
                                     },
                                   ),
                                 ),
@@ -1292,7 +1321,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                         ),
                       ),
 
-                      //LDA y boton de ajustes de reduccion, no se muestra si el aeropuerto es XXX
+                      //Campo de LDA y boton de ajustes de reduccion, no se muestra si el aeropuerto es XXX
                       if (selectedAirport != 'XXX')
                         Card(
                           color: AppColors.cardDark,
@@ -1598,7 +1627,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                           ),
                         ),
 
-                      //Aircraft Configuration header
+                      //Header de Aircraft Configuration
                       Card(
                         color: AppColors.black,
                         shape: RoundedRectangleBorder(
@@ -1624,7 +1653,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                         ),
                       ),
 
-                      //Flaps
+                      //Campo de Flaps
                       Card(
                         color: AppColors.cardDark,
                         shape: RoundedRectangleBorder(
@@ -1778,20 +1807,19 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                         selectedFlaps = newValue;
 
                                         listaComments = Loadcomments(
-                                          aircraftRef: selectedAircraft,
-                                          landingRef: selectedLanding,
-                                          configurationRef:
-                                              selectedConfiguration,
-                                          flapRef: selectedFlaps,
+                                          aircraftRef: selectedAircraft, landingRef: selectedLanding,
+                                          configurationRef: selectedConfiguration, flapRef: selectedFlaps,
                                         )();
 
                                         autoBrakeOptions = Loadautobrakes(
-                                          aircraftRef: selectedAircraft,
-                                          landingRef: selectedLanding,
-                                          configurationRef:
-                                              selectedConfiguration,
-                                          flapRef: selectedFlaps,
+                                          aircraftRef: selectedAircraft, landingRef: selectedLanding,
+                                          configurationRef: selectedConfiguration, flapRef: selectedFlaps,
                                           conditionRef: selectedCondition,
+                                        )();
+
+                                        baseDetails = Searchbaselinereference( 
+                                          aircraftRef: selectedAircraft, landingRef: selectedLanding, 
+                                          configurationRef: selectedConfiguration, flapRef: selectedFlaps 
                                         )();
 
                                         updateOpld();
@@ -1930,7 +1958,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                         ),
                       ),
 
-                      //Autobrake
+                      //Campo de Autobrake
                       Card(
                         color: AppColors.cardDark,
                         shape: RoundedRectangleBorder(
@@ -2101,7 +2129,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                         ),
                       ),
 
-                      //Reversers
+                      //Campo de Reversers
                       Card(
                         color: AppColors.cardDark,
                         shape: RoundedRectangleBorder(
@@ -2252,7 +2280,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                         ),
                       ),
 
-                      //SpeedBrakes, cambia dependiendo del tipo de landing (normal o non-normal) a N/A
+                      //Campo de SpeedBrakes, cambia dependiendo del tipo de landing (normal o non-normal) a N/A
                       Card(
                         color: AppColors.cardDark,
                         shape: RoundedRectangleBorder(
@@ -2427,7 +2455,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                         ),
                       ),
 
-                      //Vref add, cambia dependiendo del tipo de landing (Normal o Non-Normal) a N/A y el texto VREF cambia
+                      //Campo de Vref add, cambia dependiendo del tipo de landing (Normal o Non-Normal) a N/A y el texto VREF cambia
                       Card(
                         color: AppColors.cardDark,
                         shape: RoundedRectangleBorder(
@@ -2648,7 +2676,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                         ),
                       ),
 
-                      //Landing Weight
+                      //Campo de Landing Weight
                       Card(
                         color: AppColors.cardDark,
                         shape: RoundedRectangleBorder(
@@ -2779,10 +2807,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                       ? 0
                                       : _currentLadWeight >= weightMAX
                                       ? _divisionsWeight!.toDouble()
-                                      : ((_currentLadWeight / 1000).round() -
-                                                minStep +
-                                                1)
-                                            .toDouble(),
+                                      : ((_currentLadWeight / 1000).round() - minStep + 1).toDouble(),
                                   onChanged: (double val) {
                                     setState(() {
                                       if (val == 0) {
@@ -2790,18 +2815,12 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                       } else if (val == _divisionsWeight) {
                                         _currentLadWeight = weightMAX;
                                       } else {
-                                        _currentLadWeight =
-                                            (minStep + val.toInt() - 1) * 1000;
+                                        _currentLadWeight = (minStep + val.toInt() - 1) * 1000;
                                       }
                                     });
+      
+                                    updateOpld();
 
-                                    _opldDebounce?.cancel();
-                                    _opldDebounce = Timer(
-                                      const Duration(milliseconds: 300),
-                                      () {
-                                        updateOpld();
-                                      },
-                                    );
                                   },
                                 ),
                               ),
@@ -2819,7 +2838,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                 Expanded(
                   child: Column(
                     children: [
-                      // Weather Condition Header
+                      //Header de Weather Condition Header
                       Card(
                         color: AppColors.black,
                         shape: RoundedRectangleBorder(
@@ -2845,7 +2864,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                         ),
                       ),
 
-                      // QNH
+                      //Campo de QNH
                       Card(
                         color: AppColors.cardDark,
                         shape: RoundedRectangleBorder(
@@ -3103,7 +3122,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                         ),
                       ),
 
-                      // Altitude
+                      //Campo de Altitude
                       Card(
                         color: AppColors.cardDark,
                         shape: RoundedRectangleBorder(
@@ -3140,7 +3159,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                         ),
                       ),
 
-                      // QAT
+                      //Campo de QAT
                       Card(
                         color: AppColors.cardDark,
                         shape: RoundedRectangleBorder(
@@ -3374,7 +3393,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                         ),
                       ),
 
-                      // WIND
+                      //Campo de WIND
                       Card(
                         color: AppColors.cardDark,
                         shape: RoundedRectangleBorder(
@@ -3419,7 +3438,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                                     shape: RoundedRectangleBorder(
                                                       borderRadius: BorderRadius.circular(12.0),
                                                       side: const BorderSide(
-                                                        color: AppColors.orange,
+                                                        color: AppColors.activeColor,
                                                         width: 1.5,
                                                       ),
                                                     ),
@@ -3433,10 +3452,10 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                                           // Título
                                                           const Center(
                                                             child: Text(
-                                                              'Warning Landing Crosswind Limitations ',
+                                                              'Landing Crosswind Limitations ',
                                                               textAlign: TextAlign.center,
                                                               style: TextStyle(
-                                                                color: AppColors.orange,
+                                                                color: AppColors.activeColor,
                                                                 fontSize: 20,
                                                                 fontWeight: FontWeight.bold,
                                                               ),
@@ -3496,7 +3515,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                                                 shape: RoundedRectangleBorder(
                                                                   borderRadius: BorderRadius.circular(10),
                                                                   side: const BorderSide(
-                                                                    color: AppColors.orange,
+                                                                    color: AppColors.activeColor,
                                                                     width: 1,
                                                                   ),
                                                                 ),
@@ -3524,7 +3543,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                               padding: EdgeInsets.all(3),
                                               child: Icon(
                                                 Icons.info_outline,
-                                                color: AppColors.orange,
+                                                color: AppColors.activeColor,
                                                 size: 20,
                                               ),
                                             ),
@@ -3920,280 +3939,126 @@ class _CalculatorPageState extends State<CalculatorPage> {
                         ),
                       ),
 
-                      //Performance Results header, si es XXX, solo se muestra el resultado del OpLD
+                      //Header de Performance Results, si es XXX, solo se muestra el resultado del OpLD
                       Card(
                         color: AppColors.black,
                         shape: RoundedRectangleBorder(
-                          side: BorderSide(color: AppColors.white),
+                          side: const BorderSide(color: AppColors.white),
                           borderRadius: BorderRadius.circular(4),
                         ),
                         child: Column(
                           children: [
+                            //Encabezado superior
                             Padding(
                               padding: const EdgeInsets.all(10.0),
-                              child: Column(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  if (selectedLanding != 'Non-Normal') ...[
-                                    Center(
-                                      child: Text(
-                                        AppStrings.landingTittle,
-                                        textAlign: TextAlign.center,
-                                        style: TextStyle(
-                                          fontSize: orientation ? 21 : 18,
-                                          fontWeight: FontWeight.bold,
-                                          color: AppColors.white,
-                                        ),
-                                      ),
-                                    ),
-                                  ] else ...[
-                                    Center(
-                                      child: Text(
-                                        selectedConfiguration!.toUpperCase(),
-                                        textAlign: TextAlign.center,
-                                        style: TextStyle(
-                                          fontSize: 20,
-                                          fontWeight: FontWeight.bold,
-                                          color: AppColors.white,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-
-                                  const SizedBox(height: 10),
-
-                                  if (selectedAirport != 'XXX')...[
-                                    //NET LDA results, no se muestra si el aeropuerto es XXX
-                                    Container(
-                                      width: double.infinity,
-                                      padding: const EdgeInsets.symmetric(
-                                        vertical: 5,
-                                        horizontal: 16,
-                                      ),
-                                      decoration: BoxDecoration(
-                                        color: AppColors.black,
-                                        borderRadius: BorderRadius.circular(4),
-                                        border: Border.all(
-                                          color: AppColors.white.withValues(
-                                            alpha: 0.3,
-                                          ),
-                                        ),
-                                      ),
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Text(
-                                            AppStrings.netLda,
-                                            style: TextStyle(
-                                              fontSize: 26,
-                                              fontWeight: FontWeight.bold,
-                                              color: AppColors.white,
-                                            ),
-                                          ),
-
-                                          const SizedBox(width: 5),
-
-                                          Text(
-                                            '$netLDA ${AppStrings.ft}',
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              color: AppColors.textColor3Dark,
-                                              fontSize: 24,
-                                            ),
-                                          ),
-
-                                          Text(
-                                            '(${(double.tryParse(netLDA ?? '0')! * 0.3048).round()}${AppStrings.m})',
-                                            style: TextStyle(
-                                              color: AppColors.textColor3Dark,
-                                              fontSize: 20,
-                                            ),
-                                          ),
-
-                                          const SizedBox(width: 10),
-                                        ],
-                                      ),
-                                    ),
-
-                                    const SizedBox(height: 8),
-                                  ],
-
-                                  //OpLD results
-                                  Container(
-                                    width: double.infinity,
-                                    padding: const EdgeInsets.symmetric(
-                                      vertical: 5,
-                                      horizontal: 16,
-                                    ),
-                                    decoration: BoxDecoration(
-                                      color: AppColors.black,
-                                      borderRadius: BorderRadius.circular(4),
-                                      border: Border.all(
-                                        color: AppColors.white.withValues(
-                                          alpha: 0.3,
-                                        ),
-                                      ),
-                                    ),
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Text(
-                                          AppStrings.opld,
-                                          style: TextStyle(
-                                            fontSize: 26,
-                                            fontWeight: FontWeight.bold,
-                                            color: AppColors.white,
-                                          ),
-                                        ),
-
-                                        const SizedBox(width: 40),
-
-                                        Text(
-                                          '$opldResult ${AppStrings.ft}',
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            color: selectedAirport != 'XXX'
-                                                ? colorResult
-                                                : AppColors.white,
-                                            fontSize: 24,
-                                          ),
-                                        ),
-
-                                        Text(
-                                          '(${(double.tryParse(opldResult ?? '0')! * 0.3048).round()}${AppStrings.m})',
-                                          style: TextStyle(
-                                            color: selectedAirport != 'XXX'
-                                                ? colorResult
-                                                : AppColors.white,
-                                            fontSize: 20,
-                                          ),
-                                        ),
-
-                                        const SizedBox(width: 4),
-                                      ],
-                                    ),
+                              child: Center(
+                                child: Text(
+                                  selectedLanding != 'Non-Normal'
+                                      ? AppStrings.landingTittle
+                                      : selectedConfiguration!.toUpperCase(),
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    fontSize: orientation ? 20 : 18,
+                                    fontWeight: FontWeight.bold,
+                                    color: AppColors.white,
                                   ),
-
-                                  //Remaining results, no se muestra si el aeropuerto es XXX
-                                  if (selectedAirport != 'XXX') ...[
-                                    const SizedBox(height: 8),
-                                    Container(
-                                      width: double.infinity,
-                                      padding: const EdgeInsets.symmetric(
-                                        vertical: 5,
-                                        horizontal: 16,
-                                      ),
-                                      decoration: BoxDecoration(
-                                        color: AppColors.black,
-                                        borderRadius: BorderRadius.circular(4),
-                                        border: Border.all(
-                                          color: AppColors.white.withValues(
-                                            alpha: 0.3,
-                                          ),
-                                        ),
-                                      ),
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Text(
-                                            AppStrings.remaining,
-                                            textAlign: TextAlign.left,
-                                              style: TextStyle(
-                                                fontSize: 19,
-                                                fontWeight: FontWeight.bold,
-                                                color: AppColors.white,
-                                              ),
-                                          ),
-
-                                          SizedBox(width: orientation ? 10 : 15),
-
-                                          Text(
-                                            '$remainingResult ${AppStrings.ft}',
-                                            textAlign: TextAlign.right,
-                                            style: TextStyle(
-                                              color: colorResult,
-                                                fontSize: 20,
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                          ),
-
-                                          Text(
-                                            '(${(double.tryParse(remainingResult ?? '0')! * 0.3048).round()}${AppStrings.m})',
-                                            textAlign: TextAlign.right,
-                                            style: TextStyle(
-                                              color: colorResult,
-                                              fontSize: 18,
-                                            ),
-                                          ),
-
-                                          SizedBox(width: orientation ? 15 : 25),
-
-                                        ],
-                                      ),
-                                    ),
-                                  ],
-                                ],
+                                ),
                               ),
                             ),
 
-                            Divider(
+                            //1er Divider
+                            const Divider(
                               color: AppColors.white,
                               thickness: 1,
                               height: 1,
                             ),
 
-                            //Performance Side Notes
+                            //Grafica de pista del OpLD
                             Padding(
-                              padding: const EdgeInsets.all(24.0),
-                              child: SizedBox(
-                                height: 380,
-                                width: 1500,
-                                child: Column(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
+                              padding: const EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 0),
+                              child: selectedAirport != 'XXX'
+                                  ? Center(
+                                      child: Landingdistancebar(
+                                        lda: netLDA,
+                                        opLd: opldResult,
+                                        width: 300,
+                                      ),
+                                    )
+                                  : Container(
+                                      width: double.infinity,
+                                      padding: const EdgeInsets.symmetric(
+                                        vertical: 5,
+                                        horizontal: 16,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color: AppColors.black,
+                                        borderRadius: BorderRadius.circular(4),
+                                        border: Border.all(
+                                          color: AppColors.white.withValues(alpha: 0.3),
+                                        ),
+                                      ),
+                                      child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text(
+                                            AppStrings.opld,
+                                            style: const TextStyle(
+                                              fontSize: 26,
+                                              fontWeight: FontWeight.bold,
+                                              color: AppColors.white,
+                                            ),
+                                          ),
+                                          const SizedBox(width: 40),
+                                          Text(
+                                            '$opldResult ${AppStrings.ft}',
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              color:AppColors.white,
+                                              fontSize: 24,
+                                            ),
+                                          ),
+                                          Text(
+                                            '(${(double.tryParse(opldResult ?? '0')! * 0.3048).round()}${AppStrings.m})',
+                                            style: TextStyle(
+                                              color:AppColors.white,
+                                              fontSize: 20,
+                                            ),
+                                          ),
+                                          const SizedBox(width: 4),
+                                        ],
+                                      ),
+                                    ),
+                            ),
 
+                            const SizedBox(height: 14),
+
+                            const Divider(
+                              color: AppColors.white,
+                              thickness: 1,
+                              height: 1,
+                            ),
+
+                            //Comentarios de Runway condition y autobrake warning
+                            Padding(
+                              padding: const EdgeInsets.all(16.0),
+                              child: SizedBox(
+                                height: selectedAirport != 'XXX'
+                                                  ? 270
+                                                  : 450,
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
                                     SizedBox(
                                       width: double.infinity,
                                       child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
+                                        crossAxisAlignment: CrossAxisAlignment.start,
                                         children: [
-                                          if (selectedAirport != 'XXX')... [
-                                            Align(
-                                              alignment: Alignment.center,
-                                              child: Text(
-                                                'Runway Landing Distance',
-                                                textAlign: TextAlign.center,
-                                                style: TextStyle(
-                                                  color: AppColors.white,
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 16.5,
-                                                ),
-                                              ),
-                                            ),
-
-                                            Center(
-                                              child: Landingdistancebar(
-                                                lda: netLDA,
-                                                opLd: opldResult,
-                                                width: 285, 
-                                              ),
-                                            ),
-                                          ],
-
                                           if (checkAutobreak == 'YES') ...[
                                             const SizedBox(height: 5),
                                             Text(
                                               AppStrings.cautionMessage,
                                               textAlign: TextAlign.left,
-                                              style: TextStyle(
+                                              style: const TextStyle(
                                                 color: AppColors.orange,
                                                 fontWeight: FontWeight.bold,
                                                 fontSize: 16.5,
@@ -4201,35 +4066,25 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                             ),
                                           ],
 
-                                          const SizedBox(height: 5),
+                                          const SizedBox(height: 10),
 
-                                          Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            children: [
- 
-                                              Text(
-                                                '$selectedCondition ($rwyRcc) rwy condition:',
-                                                textAlign: TextAlign.left,
-                                                style: TextStyle(
-                                                  color: AppColors.resultNotes,
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 16.5,
-                                                ),
-                                              ),
-
-                                              const Spacer(),
-                                            ],
+                                          //Runway Condition
+                                          Text(
+                                            '$selectedCondition ($rwyRcc) rwy condition:',
+                                            textAlign: TextAlign.left,
+                                            style: const TextStyle(
+                                              color: AppColors.resultNotes,
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 16.5,
+                                            ),
                                           ),
 
-                                          const SizedBox(height: 5),
+                                          const SizedBox(height: 4),
 
-                                          ...rwyNote!.map(
+                                          //Notas de runway condition
+                                          ...?rwyNote?.map(
                                             (nota) => Padding(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                    vertical: 5.0,
-                                                  ),
+                                              padding: const EdgeInsets.symmetric(vertical: 3.0),
                                               child: Text(
                                                 nota,
                                                 style: const TextStyle(
@@ -4244,10 +4099,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                       ),
                                     ),
 
-
-                                    //const Spacer(),
-
-                                    //Important Notes
+                                    //Boton Important Notes
                                     ElevatedButton(
                                       style: ElevatedButton.styleFrom(
                                         backgroundColor: AppColors.black,
@@ -4275,15 +4127,13 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                                 ),
                                               ),
                                               content: SizedBox(
-                                                width: 750.0,
-                                                height: 700.0,
+                                                width: 750,
+                                                height: 700,
                                                 child: Column(
-                                                  mainAxisAlignment: MainAxisAlignment.start,
                                                   crossAxisAlignment: CrossAxisAlignment.start,
                                                   children: [
-                                                    // Título
-                                                    Center(
-                                                      child: const Text(
+                                                    const Center(
+                                                      child: Text(
                                                         AppStrings.notesTitle,
                                                         style: TextStyle(
                                                           color: AppColors.textColor2Dark,
@@ -4292,69 +4142,51 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                                         ),
                                                       ),
                                                     ),
-
                                                     const SizedBox(height: 10),
-
-                                                    // Listado de comentarios
                                                     Expanded(
-                                                      child: ScrollConfiguration(
-                                                        behavior: ScrollConfiguration.of(context).copyWith(
-                                                          scrollbars: false,
-                                                        ),
-                                                        child: ListView.builder(
-                                                          itemCount: listaComments!.length,
-                                                          itemBuilder: (context, index) {
-                                                            final comentario = listaComments![index];
-
-                                                            return Column(
-                                                              crossAxisAlignment: CrossAxisAlignment.start,
-                                                              children: [
-                                                                Divider(
-                                                                  color: AppColors.cancelPriButBrDark,
+                                                      child: ListView.builder(
+                                                        itemCount: listaComments?.length ?? 0,
+                                                        itemBuilder: (context, index) {
+                                                          final comentario = listaComments![index];
+                                                          return Column(
+                                                            crossAxisAlignment:
+                                                                CrossAxisAlignment.start,
+                                                            children: [
+                                                              const Divider(
+                                                                color: AppColors.cancelPriButBrDark,
+                                                              ),
+                                                              Padding(
+                                                                padding: const EdgeInsets.symmetric(
+                                                                  vertical: 12.0,
                                                                 ),
-
-                                                                Padding(
-                                                                  padding: const EdgeInsets.symmetric(
-                                                                    vertical: 12.0,
+                                                                child: Text(
+                                                                  comentario.trim(),
+                                                                  style: const TextStyle(
+                                                                    color: AppColors.white,
+                                                                    fontSize: 15,
                                                                   ),
-                                                                  child: Text(
-                                                                    comentario.trim(),
-                                                                    style: const TextStyle(
-                                                                      color: AppColors.white,
-                                                                      fontSize: 15,
-                                                                    ),
-                                                                    textAlign: TextAlign.justify,
-                                                                  ),
+                                                                  textAlign: TextAlign.justify,
                                                                 ),
-
-                                                                Divider(
-                                                                  color: AppColors.cancelPriButBrDark,
-                                                                ),
-                                                              ],
-                                                            );
-                                                          },
-                                                        ),
+                                                              ),
+                                                              const Divider(
+                                                                color: AppColors.cancelPriButBrDark,
+                                                              ),
+                                                            ],
+                                                          );
+                                                        },
                                                       ),
                                                     ),
-
                                                     const SizedBox(height: 20),
-
-                                                    // Boton Return
                                                     Center(
                                                       child: ElevatedButton(
-                                                        onPressed: () {
-                                                          Navigator.of(context).pop();
-                                                        },
+                                                        onPressed: () => Navigator.of(context).pop(),
                                                         style: ElevatedButton.styleFrom(
                                                           backgroundColor: AppColors.black,
                                                           foregroundColor: AppColors.iconDark,
-                                                          fixedSize: const Size(
-                                                            130,
-                                                            130,
-                                                          ),
+                                                          fixedSize: const Size(130, 130),
                                                           shape: BeveledRectangleBorder(
                                                             borderRadius: BorderRadius.circular(200),
-                                                            side: BorderSide(
+                                                            side: const BorderSide(
                                                               color: AppColors.iconDark,
                                                               width: 1,
                                                             ),
@@ -4369,14 +4201,13 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                                           ),
                                                         ),
                                                       ),
-                                                    ),
+                                                    ),                                                 
                                                   ],
                                                 ),
                                               ),
                                             );
                                           },
                                         );
-                                      
                                       },
                                       child: const Text(
                                         AppStrings.importNotes,
@@ -4385,14 +4216,14 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                           fontSize: 15,
                                         ),
                                       ),
-                                    ),                                                                   
+                                    ),
                                   ],
                                 ),
                               ),
                             ),
                           ],
                         ),
-                      ),
+                      )                                                          
                     ],
                   ),
                 ),

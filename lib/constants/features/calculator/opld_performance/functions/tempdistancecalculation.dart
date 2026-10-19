@@ -1,7 +1,16 @@
 import 'package:xml/xml.dart';
 import 'package:flutter_application_5/service_dataxml/opldservice.dart';
 
-class Tempdistancecalculation{
+extension IterableExtension<T> on Iterable<T> {
+  T? firstWhereOrNull(bool Function(T element) test) {
+    for (var element in this) {
+      if (test(element)) return element;
+    }
+    return null;
+  }
+}
+
+class Tempdistancecalculation {
 
   final String? aircraftRef;
   final String? landingRef;
@@ -12,13 +21,12 @@ class Tempdistancecalculation{
   final String? isaRef;
   final Map<String, String>? baseDetails;
 
-    Tempdistancecalculation({ 
-      this.aircraftRef, this.landingRef, this.configurationRef, this.flapRef, 
-      this.conditionRef, this.autobrakeRef, this.isaRef, this.baseDetails
-    });
+  Tempdistancecalculation({ 
+    this.aircraftRef, this.landingRef, this.configurationRef, this.flapRef, 
+    this.conditionRef, this.autobrakeRef, this.isaRef, this.baseDetails
+  });
     
   double call() {
-    Map<String, String> tempData = {};
     double result;
     final XmlDocument document = OpLdService.instance.document;
     XmlDocument? xmlDocument;
@@ -32,125 +40,88 @@ class Tempdistancecalculation{
 
     try {
       //Search aboveISA/belowISA Temperature adjustment Value for TEMP ADJ 
-      Iterable<XmlElement> target = [];
       double isa = double.tryParse(isaRef ?? '') ?? 0;
       String nodeIsaRef = isa >= 0
-                        ? 'aboveISAtempAdjustment'
-                        : 'belowISAtempAdjustment';
-      String nodeIdRef = isa >= 0
-                        ? 'ABOVE ISA TEMP ADJ'
-                        : 'BLW ISA TEMP ADJ';
+                          ? 'aboveISAtempAdjustment'
+                          : 'belowISAtempAdjustment';
 
-      if(selectedLanding == 'Normal') {
+      //Filtrar por aircraft
+      final aircraft = xmlDocument
+          .findAllElements('aircraft')
+          .firstWhereOrNull(
+            (a) =>
+                a.getAttribute('id') == selectedAircraft ||
+                a.getAttribute('label') == selectedAircraft,
+          );
+      if (aircraft == null) return 0;
 
-          if (selectedAircraft != null && selectedLanding != null) {
-            target = xmlDocument
-                .findAllElements('aircraft')
-                .where(
-                  (a) =>
-                      a.getAttribute('id') == selectedAircraft ||
-                      a.getAttribute('label') == selectedAircraft,
-                )
-                .expand((l) => l.findAllElements('landingCondition'))
-                .where(
-                  (lc) =>
-                      lc.getAttribute('label')?.toUpperCase() ==
-                      selectedLanding.toUpperCase(),
-                )
-                .expand((f) => f.findAllElements('Flap'));
-          }
-          
-          if (selectedflap != null) {
-            tempData =  {
-            for (final child in target
-                .where((f) => f.getAttribute('label') == selectedflap)
-                .expand((c) => c.findAllElements('reportedBrakingAction'))
-                .where(
-                  (lc) =>
-                      lc.getAttribute('label')?.toUpperCase() ==
-                      selectedCondition!.toUpperCase(),
-                )
-                .expand((c) => c.findAllElements(nodeIsaRef))
-                .where(
-                  (lc) =>
-                      lc.getAttribute('id')?.toUpperCase() ==
-                      nodeIdRef.toUpperCase(),
-                )
-                .expand((c) => c.children.whereType<XmlElement>())
-                .where(
-                  (child) =>
-                      child.getAttribute('id')?.toUpperCase() ==
-                      selectedautobrake!.toUpperCase(),
-                ))
-              child.name.local: child.innerText.trim(),
-          };
+      //Filtrar por landing condition
+      final landingCondition = aircraft
+          .findElements('landingCondition')
+          .firstWhereOrNull(
+            (lc) =>
+                lc.getAttribute('label')?.toUpperCase() ==
+                selectedLanding?.toUpperCase(),
+          );
+      if (landingCondition == null) return 0;
 
-          }
-
-
+      //Filtrar si es por flaps o configuration
+      XmlElement? configNode;
+      if (selectedLanding == 'Normal') {
+        if (selectedflap == null) return 0;
+        configNode = landingCondition
+            .findElements('Flap')
+            .firstWhereOrNull((f) => f.getAttribute('label') == selectedflap);
       } else {
+        if (selectedConfiguration == null) return 0;
+        configNode = landingCondition
+            .findElements('nonNormalConfiguration')
+            .firstWhereOrNull(
+                (f) => f.getAttribute('id') == selectedConfiguration);
+      }
+      if (configNode == null) return 0;
 
-        if (selectedAircraft != null && selectedLanding != null) {
-            target = xmlDocument
-                .findAllElements('aircraft')
-                .where(
-                  (a) =>
-                      a.getAttribute('id') == selectedAircraft ||
-                      a.getAttribute('label') == selectedAircraft,
-                )
-                .expand((l) => l.findAllElements('landingCondition'))
-                .where(
-                  (lc) =>
-                      lc.getAttribute('label')?.toUpperCase() ==
-                      selectedLanding.toUpperCase(),
-                )
-                .expand((f) => f.findAllElements('nonNormalConfiguration'));
-          }
-          
-          if (selectedConfiguration != null) {
-            tempData = {
-            for (final child in target
-                .where((f) => f.getAttribute('id') == selectedConfiguration)
-                .expand((c) => c.findAllElements('reportedBrakingAction'))
-                .where(
-                  (lc) =>
-                      lc.getAttribute('label')?.toUpperCase() ==
-                      selectedCondition!.toUpperCase(),
-                )
-                .expand((c) => c.findAllElements(nodeIsaRef))
-                .where(
-                  (lc) =>
-                      lc.getAttribute('id')?.toUpperCase() ==
-                      nodeIdRef.toUpperCase(),
-                )
-                .expand((c) => c.children.whereType<XmlElement>())
-                .where(
-                  (child) =>
-                      child.getAttribute('id')?.toUpperCase() ==
-                      selectedautobrake!.toUpperCase(),
-                ))
-              child.name.local: child.innerText.trim(),
-          };
+      //Filtrar por runway condition
+      final brakingAction = configNode
+          .findElements('reportedBrakingAction')
+          .firstWhereOrNull(
+            (lc) =>
+                lc.getAttribute('label')?.toUpperCase() ==
+                selectedCondition?.toUpperCase(),
+          );
+      if (brakingAction == null) return 0;
 
-          }
-        }
-     
-      //Operation for adjustement result
-      double selectedISA = double.tryParse(isaRef ?? '') ?? 0;
-      double tempAdjustment = double.tryParse(tempData[tempData.keys.first] ?? '') ?? 0;     
-      double baseLineRefISATemp = double.tryParse(baseDetails!['refDltaISA'] ?? '') ?? 0;
-      double perHowManyTempUnits = double.tryParse(baseDetails!['perHowManyTempUnits'] ?? '') ?? 0;
+      //Localizar el nodo de isatempadjusment por tag id
+      final tempAdjNode = brakingAction
+          .findElements(nodeIsaRef)
+          .firstOrNull;
+      if (tempAdjNode == null) return 0;
 
-      if (selectedISA < baseLineRefISATemp) {
-        double isaDifference = baseLineRefISATemp - selectedISA;
-        result = ((tempAdjustment / perHowManyTempUnits) * isaDifference);
+      //Filtrar por autobrake
+      final autobrake = tempAdjNode
+          .childElements
+          .firstWhereOrNull(
+            (child) =>
+                child.getAttribute('id')?.toUpperCase() ==
+                selectedautobrake?.toUpperCase(),
+          );
+      if (autobrake == null) return 0;
 
+      //Obtener el valor isa de temperatura
+      double tempAdjustment = 0;
+      if (autobrake.childElements.isNotEmpty) {
+        tempAdjustment = double.tryParse(autobrake.childElements.first.innerText.trim()) ?? 0;
       } else {
-        double isaDifference = selectedISA - baseLineRefISATemp;
-        result = ((tempAdjustment / perHowManyTempUnits) * isaDifference);
-
+        tempAdjustment = double.tryParse(autobrake.innerText.trim()) ?? 0;
       }
 
+      // Operation for adjustment result
+      double selectedISA = double.tryParse(isaRef ?? '') ?? 0;
+      double baseLineRefISATemp = double.tryParse(baseDetails!['refDltaISA'] ?? '') ?? 0;
+      double perHowManyTempUnits = double.tryParse(baseDetails!['perHowManyTempUnits'] ?? '') ?? 0;
+      double isaDifference = (selectedISA - baseLineRefISATemp).abs();
+
+      result = ((tempAdjustment / perHowManyTempUnits) * isaDifference);
       return result;
 
     } catch (e) {
@@ -158,4 +129,4 @@ class Tempdistancecalculation{
     }
   }
   
-} 
+}

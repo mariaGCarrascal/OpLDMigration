@@ -2,7 +2,6 @@ import 'package:flutter_application_5/constants/features/calculator/opld_perform
 import 'package:flutter_application_5/constants/features/calculator/opld_performance/functions/approachspeeddistancecalculation.dart';
 import 'package:flutter_application_5/constants/features/calculator/opld_performance/functions/refdistancereference.dart';
 import 'package:flutter_application_5/constants/features/calculator/opld_performance/functions/reversethrustadj.dart';
-import 'package:flutter_application_5/constants/features/calculator/opld_performance/functions/searchbaselinereference.dart';
 import 'package:flutter_application_5/constants/features/calculator/opld_performance/functions/slopedistancecalculation.dart';
 import 'package:flutter_application_5/constants/features/calculator/opld_performance/functions/speedbrakesdistance.dart';
 import 'package:flutter_application_5/constants/features/calculator/opld_performance/functions/tempdistancecalculation.dart';
@@ -11,6 +10,7 @@ import 'package:flutter_application_5/constants/features/calculator/opld_perform
 
 class Oplddistancecalculator{
 
+  final Map<String, String>? aircraftBaseDetails;
   final String? aircraftPicker;
   final String? landingPicker;
   final String? configurationPicker;
@@ -29,7 +29,7 @@ class Oplddistancecalculator{
   final String? windRef;
   final String? vrefRef;  
 
-    Oplddistancecalculator({ 
+    Oplddistancecalculator({ this.aircraftBaseDetails,
       this.aircraftPicker, this.landingPicker, this.configurationPicker,
       this.factorRef, this.additiveRef, this.rwyPicker, this.flapPicker, this.rwyConditionPicker, 
       this.autobrakePicker, this.revsrinopPicker, this.speedbrakesPicker, 
@@ -38,58 +38,55 @@ class Oplddistancecalculator{
 
     String call() {
       double finalOpLDResult = 0;
-      Map<String, String> baseDetails = Searchbaselinereference(
-        aircraftRef: aircraftPicker, landingRef: landingPicker, 
-        configurationRef: configurationPicker, flapRef: flapPicker)();
 
     try {
       
       //OpLD Calculation Result values Order:
-
+      
       //Landing weight (REF DIST)
       double refDistanceResult = Refdistancereference(
         aircraftRef: aircraftPicker, landingRef: landingPicker, configurationRef: configurationPicker, flapRef: flapPicker, 
-        conditionRef: rwyConditionPicker, autobrakeRef: autobrakePicker, baseDetails: baseDetails)();
+        conditionRef: rwyConditionPicker, autobrakeRef: autobrakePicker, baseDetails: aircraftBaseDetails)();
 
-      //WT Adjustment (WT ADJ)
+      //WT Adjustment (WT ADJ) Funciona
       double weightAdjustmentDistanceResult = Weightdistancecalculation(
         aircraftRef: aircraftPicker, landingRef: landingPicker, configurationRef: configurationPicker, flapRef: flapPicker, 
-        conditionRef: rwyConditionPicker, autobrakeRef: autobrakePicker, weightRef: weightRef, baseDetails: baseDetails)();
+        conditionRef: rwyConditionPicker, autobrakeRef: autobrakePicker, weightRef: weightRef, baseDetails: aircraftBaseDetails)();
 
-      //Altitud Adjustment (ALT ADJ)
+      //Altitud Adjustment (ALT ADJ) funciona
       double altitudeAdjustmentResult = Altitudedistancecalculation(
         aircraftRef: aircraftPicker, landingRef: landingPicker, configurationRef: configurationPicker, flapRef: flapPicker, 
-        conditionRef: rwyConditionPicker, autobrakeRef: autobrakePicker, altitudeRef: altitudeRef, baseDetails: baseDetails)();
+        conditionRef: rwyConditionPicker, autobrakeRef: autobrakePicker, altitudeRef: altitudeRef, baseDetails: aircraftBaseDetails)();
 
       //Wind adjustment (WIND ADJ)
       double windAdjustmentResult = Winddistancecalculation(
         aircraftRef: aircraftPicker, landingRef: landingPicker, configurationRef: configurationPicker, flapRef: flapPicker, 
-        conditionRef: rwyConditionPicker, autobrakeRef: autobrakePicker, windRef: windRef, baseDetails: baseDetails)();
+        conditionRef: rwyConditionPicker, autobrakeRef: autobrakePicker, windRef: windRef, baseDetails: aircraftBaseDetails)();
 
       //Slope adjustment (SLOPE ADJ)
       double slopeAdjustmentResult = Slopedistancecalculation(
         aircraftRef: aircraftPicker, landingRef: landingPicker, configurationRef: configurationPicker, flapRef: flapPicker, 
-        conditionRef: rwyConditionPicker, autobrakeRef: autobrakePicker, slopeRef: slopeRef, baseDetails: baseDetails)();
+        conditionRef: rwyConditionPicker, autobrakeRef: autobrakePicker, slopeRef: slopeRef, baseDetails: aircraftBaseDetails)();
 
       //Temperature adjustment (TEMP ADJ)
       double tempAdjustmentResult = Tempdistancecalculation(
         aircraftRef: aircraftPicker, landingRef: landingPicker, configurationRef: configurationPicker, flapRef: flapPicker, 
-        conditionRef: rwyConditionPicker, autobrakeRef: autobrakePicker, isaRef: isaRef, baseDetails: baseDetails)();
+        conditionRef: rwyConditionPicker, autobrakeRef: autobrakePicker, isaRef: isaRef, baseDetails: aircraftBaseDetails)();
 
       //Approach Speed adjustment (APP SPD ADJ)
       double approachSpeedAdjustmentResult = Approachspeeddistancecalculation(
         aircraftRef: aircraftPicker, landingRef: landingPicker, configurationRef: configurationPicker, flapRef: flapPicker, 
-        conditionRef: rwyConditionPicker, autobrakeRef: autobrakePicker, airspeedRef: vrefRef, baseDetails: baseDetails)();
+        conditionRef: rwyConditionPicker, autobrakeRef: autobrakePicker, airspeedRef: vrefRef, baseDetails: aircraftBaseDetails)();
       
       //SpeedBrakes adjustment (REF LAND DIST)
       double speedBrakesAdjustmentResult = Speedbrakesdistance(
         aircraftRef: aircraftPicker, landingRef: landingPicker, flapRef: flapPicker, 
-        autobrakeRef: autobrakePicker, speedbrakeRef: speedbrakesPicker, baseDetails: baseDetails)();
+        autobrakeRef: autobrakePicker, speedbrakeRef: speedbrakesPicker, baseDetails: aircraftBaseDetails)();
 
       //Reverse thrust adjustment (REVERSE THRUST ADJ)
       double reverserInoperativeAdjustmentResult = Reversethrustadj(
         aircraftRef: aircraftPicker, landingRef: landingPicker, configurationRef: configurationPicker, flapRef: flapPicker, 
-        conditionRef: rwyConditionPicker, autobrakeRef: autobrakePicker, revsrinopRef: revsrinopPicker, baseDetails: baseDetails)();
+        conditionRef: rwyConditionPicker, autobrakeRef: autobrakePicker, revsrinopRef: revsrinopPicker, baseDetails: aircraftBaseDetails)();
       
       //Runway Airport reference values
       double factor = double.tryParse(factorRef ?? '1') ?? 1;

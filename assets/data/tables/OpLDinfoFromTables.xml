@@ -60586,7 +60586,7 @@
        *****************************************************
        *****************************************************
         -->
-			<nonNormalConfiguration id= 'LEADING EDGE FLAPS (Flap15)' longLabel= 'LEADING EDGE FLAPS (Flap15)' shortLabel= 'LEADING EDGE FLAPS (Flap15)'
+			<nonNormalConfiguration id= 'LEADING EDGE FLAPS TRANSIT (Flaps 15)' longLabel= 'LEADING EDGE FLAPS TRANSIT (Flaps 15)' shortLabel= 'LEADING EDGE FLAPS TRANSIT (Flaps 15)'
 								flapID= 'Flaps 15' flapValue = '15' flapLabel= 'FLAPS 15'
 								VrefID= 'Vref15+15'                  VrefLabel= 'VREF15+15' >
 

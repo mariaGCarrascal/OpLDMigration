@@ -1,16 +1,25 @@
 import 'package:xml/xml.dart';
 import 'package:flutter_application_5/service_dataxml/opldservice.dart';
 
-class Searchbaselinereference{
+extension IterableExtension<T> on Iterable<T> {
+  T? firstWhereOrNull(bool Function(T element) test) {
+    for (var element in this) {
+      if (test(element)) return element;
+    }
+    return null;
+  }
+}
+
+class Searchbaselinereference {
 
   final String? aircraftRef;
   final String? landingRef;
   final String? configurationRef;
   final String? flapRef;
 
-    Searchbaselinereference({ 
-      this.aircraftRef, this.landingRef, this.configurationRef, this.flapRef
-    });
+  Searchbaselinereference({ 
+    this.aircraftRef, this.landingRef, this.configurationRef, this.flapRef
+  });
     
   Map<String, String> call() {
     Map<String, String> baseReference = {};
@@ -27,72 +36,55 @@ class Searchbaselinereference{
     }
 
     try {
+      //Filtrar por aircraft
+      final aircraft = xmlDocument
+          .findAllElements('aircraft')
+          .firstWhereOrNull(
+            (a) =>
+                a.getAttribute('id') == selectedAircraft ||
+                a.getAttribute('label') == selectedAircraft,
+          );
+      if (aircraft == null) return baseReference = {};
 
-      Iterable<XmlElement> target = [];
+      //Filtrar por landing condition
+      final landingCondition = aircraft
+          .findElements('landingCondition')
+          .firstWhereOrNull(
+            (lc) =>
+                lc.getAttribute('label')?.toUpperCase() ==
+                selectedLanding?.toUpperCase(),
+          );
+      if (landingCondition == null) return baseReference = {};
 
-      if(selectedLanding == 'Normal') {
-
-          if (selectedAircraft != null && selectedLanding != null) {
-            target = xmlDocument
-                .findAllElements('aircraft')
-                .where(
-                  (a) =>
-                      a.getAttribute('id') == selectedAircraft ||
-                      a.getAttribute('label') == selectedAircraft,
-                )
-                .expand((l) => l.findAllElements('landingCondition'))
-                .where(
-                  (lc) =>
-                      lc.getAttribute('label')?.toUpperCase() ==
-                      selectedLanding.toUpperCase(),
-                )
-                .expand((f) => f.findAllElements('Flap'));
-          }
-          
-          if (selectedflap != null) {
-            baseReference = {
-              for (final subchild in target
-                  .where((f) => f.getAttribute('label') == selectedflap)
-                  .expand((c) => c.findAllElements('baselineReferenceDetails'))
-                  .expand((ref) => ref.findElements('*'))
-                  .expand((child) => child.findElements('*')))
-                subchild.name.local: subchild.innerText.trim(),
-          };
-
-          }
-
+      //Filtrar si es por flaps o configuration
+      XmlElement? configNode;
+      if (selectedLanding == 'Normal') {
+        if (selectedflap == null) return baseReference = {};
+        configNode = landingCondition
+            .findElements('Flap')
+            .firstWhereOrNull((f) => f.getAttribute('label') == selectedflap);
       } else {
+        if (selectedConfiguration == null) return baseReference = {};
+        configNode = landingCondition
+            .findElements('nonNormalConfiguration')
+            .firstWhereOrNull(
+                (f) => f.getAttribute('id') == selectedConfiguration);
+      }
+      if (configNode == null) return baseReference = {};
 
-        if (selectedAircraft != null && selectedLanding != null) {
-            target = xmlDocument
-                .findAllElements('aircraft')
-                .where(
-                  (a) =>
-                      a.getAttribute('id') == selectedAircraft ||
-                      a.getAttribute('label') == selectedAircraft,
-                )
-                .expand((l) => l.findAllElements('landingCondition'))
-                .where(
-                  (lc) =>
-                      lc.getAttribute('label')?.toUpperCase() ==
-                      selectedLanding.toUpperCase(),
-                )
-                .expand((f) => f.findAllElements('nonNormalConfiguration'));
-          }
-          
-          if (selectedConfiguration != null) {
-            baseReference = {
-              for (final subchild in target
-                  .where((f) => f.getAttribute('id') == selectedConfiguration)
-                  .expand((c) => c.findAllElements('baselineReferenceDetails'))
-                  .expand((ref) => ref.findElements('*'))
-                  .expand((child) => child.findElements('*')))
-                subchild.name.local: subchild.innerText.trim(),
-            };
+      //Localizar el nodo baselineReferenceDetails
+      final baselineDetails = configNode
+          .findElements('baselineReferenceDetails')
+          .firstOrNull;
+      if (baselineDetails == null) return baseReference = {};
 
-          }
+      //Obtener los valores de los nodos hijos
+      for (final refGroup in baselineDetails.childElements) {
+        for (final item in refGroup.childElements) {
+          baseReference[item.name.local] = item.innerText.trim();
         }
-      
+      }
+     
       return baseReference;
 
     } catch (e) {
@@ -100,4 +92,4 @@ class Searchbaselinereference{
     }
   }
   
-} 
+}

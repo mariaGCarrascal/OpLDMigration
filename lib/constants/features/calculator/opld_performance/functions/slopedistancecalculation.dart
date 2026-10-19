@@ -1,7 +1,16 @@
 import 'package:xml/xml.dart';
 import 'package:flutter_application_5/service_dataxml/opldservice.dart';
 
-class Slopedistancecalculation{
+extension IterableExtension<T> on Iterable<T> {
+  T? firstWhereOrNull(bool Function(T element) test) {
+    for (var element in this) {
+      if (test(element)) return element;
+    }
+    return null;
+  }
+}
+
+class Slopedistancecalculation {
 
   final String? aircraftRef;
   final String? landingRef;
@@ -12,13 +21,12 @@ class Slopedistancecalculation{
   final String? slopeRef;
   final Map<String, String>? baseDetails;
 
-    Slopedistancecalculation({ 
-      this.aircraftRef, this.landingRef, this.configurationRef, this.flapRef, 
-      this.conditionRef, this.autobrakeRef, this.slopeRef, this.baseDetails
-    });
+  Slopedistancecalculation({ 
+    this.aircraftRef, this.landingRef, this.configurationRef, this.flapRef, 
+    this.conditionRef, this.autobrakeRef, this.slopeRef, this.baseDetails
+  });
     
   double call() {
-    Map<String, String> hillsData = {};
     double result;
     final XmlDocument document = OpLdService.instance.document;
     XmlDocument? xmlDocument;
@@ -32,124 +40,88 @@ class Slopedistancecalculation{
 
     try {
       //Search upHill/downHill Slope Adjustment Value for SLOPE ADJ 
-      Iterable<XmlElement> target = [];
       double slope = double.tryParse(slopeRef ?? '') ?? 0;
       String nodeSlopeRef = slope >= 0
-                        ? 'upHillSlopeAdjustment'
-                        : 'downHillSlopeAdjustment';
-      String nodeIdRef = slope >= 0
-                        ? 'UP HILL SLOPE ADJ'
-                        : 'DOWN HILL SLOPE ADJ';
+                          ? 'upHillSlopeAdjustment'
+                          : 'downHillSlopeAdjustment';
 
-      if(selectedLanding == 'Normal') {
+      //Filtrar por aircraft
+      final aircraft = xmlDocument
+          .findAllElements('aircraft')
+          .firstWhereOrNull(
+            (a) =>
+                a.getAttribute('id') == selectedAircraft ||
+                a.getAttribute('label') == selectedAircraft,
+          );
+      if (aircraft == null) return 0;
 
-          if (selectedAircraft != null && selectedLanding != null) {
-            target = xmlDocument
-                .findAllElements('aircraft')
-                .where(
-                  (a) =>
-                      a.getAttribute('id') == selectedAircraft ||
-                      a.getAttribute('label') == selectedAircraft,
-                )
-                .expand((l) => l.findAllElements('landingCondition'))
-                .where(
-                  (lc) =>
-                      lc.getAttribute('label')?.toUpperCase() ==
-                      selectedLanding.toUpperCase(),
-                )
-                .expand((f) => f.findAllElements('Flap'));
-          }
-          
-          if (selectedflap != null) {
-            hillsData =  {
-            for (final child in target
-                .where((f) => f.getAttribute('label') == selectedflap)
-                .expand((c) => c.findAllElements('reportedBrakingAction'))
-                .where(
-                  (lc) =>
-                      lc.getAttribute('label')?.toUpperCase() ==
-                      selectedCondition!.toUpperCase(),
-                )
-                .expand((c) => c.findAllElements(nodeSlopeRef))
-                .where(
-                  (lc) =>
-                      lc.getAttribute('id')?.toUpperCase() ==
-                      nodeIdRef.toUpperCase(),
-                )
-                .expand((c) => c.children.whereType<XmlElement>())
-                .where(
-                  (child) =>
-                      child.getAttribute('id')?.toUpperCase() ==
-                      selectedautobrake!.toUpperCase(),
-                ))
-              child.name.local: child.innerText.trim(),
-          };
+      //Filtrar por landing condition
+      final landingCondition = aircraft
+          .findElements('landingCondition')
+          .firstWhereOrNull(
+            (lc) =>
+                lc.getAttribute('label')?.toUpperCase() ==
+                selectedLanding?.toUpperCase(),
+          );
+      if (landingCondition == null) return 0;
 
-          }
-
-
+      //Filtrar si es por flaps o configuration
+      XmlElement? configNode;
+      if (selectedLanding == 'Normal') {
+        if (selectedflap == null) return 0;
+        configNode = landingCondition
+            .findElements('Flap')
+            .firstWhereOrNull((f) => f.getAttribute('label') == selectedflap);
       } else {
+        if (selectedConfiguration == null) return 0;
+        configNode = landingCondition
+            .findElements('nonNormalConfiguration')
+            .firstWhereOrNull(
+                (f) => f.getAttribute('id') == selectedConfiguration);
+      }
+      if (configNode == null) return 0;
 
-        if (selectedAircraft != null && selectedLanding != null) {
-            target = xmlDocument
-                .findAllElements('aircraft')
-                .where(
-                  (a) =>
-                      a.getAttribute('id') == selectedAircraft ||
-                      a.getAttribute('label') == selectedAircraft,
-                )
-                .expand((l) => l.findAllElements('landingCondition'))
-                .where(
-                  (lc) =>
-                      lc.getAttribute('label')?.toUpperCase() ==
-                      selectedLanding.toUpperCase(),
-                )
-                .expand((f) => f.findAllElements('nonNormalConfiguration'));
-          }
-          
-          if (selectedConfiguration != null) {
-            hillsData = {
-            for (final child in target
-                .where((f) => f.getAttribute('id') == selectedConfiguration)
-                .expand((c) => c.findAllElements('reportedBrakingAction'))
-                .where(
-                  (lc) =>
-                      lc.getAttribute('label')?.toUpperCase() ==
-                      selectedCondition!.toUpperCase(),
-                )
-                .expand((c) => c.findAllElements(nodeSlopeRef))
-                .where(
-                  (lc) =>
-                      lc.getAttribute('id')?.toUpperCase() ==
-                      nodeIdRef.toUpperCase(),
-                )
-                .expand((c) => c.children.whereType<XmlElement>())
-                .where(
-                  (child) =>
-                      child.getAttribute('id')?.toUpperCase() ==
-                      selectedautobrake!.toUpperCase(),
-                ))
-              child.name.local: child.innerText.trim(),
-          };
+      //Filtrar por runway condition
+      final brakingAction = configNode
+          .findElements('reportedBrakingAction')
+          .firstWhereOrNull(
+            (lc) =>
+                lc.getAttribute('label')?.toUpperCase() ==
+                selectedCondition?.toUpperCase(),
+          );
+      if (brakingAction == null) return 0;
 
-          }
-        }
+      //Localizar el nodo de slope por el nombre del tag id
+      final slopeAdjNode = brakingAction
+          .findElements(nodeSlopeRef)
+          .firstOrNull;
+      if (slopeAdjNode == null) return 0;
 
-      //Adjustement result value
-      double selectedSlope = double.tryParse(slopeRef ?? '') ?? 0; 
-      double slopeAdjustment = double.tryParse(hillsData[hillsData.keys.first] ?? '') ?? 0;     
-      double baseLineRefSlope = double.tryParse(baseDetails!['refSlope'] ?? '') ?? 0;
-      double perHowManySlopeUnits = double.tryParse(baseDetails!['perHowManySlopeUnits'] ?? '') ?? 0;
+      //Filtrar por autobrake
+      final autobrake = slopeAdjNode
+          .childElements
+          .firstWhereOrNull(
+            (child) =>
+                child.getAttribute('id')?.toUpperCase() ==
+                selectedautobrake?.toUpperCase(),
+          );
+      if (autobrake == null) return 0;
 
-      if (selectedSlope < baseLineRefSlope) {
-        double slopeDifference = baseLineRefSlope - selectedSlope;
-        result = ((slopeAdjustment / perHowManySlopeUnits) * slopeDifference);
-
+      //Obtener el valor slope
+      double slopeAdjustment = 0;
+      if (autobrake.childElements.isNotEmpty) {
+        slopeAdjustment = double.tryParse(autobrake.childElements.first.innerText.trim()) ?? 0;
       } else {
-        double slopeDifference = selectedSlope - baseLineRefSlope;
-        result = ((slopeAdjustment / perHowManySlopeUnits) * slopeDifference);
+        slopeAdjustment = double.tryParse(autobrake.innerText.trim()) ?? 0;
       }
 
+      // Adjustment result value
+      double selectedSlope = double.tryParse(slopeRef ?? '') ?? 0;
+      double baseLineRefSlope = double.tryParse(baseDetails!['refSlope'] ?? '') ?? 0;
+      double perHowManySlopeUnits = double.tryParse(baseDetails!['perHowManySlopeUnits'] ?? '') ?? 0;
+      double slopeDifference = (selectedSlope - baseLineRefSlope).abs();
+
+      result = ((slopeAdjustment / perHowManySlopeUnits) * slopeDifference);
       return result;
 
     } catch (e) {
@@ -157,4 +129,4 @@ class Slopedistancecalculation{
     }
   }
   
-} 
+}

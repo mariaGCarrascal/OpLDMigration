@@ -1,7 +1,16 @@
 import 'package:xml/xml.dart';
 import 'package:flutter_application_5/service_dataxml/opldservice.dart';
 
-class Approachspeeddistancecalculation{
+extension IterableExtension<T> on Iterable<T> {
+  T? firstWhereOrNull(bool Function(T element) test) {
+    for (var element in this) {
+      if (test(element)) return element;
+    }
+    return null;
+  }
+}
+
+class Approachspeeddistancecalculation {
 
   final String? aircraftRef;
   final String? landingRef;
@@ -12,13 +21,12 @@ class Approachspeeddistancecalculation{
   final String? airspeedRef;
   final Map<String, String>? baseDetails;
 
-    Approachspeeddistancecalculation({ 
-      this.aircraftRef, this.landingRef, this.configurationRef, this.flapRef, 
-      this.conditionRef, this.autobrakeRef, this.airspeedRef, this.baseDetails
-    });
+  Approachspeeddistancecalculation({ 
+    this.aircraftRef, this.landingRef, this.configurationRef, this.flapRef, 
+    this.conditionRef, this.autobrakeRef, this.airspeedRef, this.baseDetails
+  });
     
   double call() {
-    Map<String, String> airspeedData = {};
     double result;
     final XmlDocument document = OpLdService.instance.document;
     XmlDocument? xmlDocument;
@@ -31,105 +39,83 @@ class Approachspeeddistancecalculation{
     final String? selectedautobrake = autobrakeRef;
 
     try {
-      //Search Approach Speed Adjustment Value for APP SPD ADJ
-      Iterable<XmlElement> target = [];
+      //Buscar por aircraft
+      final aircraft = xmlDocument
+          .findAllElements('aircraft')
+          .firstWhereOrNull(
+            (a) =>
+                a.getAttribute('id') == selectedAircraft ||
+                a.getAttribute('label') == selectedAircraft,
+          );
+      if (aircraft == null) return 0;
 
-      if(selectedLanding == 'Normal') {
+      //Buscar por landing condition
+      final landingCondition = aircraft
+          .findElements('landingCondition')
+          .firstWhereOrNull(
+            (lc) =>
+                lc.getAttribute('label')?.toUpperCase() ==
+                selectedLanding?.toUpperCase(),
+          );
+      if (landingCondition == null) return 0;
 
-          if (selectedAircraft != null && selectedLanding != null) {
-            target = xmlDocument
-                .findAllElements('aircraft')
-                .where(
-                  (a) =>
-                      a.getAttribute('id') == selectedAircraft ||
-                      a.getAttribute('label') == selectedAircraft,
-                )
-                .expand((l) => l.findAllElements('landingCondition'))
-                .where(
-                  (lc) =>
-                      lc.getAttribute('label')?.toUpperCase() ==
-                      selectedLanding.toUpperCase(),
-                )
-                .expand((f) => f.findAllElements('Flap'));
-          }
-          
-          if (selectedflap != null) {
-            airspeedData =  {
-            for (final child in target
-                .where((f) => f.getAttribute('label') == selectedflap)
-                .expand((c) => c.findAllElements('reportedBrakingAction'))
-                .where(
-                  (lc) =>
-                      lc.getAttribute('label')?.toUpperCase() ==
-                      selectedCondition!.toUpperCase(),
-                )
-                .expand((c) => c.findAllElements('approachSpeedAdjustment'))
-                .expand((c) => c.children.whereType<XmlElement>())
-                .where(
-                  (child) =>
-                      child.getAttribute('id')?.toUpperCase() ==
-                      selectedautobrake!.toUpperCase(),
-                ))
-              child.name.local: child.innerText.trim(),
-          };
-
-          }
-
-
+      //Filtrar si es por flaps o configuration
+      XmlElement? configNode;
+      if (selectedLanding == 'Normal') {
+        if (selectedflap == null) return 0;
+        configNode = landingCondition
+            .findElements('Flap')
+            .firstWhereOrNull((f) => f.getAttribute('label') == selectedflap);
       } else {
+        if (selectedConfiguration == null) return 0;
+        configNode = landingCondition
+            .findElements('nonNormalConfiguration')
+            .firstWhereOrNull(
+                (f) => f.getAttribute('id') == selectedConfiguration);
+      }
+      if (configNode == null) return 0;
 
-        if (selectedAircraft != null && selectedLanding != null) {
-            target = xmlDocument
-                .findAllElements('aircraft')
-                .where(
-                  (a) =>
-                      a.getAttribute('id') == selectedAircraft ||
-                      a.getAttribute('label') == selectedAircraft,
-                )
-                .expand((l) => l.findAllElements('landingCondition'))
-                .where(
-                  (lc) =>
-                      lc.getAttribute('label')?.toUpperCase() ==
-                      selectedLanding.toUpperCase(),
-                )
-                .expand((f) => f.findAllElements('nonNormalConfiguration'));
-          }
-          
-          if (selectedConfiguration != null) {
-            airspeedData = {
-            for (final child in target
-                .where((f) => f.getAttribute('id') == selectedConfiguration)
-                .expand((c) => c.findAllElements('reportedBrakingAction'))
-                .where(
-                  (lc) =>
-                      lc.getAttribute('label')?.toUpperCase() ==
-                      selectedCondition!.toUpperCase(),
-                )
-                .expand((c) => c.findAllElements('approachSpeedAdjustment'))
-                .expand((c) => c.children.whereType<XmlElement>())
-                .where(
-                  (child) =>
-                      child.getAttribute('id')?.toUpperCase() ==
-                      selectedautobrake!.toUpperCase(),
-                ))
-              child.name.local: child.innerText.trim(),
-          };
+      //Filtrar por runway condition
+      final brakingAction = configNode
+          .findElements('reportedBrakingAction')
+          .firstWhereOrNull(
+            (lc) =>
+                lc.getAttribute('label')?.toUpperCase() ==
+                selectedCondition?.toUpperCase(),
+          );
+      if (brakingAction == null) return 0;
 
-          }
-        }
+      //Localizar el nodo approachSpeedAdjustment
+      final appSpdAdj = brakingAction
+          .findElements('approachSpeedAdjustment')
+          .firstOrNull;
+      if (appSpdAdj == null) return 0;
 
-      //Operation for adjustement result
+      //Filtrar por autobrake
+      final autobrake = appSpdAdj
+          .childElements
+          .firstWhereOrNull(
+            (child) =>
+                child.getAttribute('id')?.toUpperCase() ==
+                selectedautobrake?.toUpperCase(),
+          );
+      if (autobrake == null) return 0;
+
+      //Obtener el valor de ajuste de aproximacion
+      double approachSpeedAdjustment = 0;
+      if (autobrake.childElements.isNotEmpty) {
+        approachSpeedAdjustment = double.tryParse(autobrake.childElements.first.innerText.trim()) ?? 0;
+      } else {
+        approachSpeedAdjustment = double.tryParse(autobrake.innerText.trim()) ?? 0;
+      }
+
+      // Operation for adjustment result
       double selectedVref = double.tryParse(airspeedRef ?? '') ?? 0;
-      double approachSpeedAdjustment = double.tryParse(airspeedData[airspeedData.keys.first] ?? '') ?? 0;
       double baseLineRefVref = double.tryParse(baseDetails!['refDltaVref'] ?? '') ?? 0;
       double perHowManyAirspeedUnitsAboveVref = double.tryParse(baseDetails!['perHowManyAirspeedUnitsAboveVref'] ?? '') ?? 0;
 
-      if (selectedVref >= baseLineRefVref) {
+      if (selectedVref >= baseLineRefVref || (selectedAircraft == "E190 CF34-10E5" && selectedVref >= 0)) {
         result = ((approachSpeedAdjustment / perHowManyAirspeedUnitsAboveVref) * (selectedVref - baseLineRefVref));
-
-      } else if (selectedAircraft == "E190 CF34-10E5" && selectedVref >= 0) {
-        result = ((approachSpeedAdjustment / perHowManyAirspeedUnitsAboveVref) * (selectedVref - baseLineRefVref));
-                
       } else {
         result = double.nan;
       }
@@ -141,4 +127,4 @@ class Approachspeeddistancecalculation{
     }
   }
   
-} 
+}
