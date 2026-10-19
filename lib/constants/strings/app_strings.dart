@@ -35,6 +35,7 @@ class AppStrings {
   static const String na = "N/A";
   static const String caution = "CAUTION";
   static const String cautionMessage = "CAUTION: VERIFY AUTOBRAKE SETTING";
+  static const String crosswindTitle = "Landing Crosswind Limitations";
   static const String metar = "METAR";
   
   static const String ft = "ft";

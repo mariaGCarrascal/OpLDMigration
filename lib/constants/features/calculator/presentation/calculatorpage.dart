@@ -3452,7 +3452,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                                           // Título
                                                           const Center(
                                                             child: Text(
-                                                              'Landing Crosswind Limitations ',
+                                                              AppStrings.crosswindTitle,
                                                               textAlign: TextAlign.center,
                                                               style: TextStyle(
                                                                 color: AppColors.activeColor,
