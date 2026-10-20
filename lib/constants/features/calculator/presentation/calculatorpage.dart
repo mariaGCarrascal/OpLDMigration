@@ -19,6 +19,7 @@ import 'package:flutter_application_5/constants/features/calculator/fuctions/loa
 import 'package:flutter_application_5/constants/features/calculator/fuctions/loadreversers.dart';
 import 'package:flutter_application_5/constants/features/calculator/fuctions/loadvrefcondition.dart';
 import 'package:flutter_application_5/constants/features/calculator/fuctions/loadvreftext.dart';
+import 'package:flutter_application_5/constants/features/calculator/fuctions/metar/remotedatasource.dart';
 import 'package:flutter_application_5/constants/features/calculator/fuctions/opldcolorasignator.dart';
 import 'package:flutter_application_5/constants/features/calculator/fuctions/searchautobrakedefault.dart';
 import 'package:flutter_application_5/constants/features/calculator/fuctions/searchdefault.dart';
@@ -29,6 +30,7 @@ import 'package:flutter_application_5/constants/strings/app_strings.dart';
 import 'package:flutter/services.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:http/http.dart' as http;
 
 class CalculatorPage extends StatefulWidget {
   final String? aircraft;
@@ -113,8 +115,10 @@ class _CalculatorPageState extends State<CalculatorPage> {
   String? vrefAdjust;
   String? crosswindsComment;
   bool _isExpanded = false;
+  final remoteDataSource = Remotedatasource(client: http.Client());
   //Variables de listas y Maps de los DropDownlists
   Map<String, String> baseDetails = {};
+  Map<String, String> metarResult = {};
   List<String>? listaComments = [];
   List<String>? weightsAircraft = [];
   List<String>? defaultAircraft = [];
@@ -358,12 +362,107 @@ class _CalculatorPageState extends State<CalculatorPage> {
         iconTheme: const IconThemeData(color: AppColors.white),
         backgroundColor: Colors.black,
         actions: [
-          if (selectedAirport != 'XXX')
+          if (selectedAirport != 'XXX') ...[
+            //Boton METAR Notes
+            Center(
+              child: InkWell(
+                borderRadius: BorderRadius.circular(20),
+                onTap: () {
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      final infoText = metarResult['INFO']?.trim();
+                      final hasData = infoText != null && infoText.isNotEmpty;
+                      return AlertDialog(
+                        backgroundColor: AppColors.black,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12.0),
+                          side: const BorderSide(
+                            color: AppColors.iconDark,
+                            width: 1.5,
+                          ),
+                        ),
+                        content: SizedBox(
+                          width: 500,
+                          height: 150,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Center(
+                                child: Text(
+                                  AppStrings.metarTitle,
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    color: AppColors.textColor2Dark,
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(height: 10),
+                              Expanded(
+                                child: ScrollConfiguration(
+                                  behavior: ScrollConfiguration.of(context).copyWith(
+                                    scrollbars: false,
+                                  ),
+                                  child: SingleChildScrollView(
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                                      children: [
+                                        const Divider(
+                                          color: AppColors.cancelPriButBrDark,
+                                        ),
+                                        Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                            vertical: 12.0,
+                                          ),
+                                          child: Text(
+                                            hasData ? infoText : 'Load METAR Data First',
+                                            textAlign: hasData
+                                                ? TextAlign.justify
+                                                : TextAlign.center,
+                                            style: TextStyle(
+                                              color: AppColors.white,
+                                              fontSize: 16.5,
+                                            ),
+                                          ),
+                                        ),
+                                        const Divider(
+                                          color: AppColors.cancelPriButBrDark,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  );
+                },
+                child: const Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: Icon(
+                    Icons.info_outline,
+                    color: AppColors.iconDark,
+                    size: 30,
+                  ),
+                ),
+              ),
+            ),
+            //Boton de METAR
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              padding: const EdgeInsets.only(left: 4, right: 12, top: 8, bottom: 8),
               child: ElevatedButton.icon(
-                onPressed: () {},
-                iconAlignment: IconAlignment.end, 
+                onPressed: () {
+                  setState(() async {
+                    metarResult = await remoteDataSource.getMetar('$selectedAirport');
+                  });
+                },
+                iconAlignment: IconAlignment.end,
                 icon: SvgPicture.asset(
                   'icons/cloudy_sunny.svg',
                   width: 25,
@@ -391,8 +490,9 @@ class _CalculatorPageState extends State<CalculatorPage> {
                 ),
               ),
             ),
+          ],
         ],
-      ),     
+      ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(4.0),
         child: Column(
@@ -3431,7 +3531,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                         const SizedBox(width: 6),
 
                                         // Notas de Warning de Crosswinds
-                                       if (crosswindValue > (num.tryParse((crosswindsLimits[selectedCondition] ?? '33').replaceAll('−','-',).replaceAll('–','-',),) ?? 33)) ... [
+                                       if (crosswindValue > (num.tryParse((crosswindsLimits[selectedCondition] ?? '33').replaceAll('−','-',).replaceAll('–','-',),) ?? 33).abs()) ... [
                                           InkWell(
                                             onTap: () {
                                               showDialog(
@@ -3848,7 +3948,9 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                           '${(double.tryParse(crosswind ?? '0') ?? 0).round()} ${AppStrings.ktCwc}',
                                           style: TextStyle(
                                             fontSize: 16.5,
-                                            color: AppColors.textColor3Dark,
+                                            color: crosswindValue > (num.tryParse((crosswindsLimits[selectedCondition] ?? '33').replaceAll('−','-',).replaceAll('–','-',),) ?? 33).abs()
+                                                ? AppColors.activeColor
+                                                : AppColors.textColor3Dark,
                                             fontWeight: FontWeight.bold,
                                           ),
                                         ),

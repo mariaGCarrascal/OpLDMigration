@@ -91,8 +91,6 @@ class Speedbrakesdistance {
           }
         }
       }
-
-       print('Busqueda de speedbrakes en el xml: $brakesData');
       
       //Adjustement result
       if (selectedLanding == 'Non-Normal') {

@@ -41,6 +41,7 @@ dependencies:
   equatable: ^2.0.8
   flutter_bloc: ^9.1.1
   flutter_svg: ^2.0.10
+  http: ^1.6.0
 
 dev_dependencies:
   flutter_test:
@@ -66,9 +67,10 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
-    - assets/data/tables/OpLDinfoTables.json
     - assets/data/tables/OpLDinfoFromTables.xml
-  #   - images/a_dot_ham.jpeg
+    - assets/icons/cloudy_sunny.svg
+    - assets/icons/raining_sunny.svg
+    - assets/icons/weather_mult.svg
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

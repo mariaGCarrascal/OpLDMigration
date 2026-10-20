@@ -1,23 +1,23 @@
-import 'package:flutter_application_5/constants/features/calculator/fuctions/metar/airportformat.dart';
+import 'package:flutter_application_5/constants/features/calculator/fuctions/metar/metarparser.dart';
+import 'package:flutter_application_5/constants/features/home/data/airportdata.dart';
 import 'package:http/http.dart' as http;
 
 class Remotedatasource {
   final http.Client client;
-  final AirportFormat airportFormat;
 
   Remotedatasource({
     required this.client,
-    AirportFormat? airportFormat,
-  }) : airportFormat = airportFormat ?? AirportFormat();
+  });
 
-  Future<String> getMetar(String airportCode) async {
+  Future<Map<String, String>> getMetar(String airportCode) async {
     try {
-      //Obtener el codigo IATA del aeropuerto
-      final String? iataCode = await airportFormat.getIataCode(airportCode);
+      Map<String, String> metar = {};
+      //Obtener el codigo ICAO del aeropuerto seleccionado
+      final String? airport = Airportdata.airportIcao[airportCode];
 
-      //Si no se encuentra el codigo o viene vacio, se usara el codigo original del aeropuerto
-      final String targetCode = (iataCode != null && iataCode.isNotEmpty) 
-          ? iataCode 
+      //Si no se encuentra el codigo ICAO, se usara el codigo IATA del aeropuerto
+      final String targetCode = (airport != null && airport.isNotEmpty) 
+          ? airport 
           : airportCode;
 
       final response = await client.get(
@@ -26,10 +26,12 @@ class Remotedatasource {
 
       if (response.statusCode == 200) {
         final body = response.body.trim();
+        metar = MetarParser.parseMetar(body);
+        print('Metar parseado: $metar');
         if (body.isEmpty) {
           throw Exception("No METAR data found for $targetCode");
         }
-        return body;
+        return metar;
       } else {
         throw Exception("Failed to load metar. Status: ${response.statusCode}");
       }
