@@ -49,7 +49,6 @@ class CalculatorPage extends StatefulWidget {
   });
   //Pendientes:
   //LongPress en QNH y Elevation (XXX).
-  //Inclusion de Metar.
   //Calculatetempisa es para generico y Calculateisa para existente, la temp viene por default, en generico no.
 
   @override
@@ -3531,7 +3530,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                         const SizedBox(width: 6),
 
                                         // Notas de Warning de Crosswinds
-                                       if (crosswindValue > (num.tryParse((crosswindsLimits[selectedCondition] ?? '33').replaceAll('−','-',).replaceAll('–','-',),) ?? 33).abs()) ... [
+                                       if (crosswindValue.abs() > (num.tryParse((crosswindsLimits[selectedCondition] ?? '33').replaceAll('−','-',).replaceAll('–','-',),) ?? 33).abs()) ... [
                                           InkWell(
                                             onTap: () {
                                               showDialog(
@@ -3648,7 +3647,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                               child: Icon(
                                                 Icons.info_outline,
                                                 color: AppColors.activeColor,
-                                                size: 20,
+                                                size: 25,
                                               ),
                                             ),
                                           )
@@ -3948,7 +3947,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                           '${(double.tryParse(crosswind ?? '0') ?? 0).round()} ${AppStrings.ktCwc}',
                                           style: TextStyle(
                                             fontSize: 16.5,
-                                            color: crosswindValue > (num.tryParse((crosswindsLimits[selectedCondition] ?? '33').replaceAll('−','-',).replaceAll('–','-',),) ?? 33).abs()
+                                            color: crosswindValue.abs() > (num.tryParse((crosswindsLimits[selectedCondition] ?? '33').replaceAll('−','-',).replaceAll('–','-',),) ?? 33).abs()
                                                 ? AppColors.activeColor
                                                 : AppColors.textColor3Dark,
                                             fontWeight: FontWeight.bold,
