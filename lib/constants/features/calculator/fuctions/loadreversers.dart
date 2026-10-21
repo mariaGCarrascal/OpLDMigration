@@ -1,19 +1,30 @@
 import 'package:flutter_application_5/service_dataxml/opldservice.dart';
 import 'package:xml/xml.dart';
 
-class Loadreversers{
+extension IterableExtension<T> on Iterable<T> {
+  T? firstWhereOrNull(bool Function(T element) test) {
+    for (var element in this) {
+      if (test(element)) return element;
+    }
+    return null;
+  }
+}
 
+class Loadreversers {
   final String? aircraftRef;
   final String? landingRef;
   final String? configurationRef;
   final String? flapRef;
   final String? conditionRef;
 
-  Loadreversers({ 
-    this.aircraftRef, this.landingRef, 
-    this.configurationRef, this.flapRef, this.conditionRef
+  Loadreversers({
+    this.aircraftRef,
+    this.landingRef,
+    this.configurationRef,
+    this.flapRef,
+    this.conditionRef,
   });
-    
+
   List<String> call() {
     List<String> revsrInopData = [];
     List<String> reversers = [];
@@ -28,93 +39,64 @@ class Loadreversers{
     final String? selectedCondition = conditionRef;
 
     try {
-      //Search Reversers Values. 
-      Iterable<XmlElement> target = [];
 
-      if(selectedLanding == 'Normal') {
+      final aircraft = xmlDocument
+          .findAllElements('aircraft')
+          .firstWhereOrNull(
+            (a) =>
+                a.getAttribute('id') == selectedAircraft ||
+                a.getAttribute('label') == selectedAircraft,
+          );
+      if (aircraft == null) return reversers = [];
 
-        if (selectedAircraft != null && selectedLanding != null) {
-              target = xmlDocument
-                  .findAllElements('aircraft')
-                  .where(
-                    (a) =>
-                        a.getAttribute('id') == selectedAircraft ||
-                        a.getAttribute('label') == selectedAircraft,
-                  )
-                  .expand((l) => l.findAllElements('landingCondition'))
-                  .where(
-                    (lc) =>
-                        lc.getAttribute('label')?.toUpperCase() ==
-                        selectedLanding.toUpperCase(),
-                  )
-                  .expand((f) => f.findAllElements('Flap'));
-        }
-            
-        if (selectedFlap != null) {
-          revsrInopData = target
-            .where((f) => f.getAttribute('label') == selectedFlap)
-            .expand((c) => c.findAllElements('reportedBrakingAction'))
-            .where(
-              (lc) =>
-                  lc.getAttribute('label')?.toUpperCase() ==
-                  selectedCondition!.toUpperCase(),
-            )
-            .expand((c) => c.findAllElements('ReverserInoperativeAdjustment'))
-            .map(
-              (node) => node.getAttribute('AmountOfRevInop'),
-            )
-            .whereType<String>()
-            .toList();
-        }
+      final landingCondition = aircraft
+          .findElements('landingCondition')
+          .firstWhereOrNull(
+            (lc) =>
+                lc.getAttribute('label')?.toUpperCase() ==
+                selectedLanding?.toUpperCase(),
+          );
+      if (landingCondition == null) return reversers = [];
 
+      XmlElement? configNode;
+      if (selectedLanding == 'Normal') {
+        if (selectedFlap == null) return reversers = [];
+        configNode = landingCondition
+            .findElements('Flap')
+            .firstWhereOrNull((f) => f.getAttribute('label') == selectedFlap);
       } else {
-
-        if (selectedAircraft != null && selectedLanding != null) {
-              target = xmlDocument
-                  .findAllElements('aircraft')
-                  .where(
-                    (a) =>
-                        a.getAttribute('id') == selectedAircraft ||
-                        a.getAttribute('label') == selectedAircraft,
-                  )
-                  .expand((l) => l.findAllElements('landingCondition'))
-                  .where(
-                    (lc) =>
-                        lc.getAttribute('label')?.toUpperCase() ==
-                        selectedLanding.toUpperCase(),
-                  )
-                  .expand((f) => f.findAllElements('nonNormalConfiguration'));
-        }
-            
-        if (selectedConfiguration != null) {
-          revsrInopData = target
-            .where((f) => f.getAttribute('id') == selectedConfiguration)
-            .expand((c) => c.findAllElements('reportedBrakingAction'))
-            .where(
-              (lc) =>
-                  lc.getAttribute('label')?.toUpperCase() ==
-                  selectedCondition!.toUpperCase(),
-            )
-            .expand((c) => c.findAllElements('ReverserInoperativeAdjustment'))
-            .map(
-              (node) => node.getAttribute('AmountOfRevInop'),
-            )
-            .whereType<String>()
-            .toList();
-        }
+        if (selectedConfiguration == null) return reversers = [];
+        configNode = landingCondition
+            .findElements('nonNormalConfiguration')
+            .firstWhereOrNull(
+              (f) => f.getAttribute('id') == selectedConfiguration,
+            );
       }
+      if (configNode == null) return reversers = [];
+
+      final brakingAction = configNode
+          .findElements('reportedBrakingAction')
+          .firstWhereOrNull(
+            (lc) =>
+                lc.getAttribute('label')?.toUpperCase() ==
+                selectedCondition?.toUpperCase(),
+          );
+      if (brakingAction == null) return reversers = [];
+
+      revsrInopData = brakingAction
+          .findElements('ReverserInoperativeAdjustment')
+          .map((node) => node.getAttribute('AmountOfRevInop'))
+          .whereType<String>()
+          .toList();
 
       for (int i = 0; i < revsrInopData.length; i++) {
         nombre = '${revsrInopData[i]} revsr Inop';
-        reversers.add(nombre); 
+        reversers.add(nombre);
       }
 
-
       return reversers;
-
     } catch (e) {
-      return reversers = []; 
+      return reversers = [];
     }
   }
-  
-} 
+}

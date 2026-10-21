@@ -11,6 +11,7 @@ import 'package:flutter_application_5/constants/features/calculator/fuctions/cal
 import 'package:flutter_application_5/constants/features/calculator/fuctions/calculateweightincredecre.dart';
 import 'package:flutter_application_5/constants/features/calculator/fuctions/calculatewind.dart';
 import 'package:flutter_application_5/constants/features/calculator/fuctions/customDigitFormatter.dart';
+import 'package:flutter_application_5/constants/features/calculator/fuctions/formatqnh.dart';
 import 'package:flutter_application_5/constants/features/calculator/fuctions/formatslope.dart';
 import 'package:flutter_application_5/constants/features/calculator/fuctions/landingdistancebar.dart';
 import 'package:flutter_application_5/constants/features/calculator/fuctions/loadautobrakes.dart';
@@ -47,9 +48,8 @@ class CalculatorPage extends StatefulWidget {
     this.aircraft, this.normalNon, this.configuration, this.airport,
     this.airportEl, this.airportQNH, this.airportTemp, this.airportRunway, this.nonflaps,
   });
-  //Pendientes:
+  //Pendientes: flutter run -d chrome --web-browser-flag "--disable-web-security"
   //LongPress en QNH y Elevation (XXX).
-  //Calculatetempisa es para generico y Calculateisa para existente, la temp viene por default, en generico no.
 
   @override
   State<CalculatorPage> createState() => _CalculatorPageState();
@@ -459,6 +459,17 @@ class _CalculatorPageState extends State<CalculatorPage> {
                 onPressed: () {
                   setState(() async {
                     metarResult = await remoteDataSource.getMetar('$selectedAirport');
+                    selectedAirportQNH = metarResult['QNH'];
+                    selectedAirportTemperature = metarResult['OAT'];
+                    selectedWind = metarResult['WIND'];
+                    windValue = metarResult['NODE'];
+                    altitud = Calculatealtitud(elevationRef: selectedAirportElevation, qnhRef: selectedAirportQNH)();
+                    isa = Calculateisa(elevationRef: altitud, temperatureRef: selectedAirportTemperature)();
+                    windValues = Calculatewind(rwyidRef: rwyId, windRef: windValue, windpickerRef: selectedWind, operation: '')();
+                    windValue = windValues?[0];
+                    headtail = windValues?[1];
+                    crosswind = windValues?[2];
+                    updateOpld();
                   });
                 },
                 iconAlignment: IconAlignment.end,
@@ -1270,7 +1281,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                           fontWeight: FontWeight.bold,
                                         ),
                                     ),
-                                     const Spacer(),
+                                    const Spacer(),
                                     ElevatedButton(
                                       onPressed: () {
                                         setState(() {
@@ -2998,7 +3009,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
                                     Text(
-                                      '$selectedAirportQNH',
+                                      Formatqnh(qnhRef: selectedAirportQNH)(),
                                       style: TextStyle(
                                         color: AppColors.placeholderDark,
                                         fontSize: 18,

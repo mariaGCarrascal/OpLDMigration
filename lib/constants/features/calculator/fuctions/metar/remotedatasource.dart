@@ -27,7 +27,7 @@ class Remotedatasource {
       if (response.statusCode == 200) {
         final body = response.body.trim();
         metar = MetarParser.parseMetar(body);
-        print('Metar parseado: $metar');
+
         if (body.isEmpty) {
           throw Exception("No METAR data found for $targetCode");
         }
