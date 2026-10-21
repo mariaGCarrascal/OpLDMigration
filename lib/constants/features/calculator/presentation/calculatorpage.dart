@@ -11,6 +11,7 @@ import 'package:flutter_application_5/constants/features/calculator/fuctions/cal
 import 'package:flutter_application_5/constants/features/calculator/fuctions/calculateweightincredecre.dart';
 import 'package:flutter_application_5/constants/features/calculator/fuctions/calculatewind.dart';
 import 'package:flutter_application_5/constants/features/calculator/fuctions/customDigitFormatter.dart';
+import 'package:flutter_application_5/constants/features/calculator/fuctions/customskeletonizer.dart';
 import 'package:flutter_application_5/constants/features/calculator/fuctions/formatqnh.dart';
 import 'package:flutter_application_5/constants/features/calculator/fuctions/formatslope.dart';
 import 'package:flutter_application_5/constants/features/calculator/fuctions/landingdistancebar.dart';
@@ -32,6 +33,7 @@ import 'package:flutter/services.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:http/http.dart' as http;
+import 'package:skeletonizer/skeletonizer.dart';
 
 class CalculatorPage extends StatefulWidget {
   final String? aircraft;
@@ -114,6 +116,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
   String? vrefAdjust;
   String? crosswindsComment;
   bool _isExpanded = false;
+  bool _ispresseded = false;
   final remoteDataSource = Remotedatasource(client: http.Client());
   //Variables de listas y Maps de los DropDownlists
   Map<String, String> baseDetails = {};
@@ -390,7 +393,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                             children: [
                               const Center(
                                 child: Text(
-                                  AppStrings.metarTitle,
+                                  AppStrings.metar,
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
                                     color: AppColors.textColor2Dark,
@@ -456,25 +459,38 @@ class _CalculatorPageState extends State<CalculatorPage> {
             Padding(
               padding: const EdgeInsets.only(left: 4, right: 12, top: 8, bottom: 8),
               child: ElevatedButton.icon(
-                onPressed: () {
-                  setState(() async {
+                onPressed: () async {
+                    setState(() {
+                      _ispresseded = true;
+                    });
+
                     metarResult = await remoteDataSource.getMetar('$selectedAirport');
-                    selectedAirportQNH = metarResult['QNH'];
-                    selectedAirportTemperature = metarResult['OAT'];
-                    selectedWind = metarResult['WIND'];
-                    windValue = metarResult['NODE'];
-                    altitud = Calculatealtitud(elevationRef: selectedAirportElevation, qnhRef: selectedAirportQNH)();
-                    isa = Calculateisa(elevationRef: altitud, temperatureRef: selectedAirportTemperature)();
-                    windValues = Calculatewind(rwyidRef: rwyId, windRef: windValue, windpickerRef: selectedWind, operation: '')();
-                    windValue = windValues?[0];
-                    headtail = windValues?[1];
-                    crosswind = windValues?[2];
-                    updateOpld();
-                  });
-                },
+
+                    if (!mounted) return;
+
+                    setState(() {
+                      selectedAirportQNH = metarResult['QNH'];
+                      selectedAirportTemperature = metarResult['OAT'];
+                      selectedWind = metarResult['WIND'];
+                      windValue = metarResult['NODE'];
+                      altitud = Calculatealtitud( elevationRef: selectedAirportElevation, qnhRef: selectedAirportQNH)();
+                      isa = Calculateisa(elevationRef: altitud, temperatureRef: selectedAirportTemperature)();
+                      windValues = Calculatewind(rwyidRef: rwyId, windRef: windValue, windpickerRef: selectedWind, operation: '')();
+                      windValue = windValues?[0];
+                      headtail = windValues?[1];
+                      crosswind = windValues?[2];
+                      updateOpld();
+                    });
+
+                    if (mounted) {
+                      setState(() {
+                        _ispresseded = false;
+                      });
+                    }
+                },                               
                 iconAlignment: IconAlignment.end,
                 icon: SvgPicture.asset(
-                  'icons/cloudy_sunny.svg',
+                  'assets/icons/cloudy_sunny.svg',
                   width: 25,
                   height: 25,
                   colorFilter: const ColorFilter.mode(
@@ -2979,259 +2995,263 @@ class _CalculatorPageState extends State<CalculatorPage> {
                       ),
 
                       //Campo de QNH
-                      Card(
-                        color: AppColors.cardDark,
-                        shape: RoundedRectangleBorder(
-                          side: BorderSide(
-                            color: AppColors.placeholder,
-                            width: 2.0,
+                      Customskeletonizer(
+                        isLoading: _ispresseded,
+                        child:
+                        Card(
+                          color: AppColors.cardDark,
+                          shape: RoundedRectangleBorder(
+                            side: BorderSide(
+                              color: AppColors.placeholder,
+                              width: 2.0,
+                            ),
+                            borderRadius: BorderRadius.circular(12.0),
                           ),
-                          borderRadius: BorderRadius.circular(12.0),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(15.0),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                  AppStrings.qnh,
-                                  style: TextStyle(
-                                    color: AppColors.white,
-                                    fontSize: 16.5,
-                                  ),
-                                ),
-                              
-                              const SizedBox(width: 5.0),
-
-                              Flexible(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Text(
-                                      Formatqnh(qnhRef: selectedAirportQNH)(),
-                                      style: TextStyle(
-                                        color: AppColors.placeholderDark,
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.bold,
-                                      ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(15.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                    AppStrings.qnh,
+                                    style: TextStyle(
+                                      color: AppColors.white,
+                                      fontSize: 16.5,
                                     ),
-                                    const SizedBox(height: 4),
-                                    Padding(
-                                      padding: const EdgeInsets.only(left: 10),
-                                      child: Text(
-                                        (0.02953 *
-                                                (double.tryParse(
-                                                      selectedAirportQNH ?? '',
-                                                    ) ??
-                                                    0))
-                                            .toStringAsFixed(2),
+                                  ),
+                                
+                                const SizedBox(width: 5.0),
+
+                                Flexible(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Text(
+                                        Formatqnh(qnhRef: selectedAirportQNH)(),
                                         style: TextStyle(
                                           color: AppColors.placeholderDark,
                                           fontSize: 18,
                                           fontWeight: FontWeight.bold,
                                         ),
                                       ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              SizedBox(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Text(
-                                      AppStrings.hpa,
-                                      style: TextStyle(
-                                        color: AppColors.placeholderDark,
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.bold,
+                                      const SizedBox(height: 4),
+                                      Padding(
+                                        padding: const EdgeInsets.only(left: 10),
+                                        child: Text(
+                                          (0.02953 *
+                                                  (double.tryParse(
+                                                        selectedAirportQNH ?? '',
+                                                      ) ??
+                                                      0))
+                                              .toStringAsFixed(2),
+                                          style: TextStyle(
+                                            color: AppColors.placeholderDark,
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
                                       ),
-                                    ),
-                                    const SizedBox(height: 4),
-                                    Text(
-                                      AppStrings.inhg,
-                                      style: TextStyle(
-                                        color: AppColors.placeholderDark,
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ],
+                                    ],
+                                  ),
                                 ),
-                              ),
+                                SizedBox(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Text(
+                                        AppStrings.hpa,
+                                        style: TextStyle(
+                                          color: AppColors.placeholderDark,
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 4),
+                                      Text(
+                                        AppStrings.inhg,
+                                        style: TextStyle(
+                                          color: AppColors.placeholderDark,
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
 
-                              const SizedBox(width: 5.0),
+                                const SizedBox(width: 5.0),
 
-                              if (selectedAirport != 'XXX') ...[
-                                Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    ElevatedButton(
-                                      onPressed: () {
-                                        setState(() {
-                                          selectedAirportQNH =
-                                              Calculateqnhincredecre(
-                                                qnhRef: selectedAirportQNH,
-                                                operation: 'decrement',
-                                              )();
-                                          altitud = Calculatealtitud(
-                                            elevationRef:
-                                                selectedAirportElevation,
-                                            qnhRef: selectedAirportQNH,
-                                          )();
-                                          updateOpld();
-                                        });
-                                      },
-                                      style: ElevatedButton.styleFrom(
-                                        backgroundColor: AppColors.grey,
-                                        foregroundColor: AppColors.iconDark,
-                                        minimumSize: const Size(70, 70),
-                                        padding: EdgeInsets.zero,
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(
-                                            8.0,
-                                          ),
-                                          side: const BorderSide(
-                                            color: AppColors.white,
-                                            width: 1.0,
-                                          ),
-                                        ),
-                                      ),
-                                      child: Icon(
-                                        Icons.remove,
-                                        color: AppColors.iconDark,
-                                        size: 30,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                    const SizedBox(width: 8.0),
-                                    ElevatedButton(
-                                      onPressed: () {
-                                        setState(() {
-                                          selectedAirportQNH =
-                                              Calculateqnhincredecre(
-                                                qnhRef: selectedAirportQNH,
-                                                operation: 'increment',
-                                              )();
-                                          altitud = Calculatealtitud(
-                                            elevationRef:
-                                                selectedAirportElevation,
-                                            qnhRef: selectedAirportQNH,
-                                          )();
-                                          updateOpld();
-                                        });
-                                      },
-                                      style: ElevatedButton.styleFrom(
-                                        backgroundColor: AppColors.grey,
-                                        foregroundColor: AppColors.iconDark,
-                                        minimumSize: const Size(70, 70),
-                                        padding: EdgeInsets.zero,
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(
-                                            8.0,
-                                          ),
-                                          side: const BorderSide(
-                                            color: AppColors.white,
-                                            width: 1.0,
+                                if (selectedAirport != 'XXX') ...[
+                                  Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      ElevatedButton(
+                                        onPressed: () {
+                                          setState(() {
+                                            selectedAirportQNH =
+                                                Calculateqnhincredecre(
+                                                  qnhRef: selectedAirportQNH,
+                                                  operation: 'decrement',
+                                                )();
+                                            altitud = Calculatealtitud(
+                                              elevationRef:
+                                                  selectedAirportElevation,
+                                              qnhRef: selectedAirportQNH,
+                                            )();
+                                            updateOpld();
+                                          });
+                                        },
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: AppColors.grey,
+                                          foregroundColor: AppColors.iconDark,
+                                          minimumSize: const Size(70, 70),
+                                          padding: EdgeInsets.zero,
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(
+                                              8.0,
+                                            ),
+                                            side: const BorderSide(
+                                              color: AppColors.white,
+                                              width: 1.0,
+                                            ),
                                           ),
                                         ),
-                                      ),
-                                      child: Icon(
-                                        Icons.add,
-                                        color: AppColors.iconDark,
-                                        size: 30,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ] else ...[
-                                Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    ElevatedButton(
-                                      onPressed: () {
-                                        setState(() {
-                                          selectedAirportQNH =
-                                              Calculateqnhincredecre(
-                                                qnhRef: selectedAirportQNH,
-                                                operation: 'decrement',
-                                              )();
-                                          altitud = Calculatealtitud(
-                                            elevationRef: _currentElevation
-                                                .toString(),
-                                            qnhRef: selectedAirportQNH,
-                                          )();
-                                          updateOpld();
-                                        });
-                                      },
-                                      style: ElevatedButton.styleFrom(
-                                        backgroundColor: AppColors.grey,
-                                        foregroundColor: AppColors.iconDark,
-                                        minimumSize: const Size(70, 70),
-                                        padding: EdgeInsets.zero,
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(
-                                            8.0,
-                                          ),
-                                          side: const BorderSide(
-                                            color: AppColors.white,
-                                            width: 1.0,
-                                          ),
+                                        child: Icon(
+                                          Icons.remove,
+                                          color: AppColors.iconDark,
+                                          size: 30,
+                                          fontWeight: FontWeight.bold,
                                         ),
                                       ),
-                                      child: Icon(
-                                        Icons.remove,
-                                        color: AppColors.iconDark,
-                                        size: 30,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                    const SizedBox(width: 8.0),
-                                    ElevatedButton(
-                                      onPressed: () {
-                                        setState(() {
-                                          selectedAirportQNH =
-                                              Calculateqnhincredecre(
-                                                qnhRef: selectedAirportQNH,
-                                                operation: 'increment',
-                                              )();
-                                          altitud = Calculatealtitud(
-                                            elevationRef: _currentElevation
-                                                .toString(),
-                                            qnhRef: selectedAirportQNH,
-                                          )();
-                                          updateOpld();
-                                        });
-                                      },
-                                      style: ElevatedButton.styleFrom(
-                                        backgroundColor: AppColors.grey,
-                                        foregroundColor: AppColors.iconDark,
-                                        minimumSize: const Size(70, 70),
-                                        padding: EdgeInsets.zero,
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(
-                                            8.0,
-                                          ),
-                                          side: const BorderSide(
-                                            color: AppColors.white,
-                                            width: 1.0,
+                                      const SizedBox(width: 8.0),
+                                      ElevatedButton(
+                                        onPressed: () {
+                                          setState(() {
+                                            selectedAirportQNH =
+                                                Calculateqnhincredecre(
+                                                  qnhRef: selectedAirportQNH,
+                                                  operation: 'increment',
+                                                )();
+                                            altitud = Calculatealtitud(
+                                              elevationRef:
+                                                  selectedAirportElevation,
+                                              qnhRef: selectedAirportQNH,
+                                            )();
+                                            updateOpld();
+                                          });
+                                        },
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: AppColors.grey,
+                                          foregroundColor: AppColors.iconDark,
+                                          minimumSize: const Size(70, 70),
+                                          padding: EdgeInsets.zero,
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(
+                                              8.0,
+                                            ),
+                                            side: const BorderSide(
+                                              color: AppColors.white,
+                                              width: 1.0,
+                                            ),
                                           ),
                                         ),
+                                        child: Icon(
+                                          Icons.add,
+                                          color: AppColors.iconDark,
+                                          size: 30,
+                                          fontWeight: FontWeight.bold,
+                                        ),
                                       ),
-                                      child: Icon(
-                                        Icons.add,
-                                        color: AppColors.iconDark,
-                                        size: 30,
-                                        fontWeight: FontWeight.bold,
+                                    ],
+                                  ),
+                                ] else ...[
+                                  Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      ElevatedButton(
+                                        onPressed: () {
+                                          setState(() {
+                                            selectedAirportQNH =
+                                                Calculateqnhincredecre(
+                                                  qnhRef: selectedAirportQNH,
+                                                  operation: 'decrement',
+                                                )();
+                                            altitud = Calculatealtitud(
+                                              elevationRef: _currentElevation
+                                                  .toString(),
+                                              qnhRef: selectedAirportQNH,
+                                            )();
+                                            updateOpld();
+                                          });
+                                        },
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: AppColors.grey,
+                                          foregroundColor: AppColors.iconDark,
+                                          minimumSize: const Size(70, 70),
+                                          padding: EdgeInsets.zero,
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(
+                                              8.0,
+                                            ),
+                                            side: const BorderSide(
+                                              color: AppColors.white,
+                                              width: 1.0,
+                                            ),
+                                          ),
+                                        ),
+                                        child: Icon(
+                                          Icons.remove,
+                                          color: AppColors.iconDark,
+                                          size: 30,
+                                          fontWeight: FontWeight.bold,
+                                        ),
                                       ),
-                                    ),
-                                  ],
-                                ),
+                                      const SizedBox(width: 8.0),
+                                      ElevatedButton(
+                                        onPressed: () {
+                                          setState(() {
+                                            selectedAirportQNH =
+                                                Calculateqnhincredecre(
+                                                  qnhRef: selectedAirportQNH,
+                                                  operation: 'increment',
+                                                )();
+                                            altitud = Calculatealtitud(
+                                              elevationRef: _currentElevation
+                                                  .toString(),
+                                              qnhRef: selectedAirportQNH,
+                                            )();
+                                            updateOpld();
+                                          });
+                                        },
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: AppColors.grey,
+                                          foregroundColor: AppColors.iconDark,
+                                          minimumSize: const Size(70, 70),
+                                          padding: EdgeInsets.zero,
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(
+                                              8.0,
+                                            ),
+                                            side: const BorderSide(
+                                              color: AppColors.white,
+                                              width: 1.0,
+                                            ),
+                                          ),
+                                        ),
+                                        child: Icon(
+                                          Icons.add,
+                                          color: AppColors.iconDark,
+                                          size: 30,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
                               ],
-                            ],
+                            ),
                           ),
                         ),
                       ),
@@ -3274,78 +3294,724 @@ class _CalculatorPageState extends State<CalculatorPage> {
                       ),
 
                       //Campo de QAT
-                      Card(
-                        color: AppColors.cardDark,
-                        shape: RoundedRectangleBorder(
-                          side: BorderSide(
-                            color: AppColors.placeholder,
-                            width: 2.0,
+                      Customskeletonizer(
+                      isLoading: _ispresseded,
+                      child:
+                        Card(
+                          color: AppColors.cardDark,
+                          shape: RoundedRectangleBorder(
+                            side: BorderSide(
+                              color: AppColors.placeholder,
+                              width: 2.0,
+                            ),
+                            borderRadius: BorderRadius.circular(12.0),
                           ),
-                          borderRadius: BorderRadius.circular(12.0),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(10.0),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Expanded(
-                                child: Text(
-                                  AppStrings.oat,
-                                  style: TextStyle(
-                                    color: AppColors.white,
-                                    fontSize: 16.5,
+                          child: Padding(
+                            padding: const EdgeInsets.all(10.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Expanded(
+                                  child: Text(
+                                    AppStrings.oat,
+                                    style: TextStyle(
+                                      color: AppColors.white,
+                                      fontSize: 16.5,
+                                    ),
                                   ),
                                 ),
-                              ),
-                              const Spacer(),
-                              SizedBox(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Padding(
-                                      padding: const EdgeInsets.only(left: 10),
-                                      child: Text(
-                                        '${double.tryParse(selectedAirportTemperature ?? '')?.round() ?? 0} ${AppStrings.celcius}',
+                                const Spacer(),
+                                SizedBox(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.only(left: 10),
+                                        child: Text(
+                                          '${double.tryParse(selectedAirportTemperature ?? '')?.round() ?? 0} ${AppStrings.celcius}',
+                                          style: TextStyle(
+                                            color: AppColors.textColor3Dark,
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ),
+                                      const SizedBox(height: 4),
+                                      Text(
+                                        '${AppStrings.isa} $isa',
                                         style: TextStyle(
-                                          color: AppColors.textColor3Dark,
+                                          color: AppColors.placeholderDark,
                                           fontSize: 18,
                                           fontWeight: FontWeight.bold,
                                         ),
                                       ),
-                                    ),
-                                    const SizedBox(height: 4),
-                                    Text(
-                                      '${AppStrings.isa} $isa',
-                                      style: TextStyle(
-                                        color: AppColors.placeholderDark,
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ],
+                                    ],
+                                  ),
                                 ),
-                              ),
-                              const Spacer(),
-                              if (selectedAirport != 'XXX') ...[
+                                const Spacer(),
+                                if (selectedAirport != 'XXX') ...[
+                                  Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      ElevatedButton(
+                                        onPressed: () {
+                                          setState(() {
+                                            tempValues = Calculatetempisa(
+                                              altitudRef: altitud,
+                                              temperatureRef:
+                                                  selectedAirportTemperature,
+                                              isaRef: isa,
+                                              minRef: isaMin,
+                                              maxRef: isaMax,
+                                              operation: 'decrement',
+                                            )();
+                                            selectedAirportTemperature =
+                                                tempValues[1];
+                                            isa = tempValues[0];
+                                            updateOpld();
+                                          });
+                                        },
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: AppColors.grey,
+                                          foregroundColor: AppColors.iconDark,
+                                          minimumSize: const Size(70, 70),
+                                          padding: EdgeInsets.zero,
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(
+                                              8.0,
+                                            ),
+                                            side: const BorderSide(
+                                              color: AppColors.white,
+                                              width: 1.0,
+                                            ),
+                                          ),
+                                        ),
+                                        child: Icon(
+                                          Icons.remove,
+                                          color: AppColors.iconDark,
+                                          size: 30,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      const SizedBox(width: 8.0),
+                                      ElevatedButton(
+                                        onPressed: () {
+                                          setState(() {
+                                            tempValues = Calculatetempisa(
+                                              altitudRef: altitud,
+                                              temperatureRef:
+                                                  selectedAirportTemperature,
+                                              isaRef: isa,
+                                              minRef: isaMin,
+                                              maxRef: isaMax,
+                                              operation: 'increment',
+                                            )();
+                                            selectedAirportTemperature =
+                                                tempValues[1];
+                                            isa = tempValues[0];
+                                            updateOpld();
+                                          });
+                                        },
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: AppColors.grey,
+                                          foregroundColor: AppColors.iconDark,
+                                          minimumSize: const Size(70, 70),
+                                          padding: EdgeInsets.zero,
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(
+                                              8.0,
+                                            ),
+                                            side: const BorderSide(
+                                              color: AppColors.white,
+                                              width: 1.0,
+                                            ),
+                                          ),
+                                        ),
+                                        child: Icon(
+                                          Icons.add,
+                                          color: AppColors.iconDark,
+                                          size: 30,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ] else ...[
+                                  Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      ElevatedButton(
+                                        onPressed: () {
+                                          setState(() {
+                                            tempValues = Calculatetempisa(
+                                              altitudRef: altitud,
+                                              temperatureRef:
+                                                  selectedAirportTemperature,
+                                              isaRef: isa,
+                                              minRef: isaMin,
+                                              maxRef: isaMax,
+                                              operation: 'decrement',
+                                            )();
+                                            selectedAirportTemperature =
+                                                tempValues[1];
+                                            isa = tempValues[0];
+                                            updateOpld();
+                                          });
+                                        },
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: AppColors.grey,
+                                          foregroundColor: AppColors.iconDark,
+                                          minimumSize: const Size(70, 70),
+                                          padding: EdgeInsets.zero,
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(
+                                              8.0,
+                                            ),
+                                            side: const BorderSide(
+                                              color: AppColors.white,
+                                              width: 1.0,
+                                            ),
+                                          ),
+                                        ),
+                                        child: Icon(
+                                          Icons.remove,
+                                          color: AppColors.iconDark,
+                                          size: 30,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      const SizedBox(width: 8.0),
+                                      ElevatedButton(
+                                        onPressed: () {
+                                          setState(() {
+                                            tempValues = Calculatetempisa(
+                                              altitudRef: altitud,
+                                              temperatureRef:
+                                                  selectedAirportTemperature,
+                                              isaRef: isa,
+                                              minRef: isaMin,
+                                              maxRef: isaMax,
+                                              operation: 'increment',
+                                            )();
+                                            selectedAirportTemperature =
+                                                tempValues[1];
+                                            isa = tempValues[0];
+                                            updateOpld();
+                                          });
+                                        },
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: AppColors.grey,
+                                          foregroundColor: AppColors.iconDark,
+                                          minimumSize: const Size(70, 70),
+                                          padding: EdgeInsets.zero,
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(
+                                              8.0,
+                                            ),
+                                            side: const BorderSide(
+                                              color: AppColors.white,
+                                              width: 1.0,
+                                            ),
+                                          ),
+                                        ),
+                                        child: Icon(
+                                          Icons.add,
+                                          color: AppColors.iconDark,
+                                          size: 30,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                      
+                      //Campo de WIND
+                      Customskeletonizer(
+                      isLoading: _ispresseded,
+                      child:
+                        Card(
+                          color: AppColors.cardDark,
+                          shape: RoundedRectangleBorder(
+                            side: BorderSide(
+                              color: AppColors.placeholder,
+                              width: 2.0,
+                            ),
+                            borderRadius: BorderRadius.circular(12.0),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Row(
+                                        children: [
+                                          Text(
+                                            AppStrings.wind,
+                                            style: TextStyle(
+                                              color: AppColors.white,
+                                              fontSize: 16.5,
+                                            ),
+                                          ),
+
+                                          const SizedBox(width: 6),
+
+                                          // Notas de Warning de Crosswinds
+                                        if (crosswindValue.abs() > (num.tryParse((crosswindsLimits[selectedCondition] ?? '33').replaceAll('−','-',).replaceAll('–','-',),) ?? 33).abs()) ... [
+                                            InkWell(
+                                              onTap: () {
+                                                showDialog(
+                                                  context: context,
+                                                  builder: (BuildContext context) {
+                                                    return AlertDialog(
+                                                      backgroundColor: AppColors.black,
+                                                      shape: RoundedRectangleBorder(
+                                                        borderRadius: BorderRadius.circular(12.0),
+                                                        side: const BorderSide(
+                                                          color: AppColors.activeColor,
+                                                          width: 1.5,
+                                                        ),
+                                                      ),
+                                                      content: SizedBox(
+                                                        width: 550,
+                                                        height: 300,
+                                                        child: Column(
+                                                          mainAxisAlignment: MainAxisAlignment.start,
+                                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                                          children: [
+                                                            // Título
+                                                            const Center(
+                                                              child: Text(
+                                                                AppStrings.crosswindTitle,
+                                                                textAlign: TextAlign.center,
+                                                                style: TextStyle(
+                                                                  color: AppColors.activeColor,
+                                                                  fontSize: 20,
+                                                                  fontWeight: FontWeight.bold,
+                                                                ),
+                                                              ),
+                                                            ),
+
+                                                            const SizedBox(height: 10),
+
+                                                            // Nota de Crosswinds Limits
+                                                            Expanded(
+                                                              child: ScrollConfiguration(
+                                                                behavior: ScrollConfiguration.of(context).copyWith(
+                                                                  scrollbars: false,
+                                                                ),
+                                                                child: SingleChildScrollView(
+                                                                  child: crosswindsComment != null &&
+                                                                          crosswindsComment!.trim().isNotEmpty
+                                                                      ? Column(
+                                                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                                                          children: [
+                                                                            const Divider(
+                                                                              color: AppColors.cancelPriButBrDark,
+                                                                            ),
+                                                                            Padding(
+                                                                              padding: const EdgeInsets.symmetric(
+                                                                                vertical: 12.0,
+                                                                              ),
+                                                                              child: Text(
+                                                                                crosswindsComment!.trim(),
+                                                                                textAlign: TextAlign.justify,
+                                                                                style: const TextStyle(
+                                                                                  color: AppColors.white,
+                                                                                  fontSize: 16.5,
+                                                                                ),
+                                                                              ),
+                                                                            ),
+                                                                            const Divider(
+                                                                              color: AppColors.cancelPriButBrDark,
+                                                                            ),
+                                                                          ],
+                                                                        )
+                                                                      : const SizedBox.shrink(),
+                                                                ),
+                                                              ),
+                                                            ),
+                                                            
+                                                            const SizedBox(height: 20),
+
+                                                            // Boton para regresar
+                                                            Center(
+                                                              child: ElevatedButton(
+                                                                onPressed: () => Navigator.of(context).pop(),
+                                                                style: ElevatedButton.styleFrom(
+                                                                  backgroundColor: AppColors.black,
+                                                                  foregroundColor: AppColors.iconDark,
+                                                                  minimumSize: const Size(140, 48),
+                                                                  shape: RoundedRectangleBorder(
+                                                                    borderRadius: BorderRadius.circular(10),
+                                                                    side: const BorderSide(
+                                                                      color: AppColors.activeColor,
+                                                                      width: 1,
+                                                                    ),
+                                                                  ),
+                                                                  elevation: 4,
+                                                                ),
+                                                                child: const Text(
+                                                                  'OK',
+                                                                  style: TextStyle(
+                                                                    color: AppColors.white,
+                                                                    fontSize: 16.5,
+                                                                    fontWeight: FontWeight.bold,
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    );
+                                                  },
+                                                );
+                                              },
+                                              borderRadius: BorderRadius.circular(20),
+                                              child: const Padding(
+                                                padding: EdgeInsets.all(3),
+                                                child: Icon(
+                                                  Icons.info_outline,
+                                                  color: AppColors.activeColor,
+                                                  size: 25,
+                                                ),
+                                              ),
+                                            )
+                                          ],                                                                                
+                                        ],
+                                      ),
+
+                                      const SizedBox(height: 8),
+
+                                      Row(
+                                        children: [
+                                          Row(
+                                            children: [
+                                              SizedBox(
+                                                width: orientation ? 135 : 110,
+                                                height: 40,
+                                                child: Builder(
+                                                  builder: (context) {
+                                                    final String
+                                                    selectedWindValue =
+                                                        windDirection.isNotEmpty
+                                                        ? (windDirection.contains(
+                                                                selectedWind,
+                                                              )
+                                                              ? selectedWind!
+                                                              : windDirection
+                                                                    .first)
+                                                        : '000';
+                                                    return DropdownButtonFormField2<
+                                                      String
+                                                    >(
+                                                      isExpanded: true,
+                                                      value: selectedWindValue,
+
+                                                      decoration: InputDecoration(
+                                                        filled: true,
+                                                        fillColor:
+                                                            AppColors.placeholder,
+
+                                                        enabledBorder:
+                                                            OutlineInputBorder(
+                                                              borderSide: BorderSide(
+                                                                color: AppColors
+                                                                    .placeholder,
+                                                                width: 1,
+                                                              ),
+                                                              borderRadius:
+                                                                  BorderRadius.circular(
+                                                                    8.0,
+                                                                  ),
+                                                            ),
+
+                                                        focusedBorder:
+                                                            OutlineInputBorder(
+                                                              borderSide: BorderSide(
+                                                                color: AppColors
+                                                                    .placeholder,
+                                                                width: 1,
+                                                              ),
+                                                              borderRadius:
+                                                                  BorderRadius.circular(
+                                                                    8.0,
+                                                                  ),
+                                                            ),
+
+                                                        border: OutlineInputBorder(
+                                                          borderRadius:
+                                                              BorderRadius.circular(
+                                                                8.0,
+                                                              ),
+                                                        ),
+
+                                                        contentPadding:
+                                                            EdgeInsets.zero,
+                                                      ),
+
+                                                      hint: Center(
+                                                        child: Text(
+                                                          selectedWindValue,
+                                                          textAlign:
+                                                              TextAlign.center,
+                                                          style: TextStyle(
+                                                            color: AppColors
+                                                                .iconDark,
+                                                            fontSize: 16.5,
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                          ),
+                                                          overflow: TextOverflow
+                                                              .ellipsis,
+                                                        ),
+                                                      ),
+
+                                                      iconStyleData:
+                                                          const IconStyleData(
+                                                            icon:
+                                                                SizedBox.shrink(),
+                                                          ),
+
+                                                      dropdownStyleData: DropdownStyleData(
+                                                        offset:  Offset(
+                                                          0,
+                                                          -5,
+                                                        ),
+                                                        maxHeight: 350,
+                                                        scrollbarTheme:
+                                                            ScrollbarThemeData(
+                                                              thickness:
+                                                                  WidgetStateProperty.all(
+                                                                    0,
+                                                                  ),
+                                                            ),
+
+                                                        decoration: BoxDecoration(
+                                                          color: AppColors
+                                                              .backgroundDark
+                                                              .withOpacity(0.9),
+                                                          borderRadius:
+                                                              BorderRadius.circular(
+                                                                5,
+                                                              ),
+                                                          border: Border.all(
+                                                            color: AppColors.white
+                                                                .withOpacity(0.8),
+                                                            width: 1.5,
+                                                          ),
+                                                        ),
+                                                      ),
+
+                                                      buttonStyleData:
+                                                          const ButtonStyleData(
+                                                            padding:
+                                                                EdgeInsets.zero,
+                                                            
+                                                          ),
+
+                                                      selectedItemBuilder:
+                                                          (BuildContext context) {
+                                                            return windDirection.map((
+                                                              String value,
+                                                            ) {
+                                                              return Center(
+                                                                child: Text(
+                                                                  value,
+                                                                  textAlign:
+                                                                      TextAlign
+                                                                          .center,
+                                                                  style: TextStyle(
+                                                                    color: AppColors
+                                                                        .iconDark,
+                                                                    fontSize: 18,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold,
+                                                                  ),
+                                                                  overflow:
+                                                                      TextOverflow
+                                                                          .ellipsis,
+                                                                ),
+                                                              );
+                                                            }).toList();
+                                                          },
+
+                                                      items: windDirection.map((
+                                                        String value,
+                                                      ) {
+                                                        final bool isSelected =
+                                                            value ==
+                                                            selectedWindValue;
+                                                        return DropdownMenuItem<
+                                                          String
+                                                        >(
+                                                          value: value,
+                                                          child: Container(
+                                                            width:
+                                                                double.infinity,
+                                                            padding:
+                                                                const EdgeInsets.symmetric(
+                                                                  horizontal: 12,
+                                                                  vertical: 10,
+                                                                ),
+                                                            decoration: BoxDecoration(
+                                                              color: isSelected
+                                                                  ? AppColors
+                                                                        .white
+                                                                        .withOpacity(
+                                                                          0.15,
+                                                                        )
+                                                                  : Colors
+                                                                        .transparent,
+                                                              borderRadius:
+                                                                  BorderRadius.circular(
+                                                                    4,
+                                                                  ),
+                                                            ),
+                                                            child: Center(
+                                                              child: Text(
+                                                                value,
+                                                                textAlign:
+                                                                    TextAlign
+                                                                        .center,
+                                                                style: TextStyle(
+                                                                  color: AppColors
+                                                                      .textColor2Dark,
+                                                                  fontSize: 16.5,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold,
+                                                                ),
+                                                                overflow:
+                                                                    TextOverflow
+                                                                        .ellipsis,
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        );
+                                                      }).toList(),
+
+                                                      onChanged: (newValue) {
+                                                        if (newValue == null)
+                                                          return;
+
+                                                        setState(() {
+                                                          selectedWind = newValue;
+
+                                                          windValues =
+                                                              Calculatewind(
+                                                                rwyidRef: rwyId,
+                                                                windRef:
+                                                                    windValue,
+                                                                windpickerRef:
+                                                                    selectedWind,
+                                                                operation: '',
+                                                              )();
+
+                                                          windValue =
+                                                              windValues?[0];
+                                                          headtail =
+                                                              windValues?[1];
+                                                          crosswind =
+                                                              windValues?[2];
+
+                                                          updateOpld();
+                                                        });
+                                                      },
+                                                    );
+                                                  },
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                          const SizedBox(width: 10.0),
+                                          Text(
+                                            '/',
+                                            style: TextStyle(
+                                              color: AppColors.white,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                          const SizedBox(width: 10.0),
+                                          
+                                          Text(
+                                            '$windValue ${AppStrings.kt}',
+                                            style: TextStyle(
+                                              color: AppColors.placeholderDark,
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 16.5,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      const SizedBox(height: 8),
+                                      Row(
+                                        children: [
+                                          Text(
+                                            headtailValue >= 0
+                                                ? '$headtailValue  ${AppStrings.kthwc}'
+                                                : '$headtailValue  ${AppStrings.kttwc}',
+                                            style: TextStyle(
+                                              fontSize: 16.5,
+                                              color: (num.tryParse((headtail ?? '0').replaceAll('−', '-',).replaceAll('–', '-',),) ?? 0) < (num.tryParse((windMin ?? '-15').replaceAll('−','-',).replaceAll('–','-',),) ?? -15)
+                                                  ? AppColors.errorColor
+                                                  : AppColors.textColor3Dark,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                          const SizedBox(width: 10.0),
+                                          Text(
+                                            '/',
+                                            style: TextStyle(
+                                              color: AppColors.white,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                          const SizedBox(width: 10.0),
+                                          Text(
+                                            '${(double.tryParse(crosswind ?? '0') ?? 0).round()} ${AppStrings.ktCwc}',
+                                            style: TextStyle(
+                                              fontSize: 16.5,
+                                              color: crosswindValue.abs() > (num.tryParse((crosswindsLimits[selectedCondition] ?? '33').replaceAll('−','-',).replaceAll('–','-',),) ?? 33).abs()
+                                                  ? AppColors.activeColor
+                                                  : AppColors.textColor3Dark,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                ),
+
                                 Row(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
                                     ElevatedButton(
                                       onPressed: () {
                                         setState(() {
-                                          tempValues = Calculatetempisa(
-                                            altitudRef: altitud,
-                                            temperatureRef:
-                                                selectedAirportTemperature,
-                                            isaRef: isa,
-                                            minRef: isaMin,
-                                            maxRef: isaMax,
+                                          windValues = Calculatewind(
+                                            rwyidRef: rwyId,
+                                            windRef: windValue,
+                                            windpickerRef: selectedWind,
                                             operation: 'decrement',
                                           )();
-                                          selectedAirportTemperature =
-                                              tempValues[1];
-                                          isa = tempValues[0];
+                                          windValue = windValues?[0];
+                                          headtail = windValues?[1];
+                                          crosswind = windValues?[2];
                                           updateOpld();
                                         });
                                       },
@@ -3375,105 +4041,15 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                     ElevatedButton(
                                       onPressed: () {
                                         setState(() {
-                                          tempValues = Calculatetempisa(
-                                            altitudRef: altitud,
-                                            temperatureRef:
-                                                selectedAirportTemperature,
-                                            isaRef: isa,
-                                            minRef: isaMin,
-                                            maxRef: isaMax,
+                                          windValues = Calculatewind(
+                                            rwyidRef: rwyId,
+                                            windRef: windValue,
+                                            windpickerRef: selectedWind,
                                             operation: 'increment',
                                           )();
-                                          selectedAirportTemperature =
-                                              tempValues[1];
-                                          isa = tempValues[0];
-                                          updateOpld();
-                                        });
-                                      },
-                                      style: ElevatedButton.styleFrom(
-                                        backgroundColor: AppColors.grey,
-                                        foregroundColor: AppColors.iconDark,
-                                        minimumSize: const Size(70, 70),
-                                        padding: EdgeInsets.zero,
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(
-                                            8.0,
-                                          ),
-                                          side: const BorderSide(
-                                            color: AppColors.white,
-                                            width: 1.0,
-                                          ),
-                                        ),
-                                      ),
-                                      child: Icon(
-                                        Icons.add,
-                                        color: AppColors.iconDark,
-                                        size: 30,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ] else ...[
-                                Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    ElevatedButton(
-                                      onPressed: () {
-                                        setState(() {
-                                          tempValues = Calculatetempisa(
-                                            altitudRef: altitud,
-                                            temperatureRef:
-                                                selectedAirportTemperature,
-                                            isaRef: isa,
-                                            minRef: isaMin,
-                                            maxRef: isaMax,
-                                            operation: 'decrement',
-                                          )();
-                                          selectedAirportTemperature =
-                                              tempValues[1];
-                                          isa = tempValues[0];
-                                          updateOpld();
-                                        });
-                                      },
-                                      style: ElevatedButton.styleFrom(
-                                        backgroundColor: AppColors.grey,
-                                        foregroundColor: AppColors.iconDark,
-                                        minimumSize: const Size(70, 70),
-                                        padding: EdgeInsets.zero,
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(
-                                            8.0,
-                                          ),
-                                          side: const BorderSide(
-                                            color: AppColors.white,
-                                            width: 1.0,
-                                          ),
-                                        ),
-                                      ),
-                                      child: Icon(
-                                        Icons.remove,
-                                        color: AppColors.iconDark,
-                                        size: 30,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                    const SizedBox(width: 8.0),
-                                    ElevatedButton(
-                                      onPressed: () {
-                                        setState(() {
-                                          tempValues = Calculatetempisa(
-                                            altitudRef: altitud,
-                                            temperatureRef:
-                                                selectedAirportTemperature,
-                                            isaRef: isa,
-                                            minRef: isaMin,
-                                            maxRef: isaMax,
-                                            operation: 'increment',
-                                          )();
-                                          selectedAirportTemperature =
-                                              tempValues[1];
-                                          isa = tempValues[0];
+                                          windValue = windValues?[0];
+                                          headtail = windValues?[1];
+                                          crosswind = windValues?[2];
                                           updateOpld();
                                         });
                                       },
@@ -3502,557 +4078,9 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                   ],
                                 ),
                               ],
-                            ],
+                            ),
                           ),
-                        ),
-                      ),
-
-                      //Campo de WIND
-                      Card(
-                        color: AppColors.cardDark,
-                        shape: RoundedRectangleBorder(
-                          side: BorderSide(
-                            color: AppColors.placeholder,
-                            width: 2.0,
-                          ),
-                          borderRadius: BorderRadius.circular(12.0),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Row(
-                                      children: [
-                                        Text(
-                                          AppStrings.wind,
-                                          style: TextStyle(
-                                            color: AppColors.white,
-                                            fontSize: 16.5,
-                                          ),
-                                        ),
-
-                                        const SizedBox(width: 6),
-
-                                        // Notas de Warning de Crosswinds
-                                       if (crosswindValue.abs() > (num.tryParse((crosswindsLimits[selectedCondition] ?? '33').replaceAll('−','-',).replaceAll('–','-',),) ?? 33).abs()) ... [
-                                          InkWell(
-                                            onTap: () {
-                                              showDialog(
-                                                context: context,
-                                                builder: (BuildContext context) {
-                                                  return AlertDialog(
-                                                    backgroundColor: AppColors.black,
-                                                    shape: RoundedRectangleBorder(
-                                                      borderRadius: BorderRadius.circular(12.0),
-                                                      side: const BorderSide(
-                                                        color: AppColors.activeColor,
-                                                        width: 1.5,
-                                                      ),
-                                                    ),
-                                                    content: SizedBox(
-                                                      width: 550,
-                                                      height: 300,
-                                                      child: Column(
-                                                        mainAxisAlignment: MainAxisAlignment.start,
-                                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                                        children: [
-                                                          // Título
-                                                          const Center(
-                                                            child: Text(
-                                                              AppStrings.crosswindTitle,
-                                                              textAlign: TextAlign.center,
-                                                              style: TextStyle(
-                                                                color: AppColors.activeColor,
-                                                                fontSize: 20,
-                                                                fontWeight: FontWeight.bold,
-                                                              ),
-                                                            ),
-                                                          ),
-
-                                                          const SizedBox(height: 10),
-
-                                                          // Nota de Crosswinds Limits
-                                                          Expanded(
-                                                            child: ScrollConfiguration(
-                                                              behavior: ScrollConfiguration.of(context).copyWith(
-                                                                scrollbars: false,
-                                                              ),
-                                                              child: SingleChildScrollView(
-                                                                child: crosswindsComment != null &&
-                                                                        crosswindsComment!.trim().isNotEmpty
-                                                                    ? Column(
-                                                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                                                        children: [
-                                                                          const Divider(
-                                                                            color: AppColors.cancelPriButBrDark,
-                                                                          ),
-                                                                          Padding(
-                                                                            padding: const EdgeInsets.symmetric(
-                                                                              vertical: 12.0,
-                                                                            ),
-                                                                            child: Text(
-                                                                              crosswindsComment!.trim(),
-                                                                              textAlign: TextAlign.justify,
-                                                                              style: const TextStyle(
-                                                                                color: AppColors.white,
-                                                                                fontSize: 16.5,
-                                                                              ),
-                                                                            ),
-                                                                          ),
-                                                                          const Divider(
-                                                                            color: AppColors.cancelPriButBrDark,
-                                                                          ),
-                                                                        ],
-                                                                      )
-                                                                    : const SizedBox.shrink(),
-                                                              ),
-                                                            ),
-                                                          ),
-                                                          
-                                                          const SizedBox(height: 20),
-
-                                                          // Boton para regresar
-                                                          Center(
-                                                            child: ElevatedButton(
-                                                              onPressed: () => Navigator.of(context).pop(),
-                                                              style: ElevatedButton.styleFrom(
-                                                                backgroundColor: AppColors.black,
-                                                                foregroundColor: AppColors.iconDark,
-                                                                minimumSize: const Size(140, 48),
-                                                                shape: RoundedRectangleBorder(
-                                                                  borderRadius: BorderRadius.circular(10),
-                                                                  side: const BorderSide(
-                                                                    color: AppColors.activeColor,
-                                                                    width: 1,
-                                                                  ),
-                                                                ),
-                                                                elevation: 4,
-                                                              ),
-                                                              child: const Text(
-                                                                'OK',
-                                                                style: TextStyle(
-                                                                  color: AppColors.white,
-                                                                  fontSize: 16.5,
-                                                                  fontWeight: FontWeight.bold,
-                                                                ),
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    ),
-                                                  );
-                                                },
-                                              );
-                                            },
-                                            borderRadius: BorderRadius.circular(20),
-                                            child: const Padding(
-                                              padding: EdgeInsets.all(3),
-                                              child: Icon(
-                                                Icons.info_outline,
-                                                color: AppColors.activeColor,
-                                                size: 25,
-                                              ),
-                                            ),
-                                          )
-                                        ],                                                                                
-                                      ],
-                                    ),
-
-                                    const SizedBox(height: 8),
-
-                                    Row(
-                                      children: [
-                                        Row(
-                                          children: [
-                                            SizedBox(
-                                              width: orientation ? 135 : 110,
-                                              height: 40,
-                                              child: Builder(
-                                                builder: (context) {
-                                                  final String
-                                                  selectedWindValue =
-                                                      windDirection.isNotEmpty
-                                                      ? (windDirection.contains(
-                                                              selectedWind,
-                                                            )
-                                                            ? selectedWind!
-                                                            : windDirection
-                                                                  .first)
-                                                      : '000';
-                                                  return DropdownButtonFormField2<
-                                                    String
-                                                  >(
-                                                    isExpanded: true,
-                                                    value: selectedWindValue,
-
-                                                    decoration: InputDecoration(
-                                                      filled: true,
-                                                      fillColor:
-                                                          AppColors.placeholder,
-
-                                                      enabledBorder:
-                                                          OutlineInputBorder(
-                                                            borderSide: BorderSide(
-                                                              color: AppColors
-                                                                  .placeholder,
-                                                              width: 1,
-                                                            ),
-                                                            borderRadius:
-                                                                BorderRadius.circular(
-                                                                  8.0,
-                                                                ),
-                                                          ),
-
-                                                      focusedBorder:
-                                                          OutlineInputBorder(
-                                                            borderSide: BorderSide(
-                                                              color: AppColors
-                                                                  .placeholder,
-                                                              width: 1,
-                                                            ),
-                                                            borderRadius:
-                                                                BorderRadius.circular(
-                                                                  8.0,
-                                                                ),
-                                                          ),
-
-                                                      border: OutlineInputBorder(
-                                                        borderRadius:
-                                                            BorderRadius.circular(
-                                                              8.0,
-                                                            ),
-                                                      ),
-
-                                                      contentPadding:
-                                                           EdgeInsets.zero,
-                                                    ),
-
-                                                    hint: Center(
-                                                      child: Text(
-                                                        selectedWindValue,
-                                                        textAlign:
-                                                            TextAlign.center,
-                                                        style: TextStyle(
-                                                          color: AppColors
-                                                              .iconDark,
-                                                          fontSize: 16.5,
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                        ),
-                                                        overflow: TextOverflow
-                                                            .ellipsis,
-                                                      ),
-                                                    ),
-
-                                                    iconStyleData:
-                                                        const IconStyleData(
-                                                          icon:
-                                                              SizedBox.shrink(),
-                                                        ),
-
-                                                    dropdownStyleData: DropdownStyleData(
-                                                      offset:  Offset(
-                                                        0,
-                                                        -5,
-                                                      ),
-                                                      maxHeight: 350,
-                                                      scrollbarTheme:
-                                                          ScrollbarThemeData(
-                                                            thickness:
-                                                                WidgetStateProperty.all(
-                                                                  0,
-                                                                ),
-                                                          ),
-
-                                                      decoration: BoxDecoration(
-                                                        color: AppColors
-                                                            .backgroundDark
-                                                            .withOpacity(0.9),
-                                                        borderRadius:
-                                                            BorderRadius.circular(
-                                                              5,
-                                                            ),
-                                                        border: Border.all(
-                                                          color: AppColors.white
-                                                              .withOpacity(0.8),
-                                                          width: 1.5,
-                                                        ),
-                                                      ),
-                                                    ),
-
-                                                    buttonStyleData:
-                                                        const ButtonStyleData(
-                                                          padding:
-                                                              EdgeInsets.zero,
-                                                          
-                                                        ),
-
-                                                    selectedItemBuilder:
-                                                        (BuildContext context) {
-                                                          return windDirection.map((
-                                                            String value,
-                                                          ) {
-                                                            return Center(
-                                                              child: Text(
-                                                                value,
-                                                                textAlign:
-                                                                    TextAlign
-                                                                        .center,
-                                                                style: TextStyle(
-                                                                  color: AppColors
-                                                                      .iconDark,
-                                                                  fontSize: 18,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .bold,
-                                                                ),
-                                                                overflow:
-                                                                    TextOverflow
-                                                                        .ellipsis,
-                                                              ),
-                                                            );
-                                                          }).toList();
-                                                        },
-
-                                                    items: windDirection.map((
-                                                      String value,
-                                                    ) {
-                                                      final bool isSelected =
-                                                          value ==
-                                                          selectedWindValue;
-                                                      return DropdownMenuItem<
-                                                        String
-                                                      >(
-                                                        value: value,
-                                                        child: Container(
-                                                          width:
-                                                              double.infinity,
-                                                          padding:
-                                                              const EdgeInsets.symmetric(
-                                                                horizontal: 12,
-                                                                vertical: 10,
-                                                              ),
-                                                          decoration: BoxDecoration(
-                                                            color: isSelected
-                                                                ? AppColors
-                                                                      .white
-                                                                      .withOpacity(
-                                                                        0.15,
-                                                                      )
-                                                                : Colors
-                                                                      .transparent,
-                                                            borderRadius:
-                                                                BorderRadius.circular(
-                                                                  4,
-                                                                ),
-                                                          ),
-                                                          child: Center(
-                                                            child: Text(
-                                                              value,
-                                                              textAlign:
-                                                                  TextAlign
-                                                                      .center,
-                                                              style: TextStyle(
-                                                                color: AppColors
-                                                                    .textColor2Dark,
-                                                                fontSize: 16.5,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .bold,
-                                                              ),
-                                                              overflow:
-                                                                  TextOverflow
-                                                                      .ellipsis,
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      );
-                                                    }).toList(),
-
-                                                    onChanged: (newValue) {
-                                                      if (newValue == null)
-                                                        return;
-
-                                                      setState(() {
-                                                        selectedWind = newValue;
-
-                                                        windValues =
-                                                            Calculatewind(
-                                                              rwyidRef: rwyId,
-                                                              windRef:
-                                                                  windValue,
-                                                              windpickerRef:
-                                                                  selectedWind,
-                                                              operation: '',
-                                                            )();
-
-                                                        windValue =
-                                                            windValues?[0];
-                                                        headtail =
-                                                            windValues?[1];
-                                                        crosswind =
-                                                            windValues?[2];
-
-                                                        updateOpld();
-                                                      });
-                                                    },
-                                                  );
-                                                },
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                        const SizedBox(width: 10.0),
-                                        Text(
-                                          '/',
-                                          style: TextStyle(
-                                            color: AppColors.white,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                        const SizedBox(width: 10.0),
-                                        
-                                        Text(
-                                          '$windValue ${AppStrings.kt}',
-                                          style: TextStyle(
-                                            color: AppColors.placeholderDark,
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 16.5,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    const SizedBox(height: 8),
-                                    Row(
-                                      children: [
-                                        Text(
-                                          headtailValue >= 0
-                                              ? '$headtailValue  ${AppStrings.kthwc}'
-                                              : '$headtailValue  ${AppStrings.kttwc}',
-                                          style: TextStyle(
-                                            fontSize: 16.5,
-                                            color: (num.tryParse((headtail ?? '0').replaceAll('−', '-',).replaceAll('–', '-',),) ?? 0) < (num.tryParse((windMin ?? '-15').replaceAll('−','-',).replaceAll('–','-',),) ?? -15)
-                                                ? AppColors.errorColor
-                                                : AppColors.textColor3Dark,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                        const SizedBox(width: 10.0),
-                                        Text(
-                                          '/',
-                                          style: TextStyle(
-                                            color: AppColors.white,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                        const SizedBox(width: 10.0),
-                                        Text(
-                                          '${(double.tryParse(crosswind ?? '0') ?? 0).round()} ${AppStrings.ktCwc}',
-                                          style: TextStyle(
-                                            fontSize: 16.5,
-                                            color: crosswindValue.abs() > (num.tryParse((crosswindsLimits[selectedCondition] ?? '33').replaceAll('−','-',).replaceAll('–','-',),) ?? 33).abs()
-                                                ? AppColors.activeColor
-                                                : AppColors.textColor3Dark,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              ),
-
-                              Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  ElevatedButton(
-                                    onPressed: () {
-                                      setState(() {
-                                        windValues = Calculatewind(
-                                          rwyidRef: rwyId,
-                                          windRef: windValue,
-                                          windpickerRef: selectedWind,
-                                          operation: 'decrement',
-                                        )();
-                                        windValue = windValues?[0];
-                                        headtail = windValues?[1];
-                                        crosswind = windValues?[2];
-                                        updateOpld();
-                                      });
-                                    },
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: AppColors.grey,
-                                      foregroundColor: AppColors.iconDark,
-                                      minimumSize: const Size(70, 70),
-                                      padding: EdgeInsets.zero,
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(
-                                          8.0,
-                                        ),
-                                        side: const BorderSide(
-                                          color: AppColors.white,
-                                          width: 1.0,
-                                        ),
-                                      ),
-                                    ),
-                                    child: Icon(
-                                      Icons.remove,
-                                      color: AppColors.iconDark,
-                                      size: 30,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                  const SizedBox(width: 8.0),
-                                  ElevatedButton(
-                                    onPressed: () {
-                                      setState(() {
-                                        windValues = Calculatewind(
-                                          rwyidRef: rwyId,
-                                          windRef: windValue,
-                                          windpickerRef: selectedWind,
-                                          operation: 'increment',
-                                        )();
-                                        windValue = windValues?[0];
-                                        headtail = windValues?[1];
-                                        crosswind = windValues?[2];
-                                        updateOpld();
-                                      });
-                                    },
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: AppColors.grey,
-                                      foregroundColor: AppColors.iconDark,
-                                      minimumSize: const Size(70, 70),
-                                      padding: EdgeInsets.zero,
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(
-                                          8.0,
-                                        ),
-                                        side: const BorderSide(
-                                          color: AppColors.white,
-                                          width: 1.0,
-                                        ),
-                                      ),
-                                    ),
-                                    child: Icon(
-                                      Icons.add,
-                                      color: AppColors.iconDark,
-                                      size: 30,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
+                        ),  
                       ),
 
                       //Header de Performance Results, si es XXX, solo se muestra el resultado del OpLD
