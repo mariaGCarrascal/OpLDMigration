@@ -81,9 +81,9 @@ class _HomePageState extends State<HomePage> {
       return;
     }
  
-    elevation = elevations[selectedAirportType] ?? "Unknown".trim();
-    qnh = refQNH[selectedAirportType] ?? "Unknown".trim();
-    temperature = refTemp[selectedAirportType] ?? "Unknown".trim();
+    elevation = elevations[selectedAirportType] ?? "0".trim();
+    qnh = refQNH[selectedAirportType] ?? "0".trim();
+    temperature = refTemp[selectedAirportType] ?? "0".trim();
     refRunway = Airportdata.airportRunwayData(selectedAirportType);
     if (selectedLandingType == 'Non-Normal' && _flapsNon.isNotEmpty) {
       selectedConfigurationFlap = _flapsNon.first;

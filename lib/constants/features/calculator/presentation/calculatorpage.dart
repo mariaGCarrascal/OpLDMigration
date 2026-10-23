@@ -241,7 +241,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
         configurationRef: selectedConfiguration,
       )();
     }
-    
+
     listaComments = Loadcomments(
       aircraftRef: selectedAircraft,
       landingRef: selectedLanding,
@@ -271,8 +271,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
       altitudMax = double.parse(defaultAircraft?[10] ?? '0');
       sliderMinAltitud = (altitudMin! / 1000).ceil() * 1000;
       sliderMaxAltitud = (altitudMax! / 1000).floor() * 1000;
-      _divisionsAltitud = ((sliderMaxAltitud - sliderMinAltitud) / 1000)
-          .round();
+      _divisionsAltitud = ((sliderMaxAltitud - sliderMinAltitud) / 1000).round();
       _currentElevation = double.parse(defaultAircraft?[18] ?? '0');
       altitud = Calculatealtitud(
         elevationRef: _currentElevation.toString(),
