@@ -13,51 +13,50 @@ class Loadvrefcondition {
   });
 
   String? call() {
-    final XmlDocument document = OpLdService.instance.document;
-    final XmlDocument xmlDocument = document;
-    String? vrefCond;
+    final XmlDocument xmlDocument = OpLdService.instance.document;
     final String? selectedAircraftType = aircraftRef;
     final String? selectedLandingType = landingRef;
     final String? selectedConfigurationType = configurationRef;
 
-
-    if (aircraftRef == null ||
-        landingRef == null ||
-        configurationRef == null) {
+    if (selectedAircraftType == null ||
+        selectedLandingType == null ||
+        selectedConfigurationType == null) {
       return 'NO';
     }
 
     try {
-      Iterable<XmlElement> target = [];
+      final aircraft = xmlDocument
+          .findAllElements('aircraft')
+          .where(
+            (a) =>
+                a.getAttribute('id') == selectedAircraftType ||
+                a.getAttribute('label') == selectedAircraftType,
+          ).firstOrNull;
 
-      if (selectedAircraftType != null && selectedLandingType != null) {
-        target = xmlDocument
-            .findAllElements('aircraft')
-            .where(
-              (a) =>
-                  a.getAttribute('id') == selectedAircraftType ||
-                  a.getAttribute('label') == selectedAircraftType,
-            )
-            .expand((l) => l.findAllElements('landingCondition'))
-            .where(
-              (lc) =>
-                  lc.getAttribute('label')?.toUpperCase() ==
-                  selectedLandingType.toUpperCase(),
-            )
-            .expand((f) => f.findAllElements('nonNormalConfiguration'));
-      }
+      if (aircraft == null) return 'NO';
 
+      final landingCondition = aircraft
+          .findElements('landingCondition')
+          .where(
+            (lc) =>
+                lc.getAttribute('label')?.toUpperCase() ==
+                selectedLandingType.toUpperCase(),
+          ).firstOrNull;
 
-      if (selectedConfigurationType != null) {
-        vrefCond = target
-            .where((f) => f.getAttribute('id') == selectedConfigurationType)
-            .expand((f) => f.findAllElements('NonNrmlVREFAdjustmentsExist_YESorNO'))
-            .map((c) => c.innerText.trim())
-            .where((text) => text.isNotEmpty)
-            .firstOrNull;
-      }
+      if (landingCondition == null) return 'NO';
 
-      return vrefCond;
+      final nonNormalConfig = landingCondition
+          .findElements('nonNormalConfiguration')
+          .where((f) => f.getAttribute('id') == selectedConfigurationType).firstOrNull;
+
+      if (nonNormalConfig == null) return 'NO';
+
+      final vrefNode = nonNormalConfig
+          .findElements('NonNrmlVREFAdjustmentsExist_YESorNO').firstOrNull;
+
+      if (vrefNode == null) return 'NO';
+
+      return vrefNode.innerText.trim();
     } catch (e) {
       return 'NO';
     }

@@ -3,61 +3,47 @@ import 'package:flutter_application_5/service_dataxml/opldservice.dart';
 
 class Loadconfig {
   final String? aircraftRef;
-  final String? landingRef;
-  final String? configurationRef;
 
   Loadconfig({
-    this.aircraftRef,
-    this.landingRef,
-    this.configurationRef,
+    this.aircraftRef
   });
 
-  List<String>? call() {
+  List<String> call() {
     final XmlDocument document = OpLdService.instance.document;
     final XmlDocument xmlDocument = document;
-    List<String>? flapsNon;
+    List<String> configurationTypes = [];
     final String? selectedAircraftType = aircraftRef;
-    final String? selectedLandingType = landingRef;
-    final String? selectedConfigurationType = configurationRef;
 
-    if (aircraftRef == null ||
-        landingRef == null ||
-        configurationRef == null) {
-      return null;
+    if (aircraftRef == null) {
+      return configurationTypes = [];
     }
 
-    try {
-      Iterable<XmlElement> targetFlap = [];
-  
-      if (selectedAircraftType != null && selectedLandingType != null) {
-        targetFlap = xmlDocument
-            .findAllElements('aircraft')
-            .where(
-              (a) =>
-                  a.getAttribute('id') == selectedAircraftType ||
-                  a.getAttribute('label') == selectedAircraftType,
-            )
-            .expand((l) => l.findAllElements('landingCondition'))
-            .where(
-              (lc) =>
-                  lc.getAttribute('label')?.toUpperCase() ==
-                  selectedLandingType.toUpperCase(),
-            )
-            .expand((f) => f.findAllElements('nonNormalConfiguration'));
-      }
-  
-      if (selectedConfigurationType != null) {
-        flapsNon = targetFlap
-            .where((f) => f.getAttribute('id') == selectedConfigurationType)
-            .map((e) => e.getAttribute('flapLabel'))
-            .where((label) => label != null)
-            .cast<String>()
-            .toList();
-      }
+     try {
+      final aircraft = xmlDocument
+          .findAllElements('aircraft')
+          .where(
+            (a) =>
+                a.getAttribute('id') == selectedAircraftType ||
+                a.getAttribute('label') == selectedAircraftType,
+          )
+          .firstOrNull;
 
-      return flapsNon;
+
+      final nonNormalLanding = aircraft!
+          .findElements('landingCondition')
+          .where((lc) => lc.getAttribute('label')?.toUpperCase() == 'NON-NORMAL')
+          .firstOrNull;
+
+      configurationTypes = nonNormalLanding!
+          .findElements('nonNormalConfiguration')
+          .map((e) => e.getAttribute('id'))
+          .whereType<String>()
+          .toSet()
+          .toList();
+
+      return configurationTypes;
     } catch (e) {
-      return null;
+      return configurationTypes = [];
     }
   }
 }

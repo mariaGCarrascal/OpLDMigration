@@ -15,57 +15,57 @@ class Searchautobrakedefault {
   });
 
   String? call() {
-    final XmlDocument document = OpLdService.instance.document;
-    final XmlDocument xmlDocument = document;
-    String? autobrake;
+    final XmlDocument xmlDocument = OpLdService.instance.document;
     final String? selectedAircraftType = aircraftRef;
     final String? selectedLandingType = landingRef;
     final String? selectedConfigurationType = configurationRef;
     final String? selectedCondition = conditionRef;
 
-    if (aircraftRef == null ||
-        landingRef == null ||
-        configurationRef == null ||
-        conditionRef == null) {
+    if (selectedAircraftType == null ||
+        selectedLandingType == null ||
+        selectedConfigurationType == null ||
+        selectedCondition == null) {
       return null;
     }
 
     try {
-      Iterable<XmlElement> target = [];
+      final aircraft = xmlDocument
+          .findAllElements('aircraft')
+          .where(
+            (a) =>
+                a.getAttribute('id') == selectedAircraftType ||
+                a.getAttribute('label') == selectedAircraftType,
+          ).firstOrNull;
 
-      if (selectedAircraftType != null && selectedLandingType != null) {
-        target = xmlDocument
-            .findAllElements('aircraft')
-            .where(
-              (a) =>
-                  a.getAttribute('id') == selectedAircraftType ||
-                  a.getAttribute('label') == selectedAircraftType,
-            )
-            .expand((l) => l.findAllElements('landingCondition'))
-            .where(
-              (lc) =>
-                  lc.getAttribute('label')?.toUpperCase() ==
-                  selectedLandingType.toUpperCase(),
-            )
-            .expand((f) => f.findAllElements('nonNormalConfiguration'));
-      }
+      if (aircraft == null) return null;
 
+      final landingCondition = aircraft
+          .findElements('landingCondition')
+          .where(
+            (lc) =>
+                lc.getAttribute('label')?.toUpperCase() ==
+                selectedLandingType.toUpperCase(),
+          ).firstOrNull;
 
-      if (selectedConfigurationType != null) {
-        autobrake = target
-            .where((f) => f.getAttribute('id') == selectedConfigurationType)
-            .expand((c) => c.findAllElements('reportedBrakingAction'))
-            .where(
-              (lc) =>
-                  lc.getAttribute('label')?.toUpperCase() ==
-                  selectedCondition!.toUpperCase(),
-            )
-            .map((c) => c.getAttribute('default_id_forNNautobrakeConfigSetting'))
-            .whereType<String>()
-            .firstOrNull;
-      }
+      if (landingCondition == null) return null;
 
-      return autobrake;
+      final nonNormalConfig = landingCondition
+          .findElements('nonNormalConfiguration')
+          .where((f) => f.getAttribute('id') == selectedConfigurationType).firstOrNull;
+
+      if (nonNormalConfig == null) return null;
+
+      final brakingAction = nonNormalConfig
+          .findElements('reportedBrakingAction')
+          .where(
+            (lc) =>
+                lc.getAttribute('label')?.toUpperCase() ==
+                selectedCondition.toUpperCase(),
+          ).firstOrNull;
+
+      if (brakingAction == null) return null;
+
+      return brakingAction.getAttribute('default_id_forNNautobrakeConfigSetting');
     } catch (e) {
       return null;
     }

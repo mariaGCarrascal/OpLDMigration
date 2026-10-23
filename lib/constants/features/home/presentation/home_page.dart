@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_5/constants/colors/app_colors.dart';
+import 'package:flutter_application_5/constants/features/home/functions/loadConfig.dart';
+import 'package:flutter_application_5/constants/features/home/functions/searchflaps.dart';
 import 'package:flutter_application_5/constants/strings/app_strings.dart';
 import 'package:xml/xml.dart';
 import 'package:flutter_application_5/constants/features/home/data/airportdata.dart';
@@ -41,7 +43,6 @@ class _HomePageState extends State<HomePage> {
   Map<String, String> refQNH = Airportdata.airportRefQNH;
   Map<String, String> refTemp = Airportdata.airportAverageRefTemp;
   Map<String, List<String>> refRunway = {};
-  XmlDocument? _xmlDocument;
   //Variables clave
   String? elevation;
   String? qnh;
@@ -65,87 +66,24 @@ class _HomePageState extends State<HomePage> {
     final aircraftElements = document.findAllElements('aircraft');
  
     setState(() {
-      _xmlDocument = document;
       aircraftTypes = aircraftElements
           .map((element) => element.getAttribute('label') ?? '')
           .where((label) => label.isNotEmpty)
           .toList();
  
-      loadConfig();
- 
       _isReady = true;
     });
   }
  
-  void searchFlaps() {
-    Iterable<XmlElement> targetFlap = [];
- 
-    if (selectedAircraftType != null && selectedLandingType != null) {
-      targetFlap = _xmlDocument!
-          .findAllElements('aircraft')
-          .where(
-            (a) =>
-                a.getAttribute('id') == selectedAircraftType ||
-                a.getAttribute('label') == selectedAircraftType,
-          )
-          .expand((l) => l.findAllElements('landingCondition'))
-          .where(
-            (lc) =>
-                lc.getAttribute('label')?.toUpperCase() ==
-                selectedLandingType?.toUpperCase(),
-          )
-          .expand((f) => f.findAllElements('nonNormalConfiguration'));
-    }
- 
-    if (selectedConfigurationType != null) {
-      _flapsNon = targetFlap
-          .where((f) => f.getAttribute('id') == selectedConfigurationType)
-          .map((e) => e.getAttribute('flapLabel'))
-          .where((label) => label != null)
-          .cast<String>()
-          .toList();
-    }
-  }
- 
-  void loadConfig() {
-    if (_xmlDocument == null || selectedAircraftType == null) {
-      return;
-    }
- 
-    final targetConfig = _xmlDocument!
-        .findAllElements('aircraft')
-        .where(
-          (a) =>
-              a.getAttribute('id') == selectedAircraftType ||
-              a.getAttribute('label') == selectedAircraftType,
-        )
-        .expand((aircraft) => aircraft.findAllElements('landingCondition'))
-        .where((lc) => lc.getAttribute('label')?.toUpperCase() == 'NON-NORMAL')
-        .expand((lc) => lc.findAllElements('nonNormalConfiguration'))
-        .map((e) => e.getAttribute('id'))
-        .whereType<String>()
-        .toSet()
-        .toList();
- 
-    configurationTypes = targetConfig;
- 
-    if (configurationTypes.isNotEmpty) {
-      selectedConfigurationType = configurationTypes.first;
-      searchFlaps();
-    } else {
-      selectedConfigurationType = null;
-      _flapsNon.clear();
-    }
-  }
- 
+
   void _onGoPressed() async {
     if (!_isReady) {
       return;
     }
  
-    elevation = elevations[selectedAirportType] ?? "Unknown";
-    qnh = refQNH[selectedAirportType] ?? "Unknown";
-    temperature = refTemp[selectedAirportType] ?? "Unknown";
+    elevation = elevations[selectedAirportType] ?? "Unknown".trim();
+    qnh = refQNH[selectedAirportType] ?? "Unknown".trim();
+    temperature = refTemp[selectedAirportType] ?? "Unknown".trim();
     refRunway = Airportdata.airportRunwayData(selectedAirportType);
     if (selectedLandingType == 'Non-Normal' && _flapsNon.isNotEmpty) {
       selectedConfigurationFlap = _flapsNon.first;
@@ -323,14 +261,21 @@ class _HomePageState extends State<HomePage> {
                       onChanged: (newValue) {
                         setState(() {
                           selectedAircraftType = newValue;
-                          selectedConfigurationType = null;
-                          selectedConfigurationFlap = null;
+                          selectedConfigurationType = '';
+                          selectedConfigurationFlap = '';
                           _flapsNon.clear();
-                          loadConfig();
                         });
 
                         if (selectedLandingType == 'Non-Normal') {
-                          loadConfig();
+                          configurationTypes = Loadconfig(aircraftRef: selectedAircraftType)();
+
+                          if (configurationTypes.isNotEmpty) {
+                            selectedConfigurationType = configurationTypes.first;
+                            _flapsNon =  Searchflaps(aircraftRef: selectedAircraftType, landingRef: selectedLandingType, configurationRef: selectedConfigurationType)();
+                          } else {
+                            selectedConfigurationType = '';
+                            _flapsNon.clear();
+                          }
                         }
                       },
                     ),
@@ -472,7 +417,14 @@ class _HomePageState extends State<HomePage> {
                         });
 
                         if (newValue == 'Non-Normal') {
-                          loadConfig();
+                          configurationTypes = Loadconfig(aircraftRef: selectedAircraftType)();
+                          if (configurationTypes.isNotEmpty) {
+                            selectedConfigurationType = configurationTypes.first;
+                            _flapsNon =  Searchflaps(aircraftRef: selectedAircraftType, landingRef: selectedLandingType, configurationRef: selectedConfigurationType)();
+                          } else {
+                            selectedConfigurationType = null;
+                            _flapsNon.clear();
+                          }
                         }
                       },
                     ),
@@ -610,7 +562,7 @@ class _HomePageState extends State<HomePage> {
                         onChanged: (newValue) {
                           setState(() {
                             selectedConfigurationType = newValue;
-                            searchFlaps();
+                            _flapsNon =  Searchflaps(aircraftRef: selectedAircraftType, landingRef: selectedLandingType, configurationRef: selectedConfigurationType)();
                           });
                         },
                       ),                                                         

@@ -21,6 +21,8 @@ import 'package:flutter_application_5/constants/features/calculator/fuctions/loa
 import 'package:flutter_application_5/constants/features/calculator/fuctions/loadreversers.dart';
 import 'package:flutter_application_5/constants/features/calculator/fuctions/loadvrefcondition.dart';
 import 'package:flutter_application_5/constants/features/calculator/fuctions/loadvreftext.dart';
+import 'package:flutter_application_5/constants/features/calculator/fuctions/metar/connectivityservice.dart';
+import 'package:flutter_application_5/constants/features/calculator/fuctions/metar/internetalert.dart';
 import 'package:flutter_application_5/constants/features/calculator/fuctions/metar/remotedatasource.dart';
 import 'package:flutter_application_5/constants/features/calculator/fuctions/opldcolorasignator.dart';
 import 'package:flutter_application_5/constants/features/calculator/fuctions/searchautobrakedefault.dart';
@@ -33,7 +35,6 @@ import 'package:flutter/services.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:http/http.dart' as http;
-import 'package:skeletonizer/skeletonizer.dart';
 
 class CalculatorPage extends StatefulWidget {
   final String? aircraft;
@@ -117,6 +118,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
   String? crosswindsComment;
   bool _isExpanded = false;
   bool _ispresseded = false;
+  bool? wifiCheck;
   final remoteDataSource = Remotedatasource(client: http.Client());
   //Variables de listas y Maps de los DropDownlists
   Map<String, String> baseDetails = {};
@@ -239,23 +241,25 @@ class _CalculatorPageState extends State<CalculatorPage> {
         configurationRef: selectedConfiguration,
       )();
     }
+    
     listaComments = Loadcomments(
       aircraftRef: selectedAircraft,
       landingRef: selectedLanding,
       configurationRef: selectedConfiguration,
       flapRef: selectedFlaps,
     )();
+
     if (selectedAirport != 'XXX') {
       selectedAirportElevation = widget.airportEl;
       selectedAirportTemperature = widget.airportTemp;
       selectedAirportRunway = widget.airportRunway;
       selectedRunway = selectedAirportRunway?.keys.first;
       selectedSlopeValues = selectedAirportRunway?[selectedRunway];
-      rwyId = selectedSlopeValues?[0];
-      rwyLda = selectedSlopeValues?[1];
-      rwySlope = selectedSlopeValues?[2];
-      rwyFactor = selectedSlopeValues?[3];
-      rwyAdditive = selectedSlopeValues?[4];
+      rwyId = selectedSlopeValues?[0].trim();
+      rwyLda = selectedSlopeValues?[1].trim();
+      rwySlope = selectedSlopeValues?[2].trim();
+      rwyFactor = selectedSlopeValues?[3].trim();
+      rwyAdditive = selectedSlopeValues?[4].trim();
       netLDA = rwyLda;
       altitud = Calculatealtitud(
         elevationRef: selectedAirportElevation,
@@ -464,23 +468,48 @@ class _CalculatorPageState extends State<CalculatorPage> {
                       _ispresseded = true;
                     });
 
-                    metarResult = await remoteDataSource.getMetar('$selectedAirport');
+                    wifiCheck = await ConnectivityService().checkInitialConnectivity();
 
-                    if (!mounted) return;
+                    if(wifiCheck == true) {
 
-                    setState(() {
-                      selectedAirportQNH = metarResult['QNH'];
-                      selectedAirportTemperature = metarResult['OAT'];
-                      selectedWind = metarResult['WIND'];
-                      windValue = metarResult['NODE'];
-                      altitud = Calculatealtitud( elevationRef: selectedAirportElevation, qnhRef: selectedAirportQNH)();
-                      isa = Calculateisa(elevationRef: altitud, temperatureRef: selectedAirportTemperature)();
-                      windValues = Calculatewind(rwyidRef: rwyId, windRef: windValue, windpickerRef: selectedWind, operation: '')();
-                      windValue = windValues?[0];
-                      headtail = windValues?[1];
-                      crosswind = windValues?[2];
-                      updateOpld();
-                    });
+                      metarResult = await remoteDataSource.getMetar('$selectedAirport');
+
+                      if (!mounted) return;
+
+                      setState(() {
+                        selectedAirportQNH = metarResult['QNH'];
+                        selectedAirportTemperature = metarResult['OAT'];
+                        selectedWind = metarResult['WIND'];
+                        windValue = metarResult['NODE'];
+                        altitud = Calculatealtitud( elevationRef: selectedAirportElevation, qnhRef: selectedAirportQNH)();
+                        isa = Calculateisa(elevationRef: altitud, temperatureRef: selectedAirportTemperature)();
+                        windValues = Calculatewind(rwyidRef: rwyId, windRef: windValue, windpickerRef: selectedWind, operation: '')();
+                        windValue = windValues?[0];
+                        headtail = windValues?[1];
+                        crosswind = windValues?[2];
+                        updateOpld();
+                      });
+
+                    } else {
+                      if (!context.mounted) return;
+
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          elevation: 0,
+                          behavior: SnackBarBehavior.floating,
+                          backgroundColor: Colors.transparent,
+                          duration: const Duration(seconds: 3),
+                          content: Card(
+                            color: AppColors.backgroundDark,
+                            elevation: 6,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(25),
+                            ),
+                            child: const Internetalert(),
+                          ),
+                        ),
+                      );
+                    }
 
                     if (mounted) {
                       setState(() {
@@ -3530,7 +3559,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                           ),
                         ),
                       ),
-                      
+
                       //Campo de WIND
                       Customskeletonizer(
                       isLoading: _ispresseded,

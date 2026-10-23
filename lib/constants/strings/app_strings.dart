@@ -37,6 +37,7 @@ class AppStrings {
   static const String cautionMessage = "CAUTION: VERIFY AUTOBRAKE SETTING";
   static const String crosswindTitle = "Landing Crosswind Limitations";
   static const String metar = "METAR";
+  static const String nowifiMessage = "No internet connection. Unable to retrieve current METAR data.";
   
   static const String ft = "ft";
   static const String lb = "Lb";

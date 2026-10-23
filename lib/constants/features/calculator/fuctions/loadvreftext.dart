@@ -13,50 +13,45 @@ class Loadvreftext {
   });
 
   String? call() {
-    final XmlDocument document = OpLdService.instance.document;
-    final XmlDocument xmlDocument = document;
-     String? vref;
+    final XmlDocument xmlDocument = OpLdService.instance.document;
     final String? selectedAircraftType = aircraftRef;
     final String? selectedLandingType = landingRef;
     final String? selectedConfigurationType = configurationRef;
 
-
-    if (aircraftRef == null ||
-        landingRef == null ||
-        configurationRef == null) {
+    if (selectedAircraftType == null ||
+        selectedLandingType == null ||
+        selectedConfigurationType == null) {
       return null;
     }
 
     try {
-      Iterable<XmlElement> target = [];
+      final aircraft = xmlDocument
+          .findAllElements('aircraft')
+          .where(
+            (a) =>
+                a.getAttribute('id') == selectedAircraftType ||
+                a.getAttribute('label') == selectedAircraftType,
+          ).firstOrNull;
 
-      if (selectedAircraftType != null && selectedLandingType != null) {
-        target = xmlDocument
-            .findAllElements('aircraft')
-            .where(
-              (a) =>
-                  a.getAttribute('id') == selectedAircraftType ||
-                  a.getAttribute('label') == selectedAircraftType,
-            )
-            .expand((l) => l.findAllElements('landingCondition'))
-            .where(
-              (lc) =>
-                  lc.getAttribute('label')?.toUpperCase() ==
-                  selectedLandingType.toUpperCase(),
-            )
-            .expand((f) => f.findAllElements('nonNormalConfiguration'));
-      }
+      if (aircraft == null) return null;
 
+      final landingCondition = aircraft
+          .findElements('landingCondition')
+          .where(
+            (lc) =>
+                lc.getAttribute('label')?.toUpperCase() ==
+                selectedLandingType.toUpperCase(),
+          ).firstOrNull;
 
-      if (selectedConfigurationType != null) {
-        vref = target
-            .where((f) => f.getAttribute('id') == selectedConfigurationType)
-            .map((c) => c.getAttribute('VrefLabel'))
-            .whereType<String>()
-            .firstOrNull;
-      }
+      if (landingCondition == null) return null;
 
-      return vref;
+      final nonNormalConfig = landingCondition
+          .findElements('nonNormalConfiguration')
+          .where((f) => f.getAttribute('id') == selectedConfigurationType).firstOrNull;
+
+      if (nonNormalConfig == null) return null;
+
+      return nonNormalConfig.getAttribute('VrefLabel');
     } catch (e) {
       return null;
     }
