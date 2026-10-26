@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_5/constants/colors/app_colors.dart';
 import 'package:flutter_application_5/constants/features/calculator/fuctions/calculateAltitud.dart';
@@ -60,6 +61,7 @@ class CalculatorPage extends StatefulWidget {
 
 class _CalculatorPageState extends State<CalculatorPage> {
   //Variables claves
+  Timer? _timer;
   String? checkAutobreak;
   String? _currentReduction;
   String? netLDA;
@@ -347,6 +349,12 @@ class _CalculatorPageState extends State<CalculatorPage> {
       altitudeRef: altitud, isaRef: isa, slopeRef: rwySlope, windRef: headtail, vrefRef: vRef)();
     remainingResult = ((double.tryParse(netLDA ?? '0') ?? 0) - (double.tryParse(opldResult ?? '0') ?? 0)).round().toString();
     colorResult = Opldcolorasignator(opldReference: opldResult, netldaReference: netLDA)();
+  }
+  
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose(); 
   }
 
   @override
@@ -1326,102 +1334,141 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                         ),
                                     ),
                                     const Spacer(),
-                                    ElevatedButton(
-                                      onPressed: () {
+                                    GestureDetector(
+                                      onTapDown: (_) {
                                         setState(() {
-                                          _currentElevation =
-                                              Calculateelevationincredecre(
-                                                elevationReference:
-                                                    _currentElevation,
-                                                minReference: altitudMin,
-                                                maxReference: altitudMax,
-                                                operation: 'decrement',
-                                              )();
+                                          _currentElevation = Calculateelevationincredecre(
+                                            elevationReference: _currentElevation,
+                                            minReference: altitudMin,
+                                            maxReference: altitudMax,
+                                            operation: 'decrement',
+                                          )();
                                           altitud = Calculatealtitud(
-                                            elevationRef: _currentElevation
-                                                .toString(),
+                                            elevationRef: _currentElevation.toString(),
                                             qnhRef: selectedAirportQNH,
                                           )();
                                           isa = Calculateisa(
                                             elevationRef: altitud,
-                                            temperatureRef:
-                                                selectedAirportTemperature,
+                                            temperatureRef: selectedAirportTemperature,
                                           )();
                                           updateOpld();
                                         });
+
+                                        _timer = Timer.periodic(const Duration(milliseconds: 150), (_) {
+                                          setState(() {
+                                            _currentElevation = Calculateelevationincredecre(
+                                              elevationReference: _currentElevation,
+                                              minReference: altitudMin,
+                                              maxReference: altitudMax,
+                                              operation: 'decrement',
+                                            )();
+                                            altitud = Calculatealtitud(
+                                              elevationRef: _currentElevation.toString(),
+                                              qnhRef: selectedAirportQNH,
+                                            )();
+                                            isa = Calculateisa(
+                                              elevationRef: altitud,
+                                              temperatureRef: selectedAirportTemperature,
+                                            )();
+                                            updateOpld();
+                                          });
+                                        });
                                       },
-                                      style: ElevatedButton.styleFrom(
-                                        backgroundColor: AppColors.grey,
-                                        foregroundColor: AppColors.iconDark,
-                                        minimumSize: const Size(70, 70),
-                                        padding: EdgeInsets.zero,
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(
-                                            8.0,
-                                          ),
-                                          side: const BorderSide(
-                                            color: AppColors.white,
-                                            width: 1.0,
+                                      onTapUp: (_) => _timer?.cancel(),
+                                      onTapCancel: () => _timer?.cancel(),
+                                      child: ElevatedButton(
+                                        onPressed: () {}, 
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: AppColors.grey,
+                                          foregroundColor: AppColors.iconDark,
+                                          minimumSize: const Size(70, 70),
+                                          padding: EdgeInsets.zero,
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(8.0),
+                                            side: const BorderSide(
+                                              color: AppColors.white,
+                                              width: 1.0,
+                                            ),
                                           ),
                                         ),
-                                      ),
-                                      child: Icon(
-                                        Icons.remove,
-                                        color: AppColors.iconDark,
-                                        size: 30,
-                                        fontWeight: FontWeight.bold,
+                                        child: Icon(
+                                          Icons.remove,
+                                          color: AppColors.iconDark,
+                                          size: 30,
+                                          fontWeight: FontWeight.bold,
+                                        ),
                                       ),
                                     ),
 
                                     const SizedBox(width: 8.0),
-                                    ElevatedButton(
-                                      onPressed: () {
+
+                                    GestureDetector(
+                                      onTapDown: (_) {
                                         setState(() {
-                                          _currentElevation =
-                                              Calculateelevationincredecre(
-                                                elevationReference:
-                                                    _currentElevation,
-                                                minReference: altitudMin,
-                                                maxReference: altitudMax,
-                                                operation: 'increment',
-                                              )();
+                                          _currentElevation = Calculateelevationincredecre(
+                                            elevationReference: _currentElevation,
+                                            minReference: altitudMin,
+                                            maxReference: altitudMax,
+                                            operation: 'increment',
+                                          )();
                                           altitud = Calculatealtitud(
-                                            elevationRef: _currentElevation
-                                                .toString(),
+                                            elevationRef: _currentElevation.toString(),
                                             qnhRef: selectedAirportQNH,
                                           )();
                                           isa = Calculateisa(
                                             elevationRef: altitud,
-                                            temperatureRef:
-                                                selectedAirportTemperature,
+                                            temperatureRef: selectedAirportTemperature,
                                           )();
                                           updateOpld();
                                         });
+
+                                        _timer = Timer.periodic(const Duration(milliseconds: 150), (_) {
+                                          setState(() {
+                                            _currentElevation = Calculateelevationincredecre(
+                                              elevationReference: _currentElevation,
+                                              minReference: altitudMin,
+                                              maxReference: altitudMax,
+                                              operation: 'increment',
+                                            )();
+                                            altitud = Calculatealtitud(
+                                              elevationRef: _currentElevation.toString(),
+                                              qnhRef: selectedAirportQNH,
+                                            )();
+                                            isa = Calculateisa(
+                                              elevationRef: altitud,
+                                              temperatureRef: selectedAirportTemperature,
+                                            )();
+                                            updateOpld();
+                                          });
+                                        });
                                       },
-                                      style: ElevatedButton.styleFrom(
-                                        backgroundColor: AppColors.grey,
-                                        foregroundColor: AppColors.iconDark,
-                                        minimumSize: const Size(70, 70),
-                                        padding: EdgeInsets.zero,
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(
-                                            8.0,
-                                          ),
-                                          side: const BorderSide(
-                                            color: AppColors.white,
-                                            width: 1.0,
+                                      onTapUp: (_) => _timer?.cancel(),
+                                      onTapCancel: () => _timer?.cancel(),
+                                      child: ElevatedButton(
+                                        onPressed: () {}, 
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: AppColors.grey,
+                                          foregroundColor: AppColors.iconDark,
+                                          minimumSize: const Size(70, 70),
+                                          padding: EdgeInsets.zero,
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(8.0),
+                                            side: const BorderSide(
+                                              color: AppColors.white,
+                                              width: 1.0,
+                                            ),
                                           ),
                                         ),
+                                        child: Icon(
+                                          Icons.add,
+                                          color: AppColors.iconDark,
+                                          size: 30,
+                                          fontWeight: FontWeight.bold,
+                                        ),
                                       ),
-                                      child: Icon(
-                                        Icons.add,
-                                        color: AppColors.iconDark,
-                                        size: 30,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
+                                    ),                                 
+                                                                      
                                   ] else ...[
-                                    //SizedBox(width: screenSize.width * 0.27),
                                     const Spacer(),
                                     Text(
                                         '$selectedAirportElevation ${AppStrings.ft}',
@@ -2789,7 +2836,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                           size: 30,
                                           fontWeight: FontWeight.bold,
                                         ),
-                                      ),
+                                      ),                                                                         
                                       const SizedBox(width: 8.0),
                                       ElevatedButton(
                                         onPressed: () {
