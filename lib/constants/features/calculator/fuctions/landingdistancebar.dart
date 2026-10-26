@@ -18,7 +18,8 @@ class Landingdistancebar extends StatelessWidget {
   Widget build(BuildContext context) {
     final double ldaValue = double.tryParse(lda ?? '') ?? 0;
     final double opLdValue = double.tryParse(opLd ?? '') ?? 0;
-    final double remainingValue = math.max(0.0, ldaValue - opLdValue);
+    final double remainingValue = ldaValue - opLdValue;
+    //final double remainingValue = math.max(0.0, ldaValue - opLdValue);
     final orientation = MediaQuery.of(context).orientation == Orientation.landscape;
 
     const double marginX = 12;      //Margen horizontal de la grafica de la pista
@@ -27,8 +28,8 @@ class Landingdistancebar extends StatelessWidget {
     const double runwayHeight = 90; //Altura del asfalto
 
     final double ratio = ldaValue > 0 ? (opLdValue / ldaValue) : 0.0;
-    final int opLdPercent = (ratio * 100).round().clamp(0, 100);
-    final int remainingPercent = (100 - opLdPercent).clamp(0, 100);
+    //final int opLdPercent = (ratio * 100).round().clamp(0, 100);
+    //final int remainingPercent = (100 - opLdPercent).clamp(0, 100);
 
     final Color barColor;
     if (opLdValue > ldaValue) {
@@ -78,10 +79,11 @@ class Landingdistancebar extends StatelessWidget {
                             ),
                           ),
                           Text(
-                            '${(opLdValue * 0.3048).round()}m | $opLdPercent%',
+                            '${(opLdValue * 0.3048).round()}m',
+                            //'${(opLdValue * 0.3048).round()}m | $opLdPercent%',
                             style: TextStyle(
                               color: barColor,
-                              fontSize: orientation ? 18 : 16,
+                              fontSize: orientation ? 18 : 16.5,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
@@ -98,29 +100,30 @@ class Landingdistancebar extends StatelessWidget {
                             'Remaining:',
                             style: TextStyle(
                               color: AppColors.white,
-                              fontSize: orientation ? 18 : 16,
+                              fontSize: orientation ? 20 : 18,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
 
-                          SizedBox(height: orientation ? 3 : 3),
+                          //SizedBox(height: orientation ? 3 : 3),
                           
                           Text(
                             '${remainingValue.round()} ft',
                             style: TextStyle(
                               color: barColor,
-                              fontSize: orientation ? 18 : 16,
+                              fontSize: orientation ? 20 : 18,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
 
-                          SizedBox(height: orientation ? 3 : 3),
+                         // SizedBox(height: orientation ? 3 : 3),
                           
                           Text(
-                            '${(remainingValue * 0.3048).round()}m | $remainingPercent%',
+                            '${(remainingValue * 0.3048).round()}m',
+                            //'${(remainingValue * 0.3048).round()}m | $remainingPercent%',
                             style: TextStyle(
                               color: barColor,
-                              fontSize: orientation ? 18 : 16,
+                              fontSize: orientation ? 18 : 16.5,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
@@ -231,7 +234,7 @@ class Landingdistancebar extends StatelessWidget {
               Center(
                 child: RichText(
                   text: TextSpan(
-                    style: TextStyle(fontSize: orientation ? 18 : 16, fontWeight: FontWeight.bold),
+                    style: TextStyle(fontSize: orientation ? 20 : 18.5, fontWeight: FontWeight.bold),
                     children: [
                       const TextSpan(
                         text: 'Net LDA: ',

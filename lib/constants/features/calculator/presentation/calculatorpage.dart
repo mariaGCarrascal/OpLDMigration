@@ -54,6 +54,10 @@ class CalculatorPage extends StatefulWidget {
   });
   //Pendientes: flutter run -d chrome --web-browser-flag "--disable-web-security"
   //LongPress en QNH y Elevation (XXX).
+  //Aumentar el size de net lda, remaining y important notes. (listo)
+  //Mensaje de no wifi en metar notes. 
+  //Opacidad mayor en wind list (listo). 
+  //Eliminar porcentaje de opld y remaining, volver a mostrar valor remaining en negativo y no quedar en 0. (Listo)
 
   @override
   State<CalculatorPage> createState() => _CalculatorPageState();
@@ -3114,12 +3118,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                       Padding(
                                         padding: const EdgeInsets.only(left: 10),
                                         child: Text(
-                                          (0.02953 *
-                                                  (double.tryParse(
-                                                        selectedAirportQNH ?? '',
-                                                      ) ??
-                                                      0))
-                                              .toStringAsFixed(2),
+                                          (0.02953 * (double.tryParse(selectedAirportQNH ?? '',) ?? 0)).toStringAsFixed(2),
                                           style: TextStyle(
                                             color: AppColors.placeholderDark,
                                             fontSize: 18,
@@ -3789,9 +3788,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                                               : windDirection
                                                                     .first)
                                                         : '000';
-                                                    return DropdownButtonFormField2<
-                                                      String
-                                                    >(
+                                                    return DropdownButtonFormField2<String>(
                                                       isExpanded: true,
                                                       value: selectedWindValue,
 
@@ -3876,8 +3873,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
 
                                                         decoration: BoxDecoration(
                                                           color: AppColors
-                                                              .backgroundDark
-                                                              .withOpacity(0.9),
+                                                              .backgroundDark,
                                                           borderRadius:
                                                               BorderRadius.circular(
                                                                 5,
@@ -4185,7 +4181,6 @@ class _CalculatorPageState extends State<CalculatorPage> {
                               ),
                             ),
 
-                            //1er Divider
                             const Divider(
                               color: AppColors.white,
                               thickness: 1,
@@ -4257,7 +4252,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                               height: 1,
                             ),
 
-                            //Comentarios de Runway condition y autobrake warning
+                            //Comentarios de Runway condition, autobrake warning y important notes
                             Padding(
                               padding: const EdgeInsets.all(16.0),
                               child: SizedBox(
@@ -4330,7 +4325,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                         shape: RoundedRectangleBorder(
                                           borderRadius: BorderRadius.circular(5),
                                         ),
-                                        fixedSize: const Size(180, 30),
+                                        fixedSize: const Size(190, 30),
                                       ),
                                       onPressed: () {
                                         showDialog(
@@ -4382,7 +4377,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                                                   comentario.trim(),
                                                                   style: const TextStyle(
                                                                     color: AppColors.white,
-                                                                    fontSize: 15,
+                                                                    fontSize: 20,
                                                                   ),
                                                                   textAlign: TextAlign.justify,
                                                                 ),
@@ -4433,6 +4428,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                         style: TextStyle(
                                           color: AppColors.white,
                                           fontSize: 15,
+                                          fontWeight: FontWeight.bold,
                                         ),
                                       ),
                                     ),
