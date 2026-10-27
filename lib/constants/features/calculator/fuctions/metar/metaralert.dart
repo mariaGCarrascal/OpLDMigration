@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_5/constants/colors/app_colors.dart';
-import 'package:flutter_application_5/constants/strings/app_strings.dart';
 
-class Internetalert extends StatelessWidget {
+class Metaralert extends StatelessWidget {
 
-  const Internetalert({
-    super.key,
+  final String? message;
+
+  const Metaralert({
+    super.key, this.message
   });
 
   @override
@@ -18,11 +19,12 @@ class Internetalert extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text(
-            AppStrings.nowifiMessage,
+            '$message',
             textAlign: TextAlign.center,
             style: const TextStyle(
               color: AppColors.white,
               fontSize: 21,
+              fontWeight: FontWeight.bold,
             ),
           ),
         ],

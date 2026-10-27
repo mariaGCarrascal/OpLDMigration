@@ -11,6 +11,7 @@ import 'package:flutter_application_5/constants/features/calculator/fuctions/cal
 import 'package:flutter_application_5/constants/features/calculator/fuctions/calculatevrefincredecre.dart';
 import 'package:flutter_application_5/constants/features/calculator/fuctions/calculateweightincredecre.dart';
 import 'package:flutter_application_5/constants/features/calculator/fuctions/calculatewind.dart';
+import 'package:flutter_application_5/constants/features/calculator/fuctions/crosswindinop.dart';
 import 'package:flutter_application_5/constants/features/calculator/fuctions/customDigitFormatter.dart';
 import 'package:flutter_application_5/constants/features/calculator/fuctions/customskeletonizer.dart';
 import 'package:flutter_application_5/constants/features/calculator/fuctions/formatqnh.dart';
@@ -23,7 +24,7 @@ import 'package:flutter_application_5/constants/features/calculator/fuctions/loa
 import 'package:flutter_application_5/constants/features/calculator/fuctions/loadvrefcondition.dart';
 import 'package:flutter_application_5/constants/features/calculator/fuctions/loadvreftext.dart';
 import 'package:flutter_application_5/constants/features/calculator/fuctions/metar/connectivityservice.dart';
-import 'package:flutter_application_5/constants/features/calculator/fuctions/metar/internetalert.dart';
+import 'package:flutter_application_5/constants/features/calculator/fuctions/metar/metaralert.dart';
 import 'package:flutter_application_5/constants/features/calculator/fuctions/metar/remotedatasource.dart';
 import 'package:flutter_application_5/constants/features/calculator/fuctions/opldcolorasignator.dart';
 import 'package:flutter_application_5/constants/features/calculator/fuctions/searchautobrakedefault.dart';
@@ -53,11 +54,8 @@ class CalculatorPage extends StatefulWidget {
     this.airportEl, this.airportQNH, this.airportTemp, this.airportRunway, this.nonflaps,
   });
   //Pendientes: flutter run -d chrome --web-browser-flag "--disable-web-security"
-  //LongPress en QNH y Elevation (XXX).
-  //Aumentar el size de net lda, remaining y important notes. (listo)
-  //Mensaje de no wifi en metar notes. 
-  //Opacidad mayor en wind list (listo). 
-  //Eliminar porcentaje de opld y remaining, volver a mostrar valor remaining en negativo y no quedar en 0. (Listo)
+  //LongPress en QNH y Elevation (XXX). (Falta en QNH)
+  //Logica de cuando no haya metar, poner mensaje de no metar. Si hay metar, pero no todos, se dejan los default.
 
   @override
   State<CalculatorPage> createState() => _CalculatorPageState();
@@ -181,6 +179,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
   List<String>? rwyNote = [];
   List<String>? windValues = [];
   Map<String, String> crosswindsLimits = {};
+  Map<String, String> _crosswindsLimits = {};
   List<String> tempValues = [];
 
   @override
@@ -192,6 +191,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
     selectedCondition = defaultAircraft?[19];
     updateRwyCondition('$selectedCondition');
     crosswindsLimits = Loadcrosswinds(aircraftRef: selectedAircraft)();
+    _crosswindsLimits = Map<String, String>.from(crosswindsLimits);
     crosswindsComment = defaultAircraft?[24];
     _currentLadWeight = double.parse(defaultAircraft?[4] ?? '0');
     weightMAX = double.parse(defaultAircraft?[5] ?? '0');
@@ -475,15 +475,15 @@ class _CalculatorPageState extends State<CalculatorPage> {
               padding: const EdgeInsets.only(left: 4, right: 12, top: 8, bottom: 8),
               child: ElevatedButton.icon(
                 onPressed: () async {
-                    setState(() {
-                      _ispresseded = true;
-                    });
+                  setState(() {
+                    _ispresseded = true;
+                  });
 
-                    wifiCheck = await ConnectivityService().checkInitialConnectivity();
+                  wifiCheck = await ConnectivityService().checkInitialConnectivity();
 
-                    if(wifiCheck == true) {
-
-                      metarResult = await remoteDataSource.getMetar('$selectedAirport');
+                  if (wifiCheck == true) {
+                    try {
+                      metarResult = await remoteDataSource.getMetar('$selectedAirport').timeout(const Duration(seconds: 15));
 
                       if (!mounted) return;
 
@@ -492,19 +492,66 @@ class _CalculatorPageState extends State<CalculatorPage> {
                         selectedAirportTemperature = metarResult['OAT'];
                         selectedWind = metarResult['WIND'];
                         windValue = metarResult['NODE'];
-                        altitud = Calculatealtitud( elevationRef: selectedAirportElevation, qnhRef: selectedAirportQNH)();
+                        altitud = Calculatealtitud(elevationRef: selectedAirportElevation, qnhRef: selectedAirportQNH)();
                         isa = Calculateisa(elevationRef: altitud, temperatureRef: selectedAirportTemperature)();
-                        windValues = Calculatewind(rwyidRef: rwyId, windRef: windValue, windpickerRef: selectedWind, operation: '')();
+                        windValues = Calculatewind(rwyidRef: rwyId, windRef: windValue, windpickerRef: selectedWind)();
                         windValue = windValues?[0];
                         headtail = windValues?[1];
                         crosswind = windValues?[2];
                         updateOpld();
                       });
-
-                    } else {
+                    } on TimeoutException {
                       if (!context.mounted) return;
 
-                      ScaffoldMessenger.of(context).showSnackBar(
+                      ScaffoldMessenger.of(context)..clearSnackBars()
+                        ..showSnackBar(
+                          SnackBar(
+                            elevation: 0,
+                            behavior: SnackBarBehavior.floating,
+                            backgroundColor: Colors.transparent,
+                            duration: const Duration(seconds: 3),
+                            content: Card(
+                              color: AppColors.backgroundDark,
+                              elevation: 6,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(25),
+                              ),
+                              child: const Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                                child: Metaralert(message: AppStrings.metarTimeout)
+                              ),
+                            ),
+                          ),
+                        );
+                    } catch (e) {
+                      if (!context.mounted) return;
+
+                      ScaffoldMessenger.of(context)..clearSnackBars()
+                        ..showSnackBar(
+                          SnackBar(
+                            elevation: 0,
+                            behavior: SnackBarBehavior.floating,
+                            backgroundColor: Colors.transparent,
+                            duration: const Duration(seconds: 3),
+                            content: Card(
+                              color: AppColors.backgroundDark,
+                              elevation: 6,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(25),
+                              ),
+                              child: const Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                                child: Metaralert(message: AppStrings.metarEmpty),
+                              ),
+                            ),
+                          ),
+                        );
+                    }
+                  } else {
+                    if (!context.mounted) return;
+
+                    ScaffoldMessenger.of(context)..clearSnackBars()
+                      ..showSnackBar(
                         SnackBar(
                           elevation: 0,
                           behavior: SnackBarBehavior.floating,
@@ -516,18 +563,18 @@ class _CalculatorPageState extends State<CalculatorPage> {
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(25),
                             ),
-                            child: const Internetalert(),
+                            child: Metaralert(message: AppStrings.nowifiMessage),
                           ),
                         ),
                       );
-                    }
+                  }
 
-                    if (mounted) {
-                      setState(() {
-                        _ispresseded = false;
-                      });
-                    }
-                },                               
+                  if (mounted) {
+                    setState(() {
+                      _ispresseded = false;
+                    });
+                  }
+                },
                 iconAlignment: IconAlignment.end,
                 icon: SvgPicture.asset(
                   'assets/icons/cloudy_sunny.svg',
@@ -1172,6 +1219,12 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                         selectedReversers,
                                       )) {
                                         selectedReversers = reversersList![0];
+                                      }
+
+                                      if(selectedCondition != 'DRY' && selectedReversers == '1 revsr Inop') {
+                                        crosswindsLimits = Crosswindinop(dataMap: crosswindsLimits, conditionList: rwyConditions)();
+                                      } else if(crosswindsLimits.values.elementAt(1) != _crosswindsLimits.values.elementAt(1)) {
+                                        crosswindsLimits = _crosswindsLimits;
                                       }
 
                                       updateOpld();
@@ -2479,6 +2532,11 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                   onChanged: (newValue) {
                                     setState(() {
                                       selectedReversers = newValue;
+                                      if(selectedCondition != 'DRY' && selectedReversers == '1 revsr Inop') {
+                                        crosswindsLimits = Crosswindinop(dataMap: crosswindsLimits, conditionList: rwyConditions)();
+                                      } else if(crosswindsLimits.values.elementAt(1) != _crosswindsLimits.values.elementAt(1)) {
+                                        crosswindsLimits = _crosswindsLimits;
+                                      }
                                       updateOpld();
                                     });
                                   },
@@ -3367,7 +3425,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                         ),
                       ),
 
-                      //Campo de QAT
+                      //Campo de OAT
                       Customskeletonizer(
                       isLoading: _ispresseded,
                       child:
@@ -3642,7 +3700,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                           const SizedBox(width: 6),
 
                                           // Notas de Warning de Crosswinds
-                                        if (crosswindValue.abs() > (num.tryParse((crosswindsLimits[selectedCondition] ?? '33').replaceAll('−','-',).replaceAll('–','-',),) ?? 33).abs()) ... [
+                                          if (crosswindValue.abs() > (num.tryParse((crosswindsLimits[selectedCondition] ?? '33').replaceAll('−','-',).replaceAll('–','-',),) ?? 33).abs()) ... [
                                             InkWell(
                                               onTap: () {
                                                 showDialog(
@@ -3658,7 +3716,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                                         ),
                                                       ),
                                                       content: SizedBox(
-                                                        width: 550,
+                                                        width: 650,
                                                         height: 300,
                                                         child: Column(
                                                           mainAxisAlignment: MainAxisAlignment.start,
@@ -3686,36 +3744,52 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                                                   scrollbars: false,
                                                                 ),
                                                                 child: SingleChildScrollView(
-                                                                  child: crosswindsComment != null &&
-                                                                          crosswindsComment!.trim().isNotEmpty
-                                                                      ? Column(
-                                                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                                                          children: [
-                                                                            const Divider(
-                                                                              color: AppColors.cancelPriButBrDark,
+                                                                  child: Column(
+                                                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                                                    children: [
+                                                                      
+                                                                      const Divider(
+                                                                        color: AppColors.cancelPriButBrDark,
+                                                                      ),
+
+                                                                      if (selectedReversers == '1 revsr Inop' && selectedCondition != 'DRY') ...[
+                                                                        Padding(
+                                                                          padding: const EdgeInsets.symmetric(vertical: 12.0),
+                                                                          child: Text(
+                                                                            AppStrings.cautionCrosswind.trim(),
+                                                                            textAlign: TextAlign.justify,
+                                                                            style: const TextStyle(
+                                                                              color: AppColors.white, 
+                                                                              fontSize: 16.5,
+                                                                              fontWeight: FontWeight.bold,
                                                                             ),
-                                                                            Padding(
-                                                                              padding: const EdgeInsets.symmetric(
-                                                                                vertical: 12.0,
-                                                                              ),
-                                                                              child: Text(
-                                                                                crosswindsComment!.trim(),
-                                                                                textAlign: TextAlign.justify,
-                                                                                style: const TextStyle(
-                                                                                  color: AppColors.white,
-                                                                                  fontSize: 16.5,
-                                                                                ),
-                                                                              ),
+                                                                          ),
+                                                                        ),
+
+                                                                        const Divider(color: AppColors.cancelPriButBrDark),
+                                                                      ],
+
+                                                                      if (crosswindsComment != null && crosswindsComment!.trim().isNotEmpty)
+                                                                        Padding(
+                                                                          padding: const EdgeInsets.symmetric(vertical: 12.0),
+                                                                          child: Text(
+                                                                            crosswindsComment!.trim(),
+                                                                            textAlign: TextAlign.justify,
+                                                                            style: const TextStyle(
+                                                                              color: AppColors.white,
+                                                                              fontSize: 16.5,
                                                                             ),
-                                                                            const Divider(
-                                                                              color: AppColors.cancelPriButBrDark,
-                                                                            ),
-                                                                          ],
-                                                                        )
-                                                                      : const SizedBox.shrink(),
+                                                                          ),
+                                                                        ),
+
+                                                                      const Divider(
+                                                                        color: AppColors.cancelPriButBrDark,
+                                                                      ),
+                                                                    ],
+                                                                  ),
                                                                 ),
                                                               ),
-                                                            ),
+                                                            ),                                                            
                                                             
                                                             const SizedBox(height: 20),
 
@@ -3762,8 +3836,19 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                                   size: 25,
                                                 ),
                                               ),
-                                            )
+                                            ),
                                           ],                                                                                
+                                                                              
+                                          if (crosswindValue.abs() > (num.tryParse((crosswindsLimits[selectedCondition] ?? '33').replaceAll('−','-',).replaceAll('–','-',),) ?? 33).abs() && selectedReversers == '1 revsr Inop' && selectedCondition != 'DRY') ...[
+                                            const SizedBox(width: 6),
+                                            Text(
+                                              AppStrings.caution,
+                                              style: TextStyle(
+                                                color: AppColors.warning,
+                                                fontSize: 16,
+                                              ),
+                                            ),
+                                          ],
                                         ],
                                       ),
 
