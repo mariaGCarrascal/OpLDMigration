@@ -40,7 +40,7 @@ class AppStrings {
   static const String metar = "METAR";
   static const String nowifiMessage = "No internet connection. Unable to retrieve current METAR data.";
   static const String metarTimeout = "Time out METAR data request, try again later.";
-  static const String metarEmpty = "There is no Metar data available at the moment for this airport";
+  static const String metarEmpty = "There is no Metar data available at the moment for this airport.";
   
   static const String ft = "ft";
   static const String lb = "Lb";

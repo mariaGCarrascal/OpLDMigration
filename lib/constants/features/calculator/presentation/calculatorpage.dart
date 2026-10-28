@@ -55,7 +55,6 @@ class CalculatorPage extends StatefulWidget {
   });
   //Pendientes: flutter run -d chrome --web-browser-flag "--disable-web-security"
   //LongPress en QNH y Elevation (XXX). (Falta en QNH)
-  //Logica de cuando no haya metar, poner mensaje de no metar. Si hay metar, pero no todos, se dejan los default.
 
   @override
   State<CalculatorPage> createState() => _CalculatorPageState();
@@ -483,22 +482,25 @@ class _CalculatorPageState extends State<CalculatorPage> {
 
                   if (wifiCheck == true) {
                     try {
-                      metarResult = await remoteDataSource.getMetar('$selectedAirport').timeout(const Duration(seconds: 15));
+                      metarResult = await remoteDataSource.getMetar('$selectedAirport').timeout(const Duration(seconds: 30));
 
                       if (!mounted) return;
 
                       setState(() {
-                        selectedAirportQNH = metarResult['QNH'];
-                        selectedAirportTemperature = metarResult['OAT'];
-                        selectedWind = metarResult['WIND'];
-                        windValue = metarResult['NODE'];
-                        altitud = Calculatealtitud(elevationRef: selectedAirportElevation, qnhRef: selectedAirportQNH)();
-                        isa = Calculateisa(elevationRef: altitud, temperatureRef: selectedAirportTemperature)();
-                        windValues = Calculatewind(rwyidRef: rwyId, windRef: windValue, windpickerRef: selectedWind)();
-                        windValue = windValues?[0];
-                        headtail = windValues?[1];
-                        crosswind = windValues?[2];
-                        updateOpld();
+                        final bool hasMissingData = metarResult['HAS_MISSING_DATA'] == 'true';
+                        selectedAirportQNH = hasMissingData ? selectedAirportQNH : metarResult['QNH'];
+                        selectedAirportTemperature = hasMissingData ? selectedAirportTemperature : metarResult['OAT'];
+                        selectedWind = hasMissingData ?  selectedWind : metarResult['WIND'];
+                        windValue = hasMissingData ? windValue : metarResult['NODE'];
+                        if(metarResult['HAS_MISSING_DATA'] != 'true') {
+                          altitud = Calculatealtitud(elevationRef: selectedAirportElevation, qnhRef: selectedAirportQNH)();
+                          isa = Calculateisa(elevationRef: altitud, temperatureRef: selectedAirportTemperature)();
+                          windValues = Calculatewind(rwyidRef: rwyId, windRef: windValue, windpickerRef: selectedWind)();
+                          windValue = windValues?[0];
+                          headtail = windValues?[1];
+                          crosswind = windValues?[2];
+                          updateOpld();
+                        }
                       });
                     } on TimeoutException {
                       if (!context.mounted) return;
@@ -525,7 +527,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                         );
                     } catch (e) {
                       if (!context.mounted) return;
-
+                      
                       ScaffoldMessenger.of(context)..clearSnackBars()
                         ..showSnackBar(
                           SnackBar(

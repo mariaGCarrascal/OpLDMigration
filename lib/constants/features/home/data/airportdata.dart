@@ -841,7 +841,7 @@ class Airportdata {
   'NAS': 'MYNN',
   'NAT': 'SBSG',
   'NLU': 'MMSM',
-  'NSA': 'OIFN',
+  'NSA': 'FNGI',
   'NVA': 'SKNV',
   'OAK': 'KOAK',
   'OAX': 'MMOX',

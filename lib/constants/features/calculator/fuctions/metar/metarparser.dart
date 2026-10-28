@@ -3,31 +3,84 @@ import 'package:flutter_application_5/constants/features/calculator/fuctions/met
 import 'package:flutter_application_5/constants/features/calculator/fuctions/metar/windconverter.dart';
 
 class MetarParser {
+  static bool _hasMissingSlashes(String value) => value.contains('//');
+
   static Map<String, String> parseMetar(String rawMetar) {
-    //Regex para vientos (ej: 13011KT, 00000KT, VRB05KT o 24015G25KT)
-    final windRegex = RegExp(r'\b(?:\d{3}|VRB)\d{2,3}(?:G\d{2,3})?KT\b');
+    final tokens = rawMetar.trim().split(RegExp(r'\s+'));
 
-    //Regex para temperatura/punto de rocio (ej: 30/14 o M02/M05)
-    final tempRegex = RegExp(r'\bM?\d{2}/M?\d{2}\b');
+    String rawWind = '';
+    String rawOat = '';
+    String rawQnh = '';
 
-    //Regex para presion/altimetro del qnh (ej: Q1020 o A2992)
-    final qnhRegex = RegExp(r'\b[QA]\d{4}\b');
+    //Vientos: termina en KT (o MPS), puede ser digitos, VRB o barras
+    final windTokenRegex = RegExp(r'^(?:\d{3}|VRB|/{3})(?:\d{2,3}|/{2,3})(?:G(?:\d{2,3}|/{2,3}))?KT$');
+    
+    //Temperatura: formato XX/XX donde X puede ser digito, M o /
+    final tempTokenRegex = RegExp(r'^(?:M?\d{2}|/{2})/(?:M?\d{2}|/{2})$');
+    
+    //QNH: empieza por Q o A seguido de 4 digitos o 4 barras
+    final qnhTokenRegex = RegExp(r'^[QA](?:\d{4}|/{4})$');
 
-    final windMatch = windRegex.firstMatch(rawMetar)?.group(0) ?? '';
-    final oatMatch = tempRegex.firstMatch(rawMetar)?.group(0) ?? '';
-    final qnhMatch = qnhRegex.firstMatch(rawMetar)?.group(0) ?? '';
+    for (final token in tokens) {
+      if (rawWind.isEmpty && (token.endsWith('KT') || token.endsWith('MPS'))) {
+        if (windTokenRegex.hasMatch(token) || token.contains('KT')) {
+          rawWind = token;
+        }
+      } else if (rawOat.isEmpty && token.contains('/') && !token.contains('KT')) {
+        if (tempTokenRegex.hasMatch(token)) {
+          rawOat = token;
+        }
+      } else if (rawQnh.isEmpty && (token.startsWith('Q') || token.startsWith('A'))) {
+        if (qnhTokenRegex.hasMatch(token)) {
+          rawQnh = token;
+        }
+      }
+    }
 
-    //Adaptar variables del Metar para el OpLD
-    final windValues = Windconverter.parseWind(windMatch);
-    final oat = OatConverter.toCelsius(oatMatch)?.toString() ?? '';
-    final qnh = Qnhconverter.toQnhString(qnhMatch);
+    final bool hasMissingData = _hasMissingSlashes(rawWind) ||
+        _hasMissingSlashes(rawOat) ||
+        _hasMissingSlashes(rawQnh) ||
+        rawMetar.contains('//');
+
+    final windMatch = _hasMissingSlashes(rawWind) ? '' : rawWind;
+    final oatMatch = _hasMissingSlashes(rawOat) ? '' : rawOat;
+    final qnhMatch = _hasMissingSlashes(rawQnh) ? '' : rawQnh;
+
+    List<String> windValues = ['', ''];
+    if (windMatch.isNotEmpty) {
+      try {
+        windValues = Windconverter.parseWind(windMatch);
+      } catch (_) {
+        windValues = ['', ''];
+      }
+    }
+
+    String oat = '';
+    if (oatMatch.isNotEmpty) {
+      try {
+        oat = OatConverter.toCelsius(oatMatch)?.toString() ?? '';
+      } catch (_) {
+        oat = '';
+      }
+    }
+
+    String qnh = '';
+    if (qnhMatch.isNotEmpty) {
+      try {
+        qnh = Qnhconverter.toQnhString(qnhMatch);
+      } catch (_) {
+        qnh = '';
+      }
+    }
 
     return {
-      'WIND': windValues[0].trim(),
-      'NODE': windValues[1].trim(),
-      'OAT': oat.trim(),
-      'QNH': qnh.trim(),
+      'WIND': windValues.isNotEmpty ? windValues[0].trim() : '',
+      'NODE': windValues.length > 1 ? windValues[1].trim() : '',
+      'OAT': oat.isNotEmpty ? oat.trim() : '',
+      'QNH': qnh.isNotEmpty ? qnh.trim() : '',
       'INFO': rawMetar,
+      'HAS_MISSING_DATA': hasMissingData.toString(),
+      'IS_VALID': (!hasMissingData).toString(),
     };
   }
 }
