@@ -54,7 +54,7 @@ class CalculatorPage extends StatefulWidget {
     this.airportEl, this.airportQNH, this.airportTemp, this.airportRunway, this.nonflaps,
   });
   //Pendientes: flutter run -d chrome --web-browser-flag "--disable-web-security"
-  //LongPress en QNH y Elevation (XXX). (Falta en QNH)
+  //LongPress en QNH y Elevation (XXX). (Falta en QNH y revisar Elevation (XXX))
 
   @override
   State<CalculatorPage> createState() => _CalculatorPageState();
@@ -1393,8 +1393,8 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                         ),
                                     ),
                                     const Spacer(),
-                                    GestureDetector(
-                                      onTapDown: (_) {
+                                    Listener(
+                                      onPointerDown: (_) {
                                         setState(() {
                                           _currentElevation = Calculateelevationincredecre(
                                             elevationReference: _currentElevation,
@@ -1433,10 +1433,10 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                           });
                                         });
                                       },
-                                      onTapUp: (_) => _timer?.cancel(),
-                                      onTapCancel: () => _timer?.cancel(),
+                                      onPointerUp: (_) => _timer?.cancel(),
+                                      onPointerCancel: (_) => _timer?.cancel(),
                                       child: ElevatedButton(
-                                        onPressed: () {}, 
+                                        onPressed: () {},
                                         style: ElevatedButton.styleFrom(
                                           backgroundColor: AppColors.grey,
                                           foregroundColor: AppColors.iconDark,
@@ -1458,11 +1458,11 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                         ),
                                       ),
                                     ),
-
+                                                                      
                                     const SizedBox(width: 8.0),
 
-                                    GestureDetector(
-                                      onTapDown: (_) {
+                                    Listener(
+                                      onPointerDown: (_) {
                                         setState(() {
                                           _currentElevation = Calculateelevationincredecre(
                                             elevationReference: _currentElevation,
@@ -1501,10 +1501,10 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                           });
                                         });
                                       },
-                                      onTapUp: (_) => _timer?.cancel(),
-                                      onTapCancel: () => _timer?.cancel(),
+                                      onPointerUp: (_) => _timer?.cancel(),
+                                      onPointerCancel: (_) => _timer?.cancel(),
                                       child: ElevatedButton(
-                                        onPressed: () {}, 
+                                        onPressed: () {},
                                         style: ElevatedButton.styleFrom(
                                           backgroundColor: AppColors.grey,
                                           foregroundColor: AppColors.iconDark,
@@ -1525,8 +1525,8 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                           fontWeight: FontWeight.bold,
                                         ),
                                       ),
-                                    ),                                 
-                                                                      
+                                    ),                                                                     
+                                  
                                   ] else ...[
                                     const Spacer(),
                                     Text(
