@@ -1,10 +1,12 @@
 class Calculateqnhincredecre {
   final String? qnhRef;
   final String? operation;
+  final double step;
 
   Calculateqnhincredecre({
     this.qnhRef,
     this.operation,
+    this.step = 0.1,
   });
 
   String call() {
@@ -17,30 +19,39 @@ class Calculateqnhincredecre {
 
       if (operation != null) {
         final String opLower = operation!.trim().toLowerCase();
-        final double diff1013_4 = (result - 1013.4).abs();
-        final double diff1013_3 = (result - 1013.3).abs();
-        final double diff1013_25 = (result - 1013.25).abs();
-        final double diff1013_2 = (result - 1013.2).abs();
 
-        if (opLower == 'increment') {
-          if (diff1013_2 < 0.001) {
-            result = 1013.25;
-          } else if (diff1013_25 < 0.001) {
-            result = 1013.3;
-          } else if (diff1013_3 < 0.001) {
-            result = 1013.4;
-          } else {
-            result = result + 0.1;
+        if (step == 1.0) {
+          if (opLower == 'increment') {
+            result += 1.0;
+          } else if (opLower == 'decrement') {
+            result -= 1.0;
           }
-        } else if (opLower == 'decrement') {
-          if (diff1013_4 < 0.001) {
-            result = 1013.3;
-          } else if (diff1013_3 < 0.001) {
-            result = 1013.25;
-          } else if (diff1013_25 < 0.001) {
-            result = 1013.2;
-          } else {
-            result = result - 0.1;
+        } else {
+          final double diff1013_4 = (result - 1013.4).abs();
+          final double diff1013_3 = (result - 1013.3).abs();
+          final double diff1013_25 = (result - 1013.25).abs();
+          final double diff1013_2 = (result - 1013.2).abs();
+
+          if (opLower == 'increment') {
+            if (diff1013_2 < 0.001) {
+              result = 1013.25;
+            } else if (diff1013_25 < 0.001) {
+              result = 1013.3;
+            } else if (diff1013_3 < 0.001) {
+              result = 1013.4;
+            } else {
+              result = result + 0.1;
+            }
+          } else if (opLower == 'decrement') {
+            if (diff1013_4 < 0.001) {
+              result = 1013.3;
+            } else if (diff1013_3 < 0.001) {
+              result = 1013.25;
+            } else if (diff1013_25 < 0.001) {
+              result = 1013.2;
+            } else {
+              result = result - 0.1;
+            }
           }
         }
       }
@@ -50,7 +61,6 @@ class Calculateqnhincredecre {
       }
 
       return double.parse(result.toStringAsFixed(2)).toStringAsFixed(1);
-      
     } catch (e) {
       return "0";
     }

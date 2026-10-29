@@ -53,8 +53,7 @@ class CalculatorPage extends StatefulWidget {
     this.aircraft, this.normalNon, this.configuration, this.airport,
     this.airportEl, this.airportQNH, this.airportTemp, this.airportRunway, this.nonflaps,
   });
-  //Pendientes: flutter run -d chrome --web-browser-flag "--disable-web-security"
-  //LongPress en QNH y Elevation (XXX). (Falta en QNH y revisar Elevation (XXX))
+  //Para correr con METAR: flutter run -d chrome --web-browser-flag "--disable-web-security"
 
   @override
   State<CalculatorPage> createState() => _CalculatorPageState();
@@ -504,7 +503,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                       });
                     } on TimeoutException {
                       if (!context.mounted) return;
-
+                      //Mensaje de alerta timeout
                       ScaffoldMessenger.of(context)..clearSnackBars()
                         ..showSnackBar(
                           SnackBar(
@@ -517,6 +516,10 @@ class _CalculatorPageState extends State<CalculatorPage> {
                               elevation: 6,
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(25),
+                                side: BorderSide(
+                                  color: AppColors.warning.withValues(alpha: 0.7), 
+                                  width: 1.5,          
+                                ),
                               ),
                               child: const Padding(
                                 padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -527,7 +530,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                         );
                     } catch (e) {
                       if (!context.mounted) return;
-                      
+                      //Mensaje de alerta no METAR Data
                       ScaffoldMessenger.of(context)..clearSnackBars()
                         ..showSnackBar(
                           SnackBar(
@@ -540,6 +543,10 @@ class _CalculatorPageState extends State<CalculatorPage> {
                               elevation: 6,
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(25),
+                                side: BorderSide(
+                                  color: AppColors.warning.withValues(alpha: 0.7), 
+                                  width: 1.5,          
+                                ),
                               ),
                               child: const Padding(
                                 padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -551,7 +558,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                     }
                   } else {
                     if (!context.mounted) return;
-
+                    //Mensaje de alerta no wifi
                     ScaffoldMessenger.of(context)..clearSnackBars()
                       ..showSnackBar(
                         SnackBar(
@@ -564,6 +571,10 @@ class _CalculatorPageState extends State<CalculatorPage> {
                             elevation: 6,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(25),
+                              side: BorderSide(
+                                color: AppColors.warning.withValues(alpha: 0.7), 
+                                width: 1.5,          
+                              ),
                             ),
                             child: Metaralert(message: AppStrings.nowifiMessage),
                           ),
@@ -3217,173 +3228,142 @@ class _CalculatorPageState extends State<CalculatorPage> {
 
                                 const SizedBox(width: 5.0),
 
-                                if (selectedAirport != 'XXX') ...[
-                                  Row(
+                                Row(
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
-                                      ElevatedButton(
-                                        onPressed: () {
+                                      Listener(
+                                        onPointerDown: (_) {
+                                          int ticks = 0;
                                           setState(() {
-                                            selectedAirportQNH =
-                                                Calculateqnhincredecre(
-                                                  qnhRef: selectedAirportQNH,
-                                                  operation: 'decrement',
-                                                )();
+                                            selectedAirportQNH = Calculateqnhincredecre(
+                                              qnhRef: selectedAirportQNH,
+                                              operation: 'decrement',
+                                              step: 0.1,
+                                            )();
                                             altitud = Calculatealtitud(
-                                              elevationRef:
-                                                  selectedAirportElevation,
+                                              elevationRef: selectedAirport != 'XXX'
+                                                  ? selectedAirportElevation
+                                                  : _currentElevation.toString(),
                                               qnhRef: selectedAirportQNH,
                                             )();
                                             updateOpld();
                                           });
+
+                                          _timer?.cancel();
+                                          _timer = Timer.periodic(const Duration(milliseconds: 150), (_) {
+                                            ticks++;
+                                            final double currentStep = (ticks >= 3) ? 1.0 : 0.1;
+
+                                            setState(() {
+                                              selectedAirportQNH = Calculateqnhincredecre(
+                                                qnhRef: selectedAirportQNH,
+                                                operation: 'decrement',
+                                                step: currentStep,
+                                              )();
+                                              altitud = Calculatealtitud(
+                                                elevationRef: selectedAirport != 'XXX'
+                                                    ? selectedAirportElevation
+                                                    : _currentElevation.toString(),
+                                                qnhRef: selectedAirportQNH,
+                                              )();
+                                              updateOpld();
+                                            });
+                                          });
                                         },
-                                        style: ElevatedButton.styleFrom(
-                                          backgroundColor: AppColors.grey,
-                                          foregroundColor: AppColors.iconDark,
-                                          minimumSize: const Size(70, 70),
-                                          padding: EdgeInsets.zero,
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(
-                                              8.0,
-                                            ),
-                                            side: const BorderSide(
-                                              color: AppColors.white,
-                                              width: 1.0,
+                                        onPointerUp: (_) => _timer?.cancel(),
+                                        onPointerCancel: (_) => _timer?.cancel(),
+                                        child: ElevatedButton(
+                                          onPressed: () {},
+                                          style: ElevatedButton.styleFrom(
+                                            backgroundColor: AppColors.grey,
+                                            foregroundColor: AppColors.iconDark,
+                                            minimumSize: const Size(70, 70),
+                                            padding: EdgeInsets.zero,
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.circular(8.0),
+                                              side: const BorderSide(
+                                                color: AppColors.white,
+                                                width: 1.0,
+                                              ),
                                             ),
                                           ),
-                                        ),
-                                        child: Icon(
-                                          Icons.remove,
-                                          color: AppColors.iconDark,
-                                          size: 30,
-                                          fontWeight: FontWeight.bold,
+                                          child: Icon(
+                                            Icons.remove,
+                                            color: AppColors.iconDark,
+                                            size: 30,
+                                            fontWeight: FontWeight.bold,
+                                          ),
                                         ),
                                       ),
+                                      
                                       const SizedBox(width: 8.0),
-                                      ElevatedButton(
-                                        onPressed: () {
+
+                                      Listener(
+                                        onPointerDown: (_) {
+                                          int ticks = 0;
                                           setState(() {
-                                            selectedAirportQNH =
-                                                Calculateqnhincredecre(
-                                                  qnhRef: selectedAirportQNH,
-                                                  operation: 'increment',
-                                                )();
+                                            selectedAirportQNH = Calculateqnhincredecre(
+                                              qnhRef: selectedAirportQNH,
+                                              operation: 'increment',
+                                              step: 0.1,
+                                            )();
                                             altitud = Calculatealtitud(
-                                              elevationRef:
-                                                  selectedAirportElevation,
+                                              elevationRef: selectedAirport != 'XXX'
+                                                  ? selectedAirportElevation
+                                                  : _currentElevation.toString(),
                                               qnhRef: selectedAirportQNH,
                                             )();
                                             updateOpld();
                                           });
+
+                                          _timer?.cancel();
+                                          _timer = Timer.periodic(const Duration(milliseconds: 150), (_) {
+                                            ticks++;
+                                            final double currentStep = (ticks >= 3) ? 1.0 : 0.1;
+
+                                            setState(() {
+                                              selectedAirportQNH = Calculateqnhincredecre(
+                                                qnhRef: selectedAirportQNH,
+                                                operation: 'increment',
+                                                step: currentStep,
+                                              )();
+                                              altitud = Calculatealtitud(
+                                                elevationRef: selectedAirport != 'XXX'
+                                                    ? selectedAirportElevation
+                                                    : _currentElevation.toString(),
+                                                qnhRef: selectedAirportQNH,
+                                              )();
+                                              updateOpld();
+                                            });
+                                          });
                                         },
-                                        style: ElevatedButton.styleFrom(
-                                          backgroundColor: AppColors.grey,
-                                          foregroundColor: AppColors.iconDark,
-                                          minimumSize: const Size(70, 70),
-                                          padding: EdgeInsets.zero,
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(
-                                              8.0,
-                                            ),
-                                            side: const BorderSide(
-                                              color: AppColors.white,
-                                              width: 1.0,
+                                        onPointerUp: (_) => _timer?.cancel(),
+                                        onPointerCancel: (_) => _timer?.cancel(),
+                                        child: ElevatedButton(
+                                          onPressed: () {},
+                                          style: ElevatedButton.styleFrom(
+                                            backgroundColor: AppColors.grey,
+                                            foregroundColor: AppColors.iconDark,
+                                            minimumSize: const Size(70, 70),
+                                            padding: EdgeInsets.zero,
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.circular(8.0),
+                                              side: const BorderSide(
+                                                color: AppColors.white,
+                                                width: 1.0,
+                                              ),
                                             ),
                                           ),
-                                        ),
-                                        child: Icon(
-                                          Icons.add,
-                                          color: AppColors.iconDark,
-                                          size: 30,
-                                          fontWeight: FontWeight.bold,
+                                          child: Icon(
+                                            Icons.add,
+                                            color: AppColors.iconDark,
+                                            size: 30,
+                                            fontWeight: FontWeight.bold,
+                                          ),
                                         ),
                                       ),
                                     ],
-                                  ),
-                                ] else ...[
-                                  Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      ElevatedButton(
-                                        onPressed: () {
-                                          setState(() {
-                                            selectedAirportQNH =
-                                                Calculateqnhincredecre(
-                                                  qnhRef: selectedAirportQNH,
-                                                  operation: 'decrement',
-                                                )();
-                                            altitud = Calculatealtitud(
-                                              elevationRef: _currentElevation
-                                                  .toString(),
-                                              qnhRef: selectedAirportQNH,
-                                            )();
-                                            updateOpld();
-                                          });
-                                        },
-                                        style: ElevatedButton.styleFrom(
-                                          backgroundColor: AppColors.grey,
-                                          foregroundColor: AppColors.iconDark,
-                                          minimumSize: const Size(70, 70),
-                                          padding: EdgeInsets.zero,
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(
-                                              8.0,
-                                            ),
-                                            side: const BorderSide(
-                                              color: AppColors.white,
-                                              width: 1.0,
-                                            ),
-                                          ),
-                                        ),
-                                        child: Icon(
-                                          Icons.remove,
-                                          color: AppColors.iconDark,
-                                          size: 30,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                      const SizedBox(width: 8.0),
-                                      ElevatedButton(
-                                        onPressed: () {
-                                          setState(() {
-                                            selectedAirportQNH =
-                                                Calculateqnhincredecre(
-                                                  qnhRef: selectedAirportQNH,
-                                                  operation: 'increment',
-                                                )();
-                                            altitud = Calculatealtitud(
-                                              elevationRef: _currentElevation
-                                                  .toString(),
-                                              qnhRef: selectedAirportQNH,
-                                            )();
-                                            updateOpld();
-                                          });
-                                        },
-                                        style: ElevatedButton.styleFrom(
-                                          backgroundColor: AppColors.grey,
-                                          foregroundColor: AppColors.iconDark,
-                                          minimumSize: const Size(70, 70),
-                                          padding: EdgeInsets.zero,
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(
-                                              8.0,
-                                            ),
-                                            side: const BorderSide(
-                                              color: AppColors.white,
-                                              width: 1.0,
-                                            ),
-                                          ),
-                                        ),
-                                        child: Icon(
-                                          Icons.add,
-                                          color: AppColors.iconDark,
-                                          size: 30,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
+                                ),
                               ],
                             ),
                           ),
