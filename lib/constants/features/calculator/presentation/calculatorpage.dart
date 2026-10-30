@@ -2003,8 +2003,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                       icon: SizedBox.shrink(),
                                     ),
 
-                                    selectedItemBuilder:
-                                        (BuildContext context) {
+                                    selectedItemBuilder: (BuildContext context) {
                                           return normalFlaps.map((
                                             String value,
                                           ) {
@@ -2222,7 +2221,6 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                     onChanged: (newValue) {
                                       setState(() {
                                         selectedFlaps = newValue;
-                                        updateOpld();
                                       });
                                     },
                                   ),
@@ -2750,9 +2748,8 @@ class _CalculatorPageState extends State<CalculatorPage> {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              if (selectedLanding != 'Non-Normal') ...[
                                 Text(
-                                    AppStrings.vrefAdd,
+                                  selectedLanding != 'Non-Normal' && vrefAdjust != 'NO' ? AppStrings.vrefAdd : '$vrefNonPlus +',
                                     style: TextStyle(
                                       color: AppColors.white,
                                       fontSize: 16.5,
@@ -2760,121 +2757,16 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                   ),
                                 const Spacer(),
                                 Text(
-                                    '$vRef ${AppStrings.kt}',
+                                  vrefAdjust != 'NO' ? '$vRef ${AppStrings.kt}' : AppStrings.na,
                                     style: TextStyle(
                                       fontSize: 18,
-                                      color: AppColors.placeholderDark,
+                                      color: vrefAdjust != 'NO' ? AppColors.placeholderDark : AppColors.textColor3Dark,
                                       fontWeight: FontWeight.bold,
                                     ),
                                 ),
-                                const Spacer(),
+                                vrefAdjust != 'NO' ? const Spacer() : SizedBox(width: 15),
 
-                                Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    ElevatedButton(
-                                      onPressed: () {
-                                        setState(() {
-                                          vRef = Calculatevrefincredecre(
-                                            vReference: vRef,
-                                            minReference: vMin,
-                                            maxReference: vMax,
-                                            operation: 'decrement',
-                                          )();
-                                          updateOpld();
-                                        });
-                                      },
-                                      style: ElevatedButton.styleFrom(
-                                        backgroundColor: AppColors.grey,
-                                        foregroundColor: AppColors.iconDark,
-                                        minimumSize: const Size(70, 70),
-                                        padding: EdgeInsets.zero,
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(
-                                            8.0,
-                                          ),
-                                          side: const BorderSide(
-                                            color: AppColors.white,
-                                            width: 1.0,
-                                          ),
-                                        ),
-                                      ),
-                                      child: Icon(
-                                        Icons.remove,
-                                        color: AppColors.iconDark,
-                                        size: 30,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                    const SizedBox(width: 8.0),
-                                    ElevatedButton(
-                                      onPressed: () {
-                                        setState(() {
-                                          vRef = Calculatevrefincredecre(
-                                            vReference: vRef,
-                                            minReference: vMin,
-                                            maxReference: vMax,
-                                            operation: 'increment',
-                                          )();
-                                          updateOpld();
-                                        });
-                                      },
-                                      style: ElevatedButton.styleFrom(
-                                        backgroundColor: AppColors.grey,
-                                        foregroundColor: AppColors.iconDark,
-                                        minimumSize: const Size(70, 70),
-                                        padding: EdgeInsets.zero,
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(
-                                            8.0,
-                                          ),
-                                          side: const BorderSide(
-                                            color: AppColors.white,
-                                            width: 1.0,
-                                          ),
-                                        ),
-                                      ),
-                                      child: Icon(
-                                        Icons.add,
-                                        color: AppColors.iconDark,
-                                        size: 30,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ] else ...[
-                                if (vrefAdjust == 'NO') ...[
-                                  Text(
-                                      '$vrefNonPlus +',
-                                      style: TextStyle(color: AppColors.white, fontSize: 16.5),
-                                  ),
-                                  const Spacer(),
-                                  Text(
-                                      AppStrings.na,
-                                      style: TextStyle(
-                                        fontSize: 18,
-                                        color: AppColors.textColor3Dark,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                  ),
-                                  SizedBox(width: 15),
-                                ] else ...[
-                                  Text(
-                                      '$vrefNonPlus +',
-                                      style: TextStyle(color: AppColors.white, fontSize: 16.5),
-                                  ),
-                                  const Spacer(),
-                                  Text(
-                                      '$vRef ${AppStrings.kt}',
-                                      style: TextStyle(
-                                        fontSize: 18,
-                                        color: AppColors.placeholderDark,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                  ),
-                                  const Spacer(),
-
+                                if(vrefAdjust != 'NO') ...[
                                   Row(
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
@@ -2911,7 +2803,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                           size: 30,
                                           fontWeight: FontWeight.bold,
                                         ),
-                                      ),                                                                         
+                                      ),
                                       const SizedBox(width: 8.0),
                                       ElevatedButton(
                                         onPressed: () {
@@ -2948,9 +2840,8 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                         ),
                                       ),
                                     ],
-                                  ),
-                                ],
-                              ],
+                                  ),                                
+                                ]
                             ],
                           ),
                         ),
@@ -3464,7 +3355,6 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                   ),
                                 ),
                                 const Spacer(),
-                                if (selectedAirport != 'XXX') ...[
                                   Row(
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
@@ -3473,15 +3363,13 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                           setState(() {
                                             tempValues = Calculatetempisa(
                                               altitudRef: altitud,
-                                              temperatureRef:
-                                                  selectedAirportTemperature,
+                                              temperatureRef: selectedAirportTemperature,
                                               isaRef: isa,
                                               minRef: isaMin,
                                               maxRef: isaMax,
                                               operation: 'decrement',
                                             )();
-                                            selectedAirportTemperature =
-                                                tempValues[1];
+                                            selectedAirportTemperature = tempValues[1];
                                             isa = tempValues[0];
                                             updateOpld();
                                           });
@@ -3514,15 +3402,13 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                           setState(() {
                                             tempValues = Calculatetempisa(
                                               altitudRef: altitud,
-                                              temperatureRef:
-                                                  selectedAirportTemperature,
+                                              temperatureRef: selectedAirportTemperature,
                                               isaRef: isa,
                                               minRef: isaMin,
                                               maxRef: isaMax,
                                               operation: 'increment',
                                             )();
-                                            selectedAirportTemperature =
-                                                tempValues[1];
+                                            selectedAirportTemperature = tempValues[1];
                                             isa = tempValues[0];
                                             updateOpld();
                                           });
@@ -3551,94 +3437,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                       ),
                                     ],
                                   ),
-                                ] else ...[
-                                  Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      ElevatedButton(
-                                        onPressed: () {
-                                          setState(() {
-                                            tempValues = Calculatetempisa(
-                                              altitudRef: altitud,
-                                              temperatureRef:
-                                                  selectedAirportTemperature,
-                                              isaRef: isa,
-                                              minRef: isaMin,
-                                              maxRef: isaMax,
-                                              operation: 'decrement',
-                                            )();
-                                            selectedAirportTemperature =
-                                                tempValues[1];
-                                            isa = tempValues[0];
-                                            updateOpld();
-                                          });
-                                        },
-                                        style: ElevatedButton.styleFrom(
-                                          backgroundColor: AppColors.grey,
-                                          foregroundColor: AppColors.iconDark,
-                                          minimumSize: const Size(70, 70),
-                                          padding: EdgeInsets.zero,
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(
-                                              8.0,
-                                            ),
-                                            side: const BorderSide(
-                                              color: AppColors.white,
-                                              width: 1.0,
-                                            ),
-                                          ),
-                                        ),
-                                        child: Icon(
-                                          Icons.remove,
-                                          color: AppColors.iconDark,
-                                          size: 30,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                      const SizedBox(width: 8.0),
-                                      ElevatedButton(
-                                        onPressed: () {
-                                          setState(() {
-                                            tempValues = Calculatetempisa(
-                                              altitudRef: altitud,
-                                              temperatureRef:
-                                                  selectedAirportTemperature,
-                                              isaRef: isa,
-                                              minRef: isaMin,
-                                              maxRef: isaMax,
-                                              operation: 'increment',
-                                            )();
-                                            selectedAirportTemperature =
-                                                tempValues[1];
-                                            isa = tempValues[0];
-                                            updateOpld();
-                                          });
-                                        },
-                                        style: ElevatedButton.styleFrom(
-                                          backgroundColor: AppColors.grey,
-                                          foregroundColor: AppColors.iconDark,
-                                          minimumSize: const Size(70, 70),
-                                          padding: EdgeInsets.zero,
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(
-                                              8.0,
-                                            ),
-                                            side: const BorderSide(
-                                              color: AppColors.white,
-                                              width: 1.0,
-                                            ),
-                                          ),
-                                        ),
-                                        child: Icon(
-                                          Icons.add,
-                                          color: AppColors.iconDark,
-                                          size: 30,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
+
                               ],
                             ),
                           ),
