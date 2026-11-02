@@ -18,7 +18,7 @@ class Customskeletonizer extends StatelessWidget {
       enabled: isLoading,
       ignorePointers: isLoading,
       effect: ShimmerEffect(
-        baseColor: AppColors.backgroundDark,
+        baseColor: AppColors.background,
         highlightColor: AppColors.grey,
       ),
       child: child,

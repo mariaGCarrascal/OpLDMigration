@@ -5,32 +5,28 @@ import 'package:flutter_application_5/theme/app_theme_extesion.dart';
 class DarkTheme {
   static final ThemeData theme = ThemeData(
     brightness: Brightness.dark,
-    scaffoldBackgroundColor: AppColors.backgroundDark,
+    scaffoldBackgroundColor: AppColors.background,
     colorScheme: const ColorScheme(
       brightness: Brightness.dark,
-      primary: AppColors.backgroundDark,
+      primary: AppColors.background,
       secondary: AppColors.activeColor,
-      surface: AppColors.surfaceDark,
-
-      onPrimary: AppColors.textColor1Dark,
-      onSecondary: AppColors.textColor2Dark,
-      onSurface: AppColors.textColor3Dark,
-      error: AppColors.errorColor,
-      onError: AppColors.errorColor,
+      surface: AppColors.surface,
+      onPrimary: AppColors.textColor1,
+      onSecondary: AppColors.textColor2,
+      onSurface: AppColors.textColor3,
+      error: AppColors.error,
+      onError: AppColors.error,
     ),
 //#2A2A2A
     extensions: [
       AppThemeExtension(
         placeholder: AppColors.placeholder,
-        cardDark: AppColors.cardDark,
+        cardColor: AppColors.cardColor,
         resultColor: AppColors.resultColor,
-        okPriButBgDark: AppColors.okPriButBgDark,
-        okPriButBrDark: AppColors.okPriButBrDark,
-        cancelPriButBgDark: AppColors.cancelPriButBgDark,
-        cancelPriButBrDark: AppColors.cancelPriButBrDark,
+        dividerLine: AppColors.dividerLine,
         barrierColor: const Color.fromARGB(255, 44, 45, 71).withValues(alpha: 0.8),
-        iconColor: AppColors.iconDark,
-        disableColor: AppColors.backgroundDark,
+        iconColor: AppColors.icon,
+        disableColor: AppColors.background,
       ),
     ],
   );

@@ -111,7 +111,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     final orientation = MediaQuery.of(context).orientation == Orientation.portrait;
     return Scaffold(
-      backgroundColor: AppColors.backgroundDark,
+      backgroundColor: AppColors.background,
       appBar: AppBar(
         title: const Text(
           AppStrings.appHeaderHome,
@@ -183,7 +183,7 @@ class _HomePageState extends State<HomePage> {
                         'Select Aircraft Type',
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
-                          color: AppColors.placeholderDark,
+                          color: AppColors.textColor2,
                           fontSize: orientation ? 20 : 26,
                         ),
                         overflow: TextOverflow.ellipsis,
@@ -203,7 +203,7 @@ class _HomePageState extends State<HomePage> {
                           thickness: WidgetStateProperty.all(0),
                         ),
                         decoration: BoxDecoration(
-                          color: AppColors.backgroundDark.withOpacity(0.9),
+                          color: AppColors.background.withOpacity(0.9),
                           borderRadius: BorderRadius.circular(5),
                           border: Border.all(
                             color: AppColors.white.withOpacity(0.8),
@@ -231,7 +231,7 @@ class _HomePageState extends State<HomePage> {
                               child: Text(
                                 value,
                                 style: TextStyle(
-                                  color: AppColors.placeholderDark,
+                                  color: AppColors.textColor2,
                                   fontWeight: FontWeight.bold,
                                   fontSize: 20,
                                 ),
@@ -248,7 +248,7 @@ class _HomePageState extends State<HomePage> {
                             child: Text(
                               value,
                               style: TextStyle(
-                                color: AppColors.placeholderDark,
+                                color: AppColors.textColor2,
                                 fontWeight: FontWeight.bold,
                                 fontSize:  orientation ? 22 : 20,
                               ),
@@ -330,7 +330,7 @@ class _HomePageState extends State<HomePage> {
                         'Select Type of Landing',
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
-                          color: AppColors.placeholderDark,
+                          color: AppColors.textColor2,
                         ),
                         overflow: TextOverflow.ellipsis,
                       ),
@@ -349,7 +349,7 @@ class _HomePageState extends State<HomePage> {
                           thickness: WidgetStateProperty.all(0),
                         ),
                         decoration: BoxDecoration(
-                          color: AppColors.backgroundDark.withOpacity(0.9),
+                          color: AppColors.background.withOpacity(0.9),
                           borderRadius: BorderRadius.circular(5),
                           border: Border.all(
                             color: AppColors.white.withOpacity(0.8),
@@ -377,7 +377,7 @@ class _HomePageState extends State<HomePage> {
                             child: Text(
                               value,
                               style: TextStyle(
-                                color: AppColors.placeholderDark,
+                                color: AppColors.textColor2,
                                 fontWeight: FontWeight.bold,
                                 fontSize: 20,
                               ),
@@ -394,7 +394,7 @@ class _HomePageState extends State<HomePage> {
                             child: Text(
                               value,
                               style: TextStyle(
-                                color: AppColors.placeholderDark,
+                                color: AppColors.textColor2,
                                 fontWeight: FontWeight.bold,
                                 fontSize: orientation ? 22 : 20,
                               ),
@@ -484,7 +484,7 @@ class _HomePageState extends State<HomePage> {
                           'Select Configuration Type',
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
-                            color: AppColors.placeholderDark,
+                            color: AppColors.textColor2,
                           ),
                           overflow: TextOverflow.ellipsis,
                         ),
@@ -504,7 +504,7 @@ class _HomePageState extends State<HomePage> {
                             thickness: WidgetStateProperty.all(0),
                           ),
                           decoration: BoxDecoration(
-                            color: AppColors.backgroundDark.withOpacity(0.9),
+                            color: AppColors.background.withOpacity(0.9),
                             borderRadius: BorderRadius.circular(5),
                             border: Border.all(
                               color: AppColors.white.withOpacity(0.8),
@@ -532,7 +532,7 @@ class _HomePageState extends State<HomePage> {
                               child: Text(
                                 value,
                                 style: TextStyle(
-                                  color: AppColors.placeholderDark,
+                                  color: AppColors.textColor2,
                                   fontWeight: FontWeight.bold,
                                   fontSize: 20,
                                 ),
@@ -549,7 +549,7 @@ class _HomePageState extends State<HomePage> {
                               child: Text(
                                 value,
                                 style: TextStyle(
-                                  color: AppColors.placeholderDark,
+                                  color: AppColors.textColor2,
                                   fontWeight: FontWeight.bold,
                                   fontSize: orientation ? 22 : 20,
                                 ),
@@ -724,7 +724,7 @@ class _HomePageState extends State<HomePage> {
                             child: Text(
                               item,
                               style: TextStyle(
-                                color: AppColors.placeholderDark,
+                                color: AppColors.textColor2,
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,
                               ),
@@ -738,7 +738,7 @@ class _HomePageState extends State<HomePage> {
                           selectedItem ?? 'PTY',
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
-                            color: AppColors.placeholderDark,
+                            color: AppColors.textColor2,
                             fontSize: 20,
                           ),
                           overflow: TextOverflow.ellipsis,
@@ -763,11 +763,11 @@ class _HomePageState extends State<HomePage> {
                   onPressed: _isReady ? _onGoPressed : null,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.black,
-                    foregroundColor: AppColors.iconDark,
+                    foregroundColor: AppColors.icon,
                     fixedSize: const Size(150, 150),
                     shape: BeveledRectangleBorder(
                       borderRadius: BorderRadius.circular(200),
-                      side: BorderSide(color: AppColors.iconDark, width: 1),
+                      side: BorderSide(color: AppColors.icon, width: 1),
                     ),
                     elevation: 4,
                   ),

@@ -17,7 +17,7 @@ class Opldcolorasignator{
       Color colorDistanceResult;
 
       if (opldReference == null || netldaReference == null) {
-        colorDistanceResult = AppColors.placeholderDark;
+        colorDistanceResult = AppColors.green;
         return colorDistanceResult;
       }
 
