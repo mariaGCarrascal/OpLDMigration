@@ -16,22 +16,22 @@ import 'package:flutter_application_5/constants/features/calculator/fuctions/cus
 import 'package:flutter_application_5/constants/features/calculator/fuctions/customskeletonizer.dart';
 import 'package:flutter_application_5/constants/features/calculator/fuctions/formatqnh.dart';
 import 'package:flutter_application_5/constants/features/calculator/fuctions/formatslope.dart';
-import 'package:flutter_application_5/constants/features/calculator/fuctions/landingdistancebar.dart';
-import 'package:flutter_application_5/constants/features/calculator/fuctions/loadautobrakes.dart';
-import 'package:flutter_application_5/constants/features/calculator/fuctions/loadcomments.dart';
-import 'package:flutter_application_5/constants/features/calculator/fuctions/loadcrosswinds.dart';
-import 'package:flutter_application_5/constants/features/calculator/fuctions/loadreversers.dart';
-import 'package:flutter_application_5/constants/features/calculator/fuctions/loadvrefcondition.dart';
-import 'package:flutter_application_5/constants/features/calculator/fuctions/loadvreftext.dart';
-import 'package:flutter_application_5/constants/features/calculator/fuctions/metar/connectivityservice.dart';
-import 'package:flutter_application_5/constants/features/calculator/fuctions/metar/metaralert.dart';
-import 'package:flutter_application_5/constants/features/calculator/fuctions/metar/remotedatasource.dart';
+import 'package:flutter_application_5/constants/design/runwayGrafic/landingdistancebar.dart';
+import 'package:flutter_application_5/constants/features/calculator/fuctions/loaders/loadautobrakes.dart';
+import 'package:flutter_application_5/constants/features/calculator/fuctions/loaders/loadcomments.dart';
+import 'package:flutter_application_5/constants/features/calculator/fuctions/loaders/loadcrosswinds.dart';
+import 'package:flutter_application_5/constants/features/calculator/fuctions/loaders/loadreversers.dart';
+import 'package:flutter_application_5/constants/features/calculator/fuctions/loaders/loadvrefcondition.dart';
+import 'package:flutter_application_5/constants/features/calculator/fuctions/loaders/loadvreftext.dart';
+import 'package:flutter_application_5/service_data/metar/connectivityservice.dart';
+import 'package:flutter_application_5/service_data/metar/metaralert.dart';
+import 'package:flutter_application_5/service_data/metar/remotedatasource.dart';
 import 'package:flutter_application_5/constants/features/calculator/fuctions/opldcolorasignator.dart';
-import 'package:flutter_application_5/constants/features/calculator/fuctions/searchautobrakedefault.dart';
-import 'package:flutter_application_5/constants/features/calculator/fuctions/searchdefault.dart';
-import 'package:flutter_application_5/constants/features/calculator/opld_performance/functions/searchbaselinereference.dart';
+import 'package:flutter_application_5/constants/features/calculator/fuctions/loaders/searchautobrakedefault.dart';
+import 'package:flutter_application_5/constants/features/calculator/fuctions/loaders/searchdefault.dart';
+import 'package:flutter_application_5/constants/features/calculator/opld_performance/loaders/searchbaselinereference.dart';
 import 'package:flutter_application_5/constants/features/calculator/opld_performance/oplddistancecalculator.dart';
-import 'package:flutter_application_5/constants/features/home/data/airportdata.dart';
+import 'package:flutter_application_5/service_data/airportdata.dart';
 import 'package:flutter_application_5/constants/strings/app_strings.dart';
 import 'package:flutter/services.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
@@ -53,8 +53,8 @@ class CalculatorPage extends StatefulWidget {
     this.aircraft, this.normalNon, this.configuration, this.airport,
     this.airportEl, this.airportQNH, this.airportTemp, this.airportRunway, this.nonflaps,
   });
-  //Para correr con METAR: flutter run -d chrome --web-browser-flag "--disable-web-security"
-
+//Pendiente: aumentar size en important notes y seletectValues en HomePage (Esperar a Majo), revisar performace del slider weight.
+//Mirar tema de control entre error y no data, con la alerta de no datos del METAR.
   @override
   State<CalculatorPage> createState() => _CalculatorPageState();
 }
@@ -481,7 +481,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
 
                   if (wifiCheck == true) {
                     try {
-                      metarResult = await remoteDataSource.getMetar('$selectedAirport').timeout(const Duration(seconds: 30));
+                      metarResult = await remoteDataSource.getMetar('$selectedAirport').timeout(const Duration(seconds: 12));
 
                       if (!mounted) return;
 
@@ -3498,12 +3498,11 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                                       ),
                                                       content: SizedBox(
                                                         width: 650,
-                                                        height: 300,
+                                                        height: selectedReversers == '1 revsr Inop' && selectedCondition != 'DRY' ? 350 : 250,
                                                         child: Column(
                                                           mainAxisAlignment: MainAxisAlignment.start,
                                                           crossAxisAlignment: CrossAxisAlignment.start,
                                                           children: [
-                                                            // Título
                                                             const Center(
                                                               child: Text(
                                                                 AppStrings.crosswindTitle,
