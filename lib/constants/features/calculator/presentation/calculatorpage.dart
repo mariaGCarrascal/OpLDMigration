@@ -12,7 +12,7 @@ import 'package:flutter_application_5/constants/features/calculator/fuctions/cal
 import 'package:flutter_application_5/constants/features/calculator/fuctions/calculateweightincredecre.dart';
 import 'package:flutter_application_5/constants/features/calculator/fuctions/calculatewind.dart';
 import 'package:flutter_application_5/constants/features/calculator/fuctions/crosswindinop.dart';
-import 'package:flutter_application_5/constants/features/calculator/fuctions/customDigitFormatter.dart';
+import 'package:flutter_application_5/constants/features/calculator/fuctions/utils/customDigitFormatter.dart';
 import 'package:flutter_application_5/constants/features/calculator/fuctions/utils/customskeletonizer.dart';
 import 'package:flutter_application_5/constants/features/calculator/fuctions/utils/formatqnh.dart';
 import 'package:flutter_application_5/constants/features/calculator/fuctions/utils/formatslope.dart';
@@ -55,6 +55,7 @@ class CalculatorPage extends StatefulWidget {
   });
 //Pendiente: aumentar size en important notes y seletectValues en HomePage (Esperar a Majo), revisar performace del slider weight.
 //Mirar tema de control entre error y no data, con la alerta de no datos del METAR.
+//flutter run -d Chrome --web-browser-flag "--disable-web-security"
   @override
   State<CalculatorPage> createState() => _CalculatorPageState();
 }
@@ -4207,7 +4208,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                               ),
                                               content: SizedBox(
                                                 width: 750,
-                                                height: 700,
+                                                height: 750,
                                                 child: Column(
                                                   crossAxisAlignment: CrossAxisAlignment.start,
                                                   children: [
@@ -4216,7 +4217,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                                         AppStrings.notesTitle,
                                                         style: TextStyle(
                                                           color: AppColors.textColor2,
-                                                          fontSize: 20,
+                                                          fontSize: 22,
                                                           fontWeight: FontWeight.bold,
                                                         ),
                                                       ),
@@ -4242,7 +4243,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                                                   comentario.trim(),
                                                                   style: const TextStyle(
                                                                     color: AppColors.white,
-                                                                    fontSize: 20,
+                                                                    fontSize: 21,
                                                                   ),
                                                                   textAlign: TextAlign.justify,
                                                                 ),
