@@ -53,7 +53,7 @@ class CalculatorPage extends StatefulWidget {
     this.aircraft, this.normalNon, this.configuration, this.airport,
     this.airportEl, this.airportQNH, this.airportTemp, this.airportRunway, this.nonflaps,
   });
-//Pendiente: aumentar size en important notes y seletectValues en HomePage (Esperar a Majo), revisar performace del slider weight.
+//Pendiente: revisar performace del slider weight.
 //Mirar tema de control entre error y no data, con la alerta de no datos del METAR.
 //flutter run -d Chrome --web-browser-flag "--disable-web-security"
   @override

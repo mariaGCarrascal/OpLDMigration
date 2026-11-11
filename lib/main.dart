@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_5/constants/features/home/presentation/home_page.dart';
 import 'package:flutter_application_5/service_data/opldservice.dart';
+import 'package:flutter_application_5/constants/features/splash/splash_screen.dart';
 import 'package:flutter_application_5/theme/dark_theme.dart';
 
 
-void main() async {
+void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  await OpLdService.instance.initialize();
   runApp(const MyApp());
 }
 
@@ -29,7 +29,14 @@ class MyApp extends StatelessWidget {
           child: child!,
         );
       },
-      home: const HomePage(),
+
+      home: SplashScreen(
+        minDuration: const Duration(seconds: 2),
+        onInit: () async {
+          await OpLdService.instance.initialize();
+        },
+        nextPage: const HomePage(),
+      ),
     );
   }
 }

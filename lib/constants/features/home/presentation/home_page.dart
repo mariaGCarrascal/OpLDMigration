@@ -154,11 +154,10 @@ class _HomePageState extends State<HomePage> {
 
                     // Aircraft Picker
                     DropdownButtonFormField2<String>(
-                      isExpanded: true,
+                      //isExpanded: true,
                       value: selectedAircraftType,
 
                       decoration: InputDecoration(
-                        isDense: true,
                         filled: true,
                         fillColor: AppColors.placeholder,
                         enabledBorder: OutlineInputBorder(
@@ -302,11 +301,10 @@ class _HomePageState extends State<HomePage> {
 
                     // Landing picker
                     DropdownButtonFormField2<String>(
-                      isExpanded: true,
+                      //isExpanded: true,
                       value: selectedLandingType,
 
                       decoration: InputDecoration(
-                        isDense: true,
                         filled: true,
                         fillColor: AppColors.placeholder,
 
@@ -441,7 +439,7 @@ class _HomePageState extends State<HomePage> {
 
                     // Label Configuration Type Selection
                     if (selectedLandingType == 'Non-Normal') ...[
-                       Padding(
+                      Padding(
                         padding: EdgeInsets.only(top: 20.0),
                         child: Text(
                           AppStrings.configSection,
@@ -465,7 +463,6 @@ class _HomePageState extends State<HomePage> {
                             : null,
 
                         decoration: InputDecoration(
-                          isDense: true,
                           filled: true,
                           fillColor: AppColors.placeholder,
 
@@ -609,7 +606,6 @@ class _HomePageState extends State<HomePage> {
                       ),
                       decoratorProps: DropDownDecoratorProps(
                         decoration: InputDecoration(
-                          isDense: true,
                           filled: true,
                           fillColor: AppColors.placeholder,
 
