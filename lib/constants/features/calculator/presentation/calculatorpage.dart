@@ -4217,7 +4217,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                                         AppStrings.notesTitle,
                                                         style: TextStyle(
                                                           color: AppColors.textColor2,
-                                                          fontSize: 22,
+                                                          fontSize: 24,
                                                           fontWeight: FontWeight.bold,
                                                         ),
                                                       ),
@@ -4243,7 +4243,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                                                   comentario.trim(),
                                                                   style: const TextStyle(
                                                                     color: AppColors.white,
-                                                                    fontSize: 21,
+                                                                    fontSize: 23,
                                                                   ),
                                                                   textAlign: TextAlign.justify,
                                                                 ),

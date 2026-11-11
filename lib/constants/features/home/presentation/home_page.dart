@@ -158,6 +158,7 @@ class _HomePageState extends State<HomePage> {
                       value: selectedAircraftType,
 
                       decoration: InputDecoration(
+                        isDense: true,
                         filled: true,
                         fillColor: AppColors.placeholder,
                         enabledBorder: OutlineInputBorder(
@@ -194,7 +195,7 @@ class _HomePageState extends State<HomePage> {
                       ),
 
                       buttonStyleData: ButtonStyleData(
-                      height: orientation ? 40 : 29,
+                      height: orientation ? 40 : 35,
                       ),
 
                       dropdownStyleData: DropdownStyleData(
@@ -250,9 +251,13 @@ class _HomePageState extends State<HomePage> {
                               style: TextStyle(
                                 color: AppColors.textColor2,
                                 fontWeight: FontWeight.bold,
-                                fontSize:  orientation ? 22 : 20,
+                                fontSize:  orientation ? 26 : 27,
                               ),
                               overflow: TextOverflow.ellipsis,
+                              textHeightBehavior: TextHeightBehavior(
+                                applyHeightToFirstAscent: false,
+                                applyHeightToLastDescent: false,
+                              )
                             ),
                           );
                         }).toList();
@@ -301,6 +306,7 @@ class _HomePageState extends State<HomePage> {
                       value: selectedLandingType,
 
                       decoration: InputDecoration(
+                        isDense: true,
                         filled: true,
                         fillColor: AppColors.placeholder,
 
@@ -340,7 +346,7 @@ class _HomePageState extends State<HomePage> {
                       ),
 
                       buttonStyleData: ButtonStyleData(
-                      height: orientation ? 40 : 29,
+                      height: orientation ? 40 : 35,
                       ),
 
                       dropdownStyleData: DropdownStyleData(
@@ -396,9 +402,13 @@ class _HomePageState extends State<HomePage> {
                               style: TextStyle(
                                 color: AppColors.textColor2,
                                 fontWeight: FontWeight.bold,
-                                fontSize: orientation ? 22 : 20,
+                                fontSize: orientation ? 26 : 27,
                               ),
                               overflow: TextOverflow.ellipsis,
+                              textHeightBehavior: TextHeightBehavior(
+                                applyHeightToFirstAscent: false,
+                                applyHeightToLastDescent: false,
+                              )
                             ),
                           );
                         }).toList();
@@ -455,6 +465,7 @@ class _HomePageState extends State<HomePage> {
                             : null,
 
                         decoration: InputDecoration(
+                          isDense: true,
                           filled: true,
                           fillColor: AppColors.placeholder,
 
@@ -494,7 +505,7 @@ class _HomePageState extends State<HomePage> {
                         ),
 
                          buttonStyleData: ButtonStyleData(
-                      height: orientation ? 40 : 29,
+                           height: orientation ? 40 : 35,
                       ),
 
                         dropdownStyleData: DropdownStyleData(
@@ -551,9 +562,13 @@ class _HomePageState extends State<HomePage> {
                                 style: TextStyle(
                                   color: AppColors.textColor2,
                                   fontWeight: FontWeight.bold,
-                                  fontSize: orientation ? 22 : 20,
+                                  fontSize: orientation ? 26 : 27,
                                 ),
                                 overflow: TextOverflow.ellipsis,
+                                textHeightBehavior: TextHeightBehavior(
+                                  applyHeightToFirstAscent: false,
+                                  applyHeightToLastDescent: false,
+                              )
                               ),
                             );
                           }).toList();
@@ -594,6 +609,7 @@ class _HomePageState extends State<HomePage> {
                       ),
                       decoratorProps: DropDownDecoratorProps(
                         decoration: InputDecoration(
+                          isDense: true,
                           filled: true,
                           fillColor: AppColors.placeholder,
 
@@ -699,7 +715,7 @@ class _HomePageState extends State<HomePage> {
                                   'No Airport Found for "$searchEntry"',
                                   style: TextStyle(
                                     color: AppColors.white,
-                                    fontSize: 20,
+                                    fontSize: 25,
                                   ),
                                 ),
                               ],
@@ -725,7 +741,7 @@ class _HomePageState extends State<HomePage> {
                               item,
                               style: TextStyle(
                                 color: AppColors.textColor2,
-                                fontSize: 16,
+                                fontSize: 20,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
@@ -734,14 +750,21 @@ class _HomePageState extends State<HomePage> {
                       ),
 
                       dropdownBuilder: (context, selectedItem) {
-                        return Text(
-                          selectedItem ?? 'PTY',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: AppColors.textColor2,
-                            fontSize: 20,
+                        return Padding(
+                          padding: const EdgeInsets.only(left: 5), 
+                          child: Text(
+                            selectedItem ?? 'PTY',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: AppColors.textColor2,
+                              fontSize: orientation ? 26 : 27,
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                            textHeightBehavior: const TextHeightBehavior(
+                              applyHeightToFirstAscent: false,
+                              applyHeightToLastDescent: false,
+                            ),
                           ),
-                          overflow: TextOverflow.ellipsis,
                         );
                       },
 
