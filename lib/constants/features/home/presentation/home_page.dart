@@ -281,7 +281,7 @@ class _HomePageState extends State<HomePage> {
                     ),
 
                     // Label Landing Selection
-                   Padding(
+                    Padding(
                       padding: EdgeInsets.only(top: 20.0),
                       child: Text(
                         AppStrings.normalNonnormalSection,
@@ -569,7 +569,7 @@ class _HomePageState extends State<HomePage> {
                     ],
  
                     // Label Airport Selection
-                     Padding(
+                    Padding(
                       padding: EdgeInsets.only(top: 20.0),
                       child: Text(
                         AppStrings.airportSection,
@@ -724,7 +724,7 @@ class _HomePageState extends State<HomePage> {
                             child: Text(
                               item,
                               style: TextStyle(
-                                color: AppColors.textColor3,
+                                color: AppColors.textColor2,
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,
                               ),
