@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_5/constants/features/home/presentation/home_page.dart';
+import 'package:flutter_application_5/features/home/presentation/home_page.dart';
 import 'package:flutter_application_5/service_data/opldservice.dart';
-import 'package:flutter_application_5/constants/features/splash/splash_screen.dart';
+import 'package:flutter_application_5/features/splash/splash_screen.dart';
 import 'package:flutter_application_5/theme/dark_theme.dart';
 
 

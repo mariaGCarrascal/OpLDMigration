@@ -1,12 +1,12 @@
-import 'package:flutter_application_5/constants/features/calculator/opld_performance/loaders/altitudedistancecalculation.dart';
-import 'package:flutter_application_5/constants/features/calculator/opld_performance/loaders/approachspeeddistancecalculation.dart';
-import 'package:flutter_application_5/constants/features/calculator/opld_performance/loaders/refdistancereference.dart';
-import 'package:flutter_application_5/constants/features/calculator/opld_performance/loaders/reversethrustadj.dart';
-import 'package:flutter_application_5/constants/features/calculator/opld_performance/loaders/slopedistancecalculation.dart';
-import 'package:flutter_application_5/constants/features/calculator/opld_performance/loaders/speedbrakesdistance.dart';
-import 'package:flutter_application_5/constants/features/calculator/opld_performance/loaders/tempdistancecalculation.dart';
-import 'package:flutter_application_5/constants/features/calculator/opld_performance/loaders/weightdistancecalculation.dart';
-import 'package:flutter_application_5/constants/features/calculator/opld_performance/loaders/winddistancecalculation.dart';
+import 'package:flutter_application_5/features/calculator/opld_performance/loaders/altitudedistancecalculation.dart';
+import 'package:flutter_application_5/features/calculator/opld_performance/loaders/approachspeeddistancecalculation.dart';
+import 'package:flutter_application_5/features/calculator/opld_performance/loaders/refdistancereference.dart';
+import 'package:flutter_application_5/features/calculator/opld_performance/loaders/reversethrustadj.dart';
+import 'package:flutter_application_5/features/calculator/opld_performance/loaders/slopedistancecalculation.dart';
+import 'package:flutter_application_5/features/calculator/opld_performance/loaders/speedbrakesdistance.dart';
+import 'package:flutter_application_5/features/calculator/opld_performance/loaders/tempdistancecalculation.dart';
+import 'package:flutter_application_5/features/calculator/opld_performance/loaders/weightdistancecalculation.dart';
+import 'package:flutter_application_5/features/calculator/opld_performance/loaders/winddistancecalculation.dart';
 
 class Oplddistancecalculator{
 

@@ -1,0 +1,4316 @@
+import 'dart:async';
+import 'package:flutter/material.dart';
+import 'package:flutter_application_5/constants/colors/app_colors.dart';
+import 'package:flutter_application_5/features/calculator/fuctions/calculateAltitud.dart';
+import 'package:flutter_application_5/features/calculator/fuctions/calculateelevationincredecre.dart';
+import 'package:flutter_application_5/features/calculator/fuctions/calculateisa.dart';
+import 'package:flutter_application_5/features/calculator/fuctions/calculateqnhincredecre.dart';
+import 'package:flutter_application_5/features/calculator/fuctions/calculatereduction.dart';
+import 'package:flutter_application_5/features/calculator/fuctions/calculateslopeincredecre.dart';
+import 'package:flutter_application_5/features/calculator/fuctions/calculatetempisa.dart';
+import 'package:flutter_application_5/features/calculator/fuctions/calculatevrefincredecre.dart';
+import 'package:flutter_application_5/features/calculator/fuctions/calculateweightincredecre.dart';
+import 'package:flutter_application_5/features/calculator/fuctions/calculatewind.dart';
+import 'package:flutter_application_5/features/calculator/fuctions/crosswindinop.dart';
+import 'package:flutter_application_5/features/calculator/fuctions/utils/customDigitFormatter.dart';
+import 'package:flutter_application_5/features/calculator/fuctions/utils/customskeletonizer.dart';
+import 'package:flutter_application_5/features/calculator/fuctions/utils/formatqnh.dart';
+import 'package:flutter_application_5/features/calculator/fuctions/utils/formatslope.dart';
+import 'package:flutter_application_5/design/runwayGrafic/landingdistancebar.dart';
+import 'package:flutter_application_5/features/calculator/fuctions/loaders/loadautobrakes.dart';
+import 'package:flutter_application_5/features/calculator/fuctions/loaders/loadcomments.dart';
+import 'package:flutter_application_5/features/calculator/fuctions/loaders/loadcrosswinds.dart';
+import 'package:flutter_application_5/features/calculator/fuctions/loaders/loadreversers.dart';
+import 'package:flutter_application_5/features/calculator/fuctions/loaders/loadvrefcondition.dart';
+import 'package:flutter_application_5/features/calculator/fuctions/loaders/loadvreftext.dart';
+import 'package:flutter_application_5/service_data/metar/connectivityservice.dart';
+import 'package:flutter_application_5/service_data/metar/metaralert.dart';
+import 'package:flutter_application_5/service_data/metar/remotedatasource.dart';
+import 'package:flutter_application_5/features/calculator/fuctions/utils/opldcolorasignator.dart';
+import 'package:flutter_application_5/features/calculator/fuctions/loaders/searchautobrakedefault.dart';
+import 'package:flutter_application_5/features/calculator/fuctions/loaders/searchdefault.dart';
+import 'package:flutter_application_5/features/calculator/opld_performance/loaders/searchbaselinereference.dart';
+import 'package:flutter_application_5/features/calculator/opld_performance/oplddistancecalculator.dart';
+import 'package:flutter_application_5/service_data/airportdata.dart';
+import 'package:flutter_application_5/constants/strings/app_strings.dart';
+import 'package:flutter/services.dart';
+import 'package:dropdown_button2/dropdown_button2.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:http/http.dart' as http;
+
+class CalculatorPage extends StatefulWidget {
+  final String? aircraft;
+  final String? normalNon;
+  final String? configuration;
+  final String? airport;
+  final String? airportEl;
+  final String? airportQNH;
+  final String? airportTemp;
+  final Map<String, List<String>>? airportRunway;
+  final String? nonflaps;
+  const CalculatorPage({
+    super.key,
+    this.aircraft, this.normalNon, this.configuration, this.airport,
+    this.airportEl, this.airportQNH, this.airportTemp, this.airportRunway, this.nonflaps,
+  });
+
+  @override
+  State<CalculatorPage> createState() => _CalculatorPageState();
+}
+
+class _CalculatorPageState extends State<CalculatorPage> {
+  //Variables claves
+  Timer? _timer;
+  String? checkAutobreak;
+  String? _currentReduction;
+  String? netLDA;
+  String? opldResult;
+  String? remainingResult;
+  Color? colorResult;
+  late double _currentLadWeight;
+  late double _currentElevation;
+  double? altitudMax;
+  double? altitudMin;
+  late double sliderMinAltitud;
+  late double sliderMaxAltitud;
+  int? _divisionsAltitud;
+  int? _divisionsWeight;
+  String? isa;
+  String? selectedRunway;
+  String? selectedMag;
+  String? selectedWind;
+  String? selectedAircraft;
+  String? selectedLanding;
+  String? selectedAirport;
+  String? selectedConfiguration;
+  String? selectedAirportElevation;
+  String? selectedFlaps;
+  String? selectedReversers;
+  String? selectedAutoBrake;
+  String? selectedAirportQNH;
+  String? selectedAirportTemperature;
+  String? selectedCondition;
+  String? nonFlap;
+  String? selectedSpeedBrake;
+  String? rwyRcc;
+  String? rwyId;
+  String? rwySlope;
+  String? rwySlopeMin;
+  String? rwySlopeMax;
+  String? rwyLda;
+  String? rwyFactor;
+  String? rwyAdditive;
+  String? windValue;
+  String? headtail;
+  String? crosswind;
+  String? vRef;
+  String? vMax;
+  String? vMin;
+  String? isaMax;
+  String? isaMin;
+  String? windMax;
+  String? windMin;
+  late double weightMIN;
+  late double weightMAX;
+  late int minStep;
+  String? altitud;
+  String? vrefNonPlus;
+  String? vrefAdjust;
+  String? crosswindsComment;
+  bool _isExpanded = false;
+  bool _ispresseded = false;
+  bool? wifiCheck;
+  final remoteDataSource = Remotedatasource(client: http.Client());
+  //Variables de listas y Maps de los DropDownlists
+  Map<String, String> baseDetails = {};
+  Map<String, String> metarResult = {};
+  List<String>? listaComments = [];
+  List<String>? weightsAircraft = [];
+  List<String>? defaultAircraft = [];
+  Map<String, List<String>>? selectedAirportRunway;
+  List<String>? selectedSlopeValues = [];
+  List<String>? selectedAircraftWeight = [];
+  final List<String> normalFlaps = ['FLAPS 15', 'FLAPS 30', 'FLAPS 40'];
+  List<String>? reversersList = [];
+  List<String>? autoBrakeOptions;
+  final List<String> speedBrakesTypes = ['AUTOMATIC', 'MANUAL'];
+  final List<String> rwyConditions = ['DRY', 'GOOD', 'GOOD TO MEDIUM', 'MEDIUM', 'MEDIUM TO POOR', 'POOR'];
+  final List<String> rwymagOptions = ['000', '001', '002', '003', '004', '005', '006', '007', '008', '009', '010',
+                                      '011', '012', '013', '014', '015', '016', '017', '018', '019', '020', '021',
+                                      '022', '023', '024', '025', '026', '027', '028', '029', '030', '031', '032',
+                                      '033', '034', '035', '036', '037', '038', '039', '040', '041', '042', '043',
+                                      '044', '045', '046', '047', '048', '049', '050', '051', '052', '053', '054',
+                                      '055', '056', '057', '058', '059', '060', '061', '062', '063', '064', '065',
+                                      '066', '067', '068', '069', '070', '071', '072', '073', '074', '075', '076',
+                                      '077', '078', '079', '080', '081', '082', '083', '084', '085', '086', '087',
+                                      '088', '089', '090', '091', '092', '093', '094', '095', '096', '097', '098',
+                                      '099', '100', '101', '102', '103', '104', '105', '106', '107', '108', '109',
+                                      '110', '111', '112', '113', '114', '115', '116', '117', '118', '119', '120',
+                                      '121', '122', '123', '124', '125', '126', '127', '128', '129', '130', '131',
+                                      '132', '133', '134', '135', '136', '137', '138', '139', '140', '141', '142',
+                                      '143', '144', '145', '146', '147', '148', '149', '150', '151', '152', '153',
+                                      '154', '155', '156', '157', '158', '159', '160', '161', '162', '163', '164',
+                                      '165', '166', '167', '168', '169', '170', '171', '172', '173', '174', '175',
+                                      '176', '177', '178', '179', '180', '181', '182', '183', '184', '185', '186',
+                                      '187', '188', '189', '190', '191', '192', '193', '194', '195', '196', '197',
+                                      '198', '199', '200', '201', '202', '203', '204', '205', '206', '207', '208',
+                                      '209', '210', '211', '212', '213', '214', '215', '216', '217', '218', '219',
+                                      '220', '221', '222', '223', '224', '225', '226', '227', '228', '229', '230',
+                                      '231', '232', '233', '234', '235', '236', '237', '238', '239', '240', '241',
+                                      '242', '243', '244', '245', '246', '247', '248', '249', '250', '251', '252',
+                                      '253', '254', '255', '256', '257', '258', '259', '260', '261', '262', '263',
+                                      '264', '265', '266', '267', '268', '269', '270', '271', '272', '273', '274',
+                                      '275', '276', '277', '278', '279', '280', '281', '282', '283', '284', '285',
+                                      '286', '287', '288', '289', '290', '291', '292', '293', '294', '295', '296',
+                                      '297', '298', '299', '300', '301', '302', '303', '304', '305', '306', '307',
+                                      '308', '309', '310', '311', '312', '313', '314', '315', '316', '317', '318',
+                                      '319', '320', '321', '322', '323', '324', '325', '326', '327', '328', '329',
+                                      '330', '331', '332', '333', '334', '335', '336', '337', '338', '339', '340',
+                                      '341', '342', '343', '344', '345', '346', '347', '348', '349', '350', '351',
+                                      '352', '353', '354', '355', '356', '357', '358', '359', '360'];
+  final List<String> windDirection = ['000', '010', '020', '030', '040', '050', '060', '070', '080', '090', '100',
+                                      '110', '120', '130', '140', '150', '160', '170', '180', '190', '200', '210',
+                                      '220', '230', '240', '250', '260', '270', '280', '290', '300', '310', '320',
+                                      '330', '340', '350', '360'];
+  Map<String, List<String>> conditionNotes = Airportdata.rcaTable;
+  List<String>? rwyNote = [];
+  List<String>? windValues = [];
+  Map<String, String> crosswindsLimits = {};
+  Map<String, String> _crosswindsLimits = {};
+  List<String> tempValues = [];
+
+  @override
+  void initState() {
+    super.initState();
+    selectedSpeedBrake = 'AUTOMATIC';
+    selectedAircraft = widget.aircraft;
+    defaultAircraft = Searchdefault(aircraftRef: selectedAircraft)();
+    selectedCondition = defaultAircraft?[19];
+    updateRwyCondition('$selectedCondition');
+    crosswindsLimits = Loadcrosswinds(aircraftRef: selectedAircraft)();
+    _crosswindsLimits = Map<String, String>.from(crosswindsLimits);
+    crosswindsComment = defaultAircraft?[24];
+    _currentLadWeight = double.parse(defaultAircraft?[4] ?? '0');
+    weightMAX = double.parse(defaultAircraft?[5] ?? '0');
+    weightMIN = double.parse(defaultAircraft?[6] ?? '0');
+    isaMin = defaultAircraft?[13];
+    isaMax = defaultAircraft?[14];
+    windValue = defaultAircraft?[20];
+    headtail = '0';
+    crosswind = '0';
+    windMin = defaultAircraft?[21];
+    windMax = defaultAircraft?[22];
+    selectedWind = '000';
+    selectedLanding = widget.normalNon;
+    selectedConfiguration = widget.configuration;
+    selectedAirport = widget.airport;
+    selectedAirportQNH = widget.airportQNH;
+
+    if (selectedLanding == 'Normal') {
+      selectedFlaps = defaultAircraft?[1];
+      selectedAutoBrake = defaultAircraft?[2];
+      autoBrakeOptions = Loadautobrakes(
+        aircraftRef: selectedAircraft,
+        landingRef: selectedLanding,
+        configurationRef: selectedConfiguration,
+        flapRef: selectedFlaps,
+        conditionRef: selectedCondition,
+      )();
+      vrefAdjust = 'YES';
+    } else {
+      selectedFlaps = widget.nonflaps;
+      nonFlap = widget.nonflaps;
+      selectedAutoBrake = Searchautobrakedefault(
+        aircraftRef: selectedAircraft,
+        landingRef: selectedLanding,
+        configurationRef: selectedConfiguration,
+        conditionRef: selectedCondition,
+      )();
+      autoBrakeOptions = Loadautobrakes(
+        aircraftRef: selectedAircraft,
+        landingRef: selectedLanding,
+        configurationRef: selectedConfiguration,
+        flapRef: selectedFlaps,
+        conditionRef: selectedCondition,
+      )();
+      vrefNonPlus = Loadvreftext(
+        aircraftRef: selectedAircraft,
+        landingRef: selectedLanding,
+        configurationRef: selectedConfiguration,
+      )();
+      vrefAdjust = Loadvrefcondition(
+        aircraftRef: selectedAircraft,
+        landingRef: selectedLanding,
+        configurationRef: selectedConfiguration,
+      )();
+    }
+
+    listaComments = Loadcomments(
+      aircraftRef: selectedAircraft,
+      landingRef: selectedLanding,
+      configurationRef: selectedConfiguration,
+      flapRef: selectedFlaps,
+    )();
+
+    if (selectedAirport != 'XXX') {
+      selectedAirportElevation = widget.airportEl;
+      selectedAirportTemperature = widget.airportTemp;
+      selectedAirportRunway = widget.airportRunway;
+      selectedRunway = selectedAirportRunway?.keys.first;
+      selectedSlopeValues = selectedAirportRunway?[selectedRunway];
+      rwyId = selectedSlopeValues?[0].trim();
+      rwyLda = selectedSlopeValues?[1].trim();
+      rwySlope = selectedSlopeValues?[2].trim();
+      rwyFactor = selectedSlopeValues?[3].trim();
+      rwyAdditive = selectedSlopeValues?[4].trim();
+      netLDA = rwyLda;
+      altitud = Calculatealtitud(
+        elevationRef: selectedAirportElevation,
+        qnhRef: selectedAirportQNH,
+      )();
+      isa = ((double.parse(selectedAirportTemperature!.trim()).round() - 15) + (0.0019812 * double.parse(altitud ?? '0').round())).round().toString();
+    } else {
+      altitudMin = double.parse(defaultAircraft?[9] ?? '0');
+      altitudMax = double.parse(defaultAircraft?[10] ?? '0');
+      sliderMinAltitud = (altitudMin! / 1000).ceil() * 1000;
+      sliderMaxAltitud = (altitudMax! / 1000).floor() * 1000;
+      _divisionsAltitud = ((sliderMaxAltitud - sliderMinAltitud) / 1000).round();
+      _currentElevation = double.parse(defaultAircraft?[18] ?? '0');
+      altitud = Calculatealtitud(
+        elevationRef: _currentElevation.toString(),
+        qnhRef: selectedAirportQNH,
+      )();
+      isa = defaultAircraft?[23];
+      tempValues = Calculatetempisa(
+        altitudRef: altitud,
+        temperatureRef: '0',
+        isaRef: defaultAircraft?[23],
+        minRef: isaMin,
+        maxRef: isaMax,
+        operation: '',
+      )();
+      selectedAirportTemperature = tempValues[1];
+      selectedAirportRunway = widget.airportRunway;
+      selectedRunway = selectedAirportRunway?.keys.first;
+      selectedSlopeValues = selectedAirportRunway?[selectedRunway];
+      rwyId = selectedSlopeValues?[0] != 'XXX'
+          ? selectedSlopeValues![0]
+          : '000';
+      rwyLda = selectedSlopeValues?[1] != 'XXXX'
+          ? selectedSlopeValues![1]
+          : '0';
+      rwySlope = selectedSlopeValues?[2] != 'XXX'
+          ? selectedSlopeValues![2]
+          : '0';
+      rwyFactor = selectedSlopeValues?[3];
+      rwyAdditive = selectedSlopeValues?[4];
+      netLDA = rwyLda;
+      rwySlopeMin = defaultAircraft?[11];
+      rwySlopeMax = defaultAircraft?[12];
+    }
+    _currentLadWeight = double.parse(defaultAircraft?[4] ?? '0');
+    weightMAX = double.parse(defaultAircraft?[5] ?? '0');
+    weightMIN = double.parse(defaultAircraft?[6] ?? '0');
+    minStep = (weightMIN / 1000).ceil();
+    final maxStep = (weightMAX / 1000).floor();
+    _divisionsWeight = maxStep - minStep + (weightMAX % 1000 != 0 ? 1 : 0);
+    vRef = vrefAdjust == 'YES' ? defaultAircraft![0] : '0';
+    vMin = defaultAircraft?[7];
+    vMax = defaultAircraft?[8];
+    reversersList = Loadreversers(
+      aircraftRef: selectedAircraft,
+      landingRef: selectedLanding,
+      configurationRef: selectedConfiguration,
+      flapRef: selectedFlaps,
+      conditionRef: selectedCondition,
+    )();
+    selectedReversers = defaultAircraft![16];
+    if (!reversersList!.contains(selectedReversers)) {
+      selectedReversers = reversersList!.first;
+    }
+
+    baseDetails = Searchbaselinereference( aircraftRef: selectedAircraft, landingRef: selectedLanding, 
+      configurationRef: selectedConfiguration, flapRef: selectedFlaps)();
+
+    updateOpld();
+  }
+
+  void updateRwyCondition(String condition) {
+    final values = conditionNotes[condition] ?? ["Unknown"];
+    rwyRcc = values.first;
+    rwyNote = values.skip(1).toList();
+  }
+
+  void updateOpld() {
+    opldResult = Oplddistancecalculator(aircraftBaseDetails: baseDetails,
+      aircraftPicker: selectedAircraft, landingPicker: selectedLanding, configurationPicker: selectedConfiguration,
+      factorRef: rwyFactor, rwyPicker: selectedRunway, additiveRef: rwyAdditive,
+      flapPicker: selectedFlaps, rwyConditionPicker: selectedCondition, autobrakePicker: selectedAutoBrake,
+      revsrinopPicker: selectedReversers, speedbrakesPicker: selectedSpeedBrake, weightRef: _currentLadWeight.toString(),
+      altitudeRef: altitud, isaRef: isa, slopeRef: rwySlope, windRef: headtail, vrefRef: vRef)();
+    remainingResult = ((double.tryParse(netLDA ?? '0') ?? 0) - (double.tryParse(opldResult ?? '0') ?? 0)).round().toString();
+    colorResult = Opldcolorasignator(opldReference: opldResult, netldaReference: netLDA)();
+  }
+  
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose(); 
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final Size screenSize = MediaQuery.of(context).size;
+    final headtailValue = (num.tryParse((headtail ?? '0').replaceAll('−', '-').replaceAll('–', '-'),) ?? 0).round();
+    final crosswindValue = (num.tryParse((crosswind ?? '0').replaceAll('−', '-').replaceAll('–', '-'),) ?? 0).round();
+    final orientation = MediaQuery.of(context).orientation == Orientation.landscape;
+
+    return Scaffold(
+      backgroundColor: AppColors.background,
+      appBar: AppBar(
+        centerTitle: true,
+        title: Text(
+          '$selectedAircraft',
+          style: const TextStyle(fontSize: 24, color: AppColors.white),
+        ),
+        iconTheme: const IconThemeData(color: AppColors.white),
+        backgroundColor: Colors.black,
+        actions: [
+          if (selectedAirport != 'XXX') ...[
+            //Boton METAR Notes
+            Center(
+              child: InkWell(
+                borderRadius: BorderRadius.circular(20),
+                onTap: () {
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      final infoText = metarResult['INFO']?.trim();
+                      final hasData = infoText != null && infoText.isNotEmpty;
+                      return AlertDialog(
+                        backgroundColor: AppColors.black,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12.0),
+                          side: const BorderSide(
+                            color: AppColors.green,
+                            width: 1.5,
+                          ),
+                        ),
+                        content: SizedBox(
+                          width: 500,
+                          height: hasData ? 170 : 150,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Center(
+                                child: Text(
+                                  AppStrings.metar,
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    color: AppColors.textColor2,
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(height: 10),
+                              Expanded(
+                                child: ScrollConfiguration(
+                                  behavior: ScrollConfiguration.of(context).copyWith(
+                                    scrollbars: false,
+                                  ),
+                                  child: SingleChildScrollView(
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                                      children: [
+                                        const Divider(
+                                          color: AppColors.dividerLine,
+                                        ),
+                                        Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                            vertical: 12.0,
+                                          ),
+                                          child: Text(
+                                            hasData ? infoText : 'Load METAR Data First',
+                                            textAlign: hasData
+                                                ? TextAlign.justify
+                                                : TextAlign.center,
+                                            style: TextStyle(
+                                              color: AppColors.white,
+                                              fontSize: 16.5,
+                                            ),
+                                          ),
+                                        ),
+                                        const Divider(
+                                          color: AppColors.dividerLine,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  );
+                },
+                child: const Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: Icon(
+                    Icons.info_outline,
+                    color: AppColors.icon,
+                    size: 30,
+                  ),
+                ),
+              ),
+            ),
+            //Boton de METAR
+            Padding(
+              padding: const EdgeInsets.only(left: 4, right: 12, top: 8, bottom: 8),
+              child: ElevatedButton.icon(
+                onPressed: () async {
+                  setState(() {
+                    _ispresseded = true;
+                  });
+
+                  wifiCheck = await ConnectivityService().checkInitialConnectivity();
+
+                  if (wifiCheck == true) {
+                    try {
+                      metarResult = await remoteDataSource.getMetar('$selectedAirport').timeout(const Duration(seconds: 12));
+
+                      if (!mounted) return;
+
+                      setState(() {
+                        final bool hasMissingData = metarResult['HAS_MISSING_DATA'] == 'true';
+                        selectedAirportQNH = hasMissingData ? selectedAirportQNH : metarResult['QNH'];
+                        selectedAirportTemperature = hasMissingData ? selectedAirportTemperature : metarResult['OAT'];
+                        selectedWind = hasMissingData ?  selectedWind : metarResult['WIND'];
+                        windValue = hasMissingData ? windValue : metarResult['NODE'];
+                        if(metarResult['HAS_MISSING_DATA'] != 'true') {
+                          altitud = Calculatealtitud(elevationRef: selectedAirportElevation, qnhRef: selectedAirportQNH)();
+                          isa = Calculateisa(elevationRef: altitud, temperatureRef: selectedAirportTemperature)();
+                          windValues = Calculatewind(rwyidRef: rwyId, windRef: windValue, windpickerRef: selectedWind)();
+                          windValue = windValues?[0];
+                          headtail = windValues?[1];
+                          crosswind = windValues?[2];
+                          updateOpld();
+                        }
+                      });
+                    } on TimeoutException {
+                      if (!context.mounted) return;
+                      //Mensaje de alerta timeout
+                      ScaffoldMessenger.of(context)..clearSnackBars()
+                        ..showSnackBar(
+                          SnackBar(
+                            elevation: 0,
+                            behavior: SnackBarBehavior.floating,
+                            backgroundColor: Colors.transparent,
+                            duration: const Duration(seconds: 3),
+                            content: Card(
+                              color: AppColors.background,
+                              elevation: 6,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(25),
+                                side: BorderSide(
+                                  color: AppColors.warning.withValues(alpha: 0.7), 
+                                  width: 1.5,          
+                                ),
+                              ),
+                              child: const Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                                child: Metaralert(message: AppStrings.metarTimeout)
+                              ),
+                            ),
+                          ),
+                        );
+                    } catch (e) {
+                      if (!context.mounted) return;
+                      //Mensaje de alerta no METAR Data
+                      ScaffoldMessenger.of(context)..clearSnackBars()
+                        ..showSnackBar(
+                          SnackBar(
+                            elevation: 0,
+                            behavior: SnackBarBehavior.floating,
+                            backgroundColor: Colors.transparent,
+                            duration: const Duration(seconds: 3),
+                            content: Card(
+                              color: AppColors.background,
+                              elevation: 6,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(25),
+                                side: BorderSide(
+                                  color: AppColors.warning.withValues(alpha: 0.7), 
+                                  width: 1.5,          
+                                ),
+                              ),
+                              child: const Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                                child: Metaralert(message: AppStrings.metarEmpty),
+                              ),
+                            ),
+                          ),
+                        );
+                    }
+                  } else {
+                    if (!context.mounted) return;
+                    //Mensaje de alerta no wifi
+                    ScaffoldMessenger.of(context)..clearSnackBars()
+                      ..showSnackBar(
+                        SnackBar(
+                          elevation: 0,
+                          behavior: SnackBarBehavior.floating,
+                          backgroundColor: Colors.transparent,
+                          duration: const Duration(seconds: 3),
+                          content: Card(
+                            color: AppColors.background,
+                            elevation: 6,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(25),
+                              side: BorderSide(
+                                color: AppColors.warning.withValues(alpha: 0.7), 
+                                width: 1.5,          
+                              ),
+                            ),
+                            child: Metaralert(message: AppStrings.nowifiMessage),
+                          ),
+                        ),
+                      );
+                  }
+
+                  if (mounted) {
+                    setState(() {
+                      _ispresseded = false;
+                    });
+                  }
+                },
+                iconAlignment: IconAlignment.end,
+                icon: SvgPicture.asset(
+                  'assets/icons/cloudy_sunny.svg',
+                  width: 25,
+                  height: 25,
+                  colorFilter: const ColorFilter.mode(
+                    AppColors.white,
+                    BlendMode.srcIn,
+                  ),
+                ),
+                label: Text(
+                  AppStrings.metar,
+                  style: const TextStyle(
+                    color: AppColors.white,
+                  ),
+                ),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.black,
+                  side: const BorderSide(
+                    color: AppColors.icon,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                  padding: const EdgeInsets.symmetric(horizontal: 14.0),
+                ),
+              ),
+            ),
+          ],
+        ],
+      ),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(4.0),
+        child: Column(
+          children: [
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                //Columna Izquierda (Airport Information y Aircraft Configuration)
+                Expanded(
+                  child: Column(
+                    children: [
+                      //Header de Airport Information 
+                      Card(
+                        color: AppColors.black,
+                        shape: RoundedRectangleBorder(
+                          side: BorderSide(color: Colors.white),
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                            vertical: 2,
+                            horizontal: 8,
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                AppStrings.airportInfo,
+                                style: TextStyle(
+                                  fontSize: 21,
+                                  fontWeight: FontWeight.bold,
+                                  color: AppColors.white,
+                                ),
+                              ),
+                              Text(
+                                '$selectedAirport', // TextForSelectedAirport
+                                style: TextStyle(
+                                  color: AppColors.textColor2,
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+
+                      //Campo de Rwy ID, si es XXX, se muestra el texto RWY MAG HDG y los valores pasan a ser numericos como Wind. En aumento de +1 hasta 360
+                      Card(
+                        color: AppColors.cardColor,
+                        shape: RoundedRectangleBorder(
+                          side: BorderSide(
+                            color: AppColors.placeholder,
+                            width: 2.0,
+                          ),
+                          borderRadius: BorderRadius.circular(12.0),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              if (selectedAirport != 'XXX') ...[
+                                Text(
+                                  AppStrings.rwyId,
+                                  style: TextStyle(
+                                    fontSize: 16.5,
+                                    color: AppColors.white,
+                                  ),
+                                ),
+                                const SizedBox(width: 25.0),
+                                Text(
+                                  '(${int.tryParse(rwyId!.trim()) ?? 0}°)',
+                                  style: TextStyle(
+                                    fontSize: 16.5,
+                                    fontWeight: FontWeight.bold,
+                                    color: AppColors.textColor3,
+                                  ),
+                                ),
+                                Spacer(),
+                                SizedBox(
+                                  width: orientation ? 360 : 210,
+                                  child: DropdownButtonFormField2<String>(
+                                    isExpanded: true,
+                                    value: selectedRunway,
+
+                                    hint: Text(
+                                      '$selectedRunway',
+                                      textAlign: TextAlign.right,
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: AppColors.textColor2,
+                                      ),
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+
+                                    decoration: InputDecoration(
+                                      filled: true,
+                                      fillColor: AppColors.placeholder,
+
+                                      enabledBorder: OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                          color: AppColors.placeholder,
+                                          width: 1,
+                                        ),
+                                        borderRadius: BorderRadius.circular(
+                                          5.0,
+                                        ),
+                                      ),
+
+                                      focusedBorder: OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                          color: AppColors.placeholder,
+                                        ),
+                                        borderRadius: BorderRadius.circular(
+                                          5.0,
+                                        ),
+                                      ),
+
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(
+                                          5.0,
+                                        ),
+                                      ),
+
+                                      contentPadding: EdgeInsets.zero,
+                                    ),
+
+                                    iconStyleData: const IconStyleData(
+                                      icon: SizedBox.shrink(),
+                                    ),
+
+                                    selectedItemBuilder:
+                                        (BuildContext context) {
+                                          return (selectedAirportRunway?.keys ??
+                                                  <String>{})
+                                              .map((value) {
+                                                return Align(
+                                                  alignment:
+                                                      Alignment.centerRight,
+                                                  child: Text(
+                                                    value,
+                                                    textAlign: TextAlign.right,
+                                                    style: TextStyle(
+                                                       fontSize: 18,
+                                                      color: AppColors
+                                                          .textColor2,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                    ),
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                  ),
+                                                );
+                                              })
+                                              .toList();
+                                        },
+
+                                    dropdownStyleData: DropdownStyleData(
+                                      offset: const Offset(0, -5),
+                                      scrollbarTheme: ScrollbarThemeData(
+                                        thickness: WidgetStateProperty.all(0),
+                                      ),
+
+                                      decoration: BoxDecoration(
+                                        color: AppColors.background
+                                            .withOpacity(0.9),
+                                        borderRadius: BorderRadius.circular(5),
+                                        border: Border.all(
+                                          color: AppColors.white.withOpacity(
+                                            0.8,
+                                          ),
+                                          width: 1.5,
+                                        ),
+                                      ),
+                                    ),
+
+                                    items:
+                                        (selectedAirportRunway?.keys ??
+                                                <String>{})
+                                            .map((value) {
+                                              final bool isSelected =
+                                                  value == selectedRunway;
+                                              return DropdownMenuItem<String>(
+                                                value: value,
+                                                child: Container(
+                                                  width: double.infinity,
+                                                  padding:
+                                                      const EdgeInsets.symmetric(
+                                                        horizontal: 12,
+                                                        vertical: 10,
+                                                      ),
+                                                  decoration: BoxDecoration(
+                                                    color: isSelected
+                                                        ? AppColors.white
+                                                              .withOpacity(0.15)
+                                                        : Colors.transparent,
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                          4,
+                                                        ),
+                                                  ),
+                                                  child: Text(
+                                                    value,
+                                                    style: TextStyle(
+                                                      color: AppColors
+                                                          .textColor2,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      fontSize: 16,
+                                                    ),
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                  ),
+                                                ),
+                                              );
+                                            })
+                                            .toList(),
+
+                                    onChanged: (newValue) {
+                                      setState(() {
+                                        selectedRunway = newValue;
+                                        selectedSlopeValues =
+                                            selectedAirportRunway?[selectedRunway];
+                                        rwyId = selectedSlopeValues?[0];
+                                        rwyLda = selectedSlopeValues?[1];
+                                        netLDA = rwyLda;
+                                        rwySlope = selectedSlopeValues?[2];
+
+                                        windValues = Calculatewind(
+                                          rwyidRef: rwyId,
+                                          windRef: windValue,
+                                          windpickerRef: selectedWind,
+                                          operation: '',
+                                        )();
+
+                                        windValue = windValues?[0];
+                                        headtail = windValues?[1];
+                                        crosswind = windValues?[2];
+
+                                        updateOpld();
+                                      });
+                                    },
+                                  ),
+                                ),
+                              ] else ...[
+                                Text(
+                                  AppStrings.rwyMag,
+                                  style: TextStyle(
+                                    fontSize: 16.5,
+                                    color: AppColors.white,
+                                  ),
+                                ),
+                                const SizedBox(width: 18.0),
+                                SizedBox(
+                                  width: orientation ? 360 : 210,
+                                  height: 50,
+                                  child: DropdownButtonFormField2<String>(
+                                    isExpanded: true,
+                                    value: rwymagOptions.isNotEmpty
+                                        ? (rwymagOptions.contains(selectedMag)
+                                              ? selectedMag
+                                              : rwymagOptions.first)
+                                        : '000',
+
+                                    decoration: InputDecoration(
+                                      filled: true,
+                                      fillColor: AppColors.placeholder,
+
+                                      enabledBorder: OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                          color: AppColors.placeholder,
+                                          width: 1,
+                                        ),
+                                        borderRadius: BorderRadius.circular(
+                                          5.0,
+                                        ),
+                                      ),
+
+                                      focusedBorder: OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                          color: AppColors.placeholder,
+                                          width: 1,
+                                        ),
+                                        borderRadius: BorderRadius.circular(
+                                          8.0,
+                                        ),
+                                      ),
+
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(
+                                          8.0,
+                                        ),
+                                      ),
+
+                                      contentPadding: EdgeInsets.zero,
+                                    ),
+
+                                    hint: Center(
+                                      child: Text(
+                                        selectedMag ?? '000',
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                          color: AppColors.textColor2,
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+
+                                    iconStyleData: const IconStyleData(
+                                      icon: SizedBox.shrink(),
+                                    ),
+
+                                    dropdownStyleData: DropdownStyleData(
+                                      offset: const Offset(0, -5),
+                                      maxHeight: 340,
+                                      scrollbarTheme: ScrollbarThemeData(
+                                        thickness: WidgetStateProperty.all(0),
+                                      ),
+
+                                      decoration: BoxDecoration(
+                                        color: AppColors.background
+                                            .withOpacity(0.9),
+                                        borderRadius: BorderRadius.circular(5),
+                                        border: Border.all(
+                                          color: AppColors.white.withOpacity(
+                                            0.8,
+                                          ),
+                                          width: 1.5,
+                                        ),
+                                      ),
+                                    ),
+
+                                    buttonStyleData: const ButtonStyleData(
+                                      padding: EdgeInsets.zero,
+                                      height: 50,
+                                    ),
+
+                                    selectedItemBuilder:
+                                        (BuildContext context) {
+                                          return rwymagOptions.map((
+                                            String value,
+                                          ) {
+                                            return Align(
+                                              alignment: Alignment.centerRight,
+                                              child: Text(
+                                                value,
+                                                textAlign: TextAlign.right,
+                                                style: TextStyle(
+                                                  color: AppColors.textColor2,
+                                                  fontSize: 18,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                                overflow: TextOverflow.ellipsis,
+                                              ),
+                                            );
+                                          }).toList();
+                                        },
+
+                                    items: rwymagOptions.map((String value) {
+                                      final bool isSelected =
+                                          value ==
+                                          (rwymagOptions.isNotEmpty
+                                              ? (rwymagOptions.contains(
+                                                      selectedMag,
+                                                    )
+                                                    ? selectedMag
+                                                    : rwymagOptions.first)
+                                              : '000');
+                                      return DropdownMenuItem<String>(
+                                        value: value,
+                                        child: Container(
+                                          width: double.infinity,
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 12,
+                                            vertical: 10,
+                                          ),
+                                          decoration: BoxDecoration(
+                                            color: isSelected
+                                                ? AppColors.white.withOpacity(
+                                                    0.15,
+                                                  )
+                                                : Colors.transparent,
+                                            borderRadius: BorderRadius.circular(
+                                              4,
+                                            ),
+                                          ),
+                                          child: Center(
+                                            child: Text(
+                                              value,
+                                              textAlign: TextAlign.center,
+                                              style: TextStyle(
+                                                color: AppColors.textColor2,
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                          ),
+                                        ),
+                                      );
+                                    }).toList(),
+
+                                    onChanged: (newValue) {
+                                      if (newValue == null) return;
+
+                                      setState(() {
+                                        selectedMag = newValue;
+
+                                        windValues = Calculatewind(
+                                          rwyidRef: selectedMag,
+                                          windRef: windValue,
+                                          windpickerRef: selectedWind,
+                                          operation: '',
+                                        )();
+
+                                        rwyId = selectedMag;
+                                        windValue = windValues?[0];
+                                        headtail = windValues?[1];
+                                        crosswind = windValues?[2];
+
+                                        updateOpld();
+                                      });
+                                    },
+                                  ),
+                                ),
+                              ],
+                            ],
+                          ),
+                        ),
+                      ),
+
+                      //Campo de Rwy condition
+                      Card(
+                        color: AppColors.cardColor,
+                        shape: RoundedRectangleBorder(
+                          side: BorderSide(
+                            color: AppColors.placeholder,
+                            width: 2.0,
+                          ),
+                          borderRadius: BorderRadius.circular(12.0),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                AppStrings.rwyCond,
+                                style: TextStyle(
+                                  fontSize: 16.5,
+                                  color: AppColors.white,
+                                ),
+                              ),
+                              Spacer(),
+                              SizedBox(
+                                width: orientation ? 360 : 210,
+                                child: DropdownButtonFormField2<String>(
+                                  isExpanded: true,
+                                  value: selectedCondition,
+
+                                  hint: Text(
+                                    '$selectedCondition',
+                                    textAlign: TextAlign.right,
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color: AppColors.textColor2,
+                                    ),
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+
+                                  decoration: InputDecoration(
+                                    filled: true,
+                                    fillColor: AppColors.placeholder,
+
+                                    enabledBorder: OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                        color: AppColors.placeholder,
+                                        width: 1,
+                                      ),
+                                      borderRadius: BorderRadius.circular(5.0),
+                                    ),
+
+                                    focusedBorder: OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                        color: AppColors.placeholder,
+                                      ),
+                                      borderRadius: BorderRadius.circular(5.0),
+                                    ),
+
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(5.0),
+                                    ),
+
+                                    contentPadding: EdgeInsets.zero,
+                                  ),
+
+                                  iconStyleData: const IconStyleData(
+                                    icon: SizedBox.shrink(),
+                                  ),
+                                  buttonStyleData: ButtonStyleData(
+                                    height: orientation ? 40 : 29,
+                                  ),
+
+                                  selectedItemBuilder: (BuildContext context) {
+                                    return rwyConditions.map((String value) {
+                                      return Align(
+                                        alignment: Alignment.centerRight,
+                                        child: Text(
+                                          value,
+                                          textAlign: TextAlign.right,
+                                          style: TextStyle(
+                                            color: AppColors.textColor2,
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 18,
+                                          ),
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      );
+                                    }).toList();
+                                  },
+
+                                  dropdownStyleData: DropdownStyleData(
+                                    offset: const Offset(0, -5),
+                                    scrollbarTheme: ScrollbarThemeData(
+                                      thickness: WidgetStateProperty.all(0),
+                                    ),
+
+                                    decoration: BoxDecoration(
+                                      color: AppColors.background
+                                          .withOpacity(0.9),
+                                      borderRadius: BorderRadius.circular(5),
+                                      border: Border.all(
+                                        color: AppColors.white.withOpacity(0.8),
+                                        width: 1.5,
+                                      ),
+                                    ),
+                                  ),
+
+                                  items: rwyConditions.map((String value) {
+                                    final bool isSelected =
+                                        value == selectedCondition;
+                                    return DropdownMenuItem<String>(
+                                      value: value,
+                                      child: Container(
+                                        width: double.infinity,
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 12,
+                                          vertical: 10,
+                                        ),
+                                        decoration: BoxDecoration(
+                                          color: isSelected
+                                              ? AppColors.white.withOpacity(
+                                                  0.15,
+                                                )
+                                              : Colors.transparent,
+                                          borderRadius: BorderRadius.circular(
+                                            4,
+                                          ),
+                                        ),
+                                        child: Text(
+                                          value,
+                                          style: TextStyle(
+                                            color: AppColors.textColor2,
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 16,
+                                          ),
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ),
+                                    );
+                                  }).toList(),
+
+                                  onChanged: (newValue) {
+                                    if (newValue == null) return;
+
+                                    setState(() {
+                                      selectedCondition = newValue;
+
+                                      updateRwyCondition(newValue);
+
+                                      autoBrakeOptions = Loadautobrakes(
+                                        aircraftRef: selectedAircraft,
+                                        landingRef: selectedLanding,
+                                        configurationRef: selectedConfiguration,
+                                        flapRef: selectedFlaps,
+                                        conditionRef: selectedCondition,
+                                      )();
+
+                                      if (!autoBrakeOptions!.contains(
+                                        selectedAutoBrake,
+                                      )) {
+                                        checkAutobreak = 'YES';
+                                        selectedAutoBrake =
+                                            autoBrakeOptions![0];
+                                      } else {
+                                        checkAutobreak = 'NO';
+                                      }
+
+                                      reversersList = Loadreversers(
+                                        aircraftRef: selectedAircraft,
+                                        landingRef: selectedLanding,
+                                        configurationRef: selectedConfiguration,
+                                        flapRef: selectedFlaps,
+                                        conditionRef: selectedCondition,
+                                      )();
+
+                                      if (!reversersList!.contains(
+                                        selectedReversers,
+                                      )) {
+                                        selectedReversers = reversersList![0];
+                                      }
+
+                                      if(selectedCondition != 'DRY' && selectedReversers == '1 revsr Inop') {
+                                        crosswindsLimits = Crosswindinop(dataMap: crosswindsLimits, conditionList: rwyConditions)();
+                                      } else if(crosswindsLimits.values.elementAt(1) != _crosswindsLimits.values.elementAt(1)) {
+                                        crosswindsLimits = _crosswindsLimits;
+                                      }
+
+                                      updateOpld();
+                                    });
+                                  },
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+
+                      //Campo de Rwy slope, en vista XXX se muestra un valor en porcentaje (color verde), y botones de suma y resta
+                      Card(
+                        color: AppColors.cardColor,
+                        shape: RoundedRectangleBorder(
+                          side: BorderSide(
+                            color: AppColors.placeholder,
+                            width: 2.0,
+                          ),
+                          borderRadius: BorderRadius.circular(12.0),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(15.0),
+                          child: Row(
+                            children: [
+                               Text(
+                                  AppStrings.rwySlop,
+                                  style: TextStyle(
+                                    color: AppColors.white,
+                                    fontSize: 16.5,
+                                  ),
+                                ),
+                              
+                              const Spacer(),
+                              if (selectedAirport != 'XXX') ...[
+                                Text(
+                                    '${Formatslope(slopeRef: rwySlope, airportRef: selectedAirport)()} %',
+                                    style: TextStyle(
+                                      color: AppColors.textColor3,
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                ),
+                                SizedBox(width: 13),
+                              ]
+                              else ...[
+                                Text(
+                                    '${Formatslope(slopeRef: rwySlope, airportRef: selectedAirport)()} %',
+                                    style: TextStyle(
+                                      fontSize: orientation ? 18 : 19,
+                                      color: AppColors.textColor2,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                const Spacer(),
+                                ElevatedButton(
+                                  onPressed: () {
+                                    setState(() {
+                                      rwySlope = Calculateslopeincredecre(
+                                        slopeReference: rwySlope,
+                                        minReference: rwySlopeMin,
+                                        maxReference: rwySlopeMax,
+                                        operation: 'decrement',
+                                      )();
+                                      updateOpld();
+                                    });
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: AppColors.grey,
+                                    foregroundColor: AppColors.icon,
+                                    minimumSize: const Size(70, 70),
+                                    padding: EdgeInsets.zero,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(8.0),
+                                      side: const BorderSide(
+                                        color: AppColors.white,
+                                        width: 1.0,
+                                      ),
+                                    ),
+                                  ),
+                                  child: Icon(
+                                    Icons.remove,
+                                    color: AppColors.icon,
+                                    size: 30,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                const SizedBox(width: 8.0),
+                                ElevatedButton(
+                                  onPressed: () {
+                                    setState(() {
+                                      rwySlope = Calculateslopeincredecre(
+                                        slopeReference: rwySlope,
+                                        minReference: rwySlopeMin,
+                                        maxReference: rwySlopeMax,
+                                        operation: 'increment',
+                                      )();
+                                      updateOpld();
+                                    });
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: AppColors.grey,
+                                    foregroundColor: AppColors.icon,
+                                    minimumSize: const Size(70, 70),
+                                    padding: EdgeInsets.zero,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(8.0),
+                                      side: const BorderSide(
+                                        color: AppColors.white,
+                                        width: 1.0,
+                                      ),
+                                    ),
+                                  ),
+                                  child: Icon(
+                                    Icons.add,
+                                    color: AppColors.icon,
+                                    size: 30,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
+                            ],
+                          ),
+                        ),
+                      ),
+
+                      //Campo de Elevation, la vista cambia si es el aeropuerto es XXX
+                      Card(
+                        color: AppColors.cardColor,
+                        shape: RoundedRectangleBorder(
+                          side: BorderSide(
+                            color: AppColors.placeholder,
+                            width: 2.0,
+                          ),
+                          borderRadius: BorderRadius.circular(12.0),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(15.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  Text(
+                                    AppStrings.elevation,
+                                    style: const TextStyle(
+                                      color: AppColors.white,
+                                      fontSize: 16.5,
+                                    ),
+                                  ),
+                                  if (selectedAirport == 'XXX') ...[
+                                    const Spacer(),
+                                    Text(
+                                        '${_currentElevation.round()} ${AppStrings.ft}',
+                                        textAlign: TextAlign.center,
+                                        maxLines: 1,
+                                        softWrap: false,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: TextStyle(
+                                          color: AppColors.textColor2,
+                                          fontSize: orientation ? 18 : 19,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                    ),
+                                    const Spacer(),
+                                    Listener(
+                                      onPointerDown: (_) {
+                                        setState(() {
+                                          _currentElevation = Calculateelevationincredecre(
+                                            elevationReference: _currentElevation,
+                                            minReference: altitudMin,
+                                            maxReference: altitudMax,
+                                            operation: 'decrement',
+                                          )();
+                                          altitud = Calculatealtitud(
+                                            elevationRef: _currentElevation.toString(),
+                                            qnhRef: selectedAirportQNH,
+                                          )();
+                                          isa = Calculateisa(
+                                            elevationRef: altitud,
+                                            temperatureRef: selectedAirportTemperature,
+                                          )();
+                                          updateOpld();
+                                        });
+
+                                        _timer = Timer.periodic(const Duration(milliseconds: 150), (_) {
+                                          setState(() {
+                                            _currentElevation = Calculateelevationincredecre(
+                                              elevationReference: _currentElevation,
+                                              minReference: altitudMin,
+                                              maxReference: altitudMax,
+                                              operation: 'decrement',
+                                            )();
+                                            altitud = Calculatealtitud(
+                                              elevationRef: _currentElevation.toString(),
+                                              qnhRef: selectedAirportQNH,
+                                            )();
+                                            isa = Calculateisa(
+                                              elevationRef: altitud,
+                                              temperatureRef: selectedAirportTemperature,
+                                            )();
+                                            updateOpld();
+                                          });
+                                        });
+                                      },
+                                      onPointerUp: (_) => _timer?.cancel(),
+                                      onPointerCancel: (_) => _timer?.cancel(),
+                                      child: ElevatedButton(
+                                        onPressed: () {},
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: AppColors.grey,
+                                          foregroundColor: AppColors.icon,
+                                          minimumSize: const Size(70, 70),
+                                          padding: EdgeInsets.zero,
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(8.0),
+                                            side: const BorderSide(
+                                              color: AppColors.white,
+                                              width: 1.0,
+                                            ),
+                                          ),
+                                        ),
+                                        child: Icon(
+                                          Icons.remove,
+                                          color: AppColors.icon,
+                                          size: 30,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
+                                                                      
+                                    const SizedBox(width: 8.0),
+
+                                    Listener(
+                                      onPointerDown: (_) {
+                                        setState(() {
+                                          _currentElevation = Calculateelevationincredecre(
+                                            elevationReference: _currentElevation,
+                                            minReference: altitudMin,
+                                            maxReference: altitudMax,
+                                            operation: 'increment',
+                                          )();
+                                          altitud = Calculatealtitud(
+                                            elevationRef: _currentElevation.toString(),
+                                            qnhRef: selectedAirportQNH,
+                                          )();
+                                          isa = Calculateisa(
+                                            elevationRef: altitud,
+                                            temperatureRef: selectedAirportTemperature,
+                                          )();
+                                          updateOpld();
+                                        });
+
+                                        _timer = Timer.periodic(const Duration(milliseconds: 150), (_) {
+                                          setState(() {
+                                            _currentElevation = Calculateelevationincredecre(
+                                              elevationReference: _currentElevation,
+                                              minReference: altitudMin,
+                                              maxReference: altitudMax,
+                                              operation: 'increment',
+                                            )();
+                                            altitud = Calculatealtitud(
+                                              elevationRef: _currentElevation.toString(),
+                                              qnhRef: selectedAirportQNH,
+                                            )();
+                                            isa = Calculateisa(
+                                              elevationRef: altitud,
+                                              temperatureRef: selectedAirportTemperature,
+                                            )();
+                                            updateOpld();
+                                          });
+                                        });
+                                      },
+                                      onPointerUp: (_) => _timer?.cancel(),
+                                      onPointerCancel: (_) => _timer?.cancel(),
+                                      child: ElevatedButton(
+                                        onPressed: () {},
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: AppColors.grey,
+                                          foregroundColor: AppColors.icon,
+                                          minimumSize: const Size(70, 70),
+                                          padding: EdgeInsets.zero,
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(8.0),
+                                            side: const BorderSide(
+                                              color: AppColors.white,
+                                              width: 1.0,
+                                            ),
+                                          ),
+                                        ),
+                                        child: Icon(
+                                          Icons.add,
+                                          color: AppColors.icon,
+                                          size: 30,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),                                                                     
+                                  
+                                  ] else ...[
+                                    const Spacer(),
+                                    Text(
+                                        '$selectedAirportElevation ${AppStrings.ft}',
+                                        style: TextStyle(
+                                          color: AppColors.textColor3,
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    SizedBox(width: 13),
+                                  ],
+                                ],
+                              ),
+                              if (selectedAirport == 'XXX')
+                                SliderTheme(
+                                  data: SliderTheme.of(context).copyWith(
+                                    tickMarkShape:
+                                        const RoundSliderTickMarkShape(
+                                          tickMarkRadius: 0,
+                                        ),
+                                  ),
+                                  child: Slider(
+                                    activeColor: AppColors.icon,
+                                    thumbColor: AppColors.icon,
+                                    inactiveColor: AppColors.grey,
+                                    value: _currentElevation.clamp(
+                                      sliderMinAltitud,
+                                      sliderMaxAltitud,
+                                    ),
+                                    min: sliderMinAltitud,
+                                    max: sliderMaxAltitud,
+                                    divisions: _divisionsAltitud,
+                                    onChanged: (double val) {
+                                      setState(() {
+                                        _currentElevation = val;
+                                        altitud = Calculatealtitud(
+                                          elevationRef: _currentElevation
+                                              .toString(),
+                                          qnhRef: selectedAirportQNH,
+                                        )();
+                                        isa = Calculateisa(
+                                          elevationRef: altitud,
+                                          temperatureRef:
+                                              selectedAirportTemperature,
+                                        )();
+                                      });
+
+                                      updateOpld();
+
+                                    },
+                                  ),
+                                ),
+                            ],
+                          ),
+                        ),
+                      ),
+
+                      //Campo de LDA y boton de ajustes de reduccion, no se muestra si el aeropuerto es XXX
+                      if (selectedAirport != 'XXX')
+                        Card(
+                          color: AppColors.cardColor,
+                          shape: RoundedRectangleBorder(
+                            side: BorderSide(
+                              color: AppColors.placeholder,
+                              width: 2.0,
+                            ),
+                            borderRadius: BorderRadius.circular(12.0),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(20.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Row(
+                                  children: [
+                                    Text.rich(
+                                      TextSpan(
+                                        style: const TextStyle(fontSize: 16.5),
+                                        children: [
+                                          TextSpan(
+                                            text: AppStrings.lda,
+                                            style: TextStyle(
+                                              color: AppColors.white,
+                                            ),
+                                          ),
+                                          TextSpan(
+                                            text: '*',
+                                            style: TextStyle(
+                                              fontSize: 16.5,
+                                              color: AppColors.warning,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+
+                                    const Spacer(),
+
+                                    Text(
+                                      '$rwyLda ${AppStrings.ft}',
+                                      style: TextStyle(
+                                        fontSize: orientation ? 20 : 18,
+                                        color: AppColors.textColor3,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    const Spacer(),
+
+                                    Text(
+                                      '(${(double.tryParse(rwyLda ?? '0')! * 0.3048).round()}${AppStrings.m})',
+                                      style: TextStyle(
+                                        fontSize: orientation ? 20 : 18,
+                                        color: AppColors.textColor3,
+                                      ),
+                                    ),
+                                    const Spacer(),
+
+                                    ElevatedButton(
+                                      onPressed: () {
+                                        setState(() {
+                                          _isExpanded = !_isExpanded;
+                                          _currentReduction = '';
+                                          netLDA = rwyLda;
+                                          updateOpld();
+                                        });
+                                      },
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: AppColors.black,
+                                        side: BorderSide(
+                                          color: AppColors.icon,
+                                        ),
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(
+                                            15,
+                                          ),
+                                        ),
+                                      ),
+                                      child: Text(
+                                        AppStrings.ldaAdjust,
+                                        style: TextStyle(
+                                          color: AppColors.white, 
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+
+                                if (_isExpanded) ...[
+                                  const SizedBox(height: 10),
+
+                                  Row(
+                                    children: [
+                                      Text(
+                                        AppStrings.reduction,
+                                        style: const TextStyle(
+                                          color: AppColors.white,
+                                          fontSize: 16.5,
+                                        ),
+                                      ),
+                                      const SizedBox(width: 15),
+
+                                      SizedBox(
+                                        width: 120,
+                                        height: 50,
+                                        child: Stack(
+                                          children: [
+                                            TextField(
+                                              controller:
+                                                  TextEditingController(
+                                                      text: _currentReduction,
+                                                    )
+                                                    ..selection =
+                                                        TextSelection.fromPosition(
+                                                          TextPosition(
+                                                            offset:
+                                                                (_currentReduction ??
+                                                                        '')
+                                                                    .length,
+                                                          ),
+                                                        ),
+                                              keyboardType:
+                                                  TextInputType.number,
+                                              inputFormatters:
+                                                  <TextInputFormatter>[
+                                                    FilteringTextInputFormatter
+                                                        .digitsOnly,
+                                                    Customdigitformatter(),
+                                                  ],
+                                              onChanged: (String newValue) {
+                                                setState(() {
+                                                  _currentReduction = newValue;
+
+                                                  netLDA = Calculatereduction(
+                                                    ldaRef: rwyLda,
+                                                    reductionRef:
+                                                        _currentReduction,
+                                                  )();
+
+                                                  updateOpld();
+                                                });
+                                              },
+                                              textAlign: TextAlign.center,
+                                              style: const TextStyle(
+                                                color: AppColors.textColor2,
+                                                fontSize: 15,
+                                                fontWeight: FontWeight.w500,
+                                              ),
+                                              decoration: InputDecoration(
+                                                hintText:
+                                                    AppStrings.reductionLow,
+                                                hintStyle: const TextStyle(
+                                                  fontSize: 14.5,
+                                                  color: AppColors.reductionPlace,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                                filled: true,
+                                                fillColor: AppColors.placeholder,
+
+                                                // Para el espacio del boton X
+                                                contentPadding:
+                                                    const EdgeInsets.only(
+                                                      left: 8,
+                                                      right: 28,
+                                                      top: 12,
+                                                      bottom: 12,
+                                                    ),
+
+                                                border: OutlineInputBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                        8.0,
+                                                      ),
+                                                  borderSide: const BorderSide(
+                                                    color:
+                                                        AppColors.placeholder,
+                                                    width: 1.0,
+                                                  ),
+                                                ),
+                                                enabledBorder:
+                                                    OutlineInputBorder(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                            8.0,
+                                                          ),
+                                                      borderSide:
+                                                          const BorderSide(
+                                                            color: AppColors
+                                                                .placeholder,
+                                                            width: 1.0,
+                                                          ),
+                                                    ),
+                                                focusedBorder:
+                                                    OutlineInputBorder(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                            8.0,
+                                                          ),
+                                                      borderSide:
+                                                          const BorderSide(
+                                                            color: AppColors
+                                                                .placeholder,
+                                                            width: 1.0,
+                                                          ),
+                                                    ),
+                                              ),                                           
+                                            ),
+
+                                            // Botón para eliminar input de reduction
+                                            if (_currentReduction?.isNotEmpty ??
+                                                false)
+                                              Positioned(
+                                                right: 0,
+                                                top: 5,
+                                                child: SizedBox(
+                                                  width: 40,
+                                                  height: 40,
+                                                  child: IconButton(
+                                                    padding: EdgeInsets.zero,
+                                                    onPressed: () {
+                                                      setState(() {
+                                                        _currentReduction = '';
+                                                        netLDA = rwyLda;
+                                                        updateOpld();
+                                                      });
+                                                    },
+                                                    icon: Container(
+                                                      width: 20,
+                                                      height: 20,
+                                                      decoration: BoxDecoration(
+                                                        color: AppColors
+                                                            .icon
+                                                            .withValues(
+                                                              alpha: 0.5,
+                                                            ),
+                                                        shape: BoxShape.circle,
+                                                      ),
+                                                      child: Center(
+                                                        child: Icon(
+                                                          Icons.close,
+                                                          color: AppColors
+                                                              .placeholder
+                                                              .withValues(
+                                                                alpha: 0.7,
+                                                              ),
+                                                          size: 13,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                          ],
+                                        ),
+                                      ),
+
+                                      const SizedBox(width: 10),
+
+                                      Text(
+                                        AppStrings.m,
+                                        style: const TextStyle(
+                                          color: AppColors.textColor2,
+                                          fontSize: 16.5,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+
+                                      if (_currentReduction?.isNotEmpty ??
+                                          false) ...[
+                                        const SizedBox(width: 10),
+
+                                        Flexible(
+                                          child: Text(
+                                            '(${(double.tryParse(_currentReduction ?? '0')! * 3.28084).toStringAsFixed(1)}${AppStrings.ft})',
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                            style: const TextStyle(
+                                              color: AppColors.textColor3,
+                                              fontSize: 15,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ],
+                                  ),
+                                ],
+                                const SizedBox(height: 8),
+
+                                Text(
+                                  AppStrings.refOnly,
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    fontStyle: FontStyle.italic,
+                                    color: AppColors.warning,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+
+                      //Header de Aircraft Configuration
+                      Card(
+                        color: AppColors.black,
+                        shape: RoundedRectangleBorder(
+                          side: BorderSide(color: AppColors.white),
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                            vertical: 2,
+                            horizontal: 8,
+                          ),
+                          child: Align(
+                            alignment: Alignment.center,
+                            child: Text(
+                              AppStrings.aircraftConfig,
+                              style: TextStyle(
+                                fontSize: 21,
+                                fontWeight: FontWeight.bold,
+                                color: AppColors.white,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+
+                      //Campo de Flaps
+                      Card(
+                        color: AppColors.cardColor,
+                        shape: RoundedRectangleBorder(
+                          side: BorderSide(
+                            color: AppColors.placeholder,
+                            width: 2.0,
+                          ),
+                          borderRadius: BorderRadius.circular(12.0),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                AppStrings.flap,
+                                style: TextStyle(
+                                  color: AppColors.white,
+                                  fontSize: 16.5,
+                                ),
+                              ),
+                              SizedBox(width: screenSize.width * 0.07),
+                              if (selectedLanding == 'Normal') ...[
+                                Expanded(
+                                  child: DropdownButtonFormField2<String>(
+                                    isExpanded: true,
+                                    value: selectedFlaps,
+
+                                    hint: Text(
+                                      '$selectedFlaps',
+                                      textAlign: TextAlign.right,
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: AppColors.textColor2,
+                                      ),
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+
+                                    decoration: InputDecoration(
+                                      filled: true,
+                                      fillColor: AppColors.placeholder,
+
+                                      enabledBorder: OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                          color: AppColors.placeholder,
+                                          width: 1,
+                                        ),
+                                        borderRadius: BorderRadius.circular(
+                                          5.0,
+                                        ),
+                                      ),
+
+                                      focusedBorder: OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                          color: AppColors.placeholder,
+                                        ),
+                                        borderRadius: BorderRadius.circular(
+                                          5.0,
+                                        ),
+                                      ),
+
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(
+                                          5.0,
+                                        ),
+                                      ),
+
+                                      contentPadding: EdgeInsets.zero
+                                    ),
+
+                                    iconStyleData: const IconStyleData(
+                                      icon: SizedBox.shrink(),
+                                    ),
+
+                                    selectedItemBuilder: (BuildContext context) {
+                                          return normalFlaps.map((
+                                            String value,
+                                          ) {
+                                            return Align(
+                                              alignment: Alignment.centerRight,
+                                              child: Text(
+                                                value,
+                                                textAlign: TextAlign.right,
+                                                style: TextStyle(
+                                                  color: AppColors.textColor2,
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 18,
+                                                ),
+                                                overflow: TextOverflow.ellipsis,
+                                              ),
+                                            );
+                                          }).toList();
+                                        },
+
+                                    dropdownStyleData: DropdownStyleData(
+                                      offset: const Offset(0, -5),
+                                      scrollbarTheme: ScrollbarThemeData(
+                                        thickness: WidgetStateProperty.all(0),
+                                      ),
+
+                                      decoration: BoxDecoration(
+                                        color: AppColors.background
+                                            .withOpacity(0.9),
+                                        borderRadius: BorderRadius.circular(5),
+                                        border: Border.all(
+                                          color: AppColors.white.withOpacity(
+                                            0.8,
+                                          ),
+                                          width: 1.5,
+                                        ),
+                                      ),
+                                    ),
+
+                                    items: normalFlaps.map((String value) {
+                                      final bool isSelected =
+                                          value == selectedFlaps;
+                                      return DropdownMenuItem<String>(
+                                        value: value,
+                                        child: Container(
+                                          width: double.infinity,
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 12,
+                                            vertical: 10,
+                                          ),
+                                          decoration: BoxDecoration(
+                                            color: isSelected
+                                                ? AppColors.white.withOpacity(
+                                                    0.15,
+                                                  )
+                                                : Colors.transparent,
+                                            borderRadius: BorderRadius.circular(
+                                              4,
+                                            ),
+                                          ),
+                                          child: Text(
+                                            value,
+                                            style: TextStyle(
+                                              color: AppColors.textColor2,
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 16,
+                                            ),
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
+                                      );
+                                    }).toList(),
+
+                                    onChanged: (newValue) {
+                                      setState(() {
+                                        selectedFlaps = newValue;
+
+                                        listaComments = Loadcomments(
+                                          aircraftRef: selectedAircraft, landingRef: selectedLanding,
+                                          configurationRef: selectedConfiguration, flapRef: selectedFlaps,
+                                        )();
+
+                                        autoBrakeOptions = Loadautobrakes(
+                                          aircraftRef: selectedAircraft, landingRef: selectedLanding,
+                                          configurationRef: selectedConfiguration, flapRef: selectedFlaps,
+                                          conditionRef: selectedCondition,
+                                        )();
+
+                                        baseDetails = Searchbaselinereference( 
+                                          aircraftRef: selectedAircraft, landingRef: selectedLanding, 
+                                          configurationRef: selectedConfiguration, flapRef: selectedFlaps 
+                                        )();
+
+                                        updateOpld();
+                                      });
+                                    },
+                                  ),
+                                ),
+                              ] else ...[
+                                Expanded(
+                                  child: DropdownButtonFormField2<String>(
+                                    isExpanded: true,
+                                    value: selectedFlaps,
+
+                                    hint: Text(
+                                      '$selectedFlaps',
+                                      textAlign: TextAlign.right,
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: AppColors.textColor2,
+                                      ),
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+
+                                    decoration: InputDecoration(
+                                      filled: true,
+                                      fillColor: AppColors.placeholder,
+
+                                      enabledBorder: OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                          color: AppColors.placeholder,
+                                          width: 1,
+                                        ),
+                                        borderRadius: BorderRadius.circular(
+                                          5.0,
+                                        ),
+                                      ),
+
+                                      focusedBorder: OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                          color: AppColors.placeholder,
+                                        ),
+                                        borderRadius: BorderRadius.circular(
+                                          5.0,
+                                        ),
+                                      ),
+
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(
+                                          5.0,
+                                        ),
+                                      ),
+
+                                      contentPadding: EdgeInsets.zero
+                                    ),
+
+                                    iconStyleData: const IconStyleData(
+                                      icon: SizedBox.shrink(),
+                                    ),
+
+                                    selectedItemBuilder:
+                                        (BuildContext context) {
+                                          return [
+                                            nonFlap,
+                                          ].where((value) => value != null).map(
+                                            (value) {
+                                              return Align(
+                                                alignment:
+                                                    Alignment.centerRight,
+                                                child: Text(
+                                                  value!,
+                                                  textAlign: TextAlign.right,
+                                                  style: TextStyle(
+                                                    color: AppColors.textColor2,
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 18,
+                                                  ),
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                ),
+                                              );
+                                            },
+                                          ).toList();
+                                        },
+
+                                    dropdownStyleData: DropdownStyleData(
+                                      offset: const Offset(0, -5),
+                                      scrollbarTheme: ScrollbarThemeData(
+                                        thickness: WidgetStateProperty.all(0),
+                                      ),
+
+                                      decoration: BoxDecoration(
+                                        color: AppColors.background
+                                            .withOpacity(0.9),
+                                        borderRadius: BorderRadius.circular(5),
+                                        border: Border.all(
+                                          color: AppColors.white.withOpacity(
+                                            0.8,
+                                          ),
+                                          width: 1.5,
+                                        ),
+                                      ),
+                                    ),
+
+                                    items: [nonFlap]
+                                        .where((val) => val != null)
+                                        .map((value) {
+                                          final String safeValue = value!;
+
+                                          return DropdownMenuItem<String>(
+                                            value: safeValue,
+                                            child: Text(
+                                              safeValue,
+                                              style: TextStyle(
+                                                color:
+                                                    AppColors.textColor2,
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 16,
+                                              ),
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                          );
+                                        })
+                                        .toList(),
+
+                                    onChanged: (newValue) {
+                                      setState(() {
+                                        selectedFlaps = newValue;
+                                      });
+                                    },
+                                  ),
+                                ),
+                              ],
+                            ],
+                          ),
+                        ),
+                      ),
+
+                      //Campo de Autobrake
+                      Card(
+                        color: AppColors.cardColor,
+                        shape: RoundedRectangleBorder(
+                          side: BorderSide(
+                            color: AppColors.placeholder,
+                            width: 2.0,
+                          ),
+                          borderRadius: BorderRadius.circular(12.0),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                AppStrings.autobrake,
+                                style: TextStyle(
+                                  color: AppColors.white,
+                                  fontSize: 16.5,
+                                ),
+                              ),
+
+                              if (checkAutobreak == 'YES') ...[
+                                SizedBox(width: screenSize.width * 0.02),
+                                Text(
+                                  AppStrings.caution,
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    color: AppColors.orange,
+                                    fontSize: 15,
+                                    //fontWeight: FontWeight.bold,
+                                  ),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                                SizedBox(width: screenSize.width * 0.02),
+                              ] else ...[
+                                SizedBox(width: screenSize.width * 0.05),
+                              ],
+
+                              Expanded(
+                                child: DropdownButtonFormField2<String>(
+                                  isExpanded: true,
+                                  value: selectedAutoBrake,
+
+                                  hint: Text(
+                                    '$selectedAutoBrake',
+                                    textAlign: TextAlign.right,
+                                    style: TextStyle(
+                                      color: AppColors.textColor2,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+
+                                  decoration: InputDecoration(
+                                    filled: true,
+                                    fillColor: AppColors.placeholder,
+
+                                    enabledBorder: OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                        color: AppColors.placeholder,
+                                        width: 1,
+                                      ),
+                                      borderRadius: BorderRadius.circular(5.0),
+                                    ),
+
+                                    focusedBorder: OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                        color: AppColors.placeholder,
+                                      ),
+                                      borderRadius: BorderRadius.circular(5.0),
+                                    ),
+
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(5.0),
+                                    ),
+
+                                    contentPadding: EdgeInsets.zero
+                                    
+                                  ),
+
+                                  iconStyleData: const IconStyleData(
+                                    icon: SizedBox.shrink(),
+                                  ),
+
+                                  selectedItemBuilder: (BuildContext context) {
+                                    return autoBrakeOptions!.map((
+                                      String value,
+                                    ) {
+                                      return Align(
+                                        alignment: Alignment.centerRight,
+                                        child: Text(
+                                          value,
+                                          textAlign: TextAlign.right,
+                                          style: TextStyle(
+                                            color: AppColors.textColor2,
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 18,
+                                          ),
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      );
+                                    }).toList();
+                                  },
+
+                                  dropdownStyleData: DropdownStyleData(
+                                    offset: const Offset(0, -5),
+                                    scrollbarTheme: ScrollbarThemeData(
+                                      thickness: WidgetStateProperty.all(0),
+                                    ),
+
+                                    decoration: BoxDecoration(
+                                      color: AppColors.background
+                                          .withOpacity(0.9),
+                                      borderRadius: BorderRadius.circular(5),
+                                      border: Border.all(
+                                        color: AppColors.white.withOpacity(0.8),
+                                        width: 1.5,
+                                      ),
+                                    ),
+                                  ),
+
+                                  items: autoBrakeOptions!.map((String value) {
+                                    final bool isSelected =
+                                        value == selectedAutoBrake;
+                                    return DropdownMenuItem<String>(
+                                      value: value,
+                                      child: Container(
+                                        width: double.infinity,
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 12,
+                                          vertical: 10,
+                                        ),
+                                        decoration: BoxDecoration(
+                                          color: isSelected
+                                              ? AppColors.white.withOpacity(
+                                                  0.15,
+                                                )
+                                              : Colors.transparent,
+                                          borderRadius: BorderRadius.circular(
+                                            4,
+                                          ),
+                                        ),
+                                        child: Text(
+                                          value,
+                                          style: TextStyle(
+                                            color: AppColors.textColor2,
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 16,
+                                          ),
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ),
+                                    );
+                                  }).toList(),
+
+                                  onChanged: (newValue) {
+                                    setState(() {
+                                      selectedAutoBrake = newValue;
+                                      checkAutobreak = 'NO';
+                                      updateOpld();
+                                    });
+                                  },
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+
+                      //Campo de Reversers
+                      Card(
+                        color: AppColors.cardColor,
+                        shape: RoundedRectangleBorder(
+                          side: BorderSide(
+                            color: AppColors.placeholder,
+                            width: 2.0,
+                          ),
+                          borderRadius: BorderRadius.circular(12.0),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                AppStrings.reversers,
+                                style: TextStyle(
+                                  color: AppColors.white,
+                                  fontSize: 16.5,
+                                ),
+                              ),
+                              SizedBox(width: screenSize.width * 0.05),
+                              SizedBox(width: 4),
+                              Expanded(
+                                child: DropdownButtonFormField2<String>(
+                                  isExpanded: true,
+                                  value: selectedReversers,
+
+                                  hint: Text(
+                                    '$selectedReversers',
+                                    textAlign: TextAlign.right,
+                                    style: TextStyle(
+                                      color: AppColors.textColor2,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+
+                                  decoration: InputDecoration(
+                                    filled: true,
+                                    fillColor: AppColors.placeholder,
+
+                                    enabledBorder: OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                        color: AppColors.placeholder,
+                                        width: 1,
+                                      ),
+                                      borderRadius: BorderRadius.circular(5.0),
+                                    ),
+
+                                    focusedBorder: OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                        color: AppColors.placeholder,
+                                      ),
+                                      borderRadius: BorderRadius.circular(5.0),
+                                    ),
+
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(5.0),
+                                    ),
+
+                                    contentPadding: EdgeInsets.zero
+                                  ),
+
+                                  iconStyleData: const IconStyleData(
+                                    icon: SizedBox.shrink(),
+                                  ),
+
+                                  selectedItemBuilder: (BuildContext context) {
+                                    return reversersList!.map((String value) {
+                                      return Align(
+                                        alignment: Alignment.centerRight,
+                                        child: Text(
+                                          value,
+                                          textAlign: TextAlign.right,
+                                          style: TextStyle(
+                                            color: AppColors.textColor2,
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 18,
+                                          ),
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      );
+                                    }).toList();
+                                  },
+
+                                  dropdownStyleData: DropdownStyleData(
+                                    offset: const Offset(0, -5),
+                                    scrollbarTheme: ScrollbarThemeData(
+                                      thickness: WidgetStateProperty.all(0),
+                                    ),
+
+                                    decoration: BoxDecoration(
+                                      color: AppColors.background
+                                          .withOpacity(0.9),
+                                      borderRadius: BorderRadius.circular(5),
+                                      border: Border.all(
+                                        color: AppColors.white.withOpacity(0.8),
+                                        width: 1.5,
+                                      ),
+                                    ),
+                                  ),
+
+                                  items: reversersList!.map((String value) {
+                                    final bool isSelected =
+                                        value == selectedReversers;
+                                    return DropdownMenuItem<String>(
+                                      value: value,
+                                      child: Container(
+                                        width: double.infinity,
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 12,
+                                          vertical: 10,
+                                        ),
+                                        decoration: BoxDecoration(
+                                          color: isSelected
+                                              ? AppColors.white.withOpacity(
+                                                  0.15,
+                                                )
+                                              : Colors.transparent,
+                                          borderRadius: BorderRadius.circular(
+                                            4,
+                                          ),
+                                        ),
+                                        child: Text(
+                                          value,
+                                          style: TextStyle(
+                                            color: AppColors.textColor2,
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 16,
+                                          ),
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ),
+                                    );
+                                  }).toList(),
+
+                                  onChanged: (newValue) {
+                                    setState(() {
+                                      selectedReversers = newValue;
+                                      if(selectedCondition != 'DRY' && selectedReversers == '1 revsr Inop') {
+                                        crosswindsLimits = Crosswindinop(dataMap: crosswindsLimits, conditionList: rwyConditions)();
+                                      } else if(crosswindsLimits.values.elementAt(1) != _crosswindsLimits.values.elementAt(1)) {
+                                        crosswindsLimits = _crosswindsLimits;
+                                      }
+                                      updateOpld();
+                                    });
+                                  },
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+
+                      //Campo de SpeedBrakes, cambia dependiendo del tipo de landing (normal o non-normal) a N/A
+                      Card(
+                        color: AppColors.cardColor,
+                        shape: RoundedRectangleBorder(
+                          side: BorderSide(
+                            color: AppColors.placeholder,
+                            width: 2.0,
+                          ),
+                          borderRadius: BorderRadius.circular(12.0),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                AppStrings.speedbrakes,
+                                style: TextStyle(
+                                  color: AppColors.white,
+                                  fontSize: 16.5,
+                                ),
+                              ),
+                              if (selectedLanding != 'Non-Normal') ...[
+                                SizedBox(width: screenSize.width * 0.03),
+                                SizedBox(width: orientation ? 4 : 0),
+                                Expanded(
+                                  child: DropdownButtonFormField2<String>(
+                                    isExpanded: true,
+                                    value: selectedSpeedBrake,
+
+                                    hint: Text(
+                                      'AUTOMATIC',
+                                      textAlign: TextAlign.right,
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: AppColors.textColor2,
+                                      ),
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+
+                                    decoration: InputDecoration(
+                                      filled: true,
+                                      fillColor: AppColors.placeholder,
+
+                                      enabledBorder: OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                          color: AppColors.placeholder,
+                                          width: 1,
+                                        ),
+                                        borderRadius: BorderRadius.circular(
+                                          5.0,
+                                        ),
+                                      ),
+
+                                      focusedBorder: OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                          color: AppColors.placeholder,
+                                        ),
+                                        borderRadius: BorderRadius.circular(
+                                          5.0,
+                                        ),
+                                      ),
+
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(
+                                          5.0,
+                                        ),
+                                      ),
+
+                                      contentPadding: EdgeInsets.zero
+                                    ),
+
+                                    iconStyleData: const IconStyleData(
+                                      icon: SizedBox.shrink(),
+                                    ),
+
+                                    selectedItemBuilder:
+                                        (BuildContext context) {
+                                          return speedBrakesTypes.map((
+                                            String value,
+                                          ) {
+                                            return Align(
+                                              alignment: Alignment.centerRight,
+                                              child: Text(
+                                                value,
+                                                textAlign: TextAlign.right,
+                                                style: TextStyle(
+                                                  color:AppColors.textColor2,
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 18,
+                                                ),
+                                                overflow: TextOverflow.ellipsis,
+                                              ),
+                                            );
+                                          }).toList();
+                                        },
+
+                                    dropdownStyleData: DropdownStyleData(
+                                      offset: const Offset(0, -5),
+                                      scrollbarTheme: ScrollbarThemeData(
+                                        thickness: WidgetStateProperty.all(0),
+                                      ),
+
+                                      decoration: BoxDecoration(
+                                        color: AppColors.background
+                                            .withOpacity(0.9),
+                                        borderRadius: BorderRadius.circular(5),
+                                        border: Border.all(
+                                          color: AppColors.white.withOpacity(
+                                            0.8,
+                                          ),
+                                          width: 1.5,
+                                        ),
+                                      ),
+                                    ),
+
+                                    items: speedBrakesTypes.map((String value) {
+                                      final bool isSelected =
+                                          value == selectedSpeedBrake;
+                                      return DropdownMenuItem<String>(
+                                        value: value,
+                                        child: Container(
+                                          width: double.infinity,
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 12,
+                                            vertical: 10,
+                                          ),
+                                          decoration: BoxDecoration(
+                                            color: isSelected
+                                                ? AppColors.white.withOpacity(
+                                                    0.15,
+                                                  )
+                                                : Colors.transparent,
+                                            borderRadius: BorderRadius.circular(
+                                              4,
+                                            ),
+                                          ),
+                                          child: Text(
+                                            value,
+                                            style: TextStyle(
+                                              color: AppColors.textColor2,
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 16,
+                                            ),
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
+                                      );
+                                    }).toList(),
+
+                                    onChanged: (newValue) {
+                                      setState(() {
+                                        selectedSpeedBrake = newValue;
+                                        updateOpld();
+                                      });
+                                    },
+                                  ),
+                                ),
+                              ] else ...[
+                                Spacer(),
+                                Text(
+                                    AppStrings.na,
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                      color: AppColors.textColor3,
+                                      fontWeight: FontWeight.bold,
+                                    ),                                 
+                                ),
+                                SizedBox(width: 21),
+                              ],
+                            ],
+                          ),
+                        ),
+                      ),
+
+                      //Campo de Vref add, cambia dependiendo del tipo de landing (Normal o Non-Normal) a N/A y el texto VREF cambia
+                      Card(
+                        color: AppColors.cardColor,
+                        shape: RoundedRectangleBorder(
+                          side: BorderSide(
+                            color: AppColors.placeholder,
+                            width: 2.0,
+                          ),
+                          borderRadius: BorderRadius.circular(12.0),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(15.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                                Text(
+                                  selectedLanding != 'Non-Normal' && vrefAdjust != 'NO' ? AppStrings.vrefAdd : '$vrefNonPlus +',
+                                    style: TextStyle(
+                                      color: AppColors.white,
+                                      fontSize: 16.5,
+                                    ),
+                                  ),
+                                const Spacer(),
+                                Text(
+                                  vrefAdjust != 'NO' ? '$vRef ${AppStrings.kt}' : AppStrings.na,
+                                    style: TextStyle(
+                                      fontSize: 19,
+                                      color: vrefAdjust != 'NO' ? AppColors.textColor2 : AppColors.textColor3,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                ),
+                                vrefAdjust != 'NO' ? const Spacer() : SizedBox(width: 15),
+
+                                if(vrefAdjust != 'NO') ...[
+                                  Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      ElevatedButton(
+                                        onPressed: () {
+                                          setState(() {
+                                            vRef = Calculatevrefincredecre(
+                                              vReference: vRef,
+                                              minReference: vMin,
+                                              maxReference: vMax,
+                                              operation: 'decrement',
+                                            )();
+                                            updateOpld();
+                                          });
+                                        },
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: AppColors.grey,
+                                          foregroundColor: AppColors.icon,
+                                          minimumSize: const Size(70, 70),
+                                          padding: EdgeInsets.zero,
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(
+                                              8.0,
+                                            ),
+                                            side: const BorderSide(
+                                              color: AppColors.white,
+                                              width: 1.0,
+                                            ),
+                                          ),
+                                        ),
+                                        child: Icon(
+                                          Icons.remove,
+                                          color: AppColors.icon,
+                                          size: 30,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      const SizedBox(width: 8.0),
+                                      ElevatedButton(
+                                        onPressed: () {
+                                          setState(() {
+                                            vRef = Calculatevrefincredecre(
+                                              vReference: vRef,
+                                              minReference: vMin,
+                                              maxReference: vMax,
+                                              operation: 'increment',
+                                            )();
+                                            updateOpld();
+                                          });
+                                        },
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: AppColors.grey,
+                                          foregroundColor: AppColors.icon,
+                                          minimumSize: const Size(70, 70),
+                                          padding: EdgeInsets.zero,
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(
+                                              8.0,
+                                            ),
+                                            side: const BorderSide(
+                                              color: AppColors.white,
+                                              width: 1.0,
+                                            ),
+                                          ),
+                                        ),
+                                        child: Icon(
+                                          Icons.add,
+                                          color: AppColors.icon,
+                                          size: 30,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ],
+                                  ),                                
+                                ]
+                            ],
+                          ),
+                        ),
+                      ),
+
+                      //Campo de Landing Weight
+                      Card(
+                        color: AppColors.cardColor,
+                        shape: RoundedRectangleBorder(
+                          side: BorderSide(
+                            color: AppColors.placeholder,
+                            width: 2.0,
+                          ),
+                          borderRadius: BorderRadius.circular(12.0),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(20.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  Column(
+                                    children: [
+                                      Text(
+                                        AppStrings.landWeight,
+                                        style: const TextStyle(
+                                          color: AppColors.white,
+                                          fontSize: 16.5,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 5.0),
+                                      Text(
+                                        '${(_currentLadWeight as num).toInt().toString()} ${AppStrings.lb}',
+                                        style: const TextStyle(
+                                          fontSize: 20,
+                                          color: AppColors.textColor2,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  const Spacer(),
+                                  ElevatedButton(
+                                    onPressed: () {
+                                      setState(() {
+                                        _currentLadWeight =
+                                            Calculateweightincredecre(
+                                              weightReference:
+                                                  _currentLadWeight,
+                                              minReference: weightMIN,
+                                              maxReference: weightMAX,
+                                              operation: 'decrement',
+                                            )();
+                                        updateOpld();
+                                      });
+                                    },
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: AppColors.grey,
+                                      foregroundColor: AppColors.icon,
+                                      minimumSize: const Size(70, 70),
+                                      padding: EdgeInsets.zero,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(
+                                          8.0,
+                                        ),
+                                        side: const BorderSide(
+                                          color: AppColors.white,
+                                          width: 1.0,
+                                        ),
+                                      ),
+                                    ),
+                                    child: Icon(
+                                      Icons.remove,
+                                      color: AppColors.icon,
+                                      size: 30,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 8.0),
+                                  ElevatedButton(
+                                    onPressed: () {
+                                      setState(() {
+                                        _currentLadWeight =
+                                            Calculateweightincredecre(
+                                              weightReference:
+                                                  _currentLadWeight,
+                                              minReference: weightMIN,
+                                              maxReference: weightMAX,
+                                              operation: 'increment',
+                                            )();
+                                        updateOpld();
+                                      });
+                                    },
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: AppColors.grey,
+                                      foregroundColor: AppColors.icon,
+                                      minimumSize: const Size(70, 70),
+                                      padding: EdgeInsets.zero,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(
+                                          8.0,
+                                        ),
+                                        side: const BorderSide(
+                                          color: AppColors.white,
+                                          width: 1.0,
+                                        ),
+                                      ),
+                                    ),
+                                    child: Icon(
+                                      Icons.add,
+                                      color: AppColors.icon,
+                                      size: 30,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ],
+                              ),
+
+                              SliderTheme(
+                                data: SliderTheme.of(context).copyWith(
+                                  tickMarkShape: const RoundSliderTickMarkShape(
+                                    tickMarkRadius: 0,
+                                  ),
+                                ),
+                                child: Slider(
+                                  activeColor: AppColors.green,
+                                  thumbColor: AppColors.green,
+                                  inactiveColor: AppColors.grey,
+                                  min: 0,
+                                  max: _divisionsWeight!.toDouble(),
+                                  divisions: _divisionsWeight,
+                                  value: _currentLadWeight <= weightMIN
+                                      ? 0
+                                      : _currentLadWeight >= weightMAX
+                                      ? _divisionsWeight!.toDouble()
+                                      : ((_currentLadWeight / 1000).round() - minStep + 1).toDouble(),
+                                  onChanged: (double val) {
+                                    setState(() {
+                                      if (val == 0) {
+                                        _currentLadWeight = weightMIN;
+                                      } else if (val == _divisionsWeight) {
+                                        _currentLadWeight = weightMAX;
+                                      } else {
+                                        _currentLadWeight = (minStep + val.toInt() - 1) * 1000;
+                                      }
+                                    });
+      
+                                    updateOpld();
+
+                                  },
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+
+                const SizedBox(width: 8),
+
+                //Columna Derecha (Weather y Landing Performance)
+                Expanded(
+                  child: Column(
+                    children: [
+                      //Header de Weather Condition Header
+                      Card(
+                        color: AppColors.black,
+                        shape: RoundedRectangleBorder(
+                          side: BorderSide(color: AppColors.white),
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                            vertical: 2,
+                            horizontal: 8,
+                          ),
+                          child: Align(
+                            alignment: Alignment.center,
+                            child: Text(
+                              AppStrings.weatherCond,
+                              style: TextStyle(
+                                fontSize: 21,
+                                fontWeight: FontWeight.bold,
+                                color: AppColors.white,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+
+                      //Campo de QNH
+                      Customskeletonizer(
+                        isLoading: _ispresseded,
+                        child:
+                        Card(
+                          color: AppColors.cardColor,
+                          shape: RoundedRectangleBorder(
+                            side: BorderSide(
+                              color: AppColors.placeholder,
+                              width: 2.0,
+                            ),
+                            borderRadius: BorderRadius.circular(12.0),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(15.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                    AppStrings.qnh,
+                                    style: TextStyle(
+                                      color: AppColors.white,
+                                      fontSize: 16.5,
+                                    ),
+                                  ),
+                                
+                                const SizedBox(width: 5.0),
+
+                                Flexible(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Text(
+                                        Formatqnh(qnhRef: selectedAirportQNH)(),
+                                        style: TextStyle(
+                                          color: AppColors.textColor2,
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 4),
+                                      Padding(
+                                        padding: const EdgeInsets.only(left: 10),
+                                        child: Text(
+                                          (0.02953 * (double.tryParse(selectedAirportQNH ?? '',) ?? 0)).toStringAsFixed(2),
+                                          style: TextStyle(
+                                            color: AppColors.textColor2,
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                SizedBox(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Text(
+                                        AppStrings.hpa,
+                                        style: TextStyle(
+                                          color: AppColors.textColor2,
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 4),
+                                      Text(
+                                        AppStrings.inhg,
+                                        style: TextStyle(
+                                          color: AppColors.textColor2,
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+
+                                const SizedBox(width: 5.0),
+
+                                Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Listener(
+                                        onPointerDown: (_) {
+                                          int ticks = 0;
+                                          setState(() {
+                                            selectedAirportQNH = Calculateqnhincredecre(
+                                              qnhRef: selectedAirportQNH,
+                                              operation: 'decrement',
+                                              step: 0.1,
+                                            )();
+                                            altitud = Calculatealtitud(
+                                              elevationRef: selectedAirport != 'XXX'
+                                                  ? selectedAirportElevation
+                                                  : _currentElevation.toString(),
+                                              qnhRef: selectedAirportQNH,
+                                            )();
+                                            updateOpld();
+                                          });
+
+                                          _timer?.cancel();
+                                          _timer = Timer.periodic(const Duration(milliseconds: 150), (_) {
+                                            ticks++;
+                                            final double currentStep = (ticks >= 3) ? 1.0 : 0.1;
+
+                                            setState(() {
+                                              selectedAirportQNH = Calculateqnhincredecre(
+                                                qnhRef: selectedAirportQNH,
+                                                operation: 'decrement',
+                                                step: currentStep,
+                                              )();
+                                              altitud = Calculatealtitud(
+                                                elevationRef: selectedAirport != 'XXX'
+                                                    ? selectedAirportElevation
+                                                    : _currentElevation.toString(),
+                                                qnhRef: selectedAirportQNH,
+                                              )();
+                                              updateOpld();
+                                            });
+                                          });
+                                        },
+                                        onPointerUp: (_) => _timer?.cancel(),
+                                        onPointerCancel: (_) => _timer?.cancel(),
+                                        child: ElevatedButton(
+                                          onPressed: () {},
+                                          style: ElevatedButton.styleFrom(
+                                            backgroundColor: AppColors.grey,
+                                            foregroundColor: AppColors.icon,
+                                            minimumSize: const Size(70, 70),
+                                            padding: EdgeInsets.zero,
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.circular(8.0),
+                                              side: const BorderSide(
+                                                color: AppColors.white,
+                                                width: 1.0,
+                                              ),
+                                            ),
+                                          ),
+                                          child: Icon(
+                                            Icons.remove,
+                                            color: AppColors.icon,
+                                            size: 30,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ),
+                                      
+                                      const SizedBox(width: 8.0),
+
+                                      Listener(
+                                        onPointerDown: (_) {
+                                          int ticks = 0;
+                                          setState(() {
+                                            selectedAirportQNH = Calculateqnhincredecre(
+                                              qnhRef: selectedAirportQNH,
+                                              operation: 'increment',
+                                              step: 0.1,
+                                            )();
+                                            altitud = Calculatealtitud(
+                                              elevationRef: selectedAirport != 'XXX'
+                                                  ? selectedAirportElevation
+                                                  : _currentElevation.toString(),
+                                              qnhRef: selectedAirportQNH,
+                                            )();
+                                            updateOpld();
+                                          });
+
+                                          _timer?.cancel();
+                                          _timer = Timer.periodic(const Duration(milliseconds: 150), (_) {
+                                            ticks++;
+                                            final double currentStep = (ticks >= 3) ? 1.0 : 0.1;
+
+                                            setState(() {
+                                              selectedAirportQNH = Calculateqnhincredecre(
+                                                qnhRef: selectedAirportQNH,
+                                                operation: 'increment',
+                                                step: currentStep,
+                                              )();
+                                              altitud = Calculatealtitud(
+                                                elevationRef: selectedAirport != 'XXX'
+                                                    ? selectedAirportElevation
+                                                    : _currentElevation.toString(),
+                                                qnhRef: selectedAirportQNH,
+                                              )();
+                                              updateOpld();
+                                            });
+                                          });
+                                        },
+                                        onPointerUp: (_) => _timer?.cancel(),
+                                        onPointerCancel: (_) => _timer?.cancel(),
+                                        child: ElevatedButton(
+                                          onPressed: () {},
+                                          style: ElevatedButton.styleFrom(
+                                            backgroundColor: AppColors.grey,
+                                            foregroundColor: AppColors.icon,
+                                            minimumSize: const Size(70, 70),
+                                            padding: EdgeInsets.zero,
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.circular(8.0),
+                                              side: const BorderSide(
+                                                color: AppColors.white,
+                                                width: 1.0,
+                                              ),
+                                            ),
+                                          ),
+                                          child: Icon(
+                                            Icons.add,
+                                            color: AppColors.icon,
+                                            size: 30,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+
+                      //Campo de Altitude
+                      Card(
+                        color: AppColors.cardColor,
+                        shape: RoundedRectangleBorder(
+                          side: BorderSide(
+                            color: AppColors.placeholder,
+                            width: 2.0,
+                          ),
+                          borderRadius: BorderRadius.circular(12.0),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(10.0),
+                          child: Row(
+                            children: [
+                               Text(
+                                  AppStrings.altitude,
+                                  style: TextStyle(
+                                    color: AppColors.white,
+                                    fontSize: 16.5,
+                                  ),
+                                ),
+                              SizedBox(width: screenSize.width * 0.1),
+                               Text(
+                                  '$altitud ${AppStrings.palt}',
+                                  style: TextStyle(
+                                    color: AppColors.textColor3,
+                                    fontSize: 19,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                
+                              ),
+                              const Spacer(),
+                            ],
+                          ),
+                        ),
+                      ),
+
+                      //Campo de OAT
+                      Customskeletonizer(
+                      isLoading: _ispresseded,
+                      child:
+                        Card(
+                          color: AppColors.cardColor,
+                          shape: RoundedRectangleBorder(
+                            side: BorderSide(
+                              color: AppColors.placeholder,
+                              width: 2.0,
+                            ),
+                            borderRadius: BorderRadius.circular(12.0),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(10.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Expanded(
+                                  child: Text(
+                                    AppStrings.oat,
+                                    style: TextStyle(
+                                      color: AppColors.white,
+                                      fontSize: 16.5,
+                                    ),
+                                  ),
+                                ),
+                                const Spacer(),
+                                SizedBox(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.only(left: 10),
+                                        child: Text(
+                                          '${double.tryParse(selectedAirportTemperature ?? '')?.round() ?? 0} ${AppStrings.celcius}',
+                                          style: TextStyle(
+                                            color: AppColors.textColor3,
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ),
+                                      const SizedBox(height: 4),
+                                      Text(
+                                        '${AppStrings.isa} $isa',
+                                        style: TextStyle(
+                                          color: AppColors.textColor2,
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                const Spacer(),
+                                  Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      ElevatedButton(
+                                        onPressed: () {
+                                          setState(() {
+                                            tempValues = Calculatetempisa(
+                                              altitudRef: altitud,
+                                              temperatureRef: selectedAirportTemperature,
+                                              isaRef: isa,
+                                              minRef: isaMin,
+                                              maxRef: isaMax,
+                                              operation: 'decrement',
+                                            )();
+                                            selectedAirportTemperature = tempValues[1];
+                                            isa = tempValues[0];
+                                            updateOpld();
+                                          });
+                                        },
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: AppColors.grey,
+                                          foregroundColor: AppColors.icon,
+                                          minimumSize: const Size(70, 70),
+                                          padding: EdgeInsets.zero,
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(
+                                              8.0,
+                                            ),
+                                            side: const BorderSide(
+                                              color: AppColors.white,
+                                              width: 1.0,
+                                            ),
+                                          ),
+                                        ),
+                                        child: Icon(
+                                          Icons.remove,
+                                          color: AppColors.icon,
+                                          size: 30,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      const SizedBox(width: 8.0),
+                                      ElevatedButton(
+                                        onPressed: () {
+                                          setState(() {
+                                            tempValues = Calculatetempisa(
+                                              altitudRef: altitud,
+                                              temperatureRef: selectedAirportTemperature,
+                                              isaRef: isa,
+                                              minRef: isaMin,
+                                              maxRef: isaMax,
+                                              operation: 'increment',
+                                            )();
+                                            selectedAirportTemperature = tempValues[1];
+                                            isa = tempValues[0];
+                                            updateOpld();
+                                          });
+                                        },
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: AppColors.grey,
+                                          foregroundColor: AppColors.icon,
+                                          minimumSize: const Size(70, 70),
+                                          padding: EdgeInsets.zero,
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(
+                                              8.0,
+                                            ),
+                                            side: const BorderSide(
+                                              color: AppColors.white,
+                                              width: 1.0,
+                                            ),
+                                          ),
+                                        ),
+                                        child: Icon(
+                                          Icons.add,
+                                          color: AppColors.icon,
+                                          size: 30,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+
+                      //Campo de WIND
+                      Customskeletonizer(
+                      isLoading: _ispresseded,
+                      child:
+                        Card(
+                          color: AppColors.cardColor,
+                          shape: RoundedRectangleBorder(
+                            side: BorderSide(
+                              color: AppColors.placeholder,
+                              width: 2.0,
+                            ),
+                            borderRadius: BorderRadius.circular(12.0),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Row(
+                                        children: [
+                                          Text(
+                                            AppStrings.wind,
+                                            style: TextStyle(
+                                              color: AppColors.white,
+                                              fontSize: 16.5,
+                                            ),
+                                          ),
+
+                                          const SizedBox(width: 6),
+
+                                          // Notas de Warning de Crosswinds
+                                          if (crosswindValue.abs() > (num.tryParse((crosswindsLimits[selectedCondition] ?? '33').replaceAll('−','-',).replaceAll('–','-',),) ?? 33).abs()) ... [
+                                            InkWell(
+                                              onTap: () {
+                                                showDialog(
+                                                  context: context,
+                                                  builder: (BuildContext context) {
+                                                    return AlertDialog(
+                                                      backgroundColor: AppColors.black,
+                                                      shape: RoundedRectangleBorder(
+                                                        borderRadius: BorderRadius.circular(12.0),
+                                                        side: const BorderSide(
+                                                          color: AppColors.warning,
+                                                          width: 1.5,
+                                                        ),
+                                                      ),
+                                                      content: SizedBox(
+                                                        width: 650,
+                                                        height: selectedReversers == '1 revsr Inop' && selectedCondition != 'DRY' ? 350 : 280,
+                                                        child: Column(
+                                                          mainAxisAlignment: MainAxisAlignment.start,
+                                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                                          children: [
+                                                            const Center(
+                                                              child: Text(
+                                                                AppStrings.crosswindTitle,
+                                                                textAlign: TextAlign.center,
+                                                                style: TextStyle(
+                                                                  color: AppColors.warning,
+                                                                  fontSize: 20,
+                                                                  fontWeight: FontWeight.bold,
+                                                                ),
+                                                              ),
+                                                            ),
+
+                                                            const SizedBox(height: 10),
+
+                                                            // Nota de Crosswinds Limits
+                                                            Expanded(
+                                                              child: ScrollConfiguration(
+                                                                behavior: ScrollConfiguration.of(context).copyWith(
+                                                                  scrollbars: false,
+                                                                ),
+                                                                child: SingleChildScrollView(
+                                                                  child: Column(
+                                                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                                                    children: [
+                                                                      
+                                                                      const Divider(
+                                                                        color: AppColors.dividerLine,
+                                                                      ),
+
+                                                                      if (selectedReversers == '1 revsr Inop' && selectedCondition != 'DRY') ...[
+                                                                        Padding(
+                                                                          padding: const EdgeInsets.symmetric(vertical: 12.0),
+                                                                          child: Text(
+                                                                            AppStrings.cautionCrosswind.trim(),
+                                                                            textAlign: TextAlign.justify,
+                                                                            style: const TextStyle(
+                                                                              color: AppColors.white, 
+                                                                              fontSize: 16.5,
+                                                                              fontWeight: FontWeight.bold,
+                                                                            ),
+                                                                          ),
+                                                                        ),
+
+                                                                        const Divider(color: AppColors.dividerLine),
+                                                                      ],
+
+                                                                      if (crosswindsComment != null && crosswindsComment!.trim().isNotEmpty)
+                                                                        Padding(
+                                                                          padding: const EdgeInsets.symmetric(vertical: 12.0),
+                                                                          child: Text(
+                                                                            crosswindsComment!.trim(),
+                                                                            textAlign: TextAlign.justify,
+                                                                            style: const TextStyle(
+                                                                              color: AppColors.white,
+                                                                              fontSize: 16.5,
+                                                                            ),
+                                                                          ),
+                                                                        ),
+
+                                                                      const Divider(
+                                                                        color: AppColors.dividerLine,
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            ),                                                            
+                                                            
+                                                            const SizedBox(height: 20),
+
+                                                            // Boton para regresar
+                                                            Center(
+                                                              child: ElevatedButton(
+                                                                onPressed: () => Navigator.of(context).pop(),
+                                                                style: ElevatedButton.styleFrom(
+                                                                  backgroundColor: AppColors.black,
+                                                                  foregroundColor: AppColors.icon,
+                                                                  minimumSize: const Size(140, 48),
+                                                                  shape: RoundedRectangleBorder(
+                                                                    borderRadius: BorderRadius.circular(10),
+                                                                    side: const BorderSide(
+                                                                      color: AppColors.warning,
+                                                                      width: 1,
+                                                                    ),
+                                                                  ),
+                                                                  elevation: 4,
+                                                                ),
+                                                                child: const Text(
+                                                                  'OK',
+                                                                  style: TextStyle(
+                                                                    color: AppColors.white,
+                                                                    fontSize: 16.5,
+                                                                    fontWeight: FontWeight.bold,
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    );
+                                                  },
+                                                );
+                                              },
+                                              borderRadius: BorderRadius.circular(20),
+                                              child: const Padding(
+                                                padding: EdgeInsets.all(3),
+                                                child: Icon(
+                                                  Icons.info_outline,
+                                                  color: AppColors.warning,
+                                                  size: 25,
+                                                ),
+                                              ),
+                                            ),
+                                          ],                                                                                
+                                                                              
+                                          if (crosswindValue.abs() > (num.tryParse((crosswindsLimits[selectedCondition] ?? '33').replaceAll('−','-',).replaceAll('–','-',),) ?? 33).abs() && selectedReversers == '1 revsr Inop' && selectedCondition != 'DRY') ...[
+                                            const SizedBox(width: 6),
+                                            Text(
+                                              AppStrings.caution,
+                                              style: TextStyle(
+                                                color: AppColors.warning,
+                                                fontSize: 16,
+                                              ),
+                                            ),
+                                          ],
+                                        ],
+                                      ),
+
+                                      const SizedBox(height: 8),
+
+                                      Row(
+                                        children: [
+                                          Row(
+                                            children: [
+                                              SizedBox(
+                                                width: orientation ? 135 : 110,
+                                                height: 40,
+                                                child: Builder(
+                                                  builder: (context) {
+                                                    final String
+                                                    selectedWindValue =
+                                                        windDirection.isNotEmpty
+                                                        ? (windDirection.contains(
+                                                                selectedWind,
+                                                              )
+                                                              ? selectedWind!
+                                                              : windDirection
+                                                                    .first)
+                                                        : '000';
+                                                    return DropdownButtonFormField2<String>(
+                                                      isExpanded: true,
+                                                      value: selectedWindValue,
+
+                                                      decoration: InputDecoration(
+                                                        filled: true,
+                                                        fillColor:
+                                                            AppColors.placeholder,
+
+                                                        enabledBorder:
+                                                            OutlineInputBorder(
+                                                              borderSide: BorderSide(
+                                                                color: AppColors
+                                                                    .placeholder,
+                                                                width: 1,
+                                                              ),
+                                                              borderRadius:
+                                                                  BorderRadius.circular(
+                                                                    8.0,
+                                                                  ),
+                                                            ),
+
+                                                        focusedBorder:
+                                                            OutlineInputBorder(
+                                                              borderSide: BorderSide(
+                                                                color: AppColors
+                                                                    .placeholder,
+                                                                width: 1,
+                                                              ),
+                                                              borderRadius:
+                                                                  BorderRadius.circular(
+                                                                    8.0,
+                                                                  ),
+                                                            ),
+
+                                                        border: OutlineInputBorder(
+                                                          borderRadius:
+                                                              BorderRadius.circular(
+                                                                8.0,
+                                                              ),
+                                                        ),
+
+                                                        contentPadding:
+                                                            EdgeInsets.zero,
+                                                      ),
+
+                                                      hint: Center(
+                                                        child: Text(
+                                                          selectedWindValue,
+                                                          textAlign:
+                                                              TextAlign.center,
+                                                          style: TextStyle(
+                                                            color: AppColors
+                                                                .textColor2,
+                                                            fontSize: 16.5,
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                          ),
+                                                          overflow: TextOverflow
+                                                              .ellipsis,
+                                                        ),
+                                                      ),
+
+                                                      iconStyleData:
+                                                          const IconStyleData(
+                                                            icon:
+                                                                SizedBox.shrink(),
+                                                          ),
+
+                                                      dropdownStyleData: DropdownStyleData(
+                                                        offset:  Offset(
+                                                          0,
+                                                          -5,
+                                                        ),
+                                                        maxHeight: 350,
+                                                        scrollbarTheme:
+                                                            ScrollbarThemeData(
+                                                              thickness:
+                                                                  WidgetStateProperty.all(
+                                                                    0,
+                                                                  ),
+                                                            ),
+
+                                                        decoration: BoxDecoration(
+                                                          color: AppColors
+                                                              .background,
+                                                          borderRadius:
+                                                              BorderRadius.circular(
+                                                                5,
+                                                              ),
+                                                          border: Border.all(
+                                                            color: AppColors.white
+                                                                .withOpacity(0.8),
+                                                            width: 1.5,
+                                                          ),
+                                                        ),
+                                                      ),
+
+                                                      buttonStyleData:
+                                                          const ButtonStyleData(
+                                                            padding:
+                                                                EdgeInsets.zero,
+                                                            
+                                                          ),
+
+                                                      selectedItemBuilder:
+                                                          (BuildContext context) {
+                                                            return windDirection.map((
+                                                              String value,
+                                                            ) {
+                                                              return Center(
+                                                                child: Text(
+                                                                  value,
+                                                                  textAlign:
+                                                                      TextAlign
+                                                                          .center,
+                                                                  style: TextStyle(
+                                                                    color: AppColors
+                                                                        .textColor2,
+                                                                    fontSize: 18,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold,
+                                                                  ),
+                                                                  overflow:
+                                                                      TextOverflow
+                                                                          .ellipsis,
+                                                                ),
+                                                              );
+                                                            }).toList();
+                                                          },
+
+                                                      items: windDirection.map((
+                                                        String value,
+                                                      ) {
+                                                        final bool isSelected =
+                                                            value ==
+                                                            selectedWindValue;
+                                                        return DropdownMenuItem<
+                                                          String
+                                                        >(
+                                                          value: value,
+                                                          child: Container(
+                                                            width:
+                                                                double.infinity,
+                                                            padding:
+                                                                const EdgeInsets.symmetric(
+                                                                  horizontal: 12,
+                                                                  vertical: 10,
+                                                                ),
+                                                            decoration: BoxDecoration(
+                                                              color: isSelected
+                                                                  ? AppColors
+                                                                        .white
+                                                                        .withOpacity(
+                                                                          0.15,
+                                                                        )
+                                                                  : Colors
+                                                                        .transparent,
+                                                              borderRadius:
+                                                                  BorderRadius.circular(
+                                                                    4,
+                                                                  ),
+                                                            ),
+                                                            child: Center(
+                                                              child: Text(
+                                                                value,
+                                                                textAlign:
+                                                                    TextAlign
+                                                                        .center,
+                                                                style: TextStyle(
+                                                                  color: AppColors
+                                                                      .textColor2,
+                                                                  fontSize: 16.5,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold,
+                                                                ),
+                                                                overflow:
+                                                                    TextOverflow
+                                                                        .ellipsis,
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        );
+                                                      }).toList(),
+
+                                                      onChanged: (newValue) {
+                                                        if (newValue == null)
+                                                          return;
+
+                                                        setState(() {
+                                                          selectedWind = newValue;
+
+                                                          windValues =
+                                                              Calculatewind(
+                                                                rwyidRef: rwyId,
+                                                                windRef:
+                                                                    windValue,
+                                                                windpickerRef:
+                                                                    selectedWind,
+                                                                operation: '',
+                                                              )();
+
+                                                          windValue =
+                                                              windValues?[0];
+                                                          headtail =
+                                                              windValues?[1];
+                                                          crosswind =
+                                                              windValues?[2];
+
+                                                          updateOpld();
+                                                        });
+                                                      },
+                                                    );
+                                                  },
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                          const SizedBox(width: 10.0),
+                                          Text(
+                                            '/',
+                                            style: TextStyle(
+                                              color: AppColors.white,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                          const SizedBox(width: 10.0),
+                                          
+                                          Text(
+                                            '$windValue ${AppStrings.kt}',
+                                            style: TextStyle(
+                                              color: AppColors.textColor2,
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 16.5,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      const SizedBox(height: 8),
+                                      Row(
+                                        children: [
+                                          Text(
+                                            headtailValue >= 0
+                                                ? '$headtailValue  ${AppStrings.kthwc}'
+                                                : '$headtailValue  ${AppStrings.kttwc}',
+                                            style: TextStyle(
+                                              fontSize: 16.5,
+                                              color: (num.tryParse((headtail ?? '0').replaceAll('−', '-',).replaceAll('–', '-',),) ?? 0) < (num.tryParse((windMin ?? '-15').replaceAll('−','-',).replaceAll('–','-',),) ?? -15)
+                                                  ? AppColors.red
+                                                  : AppColors.textColor3,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                          const SizedBox(width: 10.0),
+                                          Text(
+                                            '/',
+                                            style: TextStyle(
+                                              color: AppColors.white,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                          const SizedBox(width: 10.0),
+                                          Text(
+                                            '${(double.tryParse(crosswind ?? '0') ?? 0).round()} ${AppStrings.ktCwc}',
+                                            style: TextStyle(
+                                              fontSize: 16.5,
+                                              color: crosswindValue.abs() > (num.tryParse((crosswindsLimits[selectedCondition] ?? '33').replaceAll('−','-',).replaceAll('–','-',),) ?? 33).abs()
+                                                  ? AppColors.warning
+                                                  : AppColors.textColor3,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                ),
+
+                                Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    ElevatedButton(
+                                      onPressed: () {
+                                        setState(() {
+                                          windValues = Calculatewind(
+                                            rwyidRef: rwyId,
+                                            windRef: windValue,
+                                            windpickerRef: selectedWind,
+                                            operation: 'decrement',
+                                          )();
+                                          windValue = windValues?[0];
+                                          headtail = windValues?[1];
+                                          crosswind = windValues?[2];
+                                          updateOpld();
+                                        });
+                                      },
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: AppColors.grey,
+                                        foregroundColor: AppColors.icon,
+                                        minimumSize: const Size(70, 70),
+                                        padding: EdgeInsets.zero,
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(
+                                            8.0,
+                                          ),
+                                          side: const BorderSide(
+                                            color: AppColors.white,
+                                            width: 1.0,
+                                          ),
+                                        ),
+                                      ),
+                                      child: Icon(
+                                        Icons.remove,
+                                        color: AppColors.icon,
+                                        size: 30,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 8.0),
+                                    ElevatedButton(
+                                      onPressed: () {
+                                        setState(() {
+                                          windValues = Calculatewind(
+                                            rwyidRef: rwyId,
+                                            windRef: windValue,
+                                            windpickerRef: selectedWind,
+                                            operation: 'increment',
+                                          )();
+                                          windValue = windValues?[0];
+                                          headtail = windValues?[1];
+                                          crosswind = windValues?[2];
+                                          updateOpld();
+                                        });
+                                      },
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: AppColors.grey,
+                                        foregroundColor: AppColors.icon,
+                                        minimumSize: const Size(70, 70),
+                                        padding: EdgeInsets.zero,
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(
+                                            8.0,
+                                          ),
+                                          side: const BorderSide(
+                                            color: AppColors.white,
+                                            width: 1.0,
+                                          ),
+                                        ),
+                                      ),
+                                      child: Icon(
+                                        Icons.add,
+                                        color: AppColors.icon,
+                                        size: 30,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),  
+                      ),
+
+                      //Header de Performance Results, si es XXX, solo se muestra el resultado del OpLD
+                      Card(
+                        color: AppColors.black,
+                        shape: RoundedRectangleBorder(
+                          side: const BorderSide(color: AppColors.white),
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        child: Column(
+                          children: [
+                            //Encabezado superior
+                            Padding(
+                              padding: const EdgeInsets.all(10.0),
+                              child: Center(
+                                child: Text(
+                                  selectedLanding != 'Non-Normal'
+                                      ? AppStrings.landingTittle
+                                      : selectedConfiguration!.toUpperCase(),
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    fontSize: orientation ? 20 : 18,
+                                    fontWeight: FontWeight.bold,
+                                    color: AppColors.white,
+                                  ),
+                                ),
+                              ),
+                            ),
+
+                            const Divider(
+                              color: AppColors.white,
+                              thickness: 1,
+                              height: 1,
+                            ),
+
+                            //Grafica de pista del OpLD
+                            Padding(
+                              padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+                              child: selectedAirport != 'XXX'
+                                  ? Center(
+                                      child: Landingdistancebar(
+                                        lda: netLDA,
+                                        opLd: opldResult,
+                                        width: orientation ? 510 : 400,
+                                      ),
+                                    )
+                                  : Container(
+                                      width: double.infinity,
+                                      padding: const EdgeInsets.symmetric(
+                                        vertical: 5,
+                                        horizontal: 16,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color: AppColors.black,
+                                        borderRadius: BorderRadius.circular(4),
+                                        border: Border.all(
+                                          color: AppColors.white.withValues(alpha: 0.3),
+                                        ),
+                                      ),
+                                      child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text(
+                                            AppStrings.opld,
+                                            style: const TextStyle(
+                                              fontSize: 26,
+                                              fontWeight: FontWeight.bold,
+                                              color: AppColors.white,
+                                            ),
+                                          ),
+                                          const SizedBox(width: 40),
+                                          Text(
+                                            '$opldResult ${AppStrings.ft}',
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              color:AppColors.white,
+                                              fontSize: 24,
+                                            ),
+                                          ),
+                                          Text(
+                                            '(${(double.tryParse(opldResult ?? '0')! * 0.3048).round()}${AppStrings.m})',
+                                            style: TextStyle(
+                                              color:AppColors.white,
+                                              fontSize: 20,
+                                            ),
+                                          ),
+                                          const SizedBox(width: 4),
+                                        ],
+                                      ),
+                                    ),
+                            ),
+
+                            const SizedBox(height: 14),
+
+                            const Divider(
+                              color: AppColors.white,
+                              thickness: 1,
+                              height: 1,
+                            ),
+
+                            //Comentarios de Runway condition, autobrake warning y important notes
+                            Padding(
+                              padding: const EdgeInsets.all(16.0),
+                              child: SizedBox(
+                                height: selectedAirport != 'XXX'
+                                                  ? 270
+                                                  : 450,
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    SizedBox(
+                                      width: double.infinity,
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          if (checkAutobreak == 'YES') ...[
+                                            const SizedBox(height: 5),
+                                            Text(
+                                              AppStrings.cautionMessage,
+                                              textAlign: TextAlign.left,
+                                              style: const TextStyle(
+                                                color: AppColors.orange,
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 16.5,
+                                              ),
+                                            ),
+                                          ],
+
+                                          const SizedBox(height: 10),
+
+                                          //Runway Condition
+                                          Text(
+                                            '$selectedCondition ($rwyRcc) rwy condition:',
+                                            textAlign: TextAlign.left,
+                                            style: const TextStyle(
+                                              color: AppColors.resultNotes,
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 16.5,
+                                            ),
+                                          ),
+
+                                          const SizedBox(height: 4),
+
+                                          //Notas de runway condition
+                                          ...?rwyNote?.map(
+                                            (nota) => Padding(
+                                              padding: const EdgeInsets.symmetric(vertical: 3.0),
+                                              child: Text(
+                                                nota,
+                                                style: const TextStyle(
+                                                  color: AppColors.resultNotes,
+                                                  fontSize: 15,
+                                                ),
+                                                textAlign: TextAlign.justify,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+
+                                    //Boton Important Notes
+                                    ElevatedButton(
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: AppColors.black,
+                                        foregroundColor: AppColors.icon,
+                                        side: const BorderSide(
+                                          color: AppColors.icon,
+                                          width: 1,
+                                        ),
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(5),
+                                        ),
+                                        fixedSize: const Size(200, 40),
+                                      ),
+                                      onPressed: () {
+                                        showDialog(
+                                          context: context,
+                                          builder: (BuildContext context) {
+                                            return AlertDialog(
+                                              backgroundColor: AppColors.black,
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius: BorderRadius.circular(12.0),
+                                                side: const BorderSide(
+                                                  color: AppColors.icon,
+                                                  width: 1.5,
+                                                ),
+                                              ),
+                                              content: SizedBox(
+                                                width: 750,
+                                                height: 750,
+                                                child: Column(
+                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                  children: [
+                                                    const Center(
+                                                      child: Text(
+                                                        AppStrings.notesTitle,
+                                                        style: TextStyle(
+                                                          color: AppColors.textColor2,
+                                                          fontSize: 24,
+                                                          fontWeight: FontWeight.bold,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    const SizedBox(height: 10),
+                                                    Expanded(
+                                                      child: ListView.builder(
+                                                        itemCount: listaComments?.length ?? 0,
+                                                        itemBuilder: (context, index) {
+                                                          final comentario = listaComments![index];
+                                                          return Column(
+                                                            crossAxisAlignment:
+                                                                CrossAxisAlignment.start,
+                                                            children: [
+                                                              const Divider(
+                                                                color: AppColors.dividerLine,
+                                                              ),
+                                                              Padding(
+                                                                padding: const EdgeInsets.symmetric(
+                                                                  vertical: 12.0,
+                                                                ),
+                                                                child: Text(
+                                                                  comentario.trim(),
+                                                                  style: const TextStyle(
+                                                                    color: AppColors.white,
+                                                                    fontSize: 23,
+                                                                  ),
+                                                                  textAlign: TextAlign.justify,
+                                                                ),
+                                                              ),
+                                                              const Divider(
+                                                                color: AppColors.dividerLine,
+                                                              ),
+                                                            ],
+                                                          );
+                                                        },
+                                                      ),
+                                                    ),
+                                                    const SizedBox(height: 20),
+                                                    Center(
+                                                      child: ElevatedButton(
+                                                        onPressed: () => Navigator.of(context).pop(),
+                                                        style: ElevatedButton.styleFrom(
+                                                          backgroundColor: AppColors.black,
+                                                          foregroundColor: AppColors.icon,
+                                                          fixedSize: const Size(130, 130),
+                                                          shape: BeveledRectangleBorder(
+                                                            borderRadius: BorderRadius.circular(200),
+                                                            side: const BorderSide(
+                                                              color: AppColors.icon,
+                                                              width: 1,
+                                                            ),
+                                                          ),
+                                                          elevation: 4,
+                                                        ),
+                                                        child: const Text(
+                                                          AppStrings.returnback,
+                                                          style: TextStyle(
+                                                            fontSize: 16.5,
+                                                            fontWeight: FontWeight.bold,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),                                                 
+                                                  ],
+                                                ),
+                                              ),
+                                            );
+                                          },
+                                        );
+                                      },
+                                      child: const Text(
+                                        AppStrings.importNotes,
+                                        style: TextStyle(
+                                          color: AppColors.white,
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      )                                                          
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
