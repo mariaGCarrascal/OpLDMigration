@@ -1640,7 +1640,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                     Text(
                                       '$rwyLda ${AppStrings.ft}',
                                       style: TextStyle(
-                                        fontSize: orientation ? 18 : 16,
+                                        fontSize: orientation ? 20 : 18,
                                         color: AppColors.textColor3,
                                         fontWeight: FontWeight.bold,
                                       ),
@@ -1650,7 +1650,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                     Text(
                                       '(${(double.tryParse(rwyLda ?? '0')! * 0.3048).round()}${AppStrings.m})',
                                       style: TextStyle(
-                                        fontSize: orientation ? 18 : 16,
+                                        fontSize: orientation ? 20 : 18,
                                         color: AppColors.textColor3,
                                       ),
                                     ),
@@ -1891,7 +1891,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                 Text(
                                   AppStrings.refOnly,
                                   style: TextStyle(
-                                    fontSize: 11,
+                                    fontSize: 12,
                                     fontStyle: FontStyle.italic,
                                     color: AppColors.warning,
                                   ),
@@ -2758,7 +2758,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                 Text(
                                   vrefAdjust != 'NO' ? '$vRef ${AppStrings.kt}' : AppStrings.na,
                                     style: TextStyle(
-                                      fontSize: 18,
+                                      fontSize: 19,
                                       color: vrefAdjust != 'NO' ? AppColors.textColor2 : AppColors.textColor3,
                                       fontWeight: FontWeight.bold,
                                     ),
@@ -2876,7 +2876,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                       Text(
                                         '${(_currentLadWeight as num).toInt().toString()} ${AppStrings.lb}',
                                         style: const TextStyle(
-                                          fontSize: 18,
+                                          fontSize: 20,
                                           color: AppColors.textColor2,
                                           fontWeight: FontWeight.bold,
                                         ),
@@ -3071,7 +3071,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                         Formatqnh(qnhRef: selectedAirportQNH)(),
                                         style: TextStyle(
                                           color: AppColors.textColor2,
-                                          fontSize: 18,
+                                          fontSize: 20,
                                           fontWeight: FontWeight.bold,
                                         ),
                                       ),
@@ -3082,7 +3082,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                           (0.02953 * (double.tryParse(selectedAirportQNH ?? '',) ?? 0)).toStringAsFixed(2),
                                           style: TextStyle(
                                             color: AppColors.textColor2,
-                                            fontSize: 18,
+                                            fontSize: 20,
                                             fontWeight: FontWeight.bold,
                                           ),
                                         ),
@@ -3099,7 +3099,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                         AppStrings.hpa,
                                         style: TextStyle(
                                           color: AppColors.textColor2,
-                                          fontSize: 18,
+                                          fontSize: 20,
                                           fontWeight: FontWeight.bold,
                                         ),
                                       ),
@@ -3108,7 +3108,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                         AppStrings.inhg,
                                         style: TextStyle(
                                           color: AppColors.textColor2,
-                                          fontSize: 18,
+                                          fontSize: 20,
                                           fontWeight: FontWeight.bold,
                                         ),
                                       ),
@@ -3286,7 +3286,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                   '$altitud ${AppStrings.palt}',
                                   style: TextStyle(
                                     color: AppColors.textColor3,
-                                    fontSize: 18,
+                                    fontSize: 19,
                                     fontWeight: FontWeight.bold,
                                   ),
                                 
@@ -3336,7 +3336,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                           '${double.tryParse(selectedAirportTemperature ?? '')?.round() ?? 0} ${AppStrings.celcius}',
                                           style: TextStyle(
                                             color: AppColors.textColor3,
-                                            fontSize: 18,
+                                            fontSize: 20,
                                             fontWeight: FontWeight.bold,
                                           ),
                                         ),
@@ -3346,7 +3346,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                         '${AppStrings.isa} $isa',
                                         style: TextStyle(
                                           color: AppColors.textColor2,
-                                          fontSize: 18,
+                                          fontSize: 20,
                                           fontWeight: FontWeight.bold,
                                         ),
                                       ),
@@ -4189,7 +4189,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                         shape: RoundedRectangleBorder(
                                           borderRadius: BorderRadius.circular(5),
                                         ),
-                                        fixedSize: const Size(190, 30),
+                                        fixedSize: const Size(200, 40),
                                       ),
                                       onPressed: () {
                                         showDialog(
@@ -4291,7 +4291,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                         AppStrings.importNotes,
                                         style: TextStyle(
                                           color: AppColors.white,
-                                          fontSize: 15,
+                                          fontSize: 18,
                                           fontWeight: FontWeight.bold,
                                         ),
                                       ),
