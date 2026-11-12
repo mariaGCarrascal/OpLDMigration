@@ -19,18 +19,7 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
  
-class _HomePageState extends State<HomePage> {
-  //Ruta hacia la etiqueta o nodo comments para obtener los valores internos de ese nodo en Normal = <aircraft> -> <landingCondition id="NORMAL LANDING> -> <Flap> -> <Comments>
-  //Ruta hacia la etiqueta o nodo de comments en Nonnormal = <aircraft> -> <landingCondition id="NON-NORMAL LANDING"> -> <nonNormalConfiguration> -> <Comments>
-  //Nota: Los comentarios que se traen cuando es Normal, son solo de Flap 15 y varian es por el tipo de avion solamente, si non-normal, ya es por el tipo de configuracion.
-  //Nota: Los Flaps inician en 30 y el autobrake en 3 en Normal, en Non-normal varian por la configuracion el Flap y el autobrake en automatic.
-  //Nota: Los reversers se mantienen en default en el 1er valor de los datos del Aeropuerto, Reversers en 0 revsr Inop y Speedbrakes en Automatic (excepto en Non-Nomral que sale N/A) en Normal y Non-Normal.
-  //Nota: VREF ADD inicia por 5kt en Normal y tiene limite de 0 a 30, en Non-Normal en N/A cuando solo son los 3 de Airspeed Unreliable.
-  //Nota: Dependiendo de configuracion Non-Normal, el texto de Vref cambia por tener su valor dentro del nodo como VrefLabel, mismo caso para flaps como flapLabel que toma solo la parte de flap del texto.
-  //Nota: Los valores en metro al lado cifras en ft son la conversion de pies a metros.
-  //Noat: La conversion de pies a metros es multiplicar ft * 0.3048. Usar el metodo .round en la variable de resultado de la operacion.
-  //Nota: la reduccion solo permite 5 digitos si son 0, pero si tiene valor que no sea 0 al inicio solo permite 4 digitos
- 
+class _HomePageState extends State<HomePage> { 
   // Variables clave de listas
   List<String> aircraftTypes = [];
   final List<String> landingTypes = ['Normal', 'Non-Normal'];
@@ -152,7 +141,7 @@ class _HomePageState extends State<HomePage> {
 
                     const SizedBox(height: 8.0),
 
-                    // Aircraft Picker
+                    // Campo Aircraft Picker
                     DropdownButtonFormField2<String>(
                       //isExpanded: true,
                       value: selectedAircraftType,
@@ -299,7 +288,7 @@ class _HomePageState extends State<HomePage> {
 
                     const SizedBox(height: 8.0),
 
-                    // Landing picker
+                    // Campo Landing picker
                     DropdownButtonFormField2<String>(
                       //isExpanded: true,
                       value: selectedLandingType,
@@ -453,7 +442,7 @@ class _HomePageState extends State<HomePage> {
 
                       const SizedBox(height: 8.0),
 
-                      // Configuration Picker
+                      // Campo Configuration Picker
                       DropdownButtonFormField2<String>(
                         isExpanded: true,
                         value: configurationTypes.contains(
@@ -595,7 +584,7 @@ class _HomePageState extends State<HomePage> {
 
                     const SizedBox(height: 8.0),
 
-                    // Airport Picker
+                    // Campo Airport Picker
                     DropdownSearch<String>(
                       items: (filter, loadProps) => airportTypes,
                       selectedItem: selectedAirportType,

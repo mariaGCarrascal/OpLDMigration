@@ -53,9 +53,7 @@ class CalculatorPage extends StatefulWidget {
     this.aircraft, this.normalNon, this.configuration, this.airport,
     this.airportEl, this.airportQNH, this.airportTemp, this.airportRunway, this.nonflaps,
   });
-//Pendiente: revisar performace del slider weight.
-//Mirar tema de control entre error y no data, con la alerta de no datos del METAR.
-//flutter run -d Chrome --web-browser-flag "--disable-web-security"
+
   @override
   State<CalculatorPage> createState() => _CalculatorPageState();
 }
@@ -400,7 +398,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                         ),
                         content: SizedBox(
                           width: 500,
-                          height: 150,
+                          height: hasData ? 200 : 150,
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.start,
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -3499,7 +3497,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                                       ),
                                                       content: SizedBox(
                                                         width: 650,
-                                                        height: selectedReversers == '1 revsr Inop' && selectedCondition != 'DRY' ? 350 : 250,
+                                                        height: selectedReversers == '1 revsr Inop' && selectedCondition != 'DRY' ? 350 : 280,
                                                         child: Column(
                                                           mainAxisAlignment: MainAxisAlignment.start,
                                                           crossAxisAlignment: CrossAxisAlignment.start,
