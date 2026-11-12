@@ -398,7 +398,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                         ),
                         content: SizedBox(
                           width: 500,
-                          height: hasData ? 200 : 150,
+                          height: hasData ? 170 : 150,
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.start,
                             crossAxisAlignment: CrossAxisAlignment.start,
