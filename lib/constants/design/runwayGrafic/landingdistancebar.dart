@@ -66,7 +66,7 @@ class Landingdistancebar extends StatelessWidget {
                             'OpLD:',
                             style: TextStyle(
                               color: AppColors.white,
-                              fontSize: orientation ? 21 : 18,
+                              fontSize: orientation ? 24 : 21,
                               fontWeight: FontWeight.w900,
                             ),
                           ),
@@ -74,7 +74,7 @@ class Landingdistancebar extends StatelessWidget {
                             '${opLdValue.round()} ft',
                             style: TextStyle(
                               color: barColor,
-                              fontSize: orientation ? 21 : 18,
+                              fontSize: orientation ? 24 : 21,
                               fontWeight: FontWeight.w900,
                             ),
                           ),
@@ -83,7 +83,7 @@ class Landingdistancebar extends StatelessWidget {
                             //'${(opLdValue * 0.3048).round()}m | $opLdPercent%',
                             style: TextStyle(
                               color: barColor,
-                              fontSize: orientation ? 18 : 16.5,
+                              fontSize: orientation ? 20 : 18.5,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
@@ -100,7 +100,7 @@ class Landingdistancebar extends StatelessWidget {
                             'Remaining:',
                             style: TextStyle(
                               color: AppColors.white,
-                              fontSize: orientation ? 20 : 18,
+                              fontSize: orientation ? 22 : 19.5,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
@@ -111,7 +111,7 @@ class Landingdistancebar extends StatelessWidget {
                             '${remainingValue.round()} ft',
                             style: TextStyle(
                               color: barColor,
-                              fontSize: orientation ? 20 : 18,
+                              fontSize: orientation ? 22 : 19.5,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
@@ -123,7 +123,7 @@ class Landingdistancebar extends StatelessWidget {
                             //'${(remainingValue * 0.3048).round()}m | $remainingPercent%',
                             style: TextStyle(
                               color: barColor,
-                              fontSize: orientation ? 18 : 16.5,
+                              fontSize: orientation ? 18.5 : 17.5,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
@@ -234,7 +234,7 @@ class Landingdistancebar extends StatelessWidget {
               Center(
                 child: RichText(
                   text: TextSpan(
-                    style: TextStyle(fontSize: orientation ? 20 : 18.5, fontWeight: FontWeight.bold),
+                    style: TextStyle(fontSize: orientation ? 22 : 19.5, fontWeight: FontWeight.bold),
                     children: [
                       const TextSpan(
                         text: 'Net LDA: ',
