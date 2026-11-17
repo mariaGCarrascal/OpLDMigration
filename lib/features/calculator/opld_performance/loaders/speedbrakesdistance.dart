@@ -25,11 +25,8 @@ class Speedbrakesdistance {
   });
     
   double call() {
-    Map<String, String> brakesData = {};
-    double result;
+    double result = 0; 
     final XmlDocument document = OpLdService.instance.document;
-    XmlDocument? xmlDocument;
-    xmlDocument = document;
     final String? selectedAircraft = aircraftRef;
     final String? selectedLanding = landingRef;
     final String? selectedflap = flapRef;
@@ -37,7 +34,7 @@ class Speedbrakesdistance {
 
     try {
       //Filtrar por aircraft
-      final aircraft = xmlDocument
+      final aircraft = document
           .findAllElements('aircraft')
           .firstWhereOrNull(
             (a) =>
@@ -57,7 +54,9 @@ class Speedbrakesdistance {
       if (landingCondition == null) return 0;
 
       //Filtrar por flap seleccionado
-      if (selectedLanding == 'Normal' && selectedflap != null && speedbrakeRef != null) {
+      if (selectedLanding?.toUpperCase() == 'NORMAL' &&
+          selectedflap != null &&
+          speedbrakeRef != null) {
         final flapNode = landingCondition
             .findElements('Flap')
             .firstWhereOrNull((f) => f.getAttribute('label') == selectedflap);
@@ -90,20 +89,14 @@ class Speedbrakesdistance {
             result = double.tryParse(autobrake.innerText.trim()) ?? 0;
           }
         }
-      }
-      
-      //Adjustement result
-      if (selectedLanding == 'Non-Normal') {
+      } else if (selectedLanding?.toUpperCase() == 'NON-NORMAL') {
         result = 0;
-      } else {
-        result = double.tryParse(brakesData[brakesData.keys.first] ?? '0') ?? 0;     
       }
 
       return result;
 
     } catch (e) {
-      return 0; 
+      return 0;
     }
   }
-  
 }

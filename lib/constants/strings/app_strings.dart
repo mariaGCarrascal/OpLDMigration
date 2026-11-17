@@ -13,7 +13,7 @@ class AppStrings {
   static const String airportInfo = "AIRPORT INFORMATION";
   static const String weatherCond = "WEATHER CONDITION";
   static const String aircraftConfig = "AIRCRAFT CONFIGURATION";
-  static const String landingTittle = "NORMAL LANDING PERFORMANCE";
+  static const String landingTitle = "NORMAL LANDING PERFORMANCE";
 
   static const String rwyId = "RWY ID";
   static const String rwyMag = "RWY MAG HDG";
@@ -54,7 +54,7 @@ class AppStrings {
   static const String palt = "Palt ft";
   static const String altitude = "ALTITUDE";
   static const String oat = "OAT";
-  static const String isa = "ISA +";
+  static const String isa = "ISA";
   static const String wind = "WIND";
   static const String kthwc = "KT HWC";
   static const String kttwc = "KT TWC";

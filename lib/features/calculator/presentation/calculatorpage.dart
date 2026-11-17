@@ -61,7 +61,7 @@ class CalculatorPage extends StatefulWidget {
 class _CalculatorPageState extends State<CalculatorPage> {
   //Variables claves
   Timer? _timer;
-  String? checkAutobreak;
+  String? checkAutobrake;
   String? _currentReduction;
   String? netLDA;
   String? opldResult;
@@ -1212,11 +1212,11 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                       if (!autoBrakeOptions!.contains(
                                         selectedAutoBrake,
                                       )) {
-                                        checkAutobreak = 'YES';
+                                        checkAutobrake = 'YES';
                                         selectedAutoBrake =
                                             autoBrakeOptions![0];
                                       } else {
-                                        checkAutobreak = 'NO';
+                                        checkAutobrake = 'NO';
                                       }
 
                                       reversersList = Loadreversers(
@@ -2253,7 +2253,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                 ),
                               ),
 
-                              if (checkAutobreak == 'YES') ...[
+                              if (checkAutobrake == 'YES') ...[
                                 SizedBox(width: screenSize.width * 0.02),
                                 Text(
                                   AppStrings.caution,
@@ -2390,7 +2390,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                   onChanged: (newValue) {
                                     setState(() {
                                       selectedAutoBrake = newValue;
-                                      checkAutobreak = 'NO';
+                                      checkAutobrake = 'NO';
                                       updateOpld();
                                     });
                                   },
@@ -3343,7 +3343,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                       ),
                                       const SizedBox(height: 4),
                                       Text(
-                                        '${AppStrings.isa} $isa',
+                                        (int.tryParse(isa ?? '')?.round() ?? 0) >= 0 ?  '${AppStrings.isa} + $isa' : '${AppStrings.isa} - ${(double.tryParse(isa ?? '')?.round() ?? 0).abs()}',
                                         style: TextStyle(
                                           color: AppColors.textColor2,
                                           fontSize: 20,
@@ -4033,7 +4033,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                               child: Center(
                                 child: Text(
                                   selectedLanding != 'Non-Normal'
-                                      ? AppStrings.landingTittle
+                                      ? AppStrings.landingTitle
                                       : selectedConfiguration!.toUpperCase(),
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
@@ -4131,7 +4131,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                       child: Column(
                                         crossAxisAlignment: CrossAxisAlignment.start,
                                         children: [
-                                          if (checkAutobreak == 'YES') ...[
+                                          if (checkAutobrake == 'YES') ...[
                                             const SizedBox(height: 5),
                                             Text(
                                               AppStrings.cautionMessage,
