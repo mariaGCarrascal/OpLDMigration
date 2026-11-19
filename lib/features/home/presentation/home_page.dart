@@ -21,26 +21,24 @@ class HomePage extends StatefulWidget {
  
 class _HomePageState extends State<HomePage> { 
   // Variables clave de listas
-  List<String> aircraftTypes = [];
-  final List<String> landingTypes = ['Normal', 'Non-Normal'];
-  List<String> configurationTypes = [];
-  List<String> _flapsNon = [];
-  List<String> targetFlap = [];
-  List<String> targetConfig = [];
-  final airportTypes = Airportdata.airportNames;
-  Map<String, String> elevations = Airportdata.airportElevation;
-  Map<String, String> refQNH = Airportdata.airportRefQNH;
-  Map<String, String> refTemp = Airportdata.airportAverageRefTemp;
+  List<String> aircraftList = [];
+  final List<String> landingList = ['Normal', 'Non-Normal'];
+  List<String> configurationList = [];
+  List<String> _flapsNonList = [];
+  final airportList = Airportdata.airportNames;
+  Map<String, String> elevationList = Airportdata.airportElevation;
+  Map<String, String> qnhList = Airportdata.airportRefQNH;
+  Map<String, String> temperatureList = Airportdata.airportAverageRefTemp;
   Map<String, List<String>> refRunway = {};
   //Variables clave
   String? elevation;
   String? qnh;
   String? temperature;
   bool _isReady = false;
-  String? selectedAircraftType = '737-800W/CFM56-7B26';
-  String? selectedLandingType = 'Normal';
-  String? selectedAirportType = 'PTY';
-  String? selectedConfigurationType;
+  String? selectedAircraft = '737-800W/CFM56-7B26';
+  String? selectedLanding = 'Normal';
+  String? selectedAirport = 'PTY';
+  String? selectedConfiguration;
   String? selectedConfigurationFlap;
  
   @override
@@ -55,7 +53,7 @@ class _HomePageState extends State<HomePage> {
     final aircraftElements = document.findAllElements('aircraft');
  
     setState(() {
-      aircraftTypes = aircraftElements
+      aircraftList = aircraftElements
           .map((element) => element.getAttribute('label') ?? '')
           .where((label) => label.isNotEmpty)
           .toList();
@@ -70,22 +68,22 @@ class _HomePageState extends State<HomePage> {
       return;
     }
  
-    elevation = elevations[selectedAirportType] ?? "0".trim();
-    qnh = refQNH[selectedAirportType] ?? "0".trim();
-    temperature = refTemp[selectedAirportType] ?? "0".trim();
-    refRunway = Airportdata.airportRunwayData(selectedAirportType);
-    if (selectedLandingType == 'Non-Normal' && _flapsNon.isNotEmpty) {
-      selectedConfigurationFlap = _flapsNon.first;
+    elevation = elevationList[selectedAirport] ?? "0".trim();
+    qnh = qnhList[selectedAirport] ?? "0".trim();
+    temperature = temperatureList[selectedAirport] ?? "0".trim();
+    refRunway = Airportdata.airportRunwayData(selectedAirport);
+    if (selectedLanding == 'Non-Normal' && _flapsNonList.isNotEmpty) {
+      selectedConfigurationFlap = _flapsNonList.first;
     }
  
     Navigator.push(
       context,
       MaterialPageRoute(
         builder: (BuildContext context) => CalculatorPage(
-          aircraft: selectedAircraftType,
-          normalNon: selectedLandingType,
-          configuration: selectedConfigurationType,
-          airport: selectedAirportType,
+          aircraft: selectedAircraft,
+          normalNon: selectedLanding,
+          configuration: selectedConfiguration,
+          airport: selectedAirport,
           airportEl: elevation,
           airportQNH: qnh,
           airportTemp: temperature,
@@ -144,7 +142,7 @@ class _HomePageState extends State<HomePage> {
                     // Campo Aircraft Picker
                     DropdownButtonFormField2<String>(
                       //isExpanded: true,
-                      value: selectedAircraftType,
+                      value: selectedAircraft,
 
                       decoration: InputDecoration(
                         filled: true,
@@ -201,8 +199,8 @@ class _HomePageState extends State<HomePage> {
                         ),
                       ),
 
-                      items: aircraftTypes.map((String value) {
-                          final bool isSelected = value == selectedAircraftType;
+                      items: aircraftList.map((String value) {
+                          final bool isSelected = value == selectedAircraft;
                           return DropdownMenuItem<String>(
                             value: value,
                             child: Container(
@@ -231,7 +229,7 @@ class _HomePageState extends State<HomePage> {
                         }).toList(),
 
                       selectedItemBuilder: (BuildContext context) {
-                        return aircraftTypes.map((String value) {
+                        return aircraftList.map((String value) {
                           return Align(
                             alignment: Alignment.centerLeft,
                             child: Text(
@@ -253,21 +251,21 @@ class _HomePageState extends State<HomePage> {
                       
                       onChanged: (newValue) {
                         setState(() {
-                          selectedAircraftType = newValue;
-                          selectedConfigurationType = '';
+                          selectedAircraft = newValue;
+                          selectedConfiguration = '';
                           selectedConfigurationFlap = '';
-                          _flapsNon.clear();
+                          _flapsNonList.clear();
                         });
 
-                        if (selectedLandingType == 'Non-Normal') {
-                          configurationTypes = Loadconfig(aircraftRef: selectedAircraftType)();
+                        if (selectedLanding == 'Non-Normal') {
+                          configurationList = Loadconfig(aircraftRef: selectedAircraft)();
 
-                          if (configurationTypes.isNotEmpty) {
-                            selectedConfigurationType = configurationTypes.first;
-                            _flapsNon =  Searchflaps(aircraftRef: selectedAircraftType, landingRef: selectedLandingType, configurationRef: selectedConfigurationType)();
+                          if (configurationList.isNotEmpty) {
+                            selectedConfiguration = configurationList.first;
+                            _flapsNonList =  Searchflaps(aircraftRef: selectedAircraft, landingRef: selectedLanding, configurationRef: selectedConfiguration)();
                           } else {
-                            selectedConfigurationType = '';
-                            _flapsNon.clear();
+                            selectedConfiguration = '';
+                            _flapsNonList.clear();
                           }
                         }
                       },
@@ -291,7 +289,7 @@ class _HomePageState extends State<HomePage> {
                     // Campo Landing picker
                     DropdownButtonFormField2<String>(
                       //isExpanded: true,
-                      value: selectedLandingType,
+                      value: selectedLanding,
 
                       decoration: InputDecoration(
                         filled: true,
@@ -351,8 +349,8 @@ class _HomePageState extends State<HomePage> {
                         ),
                       ),
 
-                      items: landingTypes.map((String value) {
-                        final bool isSelected = value == selectedLandingType;
+                      items: landingList.map((String value) {
+                        final bool isSelected = value == selectedLanding;
                         return DropdownMenuItem<String>(
                           value: value,
                           child: Container(
@@ -381,7 +379,7 @@ class _HomePageState extends State<HomePage> {
                       }).toList(),
 
                       selectedItemBuilder: (BuildContext context) {
-                        return landingTypes.map((String value) {
+                        return landingList.map((String value) {
                           return Align(
                             alignment: Alignment.centerLeft,
                             child: Text(
@@ -403,31 +401,31 @@ class _HomePageState extends State<HomePage> {
 
                       onChanged: (newValue) {
                         setState(() {
-                          selectedLandingType = newValue;
-                          selectedConfigurationType = null;
+                          selectedLanding = newValue;
+                          selectedConfiguration = null;
                           selectedConfigurationFlap = null;
-                          _flapsNon.clear();
+                          _flapsNonList.clear();
 
                           if (newValue != 'Non-Normal') {
-                            configurationTypes.clear();
+                            configurationList.clear();
                           }
                         });
 
                         if (newValue == 'Non-Normal') {
-                          configurationTypes = Loadconfig(aircraftRef: selectedAircraftType)();
-                          if (configurationTypes.isNotEmpty) {
-                            selectedConfigurationType = configurationTypes.first;
-                            _flapsNon =  Searchflaps(aircraftRef: selectedAircraftType, landingRef: selectedLandingType, configurationRef: selectedConfigurationType)();
+                          configurationList = Loadconfig(aircraftRef: selectedAircraft)();
+                          if (configurationList.isNotEmpty) {
+                            selectedConfiguration = configurationList.first;
+                            _flapsNonList =  Searchflaps(aircraftRef: selectedAircraft, landingRef: selectedLanding, configurationRef: selectedConfiguration)();
                           } else {
-                            selectedConfigurationType = null;
-                            _flapsNon.clear();
+                            selectedConfiguration = null;
+                            _flapsNonList.clear();
                           }
                         }
                       },
                     ),
 
                     // Label Configuration Type Selection
-                    if (selectedLandingType == 'Non-Normal') ...[
+                    if (selectedLanding == 'Non-Normal') ...[
                       Padding(
                         padding: EdgeInsets.only(top: 20.0),
                         child: Text(
@@ -445,10 +443,10 @@ class _HomePageState extends State<HomePage> {
                       // Campo Configuration Picker
                       DropdownButtonFormField2<String>(
                         isExpanded: true,
-                        value: configurationTypes.contains(
-                          selectedConfigurationType,
+                        value: configurationList.contains(
+                          selectedConfiguration,
                         )
-                            ? selectedConfigurationType
+                            ? selectedConfiguration
                             : null,
 
                         decoration: InputDecoration(
@@ -510,8 +508,8 @@ class _HomePageState extends State<HomePage> {
                           ),
                         ),
 
-                        items: configurationTypes.map((String value) {
-                          final bool isSelected = value == selectedConfigurationType;
+                        items: configurationList.map((String value) {
+                          final bool isSelected = value == selectedConfiguration;
                           return DropdownMenuItem<String>(
                             value: value,
                             child: Container(
@@ -540,7 +538,7 @@ class _HomePageState extends State<HomePage> {
                         }).toList(),
 
                         selectedItemBuilder: (BuildContext context) {
-                          return configurationTypes.map((String value) {
+                          return configurationList.map((String value) {
                             return Align(
                               alignment: Alignment.centerLeft,
                               child: Text(
@@ -562,8 +560,8 @@ class _HomePageState extends State<HomePage> {
 
                         onChanged: (newValue) {
                           setState(() {
-                            selectedConfigurationType = newValue;
-                            _flapsNon =  Searchflaps(aircraftRef: selectedAircraftType, landingRef: selectedLandingType, configurationRef: selectedConfigurationType)();
+                            selectedConfiguration = newValue;
+                            _flapsNonList =  Searchflaps(aircraftRef: selectedAircraft, landingRef: selectedLanding, configurationRef: selectedConfiguration)();
                           });
                         },
                       ),                                                         
@@ -586,8 +584,8 @@ class _HomePageState extends State<HomePage> {
 
                     // Campo Airport Picker
                     DropdownSearch<String>(
-                      items: (filter, loadProps) => airportTypes,
-                      selectedItem: selectedAirportType,
+                      items: (filter, loadProps) => airportList,
+                      selectedItem: selectedAirport,
                       suffixProps: DropdownSuffixProps(
                         dropdownButtonProps: DropdownButtonProps(
                           isVisible: false,
@@ -709,7 +707,7 @@ class _HomePageState extends State<HomePage> {
                         },
 
                         itemBuilder: (context, item, isDisabled, isSelected) {
-                          final bool isCurrentItem = item == selectedAirportType;
+                          final bool isCurrentItem = item == selectedAirport;
                           return Container(
                             width: double.infinity,
                             padding: const EdgeInsets.symmetric(
@@ -755,7 +753,7 @@ class _HomePageState extends State<HomePage> {
 
                       onSelected: (newValue) {
                         setState(() {
-                          selectedAirportType = newValue;
+                          selectedAirport = newValue;
                         });
                       },
                     ),                                  

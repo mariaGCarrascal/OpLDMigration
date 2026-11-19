@@ -69,11 +69,11 @@ class _CalculatorPageState extends State<CalculatorPage> {
   Color? colorResult;
   late double _currentLadWeight;
   late double _currentElevation;
-  double? altitudMax;
-  double? altitudMin;
-  late double sliderMinAltitud;
-  late double sliderMaxAltitud;
-  int? _divisionsAltitud;
+  double? elevationMax;
+  double? elevationMin;
+  late double sliderMinElevation;
+  late double sliderMaxElevation;
+  int? _divisionsElevation;
   int? _divisionsWeight;
   String? isa;
   String? selectedRunway;
@@ -121,15 +121,13 @@ class _CalculatorPageState extends State<CalculatorPage> {
   bool _ispresseded = false;
   bool? wifiCheck;
   final remoteDataSource = Remotedatasource(client: http.Client());
-  //Variables de listas y Maps de los DropDownlists
+  //Variables de listas y Maps de los DropDownlists o loaders.
   Map<String, String> baseDetails = {};
   Map<String, String> metarResult = {};
   List<String>? listaComments = [];
-  List<String>? weightsAircraft = [];
   List<String>? defaultAircraft = [];
-  Map<String, List<String>>? selectedAirportRunway;
-  List<String>? selectedSlopeValues = [];
-  List<String>? selectedAircraftWeight = [];
+  Map<String, List<String>>? selectedAirportRunways;
+  List<String>? runwayValues = [];
   final List<String> normalFlaps = ['FLAPS 15', 'FLAPS 30', 'FLAPS 40'];
   List<String>? reversersList = [];
   List<String>? autoBrakeOptions;
@@ -255,14 +253,14 @@ class _CalculatorPageState extends State<CalculatorPage> {
     if (selectedAirport != 'XXX') {
       selectedAirportElevation = widget.airportEl;
       selectedAirportTemperature = widget.airportTemp;
-      selectedAirportRunway = widget.airportRunway;
-      selectedRunway = selectedAirportRunway?.keys.first;
-      selectedSlopeValues = selectedAirportRunway?[selectedRunway];
-      rwyId = selectedSlopeValues?[0].trim();
-      rwyLda = selectedSlopeValues?[1].trim();
-      rwySlope = selectedSlopeValues?[2].trim();
-      rwyFactor = selectedSlopeValues?[3].trim();
-      rwyAdditive = selectedSlopeValues?[4].trim();
+      selectedAirportRunways = widget.airportRunway;
+      selectedRunway = selectedAirportRunways?.keys.first;
+      runwayValues = selectedAirportRunways?[selectedRunway];
+      rwyId = runwayValues?[0].trim();
+      rwyLda = runwayValues?[1].trim();
+      rwySlope = runwayValues?[2].trim();
+      rwyFactor = runwayValues?[3].trim();
+      rwyAdditive = runwayValues?[4].trim();
       netLDA = rwyLda;
       altitud = Calculatealtitud(
         elevationRef: selectedAirportElevation,
@@ -270,11 +268,11 @@ class _CalculatorPageState extends State<CalculatorPage> {
       )();
       isa = ((double.parse(selectedAirportTemperature!.trim()).round() - 15) + (0.0019812 * double.parse(altitud ?? '0').round())).round().toString();
     } else {
-      altitudMin = double.parse(defaultAircraft?[9] ?? '0');
-      altitudMax = double.parse(defaultAircraft?[10] ?? '0');
-      sliderMinAltitud = (altitudMin! / 1000).ceil() * 1000;
-      sliderMaxAltitud = (altitudMax! / 1000).floor() * 1000;
-      _divisionsAltitud = ((sliderMaxAltitud - sliderMinAltitud) / 1000).round();
+      elevationMin = double.parse(defaultAircraft?[9] ?? '0');
+      elevationMax = double.parse(defaultAircraft?[10] ?? '0');
+      sliderMinElevation = (elevationMin! / 1000).ceil() * 1000;
+      sliderMaxElevation = (elevationMax! / 1000).floor() * 1000;
+      _divisionsElevation = ((sliderMaxElevation - sliderMinElevation) / 1000).round();
       _currentElevation = double.parse(defaultAircraft?[18] ?? '0');
       altitud = Calculatealtitud(
         elevationRef: _currentElevation.toString(),
@@ -290,20 +288,20 @@ class _CalculatorPageState extends State<CalculatorPage> {
         operation: '',
       )();
       selectedAirportTemperature = tempValues[1];
-      selectedAirportRunway = widget.airportRunway;
-      selectedRunway = selectedAirportRunway?.keys.first;
-      selectedSlopeValues = selectedAirportRunway?[selectedRunway];
-      rwyId = selectedSlopeValues?[0] != 'XXX'
-          ? selectedSlopeValues![0]
+      selectedAirportRunways = widget.airportRunway;
+      selectedRunway = selectedAirportRunways?.keys.first;
+      runwayValues = selectedAirportRunways?[selectedRunway];
+      rwyId = runwayValues?[0] != 'XXX'
+          ? runwayValues![0]
           : '000';
-      rwyLda = selectedSlopeValues?[1] != 'XXXX'
-          ? selectedSlopeValues![1]
+      rwyLda = runwayValues?[1] != 'XXXX'
+          ? runwayValues![1]
           : '0';
-      rwySlope = selectedSlopeValues?[2] != 'XXX'
-          ? selectedSlopeValues![2]
+      rwySlope = runwayValues?[2] != 'XXX'
+          ? runwayValues![2]
           : '0';
-      rwyFactor = selectedSlopeValues?[3];
-      rwyAdditive = selectedSlopeValues?[4];
+      rwyFactor = runwayValues?[3];
+      rwyAdditive = runwayValues?[4];
       netLDA = rwyLda;
       rwySlopeMin = defaultAircraft?[11];
       rwySlopeMax = defaultAircraft?[12];
@@ -752,7 +750,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
 
                                     selectedItemBuilder:
                                         (BuildContext context) {
-                                          return (selectedAirportRunway?.keys ??
+                                          return (selectedAirportRunways?.keys ??
                                                   <String>{})
                                               .map((value) {
                                                 return Align(
@@ -796,7 +794,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                     ),
 
                                     items:
-                                        (selectedAirportRunway?.keys ??
+                                        (selectedAirportRunways?.keys ??
                                                 <String>{})
                                             .map((value) {
                                               final bool isSelected =
@@ -840,12 +838,12 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                     onChanged: (newValue) {
                                       setState(() {
                                         selectedRunway = newValue;
-                                        selectedSlopeValues =
-                                            selectedAirportRunway?[selectedRunway];
-                                        rwyId = selectedSlopeValues?[0];
-                                        rwyLda = selectedSlopeValues?[1];
+                                        runwayValues =
+                                            selectedAirportRunways?[selectedRunway];
+                                        rwyId = runwayValues?[0];
+                                        rwyLda = runwayValues?[1];
                                         netLDA = rwyLda;
-                                        rwySlope = selectedSlopeValues?[2];
+                                        rwySlope = runwayValues?[2];
 
                                         windValues = Calculatewind(
                                           rwyidRef: rwyId,
@@ -1408,8 +1406,8 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                         setState(() {
                                           _currentElevation = Calculateelevationincredecre(
                                             elevationReference: _currentElevation,
-                                            minReference: altitudMin,
-                                            maxReference: altitudMax,
+                                            minReference: elevationMin,
+                                            maxReference: elevationMax,
                                             operation: 'decrement',
                                           )();
                                           altitud = Calculatealtitud(
@@ -1427,8 +1425,8 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                           setState(() {
                                             _currentElevation = Calculateelevationincredecre(
                                               elevationReference: _currentElevation,
-                                              minReference: altitudMin,
-                                              maxReference: altitudMax,
+                                              minReference: elevationMin,
+                                              maxReference: elevationMax,
                                               operation: 'decrement',
                                             )();
                                             altitud = Calculatealtitud(
@@ -1476,8 +1474,8 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                         setState(() {
                                           _currentElevation = Calculateelevationincredecre(
                                             elevationReference: _currentElevation,
-                                            minReference: altitudMin,
-                                            maxReference: altitudMax,
+                                            minReference: elevationMin,
+                                            maxReference: elevationMax,
                                             operation: 'increment',
                                           )();
                                           altitud = Calculatealtitud(
@@ -1495,8 +1493,8 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                           setState(() {
                                             _currentElevation = Calculateelevationincredecre(
                                               elevationReference: _currentElevation,
-                                              minReference: altitudMin,
-                                              maxReference: altitudMax,
+                                              minReference: elevationMin,
+                                              maxReference: elevationMax,
                                               operation: 'increment',
                                             )();
                                             altitud = Calculatealtitud(
@@ -1564,12 +1562,12 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                     thumbColor: AppColors.icon,
                                     inactiveColor: AppColors.grey,
                                     value: _currentElevation.clamp(
-                                      sliderMinAltitud,
-                                      sliderMaxAltitud,
+                                      sliderMinElevation,
+                                      sliderMaxElevation,
                                     ),
-                                    min: sliderMinAltitud,
-                                    max: sliderMaxAltitud,
-                                    divisions: _divisionsAltitud,
+                                    min: sliderMinElevation,
+                                    max: sliderMaxElevation,
+                                    divisions: _divisionsElevation,
                                     onChanged: (double val) {
                                       setState(() {
                                         _currentElevation = val;
@@ -1891,7 +1889,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                 Text(
                                   AppStrings.refOnly,
                                   style: TextStyle(
-                                    fontSize: 12,
+                                    fontSize: 11,
                                     fontStyle: FontStyle.italic,
                                     color: AppColors.warning,
                                   ),
