@@ -1,6 +1,6 @@
-import 'package:flutter_application_5/service_data/metar/oatconverter.dart';
-import 'package:flutter_application_5/service_data/metar/qnhconverter.dart';
-import 'package:flutter_application_5/service_data/metar/windconverter.dart';
+import 'package:opld/service_data/metar/oatconverter.dart';
+import 'package:opld/service_data/metar/qnhconverter.dart';
+import 'package:opld/service_data/metar/windconverter.dart';
 
 class MetarParser {
   static bool _hasMissingSlashes(String value) => value.contains('//');
@@ -37,10 +37,12 @@ class MetarParser {
       }
     }
 
-    final bool hasMissingData = _hasMissingSlashes(rawWind) ||
+    final bool hasMissingData = rawWind.isEmpty ||
+        rawOat.isEmpty ||
+        rawQnh.isEmpty ||
+        _hasMissingSlashes(rawWind) ||
         _hasMissingSlashes(rawOat) ||
-        _hasMissingSlashes(rawQnh) ||
-        rawMetar.contains('//');
+        _hasMissingSlashes(rawQnh);
 
     final windMatch = _hasMissingSlashes(rawWind) ? '' : rawWind;
     final oatMatch = _hasMissingSlashes(rawOat) ? '' : rawOat;

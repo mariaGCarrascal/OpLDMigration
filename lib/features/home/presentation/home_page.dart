@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_5/constants/colors/app_colors.dart';
-import 'package:flutter_application_5/features/home/loaders/loadConfig.dart';
-import 'package:flutter_application_5/features/calculator/presentation/calculatorpage.dart';
-import 'package:flutter_application_5/features/home/loaders/searchflaps.dart';
-import 'package:flutter_application_5/constants/strings/app_strings.dart';
+import 'package:opld/constants/colors/app_colors.dart';
+import 'package:opld/features/home/loaders/loadConfig.dart';
+import 'package:opld/features/calculator/presentation/calculatorpage.dart';
+import 'package:opld/features/home/loaders/searchflaps.dart';
+import 'package:opld/constants/strings/app_strings.dart';
 import 'package:xml/xml.dart';
-import 'package:flutter_application_5/service_data/airportdata.dart';
-import 'package:flutter_application_5/design/text/app_text.dart';
-import 'package:flutter_application_5/service_data/opldservice.dart';
+import 'package:opld/service_data/airportdata.dart';
+import 'package:opld/design/text/app_text.dart';
+import 'package:opld/service_data/opldservice.dart';
 import 'package:dropdown_search/dropdown_search.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 
@@ -29,7 +29,7 @@ class _HomePageState extends State<HomePage> {
   Map<String, String> elevationList = Airportdata.airportElevation;
   Map<String, String> qnhList = Airportdata.airportRefQNH;
   Map<String, String> temperatureList = Airportdata.airportAverageRefTemp;
-  Map<String, List<String>> refRunway = {};
+  Map<String, List<String>> runwayList = {};
   //Variables clave
   String? elevation;
   String? qnh;
@@ -71,7 +71,7 @@ class _HomePageState extends State<HomePage> {
     elevation = elevationList[selectedAirport] ?? "0".trim();
     qnh = qnhList[selectedAirport] ?? "0".trim();
     temperature = temperatureList[selectedAirport] ?? "0".trim();
-    refRunway = Airportdata.airportRunwayData(selectedAirport);
+    runwayList = Airportdata.airportRunwayData(selectedAirport);
     if (selectedLanding == 'Non-Normal' && _flapsNonList.isNotEmpty) {
       selectedConfigurationFlap = _flapsNonList.first;
     }
@@ -87,7 +87,7 @@ class _HomePageState extends State<HomePage> {
           airportEl: elevation,
           airportQNH: qnh,
           airportTemp: temperature,
-          airportRunway: refRunway,
+          airportRunway: runwayList,
           nonflaps: selectedConfigurationFlap,
         ),
       ),
@@ -98,6 +98,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     final orientation = MediaQuery.of(context).orientation == Orientation.portrait;
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       backgroundColor: AppColors.background,
       appBar: AppBar(
         title: const Text(
@@ -785,13 +786,19 @@ class _HomePageState extends State<HomePage> {
               ),
             ],
           ),
+
+          // Texto Version de app
           Positioned(
-            bottom: 0,
-            child: OpLDAppText.regular(
-              AppStrings.appVersionNumber,
-              color: AppColors.grey,
+            bottom: 8,
+            child: SafeArea(
+              top: false,
+              child: OpLDAppText.regular(
+                AppStrings.appVersionNumber,
+                color: AppColors.grey,
+              ),
             ),
           ),
+
         ],
       ),
     );

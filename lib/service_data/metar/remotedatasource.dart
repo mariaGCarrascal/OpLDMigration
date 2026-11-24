@@ -1,5 +1,5 @@
-import 'package:flutter_application_5/service_data/metar/metarparser.dart';
-import 'package:flutter_application_5/service_data/airportdata.dart';
+import 'package:opld/service_data/metar/metarparser.dart';
+import 'package:opld/service_data/airportdata.dart';
 import 'package:http/http.dart' as http;
 
 class Remotedatasource {

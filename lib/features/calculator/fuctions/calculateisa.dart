@@ -1,24 +1,24 @@
 class Calculateisa{
 
-  final String? elevationRef;
+  final String? altitudRef;
   final String? temperatureRef;
 
     Calculateisa({ 
-    this.elevationRef, this.temperatureRef
+    this.altitudRef, this.temperatureRef
     });
     
   String call() {
-    if (elevationRef == null || temperatureRef == null) {
+    if (altitudRef == null || temperatureRef == null) {
       return "0";
     }
 
     try {
-      final double elevation = double.parse(elevationRef!.trim());
+      final double altitud = double.parse(altitudRef!.trim());
       final double temperature = double.parse(temperatureRef!.trim());
       final double tempRounded = temperature.roundToDouble();
-      final double elevationRounded = elevation.roundToDouble();
+      final double altitudRounded = altitud.roundToDouble();
 
-      final double result = tempRounded - 15 + (0.0019812 * elevationRounded);
+      final double result = tempRounded - 15 + (0.0019812 * altitudRounded);
 
       return result.round().toString();
     } catch (e) {

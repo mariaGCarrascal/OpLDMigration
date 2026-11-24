@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_5/features/home/presentation/home_page.dart';
-import 'package:flutter_application_5/service_data/opldservice.dart';
-import 'package:flutter_application_5/features/splash/splash_screen.dart';
-import 'package:flutter_application_5/theme/dark_theme.dart';
+import 'package:opld/features/home/presentation/home_page.dart';
+import 'package:opld/service_data/opldservice.dart';
+import 'package:opld/features/splash/splash_screen.dart';
+import 'package:opld/theme/dark_theme.dart';
 
 
 void main() {

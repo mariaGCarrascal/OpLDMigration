@@ -1,12 +1,12 @@
-import 'package:flutter_application_5/features/calculator/opld_performance/loaders/altitudedistancecalculation.dart';
-import 'package:flutter_application_5/features/calculator/opld_performance/loaders/approachspeeddistancecalculation.dart';
-import 'package:flutter_application_5/features/calculator/opld_performance/loaders/refdistancereference.dart';
-import 'package:flutter_application_5/features/calculator/opld_performance/loaders/reversethrustadj.dart';
-import 'package:flutter_application_5/features/calculator/opld_performance/loaders/slopedistancecalculation.dart';
-import 'package:flutter_application_5/features/calculator/opld_performance/loaders/speedbrakesdistance.dart';
-import 'package:flutter_application_5/features/calculator/opld_performance/loaders/tempdistancecalculation.dart';
-import 'package:flutter_application_5/features/calculator/opld_performance/loaders/weightdistancecalculation.dart';
-import 'package:flutter_application_5/features/calculator/opld_performance/loaders/winddistancecalculation.dart';
+import 'package:opld/features/calculator/opld_performance/loaders/altitudedistancecalculation.dart';
+import 'package:opld/features/calculator/opld_performance/loaders/approachspeeddistancecalculation.dart';
+import 'package:opld/features/calculator/opld_performance/loaders/refdistancereference.dart';
+import 'package:opld/features/calculator/opld_performance/loaders/reversethrustadj.dart';
+import 'package:opld/features/calculator/opld_performance/loaders/slopedistancecalculation.dart';
+import 'package:opld/features/calculator/opld_performance/loaders/speedbrakesdistance.dart';
+import 'package:opld/features/calculator/opld_performance/loaders/tempdistancecalculation.dart';
+import 'package:opld/features/calculator/opld_performance/loaders/weightdistancecalculation.dart';
+import 'package:opld/features/calculator/opld_performance/loaders/winddistancecalculation.dart';
 
 class Oplddistancecalculator{
 
@@ -48,12 +48,12 @@ class Oplddistancecalculator{
         aircraftRef: aircraftPicker, landingRef: landingPicker, configurationRef: configurationPicker, flapRef: flapPicker, 
         conditionRef: rwyConditionPicker, autobrakeRef: autobrakePicker, baseDetails: aircraftBaseDetails)();
 
-      //WT Adjustment (WT ADJ) Funciona
+      //WT Adjustment (WT ADJ) 
       double weightAdjustmentDistanceResult = Weightdistancecalculation(
         aircraftRef: aircraftPicker, landingRef: landingPicker, configurationRef: configurationPicker, flapRef: flapPicker, 
         conditionRef: rwyConditionPicker, autobrakeRef: autobrakePicker, weightRef: weightRef, baseDetails: aircraftBaseDetails)();
 
-      //Altitud Adjustment (ALT ADJ) funciona
+      //Altitud Adjustment (ALT ADJ) 
       double altitudeAdjustmentResult = Altitudedistancecalculation(
         aircraftRef: aircraftPicker, landingRef: landingPicker, configurationRef: configurationPicker, flapRef: flapPicker, 
         conditionRef: rwyConditionPicker, autobrakeRef: autobrakePicker, altitudeRef: altitudeRef, baseDetails: aircraftBaseDetails)();

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_5/constants/colors/app_colors.dart';
+import 'package:opld/constants/colors/app_colors.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
 class Customskeletonizer extends StatelessWidget {

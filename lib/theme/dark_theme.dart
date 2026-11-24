@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_5/constants/colors/app_colors.dart';
-import 'package:flutter_application_5/theme/app_theme_extesion.dart';
+import 'package:opld/constants/colors/app_colors.dart';
+import 'package:opld/theme/app_theme_extesion.dart';
 
 class DarkTheme {
   static final ThemeData theme = ThemeData(

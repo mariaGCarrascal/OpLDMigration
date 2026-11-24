@@ -1,6 +1,6 @@
 
 import 'package:flutter/services.dart';
-import 'package:flutter_application_5/constants/colors/app_colors.dart';
+import 'package:opld/constants/colors/app_colors.dart';
 
 class Opldcolorasignator{
 

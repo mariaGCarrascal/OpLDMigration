@@ -1,5 +1,5 @@
 import 'package:xml/xml.dart';
-import 'package:flutter_application_5/service_data/opldservice.dart';
+import 'package:opld/service_data/opldservice.dart';
 
 extension IterableExtension<T> on Iterable<T> {
   T? firstWhereOrNull(bool Function(T element) test) {

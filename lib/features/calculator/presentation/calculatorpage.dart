@@ -1,38 +1,38 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:flutter_application_5/constants/colors/app_colors.dart';
-import 'package:flutter_application_5/features/calculator/fuctions/calculateAltitud.dart';
-import 'package:flutter_application_5/features/calculator/fuctions/calculateelevationincredecre.dart';
-import 'package:flutter_application_5/features/calculator/fuctions/calculateisa.dart';
-import 'package:flutter_application_5/features/calculator/fuctions/calculateqnhincredecre.dart';
-import 'package:flutter_application_5/features/calculator/fuctions/calculatereduction.dart';
-import 'package:flutter_application_5/features/calculator/fuctions/calculateslopeincredecre.dart';
-import 'package:flutter_application_5/features/calculator/fuctions/calculatetempisa.dart';
-import 'package:flutter_application_5/features/calculator/fuctions/calculatevrefincredecre.dart';
-import 'package:flutter_application_5/features/calculator/fuctions/calculateweightincredecre.dart';
-import 'package:flutter_application_5/features/calculator/fuctions/calculatewind.dart';
-import 'package:flutter_application_5/features/calculator/fuctions/crosswindinop.dart';
-import 'package:flutter_application_5/features/calculator/fuctions/utils/customDigitFormatter.dart';
-import 'package:flutter_application_5/features/calculator/fuctions/utils/customskeletonizer.dart';
-import 'package:flutter_application_5/features/calculator/fuctions/utils/formatqnh.dart';
-import 'package:flutter_application_5/features/calculator/fuctions/utils/formatslope.dart';
-import 'package:flutter_application_5/design/runwayGrafic/landingdistancebar.dart';
-import 'package:flutter_application_5/features/calculator/fuctions/loaders/loadautobrakes.dart';
-import 'package:flutter_application_5/features/calculator/fuctions/loaders/loadcomments.dart';
-import 'package:flutter_application_5/features/calculator/fuctions/loaders/loadcrosswinds.dart';
-import 'package:flutter_application_5/features/calculator/fuctions/loaders/loadreversers.dart';
-import 'package:flutter_application_5/features/calculator/fuctions/loaders/loadvrefcondition.dart';
-import 'package:flutter_application_5/features/calculator/fuctions/loaders/loadvreftext.dart';
-import 'package:flutter_application_5/service_data/metar/connectivityservice.dart';
-import 'package:flutter_application_5/service_data/metar/metaralert.dart';
-import 'package:flutter_application_5/service_data/metar/remotedatasource.dart';
-import 'package:flutter_application_5/features/calculator/fuctions/utils/opldcolorasignator.dart';
-import 'package:flutter_application_5/features/calculator/fuctions/loaders/searchautobrakedefault.dart';
-import 'package:flutter_application_5/features/calculator/fuctions/loaders/searchdefault.dart';
-import 'package:flutter_application_5/features/calculator/opld_performance/loaders/searchbaselinereference.dart';
-import 'package:flutter_application_5/features/calculator/opld_performance/oplddistancecalculator.dart';
-import 'package:flutter_application_5/service_data/airportdata.dart';
-import 'package:flutter_application_5/constants/strings/app_strings.dart';
+import 'package:opld/constants/colors/app_colors.dart';
+import 'package:opld/features/calculator/fuctions/calculateAltitud.dart';
+import 'package:opld/features/calculator/fuctions/calculateelevationincredecre.dart';
+import 'package:opld/features/calculator/fuctions/calculateisa.dart';
+import 'package:opld/features/calculator/fuctions/calculateqnhincredecre.dart';
+import 'package:opld/features/calculator/fuctions/calculatereduction.dart';
+import 'package:opld/features/calculator/fuctions/calculateslopeincredecre.dart';
+import 'package:opld/features/calculator/fuctions/calculatetempisa.dart';
+import 'package:opld/features/calculator/fuctions/calculatevrefincredecre.dart';
+import 'package:opld/features/calculator/fuctions/calculateweightincredecre.dart';
+import 'package:opld/features/calculator/fuctions/calculatewind.dart';
+import 'package:opld/features/calculator/fuctions/crosswindinop.dart';
+import 'package:opld/features/calculator/fuctions/utils/customDigitFormatter.dart';
+import 'package:opld/features/calculator/fuctions/utils/customskeletonizer.dart';
+import 'package:opld/features/calculator/fuctions/utils/formatqnh.dart';
+import 'package:opld/features/calculator/fuctions/utils/formatslope.dart';
+import 'package:opld/design/runwayGrafic/landingdistancebar.dart';
+import 'package:opld/features/calculator/fuctions/loaders/loadautobrakes.dart';
+import 'package:opld/features/calculator/fuctions/loaders/loadcomments.dart';
+import 'package:opld/features/calculator/fuctions/loaders/loadcrosswinds.dart';
+import 'package:opld/features/calculator/fuctions/loaders/loadreversers.dart';
+import 'package:opld/features/calculator/fuctions/loaders/loadvrefcondition.dart';
+import 'package:opld/features/calculator/fuctions/loaders/loadvreftext.dart';
+import 'package:opld/service_data/metar/connectivityservice.dart';
+import 'package:opld/service_data/metar/metaralert.dart';
+import 'package:opld/service_data/metar/remotedatasource.dart';
+import 'package:opld/features/calculator/fuctions/utils/opldcolorasignator.dart';
+import 'package:opld/features/calculator/fuctions/loaders/searchautobrakedefault.dart';
+import 'package:opld/features/calculator/fuctions/loaders/searchdefault.dart';
+import 'package:opld/features/calculator/opld_performance/loaders/searchbaselinereference.dart';
+import 'package:opld/features/calculator/opld_performance/oplddistancecalculator.dart';
+import 'package:opld/service_data/airportdata.dart';
+import 'package:opld/constants/strings/app_strings.dart';
 import 'package:flutter/services.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -490,7 +490,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                         windValue = hasMissingData ? windValue : metarResult['NODE'];
                         if(metarResult['HAS_MISSING_DATA'] != 'true') {
                           altitud = Calculatealtitud(elevationRef: selectedAirportElevation, qnhRef: selectedAirportQNH)();
-                          isa = Calculateisa(elevationRef: altitud, temperatureRef: selectedAirportTemperature)();
+                          isa = Calculateisa(altitudRef: altitud, temperatureRef: selectedAirportTemperature)();
                           windValues = Calculatewind(rwyidRef: rwyId, windRef: windValue, windpickerRef: selectedWind)();
                           windValue = windValues?[0];
                           headtail = windValues?[1];
@@ -1415,7 +1415,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                             qnhRef: selectedAirportQNH,
                                           )();
                                           isa = Calculateisa(
-                                            elevationRef: altitud,
+                                            altitudRef: altitud,
                                             temperatureRef: selectedAirportTemperature,
                                           )();
                                           updateOpld();
@@ -1434,7 +1434,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                               qnhRef: selectedAirportQNH,
                                             )();
                                             isa = Calculateisa(
-                                              elevationRef: altitud,
+                                              altitudRef: altitud,
                                               temperatureRef: selectedAirportTemperature,
                                             )();
                                             updateOpld();
@@ -1483,7 +1483,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                             qnhRef: selectedAirportQNH,
                                           )();
                                           isa = Calculateisa(
-                                            elevationRef: altitud,
+                                            altitudRef: altitud,
                                             temperatureRef: selectedAirportTemperature,
                                           )();
                                           updateOpld();
@@ -1502,7 +1502,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                               qnhRef: selectedAirportQNH,
                                             )();
                                             isa = Calculateisa(
-                                              elevationRef: altitud,
+                                              altitudRef: altitud,
                                               temperatureRef: selectedAirportTemperature,
                                             )();
                                             updateOpld();
@@ -1577,7 +1577,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                           qnhRef: selectedAirportQNH,
                                         )();
                                         isa = Calculateisa(
-                                          elevationRef: altitud,
+                                          altitudRef: altitud,
                                           temperatureRef:
                                               selectedAirportTemperature,
                                         )();
@@ -1889,7 +1889,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                                 Text(
                                   AppStrings.refOnly,
                                   style: TextStyle(
-                                    fontSize: 11,
+                                    fontSize: orientation ? 15 : 11,
                                     fontStyle: FontStyle.italic,
                                     color: AppColors.warning,
                                   ),

@@ -1,4 +1,4 @@
-import 'package:flutter_application_5/service_data/opldservice.dart';
+import 'package:opld/service_data/opldservice.dart';
 import 'package:xml/xml.dart';
 
 extension IterableExtension<T> on Iterable<T> {
