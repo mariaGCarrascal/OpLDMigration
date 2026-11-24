@@ -17,7 +17,7 @@ class Airportdata {
     "LAP","LAS","LAX","LET",//"LGB",
     "LIM","LIR","LRD","LRM","LSC",
     "MAO","MAR","MBJ","MCO","MCZ","MDE","MDQ","MDW","MDZ","MEC","MEX","MFE","MGA","MIA","MID","MKE","MLM","MTY", "MTR","MSY","MVD","MZT",
-    "NAS","NAT","NLU","NSA","NVA",
+    "NAS","NAT","NLU","NVA",//"NSA"
     "OAK","OAX","ONT","ORD","ORF",
     "PAE","PAP","PBC",//"PBI",
     "PBM","PDP","PEI","PEM","PHL","PHX","PIO",//"PIT",
@@ -201,7 +201,7 @@ class Airportdata {
     'MTR': '  41',
     'MZT': '    38',
     'NAT': '   272',
-    'NSA': '   169',
+    //'NSA': '   169',
     'NVA': '  1482',
     'OAK': '     9',
     'OAX': '  4989',
@@ -428,7 +428,7 @@ class Airportdata {
     'MTR': '1013.25',
     'MZT': '1013.25',
     'NAT': '1013.25',
-    'NSA': '1013.25',
+    //'NSA': '1013.25',
     'NVA': '1013.25',
     'OAX': '1013.25',
     'ONT': '1013.25',
@@ -656,7 +656,7 @@ class Airportdata {
     'MLM': '17.8',
     'MZT': '24.5',
     'NAT': '26.2',
-    'NSA': '26.7',
+    //'NSA': '26.7',
     'NVA': '35.0',
     'OAK': '15.0',
     'OAX': '22.1',
@@ -841,7 +841,7 @@ class Airportdata {
   'NAS': 'MYNN',
   'NAT': 'SBSG',
   'NLU': 'MMSM',
-  'NSA': 'FNGI',
+  //'NSA': 'FNGI',
   'NVA': 'SKNV',
   'OAK': 'KOAK',
   'OAX': 'MMOX',
@@ -2304,15 +2304,15 @@ class Airportdata {
                   };
 
 
-                case "NSA":
-                    return {
-                    'rwy12': ['121', '5988', '-0.350', '1', '0'],
-                    'rwy16L': ['163', '8530', '-0.130', '1', '0'],
-                    'rwy16R': ['163', '5905', '-0.170', '1', '0'],
-                    'rwy30': ['301', '5988', '0.350', '1', '0'],
-                    'rwy34L': ['343', '5905', '0.170', '1', '0'],
-                    'rwy34R': ['343', '8530', '0.130', '1', '0'],
-                  };
+                //case "NSA":
+                  //  return {
+                    //'rwy12': ['121', '5988', '-0.350', '1', '0'],
+                    //'rwy16L': ['163', '8530', '-0.130', '1', '0'],
+                    //'rwy16R': ['163', '5905', '-0.170', '1', '0'],
+                    //'rwy30': ['301', '5988', '0.350', '1', '0'],
+                    //'rwy34L': ['343', '5905', '0.170', '1', '0'],
+                    //'rwy34R': ['343', '8530', '0.130', '1', '0'],
+                  //};
 
                 case "NVA":
                     return {
