@@ -1,6 +1,6 @@
 class AppStrings {
 
-  static const String appVersionNumber = "Version: 10.5.33";
+  static const String appVersionNumber = "Version: 11.5.33";
 
   static const String appHeaderHome = "Operational Landing Distance";
 
