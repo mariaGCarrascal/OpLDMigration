@@ -59,7 +59,7 @@ class CalculatorPage extends StatefulWidget {
 }
 
 class _CalculatorPageState extends State<CalculatorPage> {
-  //Variables claves
+  //Variables clave
   Timer? _timer;
   String? checkAutobrake;
   String? _currentReduction;

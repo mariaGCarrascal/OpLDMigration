@@ -62,7 +62,6 @@ class _HomePageState extends State<HomePage> {
     });
   }
  
-
   void _onGoPressed() async {
     if (!_isReady) {
       return;
@@ -101,6 +100,14 @@ class _HomePageState extends State<HomePage> {
       resizeToAvoidBottomInset: false,
       backgroundColor: AppColors.background,
       appBar: AppBar(
+        leadingWidth: 65,
+        leading: Padding(
+          padding: const EdgeInsets.all(8.0), 
+          child: Image.asset(
+            'assets/icons/logo-copaairlines.png',
+            fit: BoxFit.contain,
+          ),
+        ),
         title: const Text(
           AppStrings.appHeaderHome,
           style: TextStyle(color: AppColors.white, fontSize: 30),
@@ -128,7 +135,7 @@ class _HomePageState extends State<HomePage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
 
-                    // Label Aircraft Selection
+                    //Label Aircraft Selection
                     Text(
                       AppStrings.aircraftSection,
                       style: TextStyle(
@@ -140,7 +147,7 @@ class _HomePageState extends State<HomePage> {
 
                     const SizedBox(height: 8.0),
 
-                    // Campo Aircraft Picker
+                    //Campo Aircraft Picker
                     DropdownButtonFormField2<String>(
                       //isExpanded: true,
                       value: selectedAircraft,
@@ -272,7 +279,7 @@ class _HomePageState extends State<HomePage> {
                       },
                     ),
 
-                    // Label Landing Selection
+                    //Label Landing Selection
                     Padding(
                       padding: EdgeInsets.only(top: 20.0),
                       child: Text(
@@ -287,7 +294,7 @@ class _HomePageState extends State<HomePage> {
 
                     const SizedBox(height: 8.0),
 
-                    // Campo Landing picker
+                    //Campo Landing picker
                     DropdownButtonFormField2<String>(
                       //isExpanded: true,
                       value: selectedLanding,
@@ -425,7 +432,7 @@ class _HomePageState extends State<HomePage> {
                       },
                     ),
 
-                    // Label Configuration Type Selection
+                    //Label Configuration Type Selection
                     if (selectedLanding == 'Non-Normal') ...[
                       Padding(
                         padding: EdgeInsets.only(top: 20.0),
@@ -441,7 +448,7 @@ class _HomePageState extends State<HomePage> {
 
                       const SizedBox(height: 8.0),
 
-                      // Campo Configuration Picker
+                      //Campo Configuration Picker
                       DropdownButtonFormField2<String>(
                         isExpanded: true,
                         value: configurationList.contains(
@@ -568,7 +575,7 @@ class _HomePageState extends State<HomePage> {
                       ),                                                         
                     ],
  
-                    // Label Airport Selection
+                    //Label Airport Selection
                     Padding(
                       padding: EdgeInsets.only(top: 20.0),
                       child: Text(
@@ -762,9 +769,9 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
 
-               SizedBox(height: orientation ? MediaQuery.of(context).size.height * 0.15 : 30),
+               SizedBox(height: orientation ? MediaQuery.of(context).size.height * 0.15 : selectedLanding != 'Non-Normal' ? 30 : 20),
 
-              // Boton GO para ir a la pantalla de CalculatorPage
+              //Boton GO para ir a la pantalla de CalculatorPage
               Center(
                 child: ElevatedButton(
                   onPressed: _isReady ? _onGoPressed : null,
